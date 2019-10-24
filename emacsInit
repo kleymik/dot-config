@@ -1,0 +1,14 @@
+Emacs Init
+
+(require 'tramp)
+(setq tramp-default-method "ssh")
+C-x C-f /ssh:you@remotehost
+
+root ffu jmg hnn
+
+(setq tramp-verbose 6)
+(dired "/ssh:root@192.168.1.6:/home/user/MyDocs/aNotes/org")
+ 
+
+wine
+WINEARCH=win32 winecfg
