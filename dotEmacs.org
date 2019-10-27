@@ -1,23 +1,17 @@
 Emacs Initialisation
 C-c C-u go up
-* Preamble
-#+BEGIN_SRC   elisp
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; File name: ` ~/.emacs '
-;;--------------------------------------------------------------- Handy commands quick ref
-;; rot13-region  (C-c C-r)
-;; telnet host port     to open
-;; ^Q^] close           to close
+* Preamble Handy commands quick ref
+; File name: ` ~/.emacs '
+rot13-region  (C-c C-r)
+telnet host port     to open
+^Q^] close           to close
+(xclip-mode 1) for emacs in terminal , export kill-yank
+(setq header-line-format mode-line-format)
+(setq Buffer-menu-sort-column 6)
+C-c C-b associate ielm with buffer
+M-6 M-x Buffer-menu-sort = sort by file name
+C-x C-v = find alternate file   -> then grab filepath
 
-;; new 
-;;  (xclip-mode 1) for emacs in terminal , export kill-yank
-;; C-c C-b associate ielm with buffer
-;; M-6 M-x Buffer-menu-sort = sort by file name
-;;(setq Buffer-menu-sort-column 6)
-;; C-x C-v = find alternate file   -> then grab filepath
-;;(setq header-line-format mode-line-format)
-(setq uniquify-buffer-name-style 'forward)
-(require 'uniquify)
 ;; proced       to view processes
 ;; find-dired   calls unix find
 ;; tail-mode    auto-revert-tail-mode (C-cr)
@@ -37,7 +31,6 @@ C-c C-u go up
 ;;              package-list-packages
 ;; C-j          eval in scratch buffer ?
 ;; C-x RTN f unix RTN  dos2unix
-
 ;; C-u C-space or C-u C-@ move back to previous positions (within buffer)
 ;; C-x C-space or C-x C-@ move back to previous positions (between buffers)
 ;; C-x n n; C-x n w                            Narrow to Region; Widen
@@ -59,6 +52,10 @@ C-c C-u go up
 ;;DEL			;; delete-backward-char
 ;;RET			;; newline
 
+
+#+BEGIN_SRC emacs-lisp
+(setq uniquify-buffer-name-style 'forward)
+(require 'uniquify)
 #+END_SRC
 
 * Settings

@@ -1,0 +1,6 @@
+
+ssh 2a9c056d2b1145379835601a07e646e7@ssh.cocalc.com
+
+.sage    just a text file written in the Sage language (i.e. Python + syntactic sugar + Sage commands)
+.sagews  is a file specifically for SageMathCloud/CoCalc use only.
+(There is also a .sws format which is from the old sagenb notebook.)
