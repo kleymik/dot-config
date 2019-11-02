@@ -356,7 +356,7 @@
     ;; (setq dired-x-hands-off-my-keys nil)
     (setq dired-omit-mode t)
     (setq dired-omit-files-p t)
-    ;; (setq dired-omit-files "^\\..*$")  |;; !! set at end of init file
+    ;; (setq dired-omit-files "^\\..*$")  ;; !! set at end of init file
     (setq dired-omit-extensions '(".asv" "~" ".o" ".pyc" ".class"))
     (setq dired-no-confirm '(revert-subdirs))))
 
@@ -388,7 +388,7 @@
    (goto-char (point-min))
    (forward-line 3))
 
-(setq load-path (append load-path '("/home/kleyn/ulib/emacs/dired-hacks"))) ;; (insert (format "%s" load-path))
+(setq load-path (append load-path '("/home/kleyn/ulib/emacs/dired-hacks"))) ;; for subtree (insert (format "%s" load-path))
 (load-library "dired-subtree")
 (setq dired-subtree-line-prefix "     ")
 
