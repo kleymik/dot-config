@@ -1,4 +1,4 @@
-;; invoke by ~/.emacs.d/init/.el
+;; invoke by ~/.emacs.d/init.el
 ;;(package-initialize)
 ;;(org-babel-load-file "~/dot/dotEmacs.org)
 Emacs Initialisation
@@ -374,32 +374,32 @@ C-c C-u go up
 ;;			    (lambda ()
 ;;			      (interactive)
 ;;			      (w32-browser (dired-replace-in-string "/" "\\" (dired-replace-in-string "/cygdrive/C/" "C:\\" (dired-get-filename)))))))
-(add-hook 'dired-load-hook
-	  (lambda ()			;(load "dired-x")
-	    (require 'dired-x)
-	    (require 'wdired)
-	    (autoload 'wdired-change-to-wdired-mode "wdired")
+(require 'dired-x)
+(require 'wdired)
 
-	    ;; Set dired-x global variables here.  For example:
-	    ;; (setq dired-guess-shell-gnutar "gtar")
-	    ;; (setq dired-x-hands-off-my-keys nil)
-	    (setq dired-omit-mode t)
-	    (setq dired-omit-files-p t)
-	    (setq dired-omit-files "^#\\|^\\.$|\\.\\.$")
-	    (setq dired-omit-files "^\\..*$")
-	    (setq dired-omit-extensions '(".asv" "~" ".o" ".pyc" ".class"))
-	    (setq dired-no-confirm '(revert-subdirs))))
+(add-hook 'dired-load-hook
+   (lambda ()			;(load "dired-x")
+    (autoload 'wdired-change-to-wdired-mode "wdired")
+    ;; Set dired-x global variables here.  For example:
+    ;; (setq dired-guess-shell-gnutar "gtar")
+    ;; (setq dired-x-hands-off-my-keys nil)
+    (setq dired-omit-mode t)
+    (setq dired-omit-files-p t)
+    ;; (setq dired-omit-files "^\\..*$")  |;; !! set at end of init file
+    (setq dired-omit-extensions '(".asv" "~" ".o" ".pyc" ".class"))
+    (setq dired-no-confirm '(revert-subdirs))))
 
 (add-hook 'dired-mode-hook
-	  (lambda ()
-	    ;; Set dired-x buffer-local variables here.  For example:
-	    (dired-omit-mode 1)
-	    (progn
-	      (setq dired-no-confirm '(revert-subdirs))
-	      ;(define-key dired-mode-map [right] 'dired-go-subdir-kbm)
-	      ;(define-key dired-mode-map [left] 'dired-up-directory)
-	      (defalias 'dired-up (kbd "ESC < C-e C-r / NUL C-a ESC w C-x d C-a C-y C-k C-a ESC \\ C-e RET C-x b RET C-x k RET"))
-	      (defalias 'dired-go-subdir-kbm (kbd "f C-x b RET C-x k RET")))))
+   (lambda ()
+    ;; Set dired-x buffer-local variables here.  For example:
+    (dired-omit-mode 1)
+    (progn
+      (setq dired-no-confirm '(revert-subdirs))
+      ;(define-key dired-mode-map [right] 'dired-go-subdir-kbm)
+      ;(define-key dired-mode-map [left] 'dired-up-directory)
+      (defalias 'dired-up (kbd "ESC < C-e C-r / NUL C-a ESC w C-x d C-a C-y C-k C-a ESC \\ C-e RET C-x b RET C-x k RET"))
+      (defalias 'dired-go-subdir-kbm (kbd "f C-x b RET C-x k RET")))))
+
 ;
 ;Dired Listing Switches: Hide Value -ahl --time-style=long-iso
 ;   State: SET for current session only.
@@ -417,9 +417,9 @@ C-c C-u go up
    (goto-char (point-min))
    (forward-line 3))
 
-;(setq load-path (append load-path '("/home/kleyn/ulib/emacs/dired-hacks"))) ;; (insert (format "%s" load-path))
-;(load-library "dired-subtree")
-;(setq dired-subtree-line-prefix "     ")
+(setq load-path (append load-path '("/home/kleyn/ulib/emacs/dired-hacks"))) ;; for subtree (insert (format "%s" load-path))
+(load-library "dired-subtree")
+(setq dired-subtree-line-prefix "     ")
 
 ;; (add-hook 'dired-mode-hook
 ;;           (lambda ()
@@ -889,7 +889,7 @@ BEG and END (region to sort)."
 ;; C-c w        delete-trailing-whitespace
 ;;GNU Emacs 22 or later has library whitespace.el, which lets you highlight whitespace in several ways. See WhiteSpace.
 ;--------------------------------------------------------------- ZeeTree
-(add-to-list 'load-path "/home/kleyn/ulib/emacs/ztree-master")
+;(add-to-list 'load-path "/home/kleyn/ulib/emacs/ztree-master")
 ;(push (substitute-in-file-name "path-to-ztree-directory") load-path)
 ;(require 'ztree-diff)
 ;(require 'ztree-dir)
@@ -958,7 +958,7 @@ BEG and END (region to sort)."
 (global-set-key [f5]            'ffap) ; bookmark-bmenu-list
 (global-set-key [f6]            'ergoemacs-open-in-external-app)
 (global-set-key [f7]            'my-list-buffers)
-(global-set-key [f8]            'ztree-dir)
+;(global-set-key [f8]            'ztree-dir)
 (global-set-key [f9]		'ielm)  ;; open file under cursor
 (global-set-key [kp-divide]     'toggle-window-split)
 (global-unset-key "\C-x\C-c")                            ;; ;;; don't quit so easily
@@ -996,6 +996,7 @@ alias cl cd $*; ls
 alias hs history
 alias ll ls -l $*
 
+
 * End bit
 #+BEGIN_SRC emacs-lisp
 ;;-------------------------------------------------------------------------------
@@ -1021,13 +1022,15 @@ alias ll ls -l $*
   ;; If you edit it by hand, you could mess it up, so be careful.
   ;; Your init file should contain only one such instance.
   ;; If there is more than one, they won't work right.
- '(default ((t (:stipple nil :background "bisque" :foreground "black" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 102 :width normal :foundry "bitstream" :family "Courier 10 Pitch")))))
+ '(default ((t (:stipple nil :background "bisque" :foreground "black" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 90 :width normal :foundry "bitstream" :family "Courier 11 Pitch")))))
 #+END_SRC
+
 
 * END
 #+BEGIN_SRC emacs-lisp
 ;;(server-start)
 (message "dotEmacs.org done")
+(setq dired-omit-files "^\\..*$")
 (switch-to-buffer "*Messages*")
 #+END_SRC
 
