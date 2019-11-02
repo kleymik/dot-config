@@ -58,8 +58,18 @@ C-x C-v = find alternate file   -> then grab filepath
 (require 'uniquify)
 #+END_SRC
 
+* eshell
+alias ll ls -l $*
+TYBD fix $(git...) doesn't work in eshell
+alias gits echo $(git rev-parse --abbrev-ref HEAD); git config branch.$(git rev-parse --abbrev-ref HEAD).description;  git status
+alias gitb git branch -av
+alias gita git add
+alias cl cd $*; ls
+alias hs history
+alias ll ls -l $*
+
 * Settings
-#+BEGIN_SRC   elisp
+#+BEGIN_SRC emacs-lisp
 ;;; ----------------------------------------------------------------------
 ;(setq ediff-shell "C:/cygwin/bin/mintty.exe")
 ;;  (if (file-directory-p "c:/cygwin/bin")      (add-to-list 'exec-path "c:/cygwin/bin"))
@@ -189,7 +199,7 @@ C-x C-v = find alternate file   -> then grab filepath
 
 #+END_SRC
 * First Section
-#+BEGIN_SRC   elisp
+#+BEGIN_SRC emacs-lisp
 
 ;;------------------------------------------------------------- Matlab Mode
 (require 'matlab)
@@ -313,7 +323,7 @@ C-x C-v = find alternate file   -> then grab filepath
 #+END_SRC
 
 * Modes Assoc List
-#+BEGIN_SRC   elisp
+#+BEGIN_SRC emacs-lisp
 
 ;;--------------------------------------------------------- iedit Mode
 ;; TBD (autoload 'iedit-mode "/home/uri03204/myDocs/ulib/emacs/iedit.elc" "Enter iedit mode" t)
@@ -352,7 +362,7 @@ C-x C-v = find alternate file   -> then grab filepath
 #+END_SRC
 * Dired Stuff
 
-#+BEGIN_SRC elisp 
+#+BEGIN_SRC emacs-lisp 
 ;(define-key dired-mode-map "r" 'wdired-change-to-wdired-mode)
 ;;(defun w32-browser (doc) (w32-shell-execute 1 doc))
 ;;(eval-after-load "dired" '(define-key dired-mode-map [f3]
@@ -444,7 +454,7 @@ C-x C-v = find alternate file   -> then grab filepath
 #+END_SRC
 
 * Handy Funs
-#+BEGIN_SRC elisp
+#+BEGIN_SRC emacs-lisp
 ;;----------------------------------------------------- Misc
 (defun instimestamp ()
    (interactive)
@@ -744,7 +754,7 @@ BEG and END (region to sort)."
 #+END_SRC
 
 * Markup Languages
-#+BEGIN_SRC elisp
+#+BEGIN_SRC emacs-lisp
 ;;------------------------------------------------------------------------------ XML
 ;;{{{ XML
 
@@ -879,7 +889,7 @@ BEG and END (region to sort)."
 #+END_SRC
 
 * Global Key Bindings
-#+BEGIN_SRC   elisp
+#+BEGIN_SRC emacs-lisp
 
 (global-set-key "\C-c<"		'selective-display-level-decr)
 (global-set-key "\C-c>"		'selective-display-level-incr)
@@ -951,7 +961,7 @@ BEG and END (region to sort)."
 #+END_SRC
 
 * End bit
-#+BEGIN_SRC   elisp
+#+BEGIN_SRC   emacs-lisp
 ;;-------------------------------------------------------------------------------
 (dired "/home/kleyn" nil)
 ;(desktop-change-dir "/home/uri03204/myDocs/config")
