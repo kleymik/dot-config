@@ -3,18 +3,25 @@
 ;;(org-babel-load-file "~/dot/dotEmacs.org)
 Emacs Initialisation
 C-c C-u go up
-* Preamble Handy commands quick ref
-; File name: ` ~/.emacs '
-rot13-region  (C-c C-r)
-telnet host port     to open
-^Q^] close           to close
-(xclip-mode 1) for emacs in terminal , export kill-yank
-(setq header-line-format mode-line-format)
-(setq Buffer-menu-sort-column 6)
-C-c C-b associate ielm with buffer
-M-6 M-x Buffer-menu-sort = sort by file name
-C-x C-v = find alternate file   -> then grab filepath
 
+* Premable
+#+BEGIN_SRC emacs-lisp
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; File name: ` ~/.emacs '
+;;--------------------------------------------------------------- Handy commands quick ref
+;; rot13-region  (C-c C-r)
+;; telnet host port     to open
+;; ^Q^] close           to close
+
+;; new 
+;;  (xclip-mode 1) for emacs in terminal , export kill-yank
+;; C-c C-b associate ielm with buffer
+;; M-6 M-x Buffer-menu-sort = sort by file name
+;;(setq Buffer-menu-sort-column 6)
+;; C-x C-v = find alternate file   -> then grab filepath
+(setq header-line-format mode-line-format)
+(setq uniquify-buffer-name-style 'forward)
+(require 'uniquify)
 ;; proced       to view processes
 ;; find-dired   calls unix find
 ;; tail-mode    auto-revert-tail-mode (C-cr)
@@ -56,10 +63,6 @@ C-x C-v = find alternate file   -> then grab filepath
 ;;DEL			;; delete-backward-char
 ;;RET			;; newline
 
-
-#+BEGIN_SRC emacs-lisp
-(setq uniquify-buffer-name-style 'forward)
-(require 'uniquify)
 #+END_SRC
 
 
@@ -984,11 +987,19 @@ BEG and END (region to sort)."
 ;;(defun eshell/gits ()   (find-file file))
 ;;(setq eshell-command-aliases-list (("gits" #("git status" 0 10 (escaped t)))))
 #+END_SRC
+alias ll ls -l $*
+TYBD fix $(git...) doesn't work in eshell
+alias gits echo $(git rev-parse --abbrev-ref HEAD); git config branch.$(git rev-parse --abbrev-ref HEAD).description;  git status
+alias gitb git branch -av
+alias gita git add
+alias cl cd $*; ls
+alias hs history
+alias ll ls -l $*
 
 * End bit
 #+BEGIN_SRC emacs-lisp
 ;;-------------------------------------------------------------------------------
-(dired "/home/kleyn" nil)
+;(dired "/home/kleyn" nil)
 ;(desktop-change-dir "/home/uri03204/myDocs/config")
 
 (put 'narrow-to-region 'disabled nil)
@@ -1011,22 +1022,7 @@ BEG and END (region to sort)."
   ;; Your init file should contain only one such instance.
   ;; If there is more than one, they won't work right.
  '(default ((t (:stipple nil :background "bisque" :foreground "black" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 102 :width normal :foundry "bitstream" :family "Courier 10 Pitch")))))
-
-* ESHELL
-#+BEGIN_SRC emacs-lisp
-;;(defalias 'open 'find-file)
-;;(defalias 'openo 'find-file-other-window)
-;;(defun eshell/gits ()   (find-file file))
-;;(setq eshell-command-aliases-list (("gits" #("git status" 0 10 (escaped t)))))
 #+END_SRC
-alias ll ls -l $*
-TYBD fix $(git...) doesn't work in eshell
-alias gits echo $(git rev-parse --abbrev-ref HEAD); git config branch.$(git rev-parse --abbrev-ref HEAD).description;  git status
-alias gitb git branch -av
-alias gita git add
-alias cl cd $*; ls
-alias hs history
-alias ll ls -l $*
 
 * END
 #+BEGIN_SRC emacs-lisp

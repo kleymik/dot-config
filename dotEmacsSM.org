@@ -996,6 +996,34 @@ alias cl cd $*; ls
 alias hs history
 alias ll ls -l $*
 
+* End bit
+#+BEGIN_SRC emacs-lisp
+;;-------------------------------------------------------------------------------
+;(dired "/home/kleyn" nil)
+;(desktop-change-dir "/home/uri03204/myDocs/config")
+
+(put 'narrow-to-region 'disabled nil)
+
+(custom-set-variables
+  ;; custom-set-variables was added by Custom.
+  ;; If you edit it by hand, you could mess it up, so be careful.
+  ;; Your init file should contain only one such instance.
+  ;; If there is more than one, they won't work right.
+ '(blink-cursor-mode nil)
+ '(column-number-mode t)
+ '(display-time-mode t)
+ '(matlab-auto-fill nil)
+ '(matlab-fill-code nil)
+ '(show-paren-mode t)
+ '(tool-bar-mode nil))
+(custom-set-faces
+  ;; custom-set-faces was added by Custom.
+  ;; If you edit it by hand, you could mess it up, so be careful.
+  ;; Your init file should contain only one such instance.
+  ;; If there is more than one, they won't work right.
+ '(default ((t (:stipple nil :background "bisque" :foreground "black" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 102 :width normal :foundry "bitstream" :family "Courier 10 Pitch")))))
+#+END_SRC
+
 * END
 #+BEGIN_SRC emacs-lisp
 ;;(server-start)
