@@ -646,7 +646,6 @@ BEG and END (region to sort)."
 ;;  )
 
 ;; ------------------------------------------------------------------------------- org-mode
-
 (defun org-save-code-block(p1 p2)
   (interactive "r")
   ;; for use with es.m
@@ -719,6 +718,7 @@ BEG and END (region to sort)."
           (lambda ()
             (setq indent-tabs-mode nil) ;; spaces not tabs!
             (setq tab-width 4)
+            (hs-minor-mode)
             (setq python-indent 4)))
 
 ;; -------------------------- new stuff
@@ -731,7 +731,7 @@ BEG and END (region to sort)."
 ;; (setq save-interprogram-paste-before-kill nil)
 
 ;; ;; Auto refresh buffers when edits occur outside emacs
-;; (global-auto-revert-mode 1)
+(global-auto-revert-mode 1)
 
 ;; ;; Also auto refresh dired, but be quiet about it
 ;; (setq global-auto-revert-non-file-buffers t)
@@ -850,7 +850,7 @@ BEG and END (region to sort)."
 (setq selective-display-lev 0)
 (defun selective-display-level-incr (&optional arg)
     (interactive "P")
-    (setq selective-display-lev (+ selective-display-lev 2))
+    (setq selective-display-lev (% (+ selective-display-lev 2) 16))
     (set-selective-display selective-display-lev))
 (defun selective-display-level-decr (&optional arg)
     (interactive "P")
@@ -865,7 +865,7 @@ BEG and END (region to sort)."
 ;; for function keys
 (defun see-logbook1()      (interactive) (find-file "L:/MyDocs/history/logbook.org"))
 (defun see-sql()           (interactive) (find-file "C:/MyMAQS/notebooks/sqlScripts.org"))
-(defun see-matlab()        (interactive) (find-file "//lon0302/dfs/DATA/MULTI_ASSET/MAQS/dataCollection/FI/LOCAL/USR/MK/vc/maqsMk/notebooks/matlabScripts.org"))
+(defun see-matlab()        (interactive) (find-file "//lon0302/dfs/DATA/MULTI_ASSET/MAQS/dataCollection/FI/LOCAL/USR/MK/vc/rs1/SSI.scratch.wt1/notebooks/matlabScripts.org"))
 (defun see-dotBashRc()     (interactive) (find-file "L:/MyDocs/dot/dotBashrc"))
 (defun see-dotEmacs()      (interactive) (find-file "L:/MyDocs/dot/dotEmacs.el"))
 ;;(defun nok900()          (interactive) (dired "/scpc:root@192.168.1.187:/home/user/MyDocs/aNotes/"))
@@ -1163,8 +1163,8 @@ BEG and END (region to sort)."
 
 (global-set-key "\C-xd"         'dired)
 (global-set-key "\C-xi"         'eval-print-last-sexp) ; ielm
-
 (global-set-key (kbd "C-.")     'repeat)
+(global-set-key (kbd "\C-c;")    'comment-or-uncomment-region)
 
 ;; with a C-0 prefix argument.
 (global-set-key [C-kp-subtract] 'text-scale-decrease)
@@ -1175,10 +1175,10 @@ BEG and END (region to sort)."
 (global-set-key [S-right]       'window-hwiden)
 (global-set-key [S-left]        'window-hshrink)
 
-(global-set-key [C-up]          'windmove-up)          ;(global-set-key (kbd "C-c <up>")    'windmove-up)
-(global-set-key [C-down]        'windmove-down)        ;(global-set-key (kbd "C-c <down>")  'windmove-down)
-(global-set-key [C-left]        'windmove-left)        ;(global-set-key (kbd "C-c <left>")  'windmove-left)
-(global-set-key [C-right]       'windmove-right)       ;(global-set-key (kbd "C-c <right>") 'windmove-right)
+;(global-set-key [C-up]          'windmove-up)          ;(global-set-key (kbd "C-c <up>")    'windmove-up)
+;(global-set-key [C-down]        'windmove-down)        ;(global-set-key (kbd "C-c <down>")  'windmove-down)
+;(global-set-key [C-left]        'windmove-left)        ;(global-set-key (kbd "C-c <left>")  'windmove-left)
+;(global-set-key [C-right]       'windmove-right)       ;(global-set-key (kbd "C-c <right>") 'windmove-right)
 
 ;(global-set-key (kbd "<wheel-up>")   'previous-buffer)
 ;(global-set-key [S-wheel-up].
