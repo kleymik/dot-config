@@ -986,6 +986,15 @@ BEG and END (region to sort)."
 ;;(defalias 'openo 'find-file-other-window)
 ;;(defun eshell/gits ()   (find-file file))
 ;;(setq eshell-command-aliases-list (("gits" #("git status" 0 10 (escaped t)))))
+#+END_SRC
+alias ll ls -l $*
+TYBD fix $(git...) doesn't work in eshell
+alias gits echo $(git rev-parse --abbrev-ref HEAD); git config branch.$(git rev-parse --abbrev-ref HEAD).description;  git status
+alias gitb git branch -av
+alias gita git add
+alias cl cd $*; ls
+alias hs history
+alias ll ls -l $*
 
 #+END_SRC
 
