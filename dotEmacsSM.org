@@ -1,8 +1,9 @@
-;; invoke by ~/.emacs.d/init/.el
+;; invoke by ~/.emacs.d/init.el
 ;;(package-initialize)
 ;;(org-babel-load-file "~/dot/dotEmacs.org)
 Emacs Initialisation
 C-c C-u go up
+increase/decrease font C-cC-+/-
 
 * Premable
 #+BEGIN_SRC emacs-lisp
@@ -390,15 +391,16 @@ C-c C-u go up
 	    (setq dired-no-confirm '(revert-subdirs))))
 
 (add-hook 'dired-mode-hook
-	  (lambda ()
-	    ;; Set dired-x buffer-local variables here.  For example:
-	    (dired-omit-mode 1)
-	    (progn
-	      (setq dired-no-confirm '(revert-subdirs))
-	      ;(define-key dired-mode-map [right] 'dired-go-subdir-kbm)
-	      ;(define-key dired-mode-map [left] 'dired-up-directory)
-	      (defalias 'dired-up (kbd "ESC < C-e C-r / NUL C-a ESC w C-x d C-a C-y C-k C-a ESC \\ C-e RET C-x b RET C-x k RET"))
-	      (defalias 'dired-go-subdir-kbm (kbd "f C-x b RET C-x k RET")))))
+   (lambda ()
+    ;; Set dired-x buffer-local variables here.  For example:
+    (dired-omit-mode 1)
+    (progn
+      (setq dired-no-confirm '(revert-subdirs))
+      ;(define-key dired-mode-map [right] 'dired-go-subdir-kbm)
+      ;(define-key dired-mode-map [left] 'dired-up-directory)
+      (defalias 'dired-up (kbd "ESC < C-e C-r / NUL C-a ESC w C-x d C-a C-y C-k C-a ESC \\ C-e RET C-x b RET C-x k RET"))
+      (defalias 'dired-go-subdir-kbm (kbd "f C-x b RET C-x k RET")))))
+
 ;
 ;Dired Listing Switches: Hide Value -ahl --time-style=long-iso
 ;   State: SET for current session only.
@@ -888,7 +890,7 @@ BEG and END (region to sort)."
 ;; C-c w        delete-trailing-whitespace
 ;;GNU Emacs 22 or later has library whitespace.el, which lets you highlight whitespace in several ways. See WhiteSpace.
 ;--------------------------------------------------------------- ZeeTree
-(add-to-list 'load-path "/home/kleyn/ulib/emacs/ztree-master")
+;(add-to-list 'load-path "/home/kleyn/ulib/emacs/ztree-master")
 ;(push (substitute-in-file-name "path-to-ztree-directory") load-path)
 ;(require 'ztree-diff)
 ;(require 'ztree-dir)
@@ -957,7 +959,7 @@ BEG and END (region to sort)."
 (global-set-key [f5]            'ffap) ; bookmark-bmenu-list
 (global-set-key [f6]            'ergoemacs-open-in-external-app)
 (global-set-key [f7]            'my-list-buffers)
-(global-set-key [f8]            'ztree-dir)
+;(global-set-key [f8]            'ztree-dir)
 (global-set-key [f9]		'ielm)  ;; open file under cursor
 (global-set-key [kp-divide]     'toggle-window-split)
 (global-unset-key "\C-x\C-c")                            ;; ;;; don't quit so easily
@@ -995,6 +997,7 @@ alias cl cd $*; ls
 alias hs history
 alias ll ls -l $*
 
+
 * End bit
 #+BEGIN_SRC emacs-lisp
 ;;-------------------------------------------------------------------------------
@@ -1022,6 +1025,9 @@ alias ll ls -l $*
   ;; If there is more than one, they won't work right.
  '(default ((t (:stipple nil :background "bisque" :foreground "black" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 102 :width normal :foundry "bitstream" :family "Courier 10 Pitch")))))
 #+END_SRC
+;custom-set-variables and custom set faces in ~/.emacs.d/init.el
+; font like this?
+;(set-default-font "Monaco 14")
 
 * END
 #+BEGIN_SRC emacs-lisp
@@ -1029,5 +1035,9 @@ alias ll ls -l $*
 (message "dotEmacs.org done")
 (setq dired-omit-files "^\\..*$")
 (switch-to-buffer "*Messages*")
+(set-background-color "midnightblue")
 #+END_SRC
+
+#+STARTUP: fold
+
 

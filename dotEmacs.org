@@ -1006,10 +1006,10 @@ alias ll ls -l $*
 
 (put 'narrow-to-region 'disabled nil)
 
-;custom-set-variables and custom set faces in ~/.emacs.d/init.el
-
 #+END_SRC
-
+;custom-set-variables and custom set faces in ~/.emacs.d/init.el
+; font like this?
+;(set-default-font "Monaco 14")
 
 * END
 #+BEGIN_SRC emacs-lisp
