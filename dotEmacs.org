@@ -32,6 +32,7 @@ C-x C-v = find alternate file   -> then grab filepath
 ;;              package-list-packages
 ;; C-j          eval in scratch buffer ?
 ;; C-x RTN f unix RTN  dos2unix
+
 ;; C-u C-space or C-u C-@ move back to previous positions (within buffer)
 ;; C-x C-space or C-x C-@ move back to previous positions (between buffers)
 ;; C-x n n; C-x n w                            Narrow to Region; Widen
@@ -59,15 +60,6 @@ C-x C-v = find alternate file   -> then grab filepath
 (require 'uniquify)
 #+END_SRC
 
-* eshell
-alias ll ls -l $*
-TYBD fix $(git...) doesn't work in eshell
-alias gits echo $(git rev-parse --abbrev-ref HEAD); git config branch.$(git rev-parse --abbrev-ref HEAD).description;  git status
-alias gitb git branch -av
-alias gita git add
-alias cl cd $*; ls
-alias hs history
-alias ll ls -l $*
 
 * Settings
 #+BEGIN_SRC emacs-lisp
@@ -132,9 +124,9 @@ alias ll ls -l $*
 ;;    say "yes" to steal from PID?
 ;;(desktop-save-mode 1)  ; desktop-revert desktop-change-dir
 ;;(desktop-change-dir "/home/uri03204/myDocs/config")
-(setq desktop-path "/home/kleyn/.emacs.d/desktop")
-(desktop-save-mode 1)
-(setq desktop-auto-save-timeout 300)
+;(setq desktop-path "/home/kleyn/.emacs.d/desktop")
+;(desktop-save-mode 1)
+;(setq desktop-auto-save-timeout 300)
 
 ;; ----------------------------------------------- Backup location
 (setq backup-directory-alist          `((".*" . , "/data/data/com.termux/files/home/internalBackup/emacs")))
@@ -321,7 +313,10 @@ alias ll ls -l $*
 			(setq tab-width 4)
 			(setq python-indent 4)))
 
+(message "dotEmacs.org first section done")
+
 #+END_SRC
+
 
 * Modes Assoc List
 #+BEGIN_SRC emacs-lisp
@@ -361,6 +356,8 @@ alias ll ls -l $*
 
 
 #+END_SRC
+
+
 * Dired Stuff
 
 #+BEGIN_SRC emacs-lisp 
@@ -411,11 +408,11 @@ alias ll ls -l $*
 (defadvice dired-sort-toggle-or-edit (after dired-sort-to-top activate)
    "Move to beginning of buffer (instead of keeping point on the current file)."
    (goto-char (point-min))
-   (goto-line 3))
+   (forward-line 3))
 
-(setq load-path (append load-path '("/home/kleyn/ulib/emacs/dired-hacks"))) ;; (insert (format "%s" load-path))
-(load-library "dired-subtree")
-(setq dired-subtree-line-prefix "     ")
+;(setq load-path (append load-path '("/home/kleyn/ulib/emacs/dired-hacks"))) ;; (insert (format "%s" load-path))
+;(load-library "dired-subtree")
+;(setq dired-subtree-line-prefix "     ")
 
 ;; (add-hook 'dired-mode-hook
 ;;           (lambda ()
@@ -452,8 +449,11 @@ alias ll ls -l $*
 ;(add-hook 'ediff-mode-hook (lambda () (setq ediff-shell "C:/cygwin/bin/mintty.exe")))
 ;(add-hook 'ediff-load-hook (lambda () (setq ediff-shell "C:/cygwin/bin/mintty.exe")))
 
+
+(message "dotEmacs.org section Dired done")
 #+END_SRC
 
+  
 * Handy Funs
 #+BEGIN_SRC emacs-lisp
 ;;----------------------------------------------------- Misc
@@ -752,10 +752,12 @@ BEG and END (region to sort)."
 	(setq selective-display-lev 0)
 	(set-selective-display selective-display-lev))
 
+(message "dotEmacs.org section Handy Funs  done")
 #+END_SRC
 
+
 * Markup Languages
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp-not
 ;;------------------------------------------------------------------------------ XML
 ;;{{{ XML
 
@@ -882,11 +884,12 @@ BEG and END (region to sort)."
 ;--------------------------------------------------------------- ZeeTree
 (add-to-list 'load-path "/home/kleyn/ulib/emacs/ztree-master")
 ;(push (substitute-in-file-name "path-to-ztree-directory") load-path)
-(require 'ztree-diff)
-(require 'ztree-dir)
+;(require 'ztree-diff)
+;(require 'ztree-dir)
 ;local binf to tab (ztree-perform-action)
 ;Call the ztree-diff interactive function: M-x ztree-diff
 
+(message "dotEmacs.org markup languages section done")
 #+END_SRC
 
 * Global Key Bindings
@@ -987,6 +990,16 @@ BEG and END (region to sort)."
   ;; Your init file should contain only one such instance.
   ;; If there is more than one, they won't work right.
  '(default ((t (:stipple nil :background "bisque" :foreground "black" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 102 :width normal :foundry "bitstream" :family "Courier 10 Pitch")))))
+
+* eshell
+alias ll ls -l $*
+TYBD fix $(git...) doesn't work in eshell
+alias gits echo $(git rev-parse --abbrev-ref HEAD); git config branch.$(git rev-parse --abbrev-ref HEAD).description;  git status
+alias gitb git branch -av
+alias gita git add
+alias cl cd $*; ls
+alias hs history
+alias ll ls -l $*
 
 ;;(server-start)
 
