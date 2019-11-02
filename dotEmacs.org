@@ -385,7 +385,7 @@ C-c C-u go up
     ;; (setq dired-x-hands-off-my-keys nil)
     (setq dired-omit-mode t)
     (setq dired-omit-files-p t)
-    ;; (setq dired-omit-files "^\\..*$")  |;; !! set at end of init file
+    ;; (setq dired-omit-files "^\\..*$")  ;; !! set at end of init file
     (setq dired-omit-extensions '(".asv" "~" ".o" ".pyc" ".class"))
     (setq dired-no-confirm '(revert-subdirs))))
 
@@ -1005,24 +1005,8 @@ alias ll ls -l $*
 
 (put 'narrow-to-region 'disabled nil)
 
-(custom-set-variables
-  ;; custom-set-variables was added by Custom.
-  ;; If you edit it by hand, you could mess it up, so be careful.
-  ;; Your init file should contain only one such instance.
-  ;; If there is more than one, they won't work right.
- '(blink-cursor-mode nil)
- '(column-number-mode t)
- '(display-time-mode t)
- '(matlab-auto-fill nil)
- '(matlab-fill-code nil)
- '(show-paren-mode t)
- '(tool-bar-mode nil))
-(custom-set-faces
-  ;; custom-set-faces was added by Custom.
-  ;; If you edit it by hand, you could mess it up, so be careful.
-  ;; Your init file should contain only one such instance.
-  ;; If there is more than one, they won't work right.
- '(default ((t (:stipple nil :background "bisque" :foreground "black" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 90 :width normal :foundry "bitstream" :family "Courier 11 Pitch")))))
+;custom-set-variables and custom set faces in ~/.emacs.d/init.el
+
 #+END_SRC
 
 
@@ -1032,5 +1016,6 @@ alias ll ls -l $*
 (message "dotEmacs.org done")
 (setq dired-omit-files "^\\..*$")
 (switch-to-buffer "*Messages*")
+(set-background-color "midnightblue")
 #+END_SRC
 
