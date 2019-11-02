@@ -127,10 +127,10 @@
 ;;
 ;;
 ;; trello
-(require 'org-trello)
-(add-hook 'org-mode-hook 'org-trello-mode)
-(setq org-trello-consumer-key "fc03dd5cd067337dcb8d40c124e43a15"
-      org-trello-access-token "c321f58405ebeff317a262cbbf52f99c89bea2cc322fff040f1c19bfa0b0e3e2")
+;;(require 'org-trello)
+;;(add-hook 'org-mode-hook 'org-trello-mode)
+;;(setq org-trello-consumer-key "fc03dd5cd067337dcb8d40c124e43a15"
+;;      org-trello-access-token "c321f58405ebeff317a262cbbf52f99c89bea2cc322fff040f1c19bfa0b0e3e2")
 ;;org-trello-install-key-and-token
 ;;org-trello-update-board-metadata
 
@@ -185,8 +185,8 @@
 ;; (setq desktop-path "/home/kleyn/.emacs.d/desktop")
 ;; (desktop-save-mode 1)
 ;; (setq desktop-auto-save-timeout 300)
-;; 
-;; ;;-------------------------------------------------------------------------------- History
+;; (org-babel-load-file "~/.emacs.d/configuration.org") 
+;;(org-babel-load-file "~/.emacs.d/configuration.org")  ;;-------------------------------------------------------------------------------- History
 ;; (setq history-length 10000)
 ;; (savehist-mode 1)
 ;; ; (list-command-history)
