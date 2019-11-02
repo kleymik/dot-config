@@ -375,9 +375,9 @@ C-c C-u go up
 ;;			      (interactive)
 ;;			      (w32-browser (dired-replace-in-string "/" "\\" (dired-replace-in-string "/cygdrive/C/" "C:\\" (dired-get-filename)))))))
 (add-hook 'dired-load-hook
-	  (lambda ()			;(load "dired-x")
-	    (require 'dired-x)
-	    (require 'wdired)
+   (lambda ()			;(load "dired-x")
+     (require 'dired-x)
+    (require 'wdired)
 	    (autoload 'wdired-change-to-wdired-mode "wdired")
 
 	    ;; Set dired-x global variables here.  For example:
@@ -385,8 +385,7 @@ C-c C-u go up
 	    ;; (setq dired-x-hands-off-my-keys nil)
 	    (setq dired-omit-mode t)
 	    (setq dired-omit-files-p t)
-	    (setq dired-omit-files "^#\\|^\\.$|\\.\\.$")
-	    (setq dired-omit-files "^\\..*$")
+            (setq dired-omit-files "^\\..*$") ;; !! set at end of init file
 	    (setq dired-omit-extensions '(".asv" "~" ".o" ".pyc" ".class"))
 	    (setq dired-no-confirm '(revert-subdirs))))
 
@@ -1028,6 +1027,7 @@ alias ll ls -l $*
 #+BEGIN_SRC emacs-lisp
 ;;(server-start)
 (message "dotEmacs.org done")
+(setq dired-omit-files "^\\..*$")
 (switch-to-buffer "*Messages*")
 #+END_SRC
 
