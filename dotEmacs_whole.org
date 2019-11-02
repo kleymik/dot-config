@@ -1,18 +1,25 @@
-;;(org-babel-load-file "~/dot/dotEmacs.org)
+;(org-babel-load-file "~/dot/dotEmacs.org)
 Emacs Initialisation
 C-c C-u go up
-* Preamble Handy commands quick ref
-; File name: ` ~/.emacs '
-rot13-region  (C-c C-r)
-telnet host port     to open
-^Q^] close           to close
-(xclip-mode 1) for emacs in terminal , export kill-yank
-(setq header-line-format mode-line-format)
-(setq Buffer-menu-sort-column 6)
-C-c C-b associate ielm with buffer
-M-6 M-x Buffer-menu-sort = sort by file name
-C-x C-v = find alternate file   -> then grab filepath
 
+* Preamble
+#+BEGIN_SRC   emacs-lisp
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; File name: ` ~/.emacs '
+;;--------------------------------------------------------------- Handy commands quick ref
+;; rot13-region  (C-c C-r)
+;; telnet host port     to open
+;; ^Q^] close           to close
+
+;; new 
+;;  (xclip-mode 1) for emacs in terminal , export kill-yank
+;; C-c C-b associate ielm with buffer
+;; M-6 M-x Buffer-menu-sort = sort by file name
+;;(setq Buffer-menu-sort-column 6)
+;; C-x C-v = find alternate file   -> then grab filepath
+;;(setq header-line-format mode-line-format)
+(setq uniquify-buffer-name-style 'forward)
+(require 'uniquify)
 ;; proced       to view processes
 ;; find-dired   calls unix find
 ;; tail-mode    auto-revert-tail-mode (C-cr)
@@ -32,6 +39,7 @@ C-x C-v = find alternate file   -> then grab filepath
 ;;              package-list-packages
 ;; C-j          eval in scratch buffer ?
 ;; C-x RTN f unix RTN  dos2unix
+
 ;; C-u C-space or C-u C-@ move back to previous positions (within buffer)
 ;; C-x C-space or C-x C-@ move back to previous positions (between buffers)
 ;; C-x n n; C-x n w                            Narrow to Region; Widen
@@ -53,21 +61,8 @@ C-x C-v = find alternate file   -> then grab filepath
 ;;DEL			;; delete-backward-char
 ;;RET			;; newline
 
-
-#+BEGIN_SRC emacs-lisp
-(setq uniquify-buffer-name-style 'forward)
-(require 'uniquify)
 #+END_SRC
 
-* eshell
-alias ll ls -l $*
-TYBD fix $(git...) doesn't work in eshell
-alias gits echo $(git rev-parse --abbrev-ref HEAD); git config branch.$(git rev-parse --abbrev-ref HEAD).description;  git status
-alias gitb git branch -av
-alias gita git add
-alias cl cd $*; ls
-alias hs history
-alias ll ls -l $*
 
 * Settings
 #+BEGIN_SRC emacs-lisp
@@ -199,8 +194,9 @@ alias ll ls -l $*
  '(default ((t (:family "Courier New" :foundry "outline" :slant normal :weight normal :height 120 :width normal)))))
 
 #+END_SRC
+
 * First Section
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC   emacs-lisp
 
 ;;------------------------------------------------------------- Matlab Mode
 (require 'matlab)
@@ -323,6 +319,7 @@ alias ll ls -l $*
 
 #+END_SRC
 
+
 * Modes Assoc List
 #+BEGIN_SRC emacs-lisp
 
@@ -360,7 +357,7 @@ alias ll ls -l $*
 ;(add-to-list 'auto-mode-alist '("\\.m\\'"     . octave-mode)  )
 
 
-#+END_SRC
+
 * Dired Stuff
 
 #+BEGIN_SRC emacs-lisp 
@@ -411,7 +408,7 @@ alias ll ls -l $*
 (defadvice dired-sort-toggle-or-edit (after dired-sort-to-top activate)
    "Move to beginning of buffer (instead of keeping point on the current file)."
    (goto-char (point-min))
-   (goto-line 3))
+   (forward-line 3))
 
 (setq load-path (append load-path '("/home/kleyn/ulib/emacs/dired-hacks"))) ;; (insert (format "%s" load-path))
 (load-library "dired-subtree")
@@ -452,7 +449,10 @@ alias ll ls -l $*
 ;(add-hook 'ediff-mode-hook (lambda () (setq ediff-shell "C:/cygwin/bin/mintty.exe")))
 ;(add-hook 'ediff-load-hook (lambda () (setq ediff-shell "C:/cygwin/bin/mintty.exe")))
 
+
+(message "dotEmacs.org section Dired done")
 #+END_SRC
+
 
 * Handy Funs
 #+BEGIN_SRC emacs-lisp
@@ -754,6 +754,7 @@ BEG and END (region to sort)."
 
 #+END_SRC
 
+
 * Markup Languages
 #+BEGIN_SRC emacs-lisp
 ;;------------------------------------------------------------------------------ XML
@@ -889,8 +890,9 @@ BEG and END (region to sort)."
 
 #+END_SRC
 
+
 * Global Key Bindings
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC   emacs-lisp
 
 (global-set-key "\C-c<"		'selective-display-level-decr)
 (global-set-key "\C-c>"		'selective-display-level-incr)
@@ -904,12 +906,11 @@ BEG and END (region to sort)."
 (global-set-key "\C-cs"		'parallel-swap)
 (global-set-key "\C-ct"		'org-table-convert-region)
 (global-set-key "\C-cw"		'delete-trailing-whitespace)
-(global-set-key "\C-x\C-c\C-v"  'save-buffers-kill-emacs) ;; But we establish a longer sequence that is harder to hit by accident:
 (global-set-key "\C-xd"         'dired)
 (global-set-key "\C-xi"         'eval-print-last-sexp) ; ielm
 (global-set-key "\C-xl"		'list-matching-lines)
 (global-set-key "\C-xt"		'instimestamp)
-(global-set-key "\C-z"		'replace-string)
+(global-set-key "\C-z"		'undo) ; replace-string
 (global-set-key "\M-$"		'query-replace-regexp)
 (global-set-key (kbd "C-.")     'repeat)
 (global-set-key [(next)]        'cycle-buffer)
@@ -932,6 +933,8 @@ BEG and END (region to sort)."
 (global-set-key [S-left]        'window-hshrink)
 (global-set-key [S-right]       'window-hwiden)
 (global-set-key [S-up]          'scroll-one-line-down)
+
+
 (global-set-key [end]           'kill-this-buffer-volatile)
 (global-set-key [f10]           'see-shell-output) ;ergoemacs-open-in-external-app
 (global-set-key [f11]           'hs-show-block)
@@ -960,6 +963,7 @@ BEG and END (region to sort)."
 ;;(global-set-key [M-return]		'ffap)  ;; open file under cursor
 
 #+END_SRC
+
 
 * End bit
 #+BEGIN_SRC   emacs-lisp
@@ -991,4 +995,3 @@ BEG and END (region to sort)."
 ;;(server-start)
 
 #+END_SRC
-
