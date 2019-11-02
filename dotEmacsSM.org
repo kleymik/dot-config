@@ -901,7 +901,7 @@ BEG and END (region to sort)."
 
 
 * Global Key Bindings
-#+BEGIN_SRC   emacs-lisp
+#+BEGIN_SRC emacs-lisp
 
 (global-set-key "\C-c<"		'selective-display-level-decr)
 (global-set-key "\C-c>"		'selective-display-level-incr)
@@ -981,7 +981,7 @@ BEG and END (region to sort)."
 
 
 * ESHELL
-#+BEGIN_SRC
+#+BEGIN_SRC emacs-lisp
 ;;(defalias 'open 'find-file)
 ;;(defalias 'openo 'find-file-other-window)
 ;;(defun eshell/gits ()   (find-file file))
@@ -996,13 +996,10 @@ alias cl cd $*; ls
 alias hs history
 alias ll ls -l $*
 
-#+END_SRC
-
 * END
 #+BEGIN_SRC emacs-lisp
+;;(server-start)
 (message "dotEmacs.org done")
 (switch-to-buffer "*Messages*")
 #+END_SRC
-
-
 

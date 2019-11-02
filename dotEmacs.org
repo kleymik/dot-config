@@ -898,7 +898,7 @@ BEG and END (region to sort)."
 
 
 * Global Key Bindings
-#+BEGIN_SRC   emacs-lisp
+#+BEGIN_SRC emacs-lisp
 
 (global-set-key "\C-c<"		'selective-display-level-decr)
 (global-set-key "\C-c>"		'selective-display-level-incr)
@@ -913,7 +913,6 @@ BEG and END (region to sort)."
 (global-set-key "\C-cs"		'parallel-swap)
 (global-set-key "\C-ct"		'org-table-convert-region)
 (global-set-key "\C-cw"		'delete-trailing-whitespace)
-(global-set-key "\C-x\C-c\C-v"  'save-buffers-kill-emacs) ;; But we establish a longer sequence that is harder to hit by accident:
 (global-set-key "\C-xd"         'dired)
 (global-set-key "\C-xi"         'eval-print-last-sexp) ; ielm
 (global-set-key "\C-xl"		'list-matching-lines)
@@ -960,6 +959,11 @@ BEG and END (region to sort)."
 (global-set-key [f9]		'ielm)  ;; open file under cursor
 (global-set-key [kp-divide]     'toggle-window-split)
 (global-unset-key "\C-x\C-c")                            ;; ;;; don't quit so easily
+
+(message "dotEmacs.org keybindings section done")
+#+END_SRC
+;(global-set-key "\C-x\C-c\C-v"  'save-buffers-kill-emacs) ;; But we establish a longer sequence that is harder to hit by accident:
+
 ;(define-key global-map "\C-co" 'org-capture)
 ;(global-set-key "\C-!"         'shell-command) TBD
 ;(global-set-key "\C-q"		'quoted-insert)
@@ -967,15 +971,22 @@ BEG and END (region to sort)."
 ;(global-set-key [M-up]	        'other-window)
 ;(global-set-key [S-kp-insert]  'yank)
 ;(global-unset-key (kbd "C-q"))
-;; (global-set-key [S-M-kp-down] 'sgml-fold-subelement) ;; ; M-kp ... conflicts with workspace navigation:
-;; (global-set-key [S-M-kp-end]  'sgml-fold-element)   ;  fold everything below current element
+;(global-set-key [S-M-kp-down] 'sgml-fold-subelement) ;; ; M-kp ... conflicts with workspace navigation:
+;(global-set-key [S-M-kp-end]  'sgml-fold-element)   ;  fold everything below current element
 ;; (global-set-key [S-M-kp-next] 'sgml-unfold-element)
 ;;(global-set-key [M-return]		'ffap)  ;; open file under cursor
 
+
+* ESHELL
+#+BEGIN_SRC emacs-lisp
+;;(defalias 'open 'find-file)
+;;(defalias 'openo 'find-file-other-window)
+;;(defun eshell/gits ()   (find-file file))
+;;(setq eshell-command-aliases-list (("gits" #("git status" 0 10 (escaped t)))))
 #+END_SRC
 
 * End bit
-#+BEGIN_SRC   emacs-lisp
+#+BEGIN_SRC emacs-lisp
 ;;-------------------------------------------------------------------------------
 (dired "/home/kleyn" nil)
 ;(desktop-change-dir "/home/uri03204/myDocs/config")
@@ -1001,7 +1012,13 @@ BEG and END (region to sort)."
   ;; If there is more than one, they won't work right.
  '(default ((t (:stipple nil :background "bisque" :foreground "black" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 102 :width normal :foundry "bitstream" :family "Courier 10 Pitch")))))
 
-* eshell
+* ESHELL
+#+BEGIN_SRC emacs-lisp
+;;(defalias 'open 'find-file)
+;;(defalias 'openo 'find-file-other-window)
+;;(defun eshell/gits ()   (find-file file))
+;;(setq eshell-command-aliases-list (("gits" #("git status" 0 10 (escaped t)))))
+#+END_SRC
 alias ll ls -l $*
 TYBD fix $(git...) doesn't work in eshell
 alias gits echo $(git rev-parse --abbrev-ref HEAD); git config branch.$(git rev-parse --abbrev-ref HEAD).description;  git status
@@ -1011,7 +1028,10 @@ alias cl cd $*; ls
 alias hs history
 alias ll ls -l $*
 
+* END
+#+BEGIN_SRC emacs-lisp
 ;;(server-start)
-
+(message "dotEmacs.org done")
+(switch-to-buffer "*Messages*")
 #+END_SRC
 
