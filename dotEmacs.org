@@ -1,3 +1,5 @@
+;; invoke by ~/.emacs.d/init/.el
+;;(package-initialize)
 ;;(org-babel-load-file "~/dot/dotEmacs.org)
 Emacs Initialisation
 C-c C-u go up
@@ -191,58 +193,60 @@ C-x C-v = find alternate file   -> then grab filepath
  '(default ((t (:family "Courier New" :foundry "outline" :slant normal :weight normal :height 120 :width normal)))))
 
 #+END_SRC
+
+  
 * First Section
 #+BEGIN_SRC emacs-lisp
 
-;;------------------------------------------------------------- Matlab Mode
-(require 'matlab)
-(setq matlab-indent-function t)
-(setq matlab-shell-command "matlab")
-;;(autoload 'matlab-mode "/home/kleyn/myDocs/ulib/emacs/matlab.elc" "Enter Matlab mode." t)
-;; User Level customizations:
-;;   (setq matlab-verify-on-save-flag nil) ; turn off auto-verify on save
-(defun my-matlab-mode-hook ()
-  (matlab-mode-hilit) 			; Turn highlight on
-  (setq fill-column 276)		; where auto-fill should wrap
-  (setq matlab-indent-function t)	; if you want function bodies indented
-  (setq matlab-indent-level  2)         ; set matlab indentation
-  (set matlab-fill-code nil)
-  (setq indent-tabs-mode nil))
-(add-hook 'matlab-mode-hook 'my-matlab-mode-hook)
+;; ;;------------------------------------------------------------- Matlab Mode
+;; (require 'matlab)
+;; (setq matlab-indent-function t)
+;; (setq matlab-shell-command "matlab")
+;; ;;(autoload 'matlab-mode "/home/kleyn/myDocs/ulib/emacs/matlab.elc" "Enter Matlab mode." t)
+;; ;; User Level customizations:
+;; ;;   (setq matlab-verify-on-save-flag nil) ; turn off auto-verify on save
+;; (defun my-matlab-mode-hook ()
+;;   (matlab-mode-hilit) 			; Turn highlight on
+;;   (setq fill-column 276)		; where auto-fill should wrap
+;;   (setq matlab-indent-function t)	; if you want function bodies indented
+;;   (setq matlab-indent-level  2)         ; set matlab indentation
+;;   (set matlab-fill-code nil)
+;;   (setq indent-tabs-mode nil))
+;; (add-hook 'matlab-mode-hook 'my-matlab-mode-hook)
 
 
-;; ----------------------------------------------------------- DOS Mode
-;;(autoload 'dos-mode "/home/uri03204/myDocs/ulib/emacs/dos.elc" "Enter DOS CMD mode." t)
+;; ;; ----------------------------------------------------------- DOS Mode
+;; ;;(autoload 'dos-mode "/home/uri03204/myDocs/ulib/emacs/dos.elc" "Enter DOS CMD mode." t)
 
 
-;; ----------------------------------------------------------- CSHARP Mode
-;(autload 'csharp-mode "/home/uri03204/myDocs/ulib/emacs/csharp-mode-0.8.5.elc" t)
-(autoload 'csharp-mode "csharp-mode" "Major mode for editing C# code." t)
-(defun csharp-mode-untabify ()
-  (if (string= (substring mode-name 0 2) "C#")
-     (save-excursion
-	(delete-trailing-whitespace)
-	(untabify (point-min) (point-max)))))
-(defun my-csharp-mode-fn ()
-  "function that runs when csharp-mode is initialized for a buffer."
-  (turn-on-auto-revert-mode)
-  (setq indent-tabs-mode nil)
-  (require 'flymake)
-  (setq flymake-mode nil)
-  ;;(add-hook 'write-contents-hooks 'csharp-mode-untabify nil t)
-  )
-  ;;      (require 'yasnippet)
-  ;;      (yas/minor-mode-on)
-  ;;      (require 'rfringe)
-(add-hook  'csharp-mode-hook 'my-csharp-mode-fn t)
-;;(add-hook 'csharp-mode-hook '(lambda () (add-hook 'write-contents-hooks 'csharp-mode-untabify nil t)))
+;; ;; ----------------------------------------------------------- CSHARP Mode
+;; ;(autload 'csharp-mode "/home/uri03204/myDocs/ulib/emacs/csharp-mode-0.8.5.elc" t)
+;; (autoload 'csharp-mode "csharp-mode" "Major mode for editing C# code." t)
+;; (defun csharp-mode-untabify ()
+;;   (if (string= (substring mode-name 0 2) "C#")
+;;      (save-excursion
+;; 	(delete-trailing-whitespace)
+;; 	(untabify (point-min) (point-max)))))
+;; (defun my-csharp-mode-fn ()
+;;   "function that runs when csharp-mode is initialized for a buffer."
+;;   (turn-on-auto-revert-mode)
+;;   (setq indent-tabs-mode nil)
+;;   (require 'flymake)
+;;   (setq flymake-mode nil)
+;;   ;;(add-hook 'write-contents-hooks 'csharp-mode-untabify nil t)
+;;   )
+;;   ;;      (require 'yasnippet)
+;;   ;;      (yas/minor-mode-on)
+;;   ;;      (require 'rfringe)
+;; (add-hook  'csharp-mode-hook 'my-csharp-mode-fn t)
+;; ;;(add-hook 'csharp-mode-hook '(lambda () (add-hook 'write-contents-hooks 'csharp-mode-untabify nil t)))
 
 
-; 'tbd add hs-minor-mode for hide/show t
-;TDB (add-hook  'java-mode-hook 'my-java-mode-hook t)
-;(defun my-java-mode-hook ()
-;  (hs-minor-mode)
-;  (setq indent-tabs-mode nil))
+;; ; 'tbd add hs-minor-mode for hide/show t
+;; ;TDB (add-hook  'java-mode-hook 'my-java-mode-hook t)
+;; ;(defun my-java-mode-hook ()
+;; ;  (hs-minor-mode)
+;; ;  (setq indent-tabs-mode nil))
 
 
 ;; ------------------------------------------------------ Org-Mode
@@ -354,7 +358,7 @@ C-x C-v = find alternate file   -> then grab filepath
 ;;(insert (format "%s" auto-mode-alist))((\.m\' . matlab-mode) (\.py$ . python-mode) (\.te?xt\' . text-mode) (\.c\' . c-mode) (\.h\' . c-mode) (\.tex\' . tex-mode) (\.ltx\' . latex-mode) (\.el\' . emacs-lisp-mode) (\.scm\' . scheme-mode) (\.l\' . lisp-mode) (\.lisp\' . lisp-mode) (\.f\' . fortran-mode) (\.F\' . fortran-mode) (\.for\' . fortran-mode) (\.p\' . pascal-mode) (\.pas\' . pascal-mode) (\.ad[abs]\' . ada-mode) (\.\([pP]\([Llm]\|erl\)\|al\)\' . perl-mode) (\.s?html?\' . html-mode) (\.cc\' . c++-mode) (\.hh\' . c++-mode) (\.hpp\' . c++-mode) (\.C\' . c++-mode) (\.H\' . c++-mode) (\.cpp\' . c++-mode) (\.cxx\' . c++-mode) (\.hxx\' . c++-mode) (\.c\+\+\' . c++-mode) (\.h\+\+\' . c++-mode) (\.m\' . objc-mode) (\.java\' . java-mode) (\.mk\' . makefile-mode) (\(M\|m\|GNUm\)akefile\(\.in\)?\' . makefile-mode) (\.am\' . makefile-mode) (\.texinfo\' . texinfo-mode) (\.te?xi\' . texinfo-mode) (\.s\' . asm-mode) (\.S\' . asm-mode) (\.asm\' . asm-mode) (ChangeLog\' . change-log-mode) (change\.log\' . change-log-mode) (changelo\' . change-log-mode) (ChangeLog\.[0-9]+\' . change-log-mode) (changelog\' . change-log-mode) (changelog\.[0-9]+\' . change-log-mode) (\$CHANGE_LOG\$\.TXT . change-log-mode) (\.scm\.[0-9]*\' . scheme-mode) (\.[ck]?sh\'\|\.shar\'\|/\.z?profile\' . sh-mode) (\(/\|\`\)\.\(bash_profile\|z?login\|bash_login\|z?logout\)\' . sh-mode) (\(/\|\`\)\.\(bash_logout\|shrc\|[kz]shrc\|bashrc\|t?cshrc\|esrc\)\' . sh-mode) (\(/\|\`\)\.\([kz]shenv\|xinitrc\|startxrc\|xsession\)\' . sh-mode) (\.m?spec\' . sh-mode) (\.mm\' . nroff-mode) (\.me\' . nroff-mode) (\.ms\' . nroff-mode) (\.man\' . nroff-mode) (\.\(u?lpc\|pike\|pmod\)\' . pike-mode) (\.TeX\' . tex-mode) (\.sty\' . latex-mode) (\.cls\' . latex-mode) (\.clo\' . latex-mode) (\.bbl\' . latex-mode) (\.bib\' . bibtex-mode) (\.sql\' . sql-mode) (\.m4\' . m4-mode) (\.mc\' . m4-mode) (\.mf\' . metafont-mode) (\.mp\' . metapost-mode) (\.vhdl?\' . vhdl-mode) (\.article\' . text-mode) (\.letter\' . text-mode) (\.tcl\' . tcl-mode) (\.exp\' . tcl-mode) (\.itcl\' . tcl-mode) (\.itk\' . tcl-mode) (\.icn\' . icon-mode) (\.sim\' . simula-mode) (\.mss\' . scribe-mode) (\.f90\' . f90-mode) (\.indent\.pro\' . fundamental-mode) (\.pro\' . idlwave-mode) (\.lsp\' . lisp-mode) (\.awk\' . awk-mode) (\.prolog\' . prolog-mode) (\.tar\' . tar-mode) (\.\(arc\|zip\|lzh\|zoo\|jar\)\' . archive-mode) (\.\(ARC\|ZIP\|LZH\|ZOO\|JAR\)\' . archive-mode) (\`/tmp/Re . text-mode) (/Message[0-9]*\' . text-mode) (/drafts/[0-9]+\' . mh-letter-mode) (\.zone\' . zone-mode) (\`/tmp/fol/ . text-mode) (\.y\' . c-mode) (\.lex\' . c-mode) (\.oak\' . scheme-mode) (\.sgml?\' . sgml-mode) (\.xml\' . sgml-mode) (\.dtd\' . sgml-mode) (\.ds\(ss\)?l\' . dsssl-mode) (\.idl\' . idl-mode) ([]>:/\]\..*emacs\' . emacs-lisp-mode) (\`\..*emacs\' . emacs-lisp-mode) ([:/]_emacs\' . emacs-lisp-mode) (/crontab\.X*[0-9]+\' . shell-script-mode) (\.ml\' . lisp-mode) (\.\(asn\|mib\|smi\)\' . snmp-mode) (\.\(as\|mi\|sm\)2\' . snmpv2-mode) (\.\(diffs?\|patch\|rej\)\' . diff-mode) (\.\(dif\|pat\)\' . diff-mode) (\.[eE]?[pP][sS]\' . ps-mode) (configure\.\(ac\|in\)\' . autoconf-mode) (BROWSE\' . ebrowse-tree-mode) (\.ebrowse\' . ebrowse-tree-mode) (#\*mail\* . mail-mode) (\.~?[0-9]+\.[0-9][-.0-9]*~?\' ignore t) (\.[1-9]\' . nroff-mode) (\.g\' . antlr-mode))
 ;(add-to-list 'auto-mode-alist '("\\.m\\'"     . octave-mode)  )
 
-
+(message "dotEmacs.org section Modes Assoc List done")
 #+END_SRC
 
 
@@ -892,8 +896,9 @@ BEG and END (region to sort)."
 (message "dotEmacs.org markup languages section done")
 #+END_SRC
 
+
 * Global Key Bindings
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC   emacs-lisp
 
 (global-set-key "\C-c<"		'selective-display-level-decr)
 (global-set-key "\C-c>"		'selective-display-level-incr)
@@ -904,6 +909,7 @@ BEG and END (region to sort)."
 (global-set-key "\C-cl"		'ed-dup-line)
 (global-set-key "\C-cq"		'lines-to-cslist)
 (global-set-key "\C-cr"		'auto-revert-tail-mode)
+
 (global-set-key "\C-cs"		'parallel-swap)
 (global-set-key "\C-ct"		'org-table-convert-region)
 (global-set-key "\C-cw"		'delete-trailing-whitespace)
@@ -912,11 +918,13 @@ BEG and END (region to sort)."
 (global-set-key "\C-xi"         'eval-print-last-sexp) ; ielm
 (global-set-key "\C-xl"		'list-matching-lines)
 (global-set-key "\C-xt"		'instimestamp)
-(global-set-key "\C-z"		'replace-string)
+(global-set-key "\C-z"		'undo) ; replace-string
 (global-set-key "\M-$"		'query-replace-regexp)
 (global-set-key (kbd "C-.")     'repeat)
 (global-set-key [(next)]        'cycle-buffer)
 (global-set-key [(prior)]       'cycle-buffer-backward)
+
+
 (global-set-key [C-down]        'windmove-down)        ;(global-set-key (kbd "C-c <down>")  'windmove-down)
 (global-set-key [C-insert]      'clipboard-kill-ring-save)
 (global-set-key [C-kp-add]      'text-scale-increase)
@@ -935,6 +943,8 @@ BEG and END (region to sort)."
 (global-set-key [S-left]        'window-hshrink)
 (global-set-key [S-right]       'window-hwiden)
 (global-set-key [S-up]          'scroll-one-line-down)
+
+
 (global-set-key [end]           'kill-this-buffer-volatile)
 (global-set-key [f10]           'see-shell-output) ;ergoemacs-open-in-external-app
 (global-set-key [f11]           'hs-show-block)
