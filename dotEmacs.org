@@ -3,6 +3,7 @@
 ;;(org-babel-load-file "~/dot/dotEmacs.org)
 Emacs Initialisation
 C-c C-u go up
+increase/decrease font C-cC-+/-
 
 * Premable
 #+BEGIN_SRC emacs-lisp
