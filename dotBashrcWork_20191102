@@ -81,13 +81,6 @@ if [[ "1" == "1" ]]; then
   #function tfh () {  tf history . /recursive }
   alias myPath='echo $PATH'
   # ensure cwd path is from a drive mapping
-  alias tfcd='cd /cygdrive/Y/LOCAL/USR/MK/vc; pwd '
-  alias tfdiffd='tf      folderdiff /recursive . | grep -v \$/MAQS |  sed  "/^[[:space:]]*$/d" '
-  alias tfdiff='tf       diff /recursive . '
-  alias tfw='tf          workspaces '
-  alias tfh='tf          history /recursive . | tac'
-  alias tfGetLatest='tf  get /recursive . '
-  alias tfGetPreview='tf get /recursive /preview .'
   # add dot '.' to end of tf alias command
   # ---------------------------------------------------------------------------------------------------- ls
   # Some shortcuts for different directory listings
@@ -96,7 +89,6 @@ if [[ "1" == "1" ]]; then
   # alias ls='ls -hF --color=tty'                 # classify files in colour
   # alias dir='ls --color=auto --format=vertical'
   # alias vdir='ls --color=auto --format=long'
-  alias ll='ls -l --time-style=long-iso'                              # long list
   # alias la='ls -A'                            # all but . and ..
   alias l='ls -CF'                              #
   # alias la='ls -alF'
@@ -149,8 +141,6 @@ if [[ "1" == "1" ]]; then
                     }
 
   alias rgrepy='/cygdrive/C/ProgramData/Anaconda3/python.exe L:\\MyDocs\\ubin\\py\\rgrep.py'
-  alias gr='grep'
-  alias gi='grep -i'
   #function rgrep() { ls "$@"}
 
   alias excel='/cygdrive/C/Program\ Files\ \(x86\)/Microsoft\ Office/Office16/EXCEL.EXE'
@@ -317,48 +307,6 @@ if [[ "1" == "1" ]]; then
 #But actually, it is worth noticing that git merge --abort is only equivalent to git reset --merge given that MERGE_HEAD is present. This can be read in the git help for merge command.
 #git merge --abort is equivalent to git reset --merge when MERGE_HEAD is present.
 
-#    alias g="git show"
-#    alias gh="git show HEAD"
-#    alias gs="git status"
-#    alias gl="git log"
-#    alias gco="git checkout"
-#    alias gbl="git branch -v"
-#    alias gbd="git branch -D"
-#    alias gri="git rebase --interactive"
-#    alias grc="git rebase --continue"
-#    alias gra="git rebase --abort"
-#    alias gsta="git stash apply"
-#    alias gx="gco -- \*; git reset HEAD \*"
-#    alias gcp="git cherry-pick"
-#    alias gcpc="git cherry-pick --continue"
-#    alias gcpa="git cherry-pick --abort"
-#* st - status
-#* dp - diff pending
-#* di - diff
-#* aa - add all
-#* cm - commit
-#    alias di='git diff --cached'
-#    alias aa='git add -A'
-#    alias cm='git commit -m'
-#    alias pu='git push'
-#        co = checkout
-#        cm = !git add -A && git commit
-#        br = branch
-#        ci = commit
-#        st = status
-#        unstage = reset HEAD --
-#        recent = for-each-ref --count=10 --sort=-committerdate refs/heads/ --format="%(refname:short)"
-#        overview = log --all --oneline --no-merges
-#        recap = !git log --all --oneline --no-merges --author=${1-$(git config user.email)}
-#        today = !git log --all --since=00:00:00 --oneline --no-merges --author=${1-$(git config user.email)}
-#        changelog = !git log --oneline --no-merges ${1-$(git describe --abbrev=0)}..HEAD
-#        upstream = !git log --oneline --no-merges HEAD..${1-$(git branch -lvv | perl -ne '/^\\*.*\\[(.*?)\\]/ and print "$1\n"')}
-#        local = !git log --oneline --no-merges ${1-$(git branch -lvv | perl -ne '/^\\*.*\\[(.*?)\\]/ and print "$1\n"')}..HEAD
-#        graph = log --oneline --graph --all --decorate --date=iso
-#        save = !git add -A && git commit -m 'SAVEPOINT'
-#        undo = reset HEAD~1 --mixed
-#        backup = !git push origin/backup/$(whoami)/$(git branch)
-#        lint = !git branch --merged | grep -v \"^\\s*master$\" | grep -v \"\\*\" | xargs -n 1 git branch -d
 
   #alias tbird='(export LC_TIME=en_DK.UTF-8; /usr/lib/thunderbird/thunderbird )'
 
