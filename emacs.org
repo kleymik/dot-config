@@ -1,7 +1,12 @@
 Emacs Initialisation
+;; invoke by ~/.emacs.d/init.el
+;; (package-initialize)
+;; (org-babel-load-file "~/dot/dotEmacs.org)
 C-c C-u go up
+increase/decrease font C-cC-+/-
+
 * Preamble
-#+BEGIN_SRC   elisp
+#+BEGIN_SRC emacs-lisp
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; File name: ` ~/.emacs '
 ;;--------------------------------------------------------------- Handy commands quick ref
@@ -15,7 +20,7 @@ C-c C-u go up
 ;; M-6 M-x Buffer-menu-sort = sort by file name
 ;;(setq Buffer-menu-sort-column 6)
 ;; C-x C-v = find alternate file   -> then grab filepath
-;;(setq header-line-format mode-line-format)
+(setq header-line-format mode-line-format)
 (setq uniquify-buffer-name-style 'forward)
 (require 'uniquify)
 ;; proced       to view processes
@@ -25,12 +30,12 @@ C-c C-u go up
 
 ;; map-query-regexp-replace
 ;; isearch-forward-regexp
-;; M-s h l      highlight-lines-matching-regexp    Highlights all lines matching a regular expression
-;; M-s h p      highlight-phrase                       Highlights everything matching a phrase
-;; M-s h r      highlight-regexp                       Highlights everything matching a regular expression
-;; M-s h u      unhighlight-regexp                     Deletes the highlighter under point
-;; M-s h w      hi-lock-write-interactive-patterns Inserts a list of Hi-Lock patterns into the buffer
-;; M-s h f      hi-lock-find-patterns              Searches for Hi-Lock patterns in the buffer to use.
+;; M-s h l 	highlight-lines-matching-regexp    Highlights all lines matching a regular expression
+;; M-s h p 	highlight-phrase 	               Highlights everything matching a phrase
+;; M-s h r 	highlight-regexp 	               Highlights everything matching a regular expression
+;; M-s h u 	unhighlight-regexp 	               Deletes the highlighter under point
+;; M-s h w 	hi-lock-write-interactive-patterns Inserts a list of Hi-Lock patterns into the buffer
+;; M-s h f 	hi-lock-find-patterns 	           Searches for Hi-Lock patterns in the buffer to use.
 ;; C-x r s r; C-x r i r                        Copy region into register "r" (copy-to-register).    Insert text from register r (insert-register).
 ;; C-ci         indent-to-column
 ;; C-x r w w; C-x r j w                        Save winows config in register "w" ; jump back (where <register> is a single character) to jump back to it.
@@ -43,26 +48,27 @@ C-c C-u go up
 ;; C-x n n; C-x n w                            Narrow to Region; Widen
 ;; C-;                                         Highlight item for MULTIPLE edit
 
-;;C-a                   ;; move-beginning-of-line
-;;C-s                   ;; isearch-forward
-;;/                         ;; self-insert-command
-;;C-b                   ;; backward-char
-;;C-s                   ;; isearch-forward
-;;:                         ;; self-insert-command
-;;C-x C-x               ; exchange-point-and-mark
-;;ESC                   ;; ESC-prefix
-;;w                         ;; self-insert-command
-;;C-x C-f               ;; find-file
-;;C-a                   ;; move-beginning-of-line
-;;C-y                   ;; yank
-;;C-k                   ;; kill-line
-;;DEL                   ;; delete-backward-char
-;;RET                   ;; newline
+;;C-a			;; move-beginning-of-line
+;;C-s			;; isearch-forward
+;;/			    ;; self-insert-command
+;;C-b			;; backward-char
+;;C-s			;; isearch-forward
+;;:			    ;; self-insert-command
+;;C-x C-x		; exchange-point-and-mark
+;;ESC			;; ESC-prefix
+;;w			    ;; self-insert-command
+;;C-x C-f		;; find-file
+;;C-a			;; move-beginning-of-line
+;;C-y			;; yank
+;;C-k			;; kill-line
+;;DEL			;; delete-backward-char
+;;RET			;; newline
 
 #+END_SRC
 
+
 * Settings
-#+BEGIN_SRC   elisp
+#+BEGIN_SRC emacs-lisp
 ;;; ----------------------------------------------------------------------
 ;(setq ediff-shell "C:/cygwin/bin/mintty.exe")
 ;;  (if (file-directory-p "c:/cygwin/bin")      (add-to-list 'exec-path "c:/cygwin/bin"))
@@ -124,9 +130,9 @@ C-c C-u go up
 ;;    say "yes" to steal from PID?
 ;;(desktop-save-mode 1)  ; desktop-revert desktop-change-dir
 ;;(desktop-change-dir "/home/uri03204/myDocs/config")
-(setq desktop-path "/home/kleyn/.emacs.d/desktop")
-(desktop-save-mode 1)
-(setq desktop-auto-save-timeout 300)
+;(setq desktop-path "/home/kleyn/.emacs.d/desktop")
+;(desktop-save-mode 1)
+;(setq desktop-auto-save-timeout 300)
 
 ;; ----------------------------------------------- Backup location
 (setq backup-directory-alist          `((".*" . , "/data/data/com.termux/files/home/internalBackup/emacs")))
@@ -191,6 +197,8 @@ C-c C-u go up
  '(default ((t (:family "Courier New" :foundry "outline" :slant normal :weight normal :height 120 :width normal)))))
 
 #+END_SRC
+
+  
 * First Section
 #+BEGIN_SRC   elisp
 
@@ -259,14 +267,14 @@ C-c C-u go up
   "Transpose orgmode table at point, eliminate hlines."
   (interactive)
   (let ((contents (apply #'mapcar* #'list ;; <== LOB magic imported here
-                         (remove-if-not 'listp ;; remove 'hline from list
-                                        (org-table-to-lisp)))) ;; signals error if not table
-        )
+			 (remove-if-not 'listp ;; remove 'hline from list
+					(org-table-to-lisp)))) ;; signals error if not table
+	)
     (delete-region (org-table-begin) (org-table-end))
     (insert (mapconcat (lambda(x) (concat "| " (mapconcat 'identity x " | " ) "
   |\n" ))
-                       contents
-                       ""))
+		       contents
+		       ""))
     (org-table-align)
     )
   )
@@ -303,20 +311,23 @@ C-c C-u go up
 ;  #'(lambda ()
 ;      (define-key python-mode-map "\C-m" 'newline-and-indent)))
 ;(add-hook 'python-mode-hook
-;                 (lambda ()
-;                       (setq-default indent-tabs-mode t)
-;                       (setq-default tab-width 4)
-;                       (setq-default python-indent 4)))
+;		  (lambda ()
+;			(setq-default indent-tabs-mode t)
+;			(setq-default tab-width 4)
+;			(setq-default python-indent 4)))
 (add-hook 'python-mode-hook
-                  (lambda ()
-                        (setq indent-tabs-mode t)
-                        (setq tab-width 4)
-                        (setq python-indent 4)))
+		  (lambda ()
+			(setq indent-tabs-mode t)
+			(setq tab-width 4)
+			(setq python-indent 4)))
+
+(message "dotEmacs.org first section done")
 
 #+END_SRC
 
+
 * Modes Assoc List
-#+BEGIN_SRC   elisp
+#+BEGIN_SRC emacs-lisp
 
 ;;--------------------------------------------------------- iedit Mode
 ;; TBD (autoload 'iedit-mode "/home/uri03204/myDocs/ulib/emacs/iedit.elc" "Enter iedit mode" t)
@@ -351,11 +362,13 @@ C-c C-u go up
 ;;(insert (format "%s" auto-mode-alist))((\.m\' . matlab-mode) (\.py$ . python-mode) (\.te?xt\' . text-mode) (\.c\' . c-mode) (\.h\' . c-mode) (\.tex\' . tex-mode) (\.ltx\' . latex-mode) (\.el\' . emacs-lisp-mode) (\.scm\' . scheme-mode) (\.l\' . lisp-mode) (\.lisp\' . lisp-mode) (\.f\' . fortran-mode) (\.F\' . fortran-mode) (\.for\' . fortran-mode) (\.p\' . pascal-mode) (\.pas\' . pascal-mode) (\.ad[abs]\' . ada-mode) (\.\([pP]\([Llm]\|erl\)\|al\)\' . perl-mode) (\.s?html?\' . html-mode) (\.cc\' . c++-mode) (\.hh\' . c++-mode) (\.hpp\' . c++-mode) (\.C\' . c++-mode) (\.H\' . c++-mode) (\.cpp\' . c++-mode) (\.cxx\' . c++-mode) (\.hxx\' . c++-mode) (\.c\+\+\' . c++-mode) (\.h\+\+\' . c++-mode) (\.m\' . objc-mode) (\.java\' . java-mode) (\.mk\' . makefile-mode) (\(M\|m\|GNUm\)akefile\(\.in\)?\' . makefile-mode) (\.am\' . makefile-mode) (\.texinfo\' . texinfo-mode) (\.te?xi\' . texinfo-mode) (\.s\' . asm-mode) (\.S\' . asm-mode) (\.asm\' . asm-mode) (ChangeLog\' . change-log-mode) (change\.log\' . change-log-mode) (changelo\' . change-log-mode) (ChangeLog\.[0-9]+\' . change-log-mode) (changelog\' . change-log-mode) (changelog\.[0-9]+\' . change-log-mode) (\$CHANGE_LOG\$\.TXT . change-log-mode) (\.scm\.[0-9]*\' . scheme-mode) (\.[ck]?sh\'\|\.shar\'\|/\.z?profile\' . sh-mode) (\(/\|\`\)\.\(bash_profile\|z?login\|bash_login\|z?logout\)\' . sh-mode) (\(/\|\`\)\.\(bash_logout\|shrc\|[kz]shrc\|bashrc\|t?cshrc\|esrc\)\' . sh-mode) (\(/\|\`\)\.\([kz]shenv\|xinitrc\|startxrc\|xsession\)\' . sh-mode) (\.m?spec\' . sh-mode) (\.mm\' . nroff-mode) (\.me\' . nroff-mode) (\.ms\' . nroff-mode) (\.man\' . nroff-mode) (\.\(u?lpc\|pike\|pmod\)\' . pike-mode) (\.TeX\' . tex-mode) (\.sty\' . latex-mode) (\.cls\' . latex-mode) (\.clo\' . latex-mode) (\.bbl\' . latex-mode) (\.bib\' . bibtex-mode) (\.sql\' . sql-mode) (\.m4\' . m4-mode) (\.mc\' . m4-mode) (\.mf\' . metafont-mode) (\.mp\' . metapost-mode) (\.vhdl?\' . vhdl-mode) (\.article\' . text-mode) (\.letter\' . text-mode) (\.tcl\' . tcl-mode) (\.exp\' . tcl-mode) (\.itcl\' . tcl-mode) (\.itk\' . tcl-mode) (\.icn\' . icon-mode) (\.sim\' . simula-mode) (\.mss\' . scribe-mode) (\.f90\' . f90-mode) (\.indent\.pro\' . fundamental-mode) (\.pro\' . idlwave-mode) (\.lsp\' . lisp-mode) (\.awk\' . awk-mode) (\.prolog\' . prolog-mode) (\.tar\' . tar-mode) (\.\(arc\|zip\|lzh\|zoo\|jar\)\' . archive-mode) (\.\(ARC\|ZIP\|LZH\|ZOO\|JAR\)\' . archive-mode) (\`/tmp/Re . text-mode) (/Message[0-9]*\' . text-mode) (/drafts/[0-9]+\' . mh-letter-mode) (\.zone\' . zone-mode) (\`/tmp/fol/ . text-mode) (\.y\' . c-mode) (\.lex\' . c-mode) (\.oak\' . scheme-mode) (\.sgml?\' . sgml-mode) (\.xml\' . sgml-mode) (\.dtd\' . sgml-mode) (\.ds\(ss\)?l\' . dsssl-mode) (\.idl\' . idl-mode) ([]>:/\]\..*emacs\' . emacs-lisp-mode) (\`\..*emacs\' . emacs-lisp-mode) ([:/]_emacs\' . emacs-lisp-mode) (/crontab\.X*[0-9]+\' . shell-script-mode) (\.ml\' . lisp-mode) (\.\(asn\|mib\|smi\)\' . snmp-mode) (\.\(as\|mi\|sm\)2\' . snmpv2-mode) (\.\(diffs?\|patch\|rej\)\' . diff-mode) (\.\(dif\|pat\)\' . diff-mode) (\.[eE]?[pP][sS]\' . ps-mode) (configure\.\(ac\|in\)\' . autoconf-mode) (BROWSE\' . ebrowse-tree-mode) (\.ebrowse\' . ebrowse-tree-mode) (#\*mail\* . mail-mode) (\.~?[0-9]+\.[0-9][-.0-9]*~?\' ignore t) (\.[1-9]\' . nroff-mode) (\.g\' . antlr-mode))
 ;(add-to-list 'auto-mode-alist '("\\.m\\'"     . octave-mode)  )
 
-
+(message "dotEmacs.org section Modes Assoc List done")
 #+END_SRC
+
+
 * Dired Stuff
 
-#+BEGIN_SRC elisp 
+#+BEGIN_SRC emacs-lisp 
 ;(define-key dired-mode-map "r" 'wdired-change-to-wdired-mode)
 ;;(defun w32-browser (doc) (w32-shell-execute 1 doc))
 ;;(eval-after-load "dired" '(define-key dired-mode-map [f3]
@@ -363,31 +376,28 @@ C-c C-u go up
 ;;                            (interactive)
 ;;                            (w32-browser (dired-replace-in-string "/" "\\" (dired-replace-in-string "/cygdrive/C/" "C:\\" (dired-get-filename)))))))
 (add-hook 'dired-load-hook
-          (lambda ()                    ;(load "dired-x")
-            (require 'dired-x)
-            (require 'wdired)
-            (autoload 'wdired-change-to-wdired-mode "wdired")
-
-            ;; Set dired-x global variables here.  For example:
-            ;; (setq dired-guess-shell-gnutar "gtar")
-            ;; (setq dired-x-hands-off-my-keys nil)
-            (setq dired-omit-mode t)
-            (setq dired-omit-files-p t)
-            (setq dired-omit-files "^#\\|^\\.$|\\.\\.$")
-            (setq dired-omit-files "^\\..*$")
-            (setq dired-omit-extensions '(".asv" "~" ".o" ".pyc" ".class"))
-            (setq dired-no-confirm '(revert-subdirs))))
+   (lambda ()			;(load "dired-x")
+    (autoload 'wdired-change-to-wdired-mode "wdired")
+    ;; Set dired-x global variables here.  For example:
+    ;; (setq dired-guess-shell-gnutar "gtar")
+    ;; (setq dired-x-hands-off-my-keys nil)
+    (setq dired-omit-mode t)
+    (setq dired-omit-files-p t)
+    ;; (setq dired-omit-files "^\\..*$")  ;; !! set at end of init file
+    (setq dired-omit-extensions '(".asv" "~" ".o" ".pyc" ".class"))
+    (setq dired-no-confirm '(revert-subdirs))))
 
 (add-hook 'dired-mode-hook
-          (lambda ()
-            ;; Set dired-x buffer-local variables here.  For example:
-            (dired-omit-mode 1)
-            (progn
-              (setq dired-no-confirm '(revert-subdirs))
-              ;(define-key dired-mode-map [right] 'dired-go-subdir-kbm)
-              ;(define-key dired-mode-map [left] 'dired-up-directory)
-              (defalias 'dired-up (kbd "ESC < C-e C-r / NUL C-a ESC w C-x d C-a C-y C-k C-a ESC \\ C-e RET C-x b RET C-x k RET"))
-              (defalias 'dired-go-subdir-kbm (kbd "f C-x b RET C-x k RET")))))
+   (lambda ()
+    ;; Set dired-x buffer-local variables here.  For example:
+    (dired-omit-mode 1)
+    (progn
+      (setq dired-no-confirm '(revert-subdirs))
+      ;(define-key dired-mode-map [right] 'dired-go-subdir-kbm)
+      ;(define-key dired-mode-map [left] 'dired-up-directory)
+      (defalias 'dired-up (kbd "ESC < C-e C-r / NUL C-a ESC w C-x d C-a C-y C-k C-a ESC \\ C-e RET C-x b RET C-x k RET"))
+      (defalias 'dired-go-subdir-kbm (kbd "f C-x b RET C-x k RET")))))
+
 ;
 ;Dired Listing Switches: Hide Value -ahl --time-style=long-iso
 ;   State: SET for current session only.
@@ -403,9 +413,9 @@ C-c C-u go up
 (defadvice dired-sort-toggle-or-edit (after dired-sort-to-top activate)
    "Move to beginning of buffer (instead of keeping point on the current file)."
    (goto-char (point-min))
-   (goto-line 3))
+   (forward-line 3))
 
-(setq load-path (append load-path '("/home/kleyn/ulib/emacs/dired-hacks"))) ;; (insert (format "%s" load-path))
+(setq load-path (append load-path '("/home/kleyn/ulib/emacs/dired-hacks"))) ;; for subtree (insert (format "%s" load-path))
 (load-library "dired-subtree")
 (setq dired-subtree-line-prefix "     ")
 
@@ -444,10 +454,13 @@ C-c C-u go up
 ;(add-hook 'ediff-mode-hook (lambda () (setq ediff-shell "C:/cygwin/bin/mintty.exe")))
 ;(add-hook 'ediff-load-hook (lambda () (setq ediff-shell "C:/cygwin/bin/mintty.exe")))
 
+
+(message "dotEmacs.org section Dired done")
 #+END_SRC
 
+  
 * Handy Funs
-#+BEGIN_SRC elisp
+#+BEGIN_SRC emacs-lisp
 ;;----------------------------------------------------- Misc
 (defun instimestamp ()
    (interactive)
@@ -505,26 +518,26 @@ C-c C-u go up
   (interactive)
   (if (= (count-windows) 2)
       (let* ((this-win-buffer (window-buffer))
-             (next-win-buffer (window-buffer (next-window)))
-             (this-win-edges (window-edges (selected-window)))
-             (next-win-edges (window-edges (next-window)))
-             (this-win-2nd (not (and (<= (car this-win-edges)
-                                         (car next-win-edges))
-                                     (<= (cadr this-win-edges)
-                                         (cadr next-win-edges)))))
-             (splitter
-              (if (= (car this-win-edges)
-                     (car (window-edges (next-window))))
-                  'split-window-horizontally
-                'split-window-vertically)))
-        (delete-other-windows)
-        (let ((first-win (selected-window)))
-          (funcall splitter)
-          (if this-win-2nd (other-window 1))
-          (set-window-buffer (selected-window) this-win-buffer)
-          (set-window-buffer (next-window) next-win-buffer)
-          (select-window first-win)
-          (if this-win-2nd (other-window 1))))))
+	     (next-win-buffer (window-buffer (next-window)))
+	     (this-win-edges (window-edges (selected-window)))
+	     (next-win-edges (window-edges (next-window)))
+	     (this-win-2nd (not (and (<= (car this-win-edges)
+					 (car next-win-edges))
+				     (<= (cadr this-win-edges)
+					 (cadr next-win-edges)))))
+	     (splitter
+	      (if (= (car this-win-edges)
+		     (car (window-edges (next-window))))
+		  'split-window-horizontally
+		'split-window-vertically)))
+	(delete-other-windows)
+	(let ((first-win (selected-window)))
+	  (funcall splitter)
+	  (if this-win-2nd (other-window 1))
+	  (set-window-buffer (selected-window) this-win-buffer)
+	  (set-window-buffer (next-window) next-win-buffer)
+	  (select-window first-win)
+	  (if this-win-2nd (other-window 1))))))
 
 ;;------------------------------------------------ Buffer menu
 (defun buffer-menu-sort-by-filename (&optional arg)
@@ -549,8 +562,8 @@ C-c C-u go up
   "Toggle line spacing between no extra space to extra half line height."
   (interactive)
   (if (eq line-spacing nil)
-      (setq-default line-spacing 0.05)  ; add 0.5 height between lines
-    (setq-default line-spacing nil)))   ; no extra heigh between lines
+      (setq-default line-spacing 0.05)	; add 0.5 height between lines
+    (setq-default line-spacing nil)))	; no extra heigh between lines
 
 ;;----------------------------------------------  unjustify
 (defun unjustify-paragraph ()
@@ -693,7 +706,7 @@ BEG and END (region to sort)."
   '(lambda ()
      (when (string= (substring (buffer-file-name) 0 4) "/dls")
        (message "Toggle to read-only for existing file")
-           ; (read-only-mode ?)
+	   ; (read-only-mode ?)
        (toggle-read-only 1)))))
 
 ;;This isn't nearly as drastic as what you're looking for, but it is possible to customize how Emacs calls ls in dired-mode.
@@ -704,9 +717,9 @@ BEG and END (region to sort)."
   "Open the current file or dired marked files in external app."
   (interactive)
   (let (doIt (myFileList
-              (cond
-               ((string-equal major-mode "dired-mode") (dired-get-marked-files))
-               (t (list (buffer-file-name))) ) ) )
+	      (cond
+	       ((string-equal major-mode "dired-mode") (dired-get-marked-files))
+	       (t (list (buffer-file-name))) ) ) )
     (setq doIt (if (<= (length myFileList) 5)
                    t
                  (y-or-n-p "Open more than 5 files?") ) )
@@ -732,22 +745,24 @@ BEG and END (region to sort)."
 ;; ------------------------------------------------------------- Selective Display
 (setq selective-display-lev 0)
 (defun selective-display-level-incr (&optional arg)
-        (interactive "P")
-        (setq selective-display-lev (+ selective-display-lev 2))
-        (set-selective-display selective-display-lev))
+	(interactive "P")
+	(setq selective-display-lev (+ selective-display-lev 2))
+	(set-selective-display selective-display-lev))
 (defun selective-display-level-decr (&optional arg)
-        (interactive "P")
-        (setq selective-display-lev (- selective-display-lev 2))
-        (set-selective-display selective-display-lev))
+	(interactive "P")
+	(setq selective-display-lev (- selective-display-lev 2))
+	(set-selective-display selective-display-lev))
 (defun selective-display-level-zero (&optional arg)
-        (interactive "P")
-        (setq selective-display-lev 0)
-        (set-selective-display selective-display-lev))
+	(interactive "P")
+	(setq selective-display-lev 0)
+	(set-selective-display selective-display-lev))
 
+(message "dotEmacs.org section Handy Funs  done")
 #+END_SRC
 
+
 * Markup Languages
-#+BEGIN_SRC elisp
+#+BEGIN_SRC emacs-lisp-not
 ;;------------------------------------------------------------------------------ XML
 ;;{{{ XML
 
@@ -757,63 +772,63 @@ BEG and END (region to sort)."
 ;;   (progn
 ;;     ;; file types
 ;;     (add-to-list 'auto-mode-alist
-;;               (cons (concat "\\." (regexp-opt '("xml"
-;;                                                 "html"
-;;                                                 "xul"
-;;                                                 "xsd"
-;;                                                 "sch"
-;;                                                 "rng"
-;;                                                 "xslt"
-;;                                                 "svg"
-;;                                                 "rss"
-;;                                                 "asp"
-;;                                                 "aspx"
-;;                                                 "zpt"
-;;                                                 "cpt"
-;;                                                 "pt") t) "\\'")
-;;                     'nxml-mode))
+;; 		 (cons (concat "\\." (regexp-opt '("xml"
+;; 						   "html"
+;; 						   "xul"
+;; 						   "xsd"
+;; 						   "sch"
+;; 						   "rng"
+;; 						   "xslt"
+;; 						   "svg"
+;; 						   "rss"
+;; 						   "asp"
+;; 						   "aspx"
+;; 						   "zpt"
+;; 						   "cpt"
+;; 						   "pt") t) "\\'")
+;; 		       'nxml-mode))
 ;;     ;; spaces insted of tabs
 ;;     (add-hook 'nxml-mode-hook
-;;            (lambda () (setq indent-tabs-mode nil)))
+;; 	      (lambda () (setq indent-tabs-mode nil)))
 ;;    ))
 
 ;;}}}
 ;;---------------------------------------------------------------------- SGML XML
-;C-c C-v        sgml-validate
-;C-M-h          sgml-mark-current-element
-;C-c C-u C-a    sgml-unfold-all
-;C-c C-u C-e    sgml-unfold-element
-;C-c C-f C-e    sgml-fold-element
+;C-c C-v	sgml-validate
+;C-M-h		sgml-mark-current-element
+;C-c C-u C-a	sgml-unfold-all
+;C-c C-u C-e	sgml-unfold-element
+;C-c C-f C-e	sgml-fold-element
 ;(require 'psgml)
 ;(add-to-list 'auto-mode-alist '("\\.xml$"     . psgml-mode)   )
 ;(setq load-path (append load-path '("/home/uri03204/ulib/emacs/psgml-1.3.2"))) ;; (insert (format "%s" load-path))
 ;(load-library "psgml")
 (setq sgml-basic-offset 2)
 (autoload 'xml-mode "psgml" "Major mode to edit XML files." t)
-(add-hook 'xml-mode-hook                ; XML-specific settings
+(add-hook 'xml-mode-hook		; XML-specific settings
   (function (lambda()
-              (make-face 'sgml-comment-face) ; faces creation
-              (make-face 'sgml-start-tag-face)
-              (make-face 'sgml-end-tag-face)
-              (make-face 'sgml-doctype-face)
-              (set-face-foreground 'sgml-comment-face "SeaGreen") ; faces definitions
-              (set-face-foreground 'sgml-start-tag-face "DarkBlue")
-                                ;(set-face-foreground 'sgml-end-tag-face "OrangeRed")
-                                ;(set-face-foreground 'sgml-doctype-face "MintCream") ; markup to face mappings
-                                ; (see http://www.lysator.liu.se/~lenst/about_psgml/psgml.html#Highlight for details)
-              (setq sgml-markup-faces
-                    '((comment   . sgml-comment-face)
-                      (start-tag . sgml-start-tag-face)
-                      (end-tag   . sgml-end-tag-face)
-                      (doctype   . sgml-doctype-face) ) )
-              (local-set-key [S-left]  'sgml-fold-element)
-              (local-set-key [S-right] 'sgml-unfold-element)
+	      (make-face 'sgml-comment-face) ; faces creation
+	      (make-face 'sgml-start-tag-face)
+	      (make-face 'sgml-end-tag-face)
+	      (make-face 'sgml-doctype-face)
+	      (set-face-foreground 'sgml-comment-face "SeaGreen") ; faces definitions
+	      (set-face-foreground 'sgml-start-tag-face "DarkBlue")
+				;(set-face-foreground 'sgml-end-tag-face "OrangeRed")
+				;(set-face-foreground 'sgml-doctype-face "MintCream") ; markup to face mappings
+				; (see http://www.lysator.liu.se/~lenst/about_psgml/psgml.html#Highlight for details)
+	      (setq sgml-markup-faces
+		    '((comment   . sgml-comment-face)
+		      (start-tag . sgml-start-tag-face)
+		      (end-tag   . sgml-end-tag-face)
+		      (doctype   . sgml-doctype-face) ) )
+	      (local-set-key [S-left]  'sgml-fold-element)
+	      (local-set-key [S-right] 'sgml-unfold-element)
 ;sgml-fold-element  sgml-unfold-element
 ;sgml-fold-region
 ;sgml-fold-subelement
 ;sgml-unfold-all
 ;sgml-unfold-line
-          (setq sgml-set-face t) ; turn faces on
+	  (setq sgml-set-face t) ; turn faces on
           (setq sgml-indent-data t))))
 ; 3 bottom keys of keypad, upper 6 are work 6 virtual screens
 
@@ -859,8 +874,8 @@ BEG and END (region to sort)."
 ;; (defun goog ()
 ;;   (interactive)
 ;;   (browse-url (concat "http://www.google.com/search?hl=en&q=" (if mark-active
-;;                                                                       (buffer-substring (region-beginning) (region-end))
-;;                                                                     (read-string "Goog: ")))))
+;; 									 (buffer-substring (region-beginning) (region-end))
+;; 								       (read-string "Goog: ")))))
 
 ;;------------------------------------------------------------- white space
 ;; (setq show-trailing-whitespace 1)
@@ -872,40 +887,44 @@ BEG and END (region to sort)."
 ;; C-c w        delete-trailing-whitespace
 ;;GNU Emacs 22 or later has library whitespace.el, which lets you highlight whitespace in several ways. See WhiteSpace.
 ;--------------------------------------------------------------- ZeeTree
-(add-to-list 'load-path "/home/kleyn/ulib/emacs/ztree-master")
+;(add-to-list 'load-path "/home/kleyn/ulib/emacs/ztree-master")
 ;(push (substitute-in-file-name "path-to-ztree-directory") load-path)
-(require 'ztree-diff)
-(require 'ztree-dir)
+;(require 'ztree-diff)
+;(require 'ztree-dir)
 ;local binf to tab (ztree-perform-action)
 ;Call the ztree-diff interactive function: M-x ztree-diff
 
+(message "dotEmacs.org markup languages section done")
 #+END_SRC
 
-* Global Key Bindings
-#+BEGIN_SRC   elisp
 
-(global-set-key "\C-c<"         'selective-display-level-decr)
-(global-set-key "\C-c>"         'selective-display-level-incr)
-(global-set-key "\C-cb"         'ediff-buffers)
-(global-set-key "\C-cd"         'ediff-directories)
-(global-set-key "\C-ch"         'diredHome)
-(global-set-key "\C-ci"         'indent-to-col)
-(global-set-key "\C-cl"         'ed-dup-line)
-(global-set-key "\C-cq"         'lines-to-cslist)
-(global-set-key "\C-cr"         'auto-revert-tail-mode)
-(global-set-key "\C-cs"         'parallel-swap)
-(global-set-key "\C-ct"         'org-table-convert-region)
-(global-set-key "\C-cw"         'delete-trailing-whitespace)
-(global-set-key "\C-x\C-c\C-v"  'save-buffers-kill-emacs) ;; But we establish a longer sequence that is harder to hit by accident:
+* Global Key Bindings
+#+BEGIN_SRC emacs-lisp
+
+(global-set-key "\C-c<"		'selective-display-level-decr)
+(global-set-key "\C-c>"		'selective-display-level-incr)
+(global-set-key "\C-cb"		'ediff-buffers)
+(global-set-key "\C-cd"		'ediff-directories)
+(global-set-key "\C-ch"		'diredHome)
+(global-set-key "\C-ci"		'indent-to-col)
+(global-set-key "\C-cl"		'ed-dup-line)
+(global-set-key "\C-cq"		'lines-to-cslist)
+(global-set-key "\C-cr"		'auto-revert-tail-mode)
+
+(global-set-key "\C-cs"		'parallel-swap)
+(global-set-key "\C-ct"		'org-table-convert-region)
+(global-set-key "\C-cw"		'delete-trailing-whitespace)
 (global-set-key "\C-xd"         'dired)
 (global-set-key "\C-xi"         'eval-print-last-sexp) ; ielm
-(global-set-key "\C-xl"         'list-matching-lines)
-(global-set-key "\C-xt"         'instimestamp)
-(global-set-key "\C-z"          'replace-string)
-(global-set-key "\M-$"          'query-replace-regexp)
+(global-set-key "\C-xl"		'list-matching-lines)
+(global-set-key "\C-xt"		'instimestamp)
+(global-set-key "\C-z"		'undo) ; replace-string
+(global-set-key "\M-$"		'query-replace-regexp)
 (global-set-key (kbd "C-.")     'repeat)
 (global-set-key [(next)]        'cycle-buffer)
 (global-set-key [(prior)]       'cycle-buffer-backward)
+
+
 (global-set-key [C-down]        'windmove-down)        ;(global-set-key (kbd "C-c <down>")  'windmove-down)
 (global-set-key [C-insert]      'clipboard-kill-ring-save)
 (global-set-key [C-kp-add]      'text-scale-increase)
@@ -913,7 +932,7 @@ BEG and END (region to sort)."
 (global-set-key [C-left]        'windmove-left)        ;(global-set-key (kbd "C-c <left>")  'windmove-left)
 (global-set-key [C-right]       'windmove-right)       ;(global-set-key (kbd "C-c <right>") 'windmove-right)
 (global-set-key [C-up]          'windmove-up)          ;(global-set-key (kbd "C-c <up>")    'windmove-up)
-(global-set-key [M-home]        'org-collapse)
+(global-set-key [M-home]	'org-collapse)
 (global-set-key [S-down]        'scroll-one-line-up)
 (global-set-key [S-f7]          'buffer-menu-sort-by-filename)
 (global-set-key [S-f8]          'dired-omit-mode)
@@ -924,6 +943,8 @@ BEG and END (region to sort)."
 (global-set-key [S-left]        'window-hshrink)
 (global-set-key [S-right]       'window-hwiden)
 (global-set-key [S-up]          'scroll-one-line-down)
+
+
 (global-set-key [end]           'kill-this-buffer-volatile)
 (global-set-key [f10]           'see-shell-output) ;ergoemacs-open-in-external-app
 (global-set-key [f11]           'hs-show-block)
@@ -935,28 +956,49 @@ BEG and END (region to sort)."
 (global-set-key [f5]            'ffap) ; bookmark-bmenu-list
 (global-set-key [f6]            'ergoemacs-open-in-external-app)
 (global-set-key [f7]            'my-list-buffers)
-(global-set-key [f8]            'ztree-dir)
-(global-set-key [f9]            'ielm)  ;; open file under cursor
+;(global-set-key [f8]            'ztree-dir)
+(global-set-key [f9]		'ielm)  ;; open file under cursor
 (global-set-key [kp-divide]     'toggle-window-split)
 (global-unset-key "\C-x\C-c")                            ;; ;;; don't quit so easily
+
+(message "dotEmacs.org keybindings section done")
+#+END_SRC
+;(global-set-key "\C-x\C-c\C-v"  'save-buffers-kill-emacs) ;; But we establish a longer sequence that is harder to hit by accident:
+
 ;(define-key global-map "\C-co" 'org-capture)
 ;(global-set-key "\C-!"         'shell-command) TBD
-;(global-set-key "\C-q"         'quoted-insert)
+;(global-set-key "\C-q"		'quoted-insert)
 ;(global-set-key [C-kp-insert]  'kill-ring-save)
-;(global-set-key [M-up]         'other-window)
+;(global-set-key [M-up]	        'other-window)
 ;(global-set-key [S-kp-insert]  'yank)
 ;(global-unset-key (kbd "C-q"))
-;; (global-set-key [S-M-kp-down] 'sgml-fold-subelement) ;; ; M-kp ... conflicts with workspace navigation:
-;; (global-set-key [S-M-kp-end]  'sgml-fold-element)   ;  fold everything below current element
+;(global-set-key [S-M-kp-down] 'sgml-fold-subelement) ;; ; M-kp ... conflicts with workspace navigation:
+;(global-set-key [S-M-kp-end]  'sgml-fold-element)   ;  fold everything below current element
 ;; (global-set-key [S-M-kp-next] 'sgml-unfold-element)
-;;(global-set-key [M-return]            'ffap)  ;; open file under cursor
+;;(global-set-key [M-return]		'ffap)  ;; open file under cursor
 
+
+* ESHELL
+#+BEGIN_SRC emacs-lisp
+;;(defalias 'open 'find-file)
+;;(defalias 'openo 'find-file-other-window)
+;;(defun eshell/gits ()   (find-file file))
+;;(setq eshell-command-aliases-list (("gits" #("git status" 0 10 (escaped t)))))
 #+END_SRC
+alias ll ls -l $*
+TYBD fix $(git...) doesn't work in eshell
+alias gits echo $(git rev-parse --abbrev-ref HEAD); git config branch.$(git rev-parse --abbrev-ref HEAD).description;  git status
+alias gitb git branch -av
+alias gita git add
+alias cl cd $*; ls
+alias hs history
+alias ll ls -l $*
+
 
 * End bit
-#+BEGIN_SRC   elisp
+#+BEGIN_SRC emacs-lisp
 ;;-------------------------------------------------------------------------------
-(dired "/home/kleyn" nil)
+;(dired "/home/kleyn" nil)
 ;(desktop-change-dir "/home/uri03204/myDocs/config")
 
 (put 'narrow-to-region 'disabled nil)
