@@ -5,56 +5,10 @@ function hg()  { cat ~/MyDocs/history/* | cut -b 7- | uniq | grep \$*;  }
 function hgg() { grep "@" ~/MyDocs/history/*; }
 alias sb='source ~/.bashrc'
 
-# REMOTE ---------------------------------------------------------------------
-echo "----- rem commands"
-alias remTuringX='ssh -Y 192.168.1.243'
-alias remTuringS='screen /dev/ttyS0 38400'
-alias remKleyqs501='ssh kleyn@62.233.104.49'
-alias remKleyqs501root='ssh root@62.233.104.49'
-alias remMaxwell='ssh kleyn@192.168.1.130'
-alias remSshd='sshd -D -p 8022'
-alias remGem='ssh -p 8022 192.168.1.2'
-alias remSyncToMaxw='rsync -rv  ~/MyDocs/aNotes kleyn@192.168.1.130:/home/kleyn/mySystems/gem'
-#alias rsyncBckup='rsync -av /storage/C0A8-1F0C/Android/data/com.termux/files/MyDocs/aNotes/org kleyn@192.168.1.130:/home/kleyn/mySystems/gem'
-alias al='alias | less -S'
-
-#alias remNok='ssh -X root@192.168.1.187'
-#alias remkleyqs501='ssh kleymik@kleyqs501.easyvserver.com'
-#alias linux1xcxX='ssh -X sshtst@192.168.0.10'
-#alias remKleyqs501='ssh root@kleyqs501.easyvserver.com'
 
 # GIT --------------------------------------------------------------------- git
 # include git completions
 # . ~/.git-completion.bash
-
-# make a branch foo   = git checkout -b foo
-# git checkout master = switch back to master
-# git diff : git log -p is the only way to get the last commited diff to a given file
-# git delete branch -d <thebranch> or -D to force
-echo "----- git commands"
-alias gita='git add'
-alias gitb='git branch -av'
-alias gitbd='git branch --edit-description'
-alias gitbm='git branch --merged'
-alias gitbnm='git branch --no-merged'
-alias gitbc='git checkout -b '
-alias gitsb='git show-branch'
-alias gitc='git commit'
-alias gitg='git grep'
-alias gitc='git checkout'
-alias gitcln='git clone'
-alias gitca='git commit -a '
-alias gitf='git fetch'
-alias gitg='git grep'
-alias gith='git help'
-alias gitmv='git mv'
-alias gitpl='git pull'
-alias gitps='git push'
-alias gitr='git reset -p'
-alias gitreps='git remote -v'
-alias gitrm='git rm'
-alias gits='echo $(git rev-parse --abbrev-ref HEAD); git config branch.$(git rev-parse --abbrev-ref HEAD).description;  git status; git stash list'
-alias gitsb='git show-branch'
 
 function gitcfg () { 
   # only needed once?
@@ -65,6 +19,15 @@ function gitcfg () {
   git config --global color.branch auto
   # git config --global core.excludesfile ~/.gitignore_global
 }
+
+# make a branch foo   = git checkout -b foo
+# git checkout master = switch back to master
+# git diff : git log -p is the only way to get the last commited diff to a given file
+# git delete branch -d <thebranch> or -D to force
+echo "----- git commands"
+
+alias gitsb='git show-branch'
+
 
 function ag () { 
   declare -f | grep "$@"; 

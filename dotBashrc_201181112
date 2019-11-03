@@ -1,5 +1,16 @@
 # MFK bash initialisation for my schroder account 20160204_14:41:36
+echo "bashrc start"
 # TBD make idempotent!
+
+# watch
+# while true; do
+#     sleep 5
+#     ls -l
+# done
+# while true; do ls -l; sleep .5; done
+# while sleep 3 ; do ls -l ; done
+
+# one line for loop: "for f in ~/l_rs1/*/.gitignore; do echo $f; done"
 
 #if [[ "$-" == *i* ]]; then  # If running interactively test
 if [[ "1" == "1" ]]; then
@@ -60,28 +71,20 @@ if [[ "1" == "1" ]]; then
   }
 
   function dataFilesCheck () {
-
    echo "----------------------- //lon0302/dfs/DATA/DTA/MLINDICES"
    ls -lrt //lon0302/dfs/DATA/DTA/MLINDICES | tail -10
-
    echo -n "NumFiles " 
    ls -lrt //lon0302/dfs/DATA/DTA/MLINDICES | wc -l  
-
    echo "-----------------------  dataCollectionFI/LOCAL/ML/MLINDICES/"
    ls -lrt /home/kleynmi/dataCollectionFI/LOCAL/ML/MLINDICES/ | tail -10
-
    echo -n "NumFiles /MLINDICES/"
    ls -lrt /home/kleynmi/dataCollectionFI/LOCAL/ML/MLINDICES/ | wc -l
-
    echo "----------------------- /home/kleynmi/dataCollectionFI/PROD/"
    ls -lrt /home/kleynmi/dataCollectionFI/PROD/ | tail -10
-
    echo -n "NumFiles /PROD/"
    ls -lrt /home/kleynmi/dataCollectionFI/PROD/ | wc -l
-
    echo "----------------------- du -sh /home/kleynmi/dataCollectionFI/*"
    du -sm /home/kleynmi/dataCollectionFI/* | sort -n
-
    echo "----------------------- du -sh /home/kleynmi/dataCollectionFI/LOCAL"
    du -sm /home/kleynmi/dataCollectionFI/LOCAL/* | sort -n
 
@@ -90,9 +93,10 @@ if [[ "1" == "1" ]]; then
   # ############################################################################### ALIASES
   alias al='declare -f | grep \(\); alias'
   function ag   () {
-    declare -f | grep "$@"; 
-    alias      | grep "$@";  
+    declare -f | grep "$@";
+    alias      | grep "$@";
   }
+  alias af='declare -f | grep \(\)'
   # edit a given function in situ
   #function efn {
   #       echo       "function $1" > /tmp/edit_bash_fn
@@ -164,6 +168,7 @@ if [[ "1" == "1" ]]; then
   alias la='ls -al --color=auto --time-style=long-iso'
   alias ll='ls -l --color=auto --time-style=long-iso'
   alias calcsum='paste -sd+ - | bc'
+  # export fndDate="-printf '%TY-%Tm-%Td %TT %p\n'"
 
   # ---------------------------------------------------------------------------------------------------- history
   export HISTFILE=/cygdrive/L/myDocs/history/history.$$.$(date +%Y%m%d_%H%M)
@@ -181,9 +186,11 @@ if [[ "1" == "1" ]]; then
   function termLog() { script /home/kleyn/history/termLogs/termLog_"$@"_`date +%Y%m%d_%H%M`; }
   #findiso()         { find ~/scratchCode/matlab/vc -iname "mapCtryMa*.m" -exec ls -ld --time-style=long-iso {} \; | sort -k 7}
 
-  # CMD: C:/cygwin64/bin/grep.exe -rs --include "*.m" tcostModelTotalLS ~/l_vc/maqs*/*
-  # function rgrep () { grep -r --include "*.m" cfg ~/l_vc/maqsLatest/ | grep '~exist'}
+  # CMD: C:/cygwin64/bin/grep.exe -rs --include "*.m" tcostModelTotalLS ~/l_MK/vc/maqs*/*
+  # function rgrep () { grep -r --include "*.m" cfg ~/l_MK/vc/maqsLatest/ | grep '~exist'}
   function rgrep() { echo "1=$1"
+                     dosPath=$(cygpath -m $1)
+                     echo "DOSPATH $dosPath";
                      echo "2=$2"
                      echo "3=$3"
                      echo "grep --color=auto -r --include $2 $3 $1;"
@@ -206,6 +213,24 @@ if [[ "1" == "1" ]]; then
   #alias jpps='/dls_sw/apps/java/x64/gda842/bin/jps'
   #alias rd='rdesktop -a 32 -x 0x80 -g 1920x1080 DIAMRL5319 -r sound:remote'
   function see () { more `which "$@"`; }
+
+  # REMOTE ---------------------------------------------------------------------
+  echo "----- rem commands"
+  alias remTuringX='ssh -Y 192.168.1.243'
+  alias remTuringS='screen /dev/ttyS0 38400'
+  alias remKleyqs501='ssh kleyn@62.233.104.49'
+  alias remKleyqs501root='ssh root@62.233.104.49'
+  alias remMaxwell='ssh kleyn@192.168.1.130'
+  alias remSshd='sshd -D -p 8022'
+  alias remGem='ssh -p 8022 192.168.1.2'
+  alias remSyncToMaxw='rsync -rv  ~/MyDocs/aNotes kleyn@192.168.1.130:/home/kleyn/mySystems/gem'
+  #alias rsyncBckup='rsync -av /storage/C0A8-1F0C/Android/data/com.termux/files/MyDocs/aNotes/org kleyn@192.168.1.130:/home/kleyn/mySystems/gem'
+  alias al='alias | less -S'
+
+  #alias remNok='ssh -X root@192.168.1.187'
+  #alias remkleyqs501='ssh kleymik@kleyqs501.easyvserver.com'
+  #alias linux1xcxX='ssh -X sshtst@192.168.0.10'
+  #alias remKleyqs501='ssh root@kleyqs501.easyvserver.com'
 
   # ---------------------------------------------------------------------------------------------------- eclipse
   #alias kepler='/dls_sw/apps/eclipse/eclipse432_linux64_20140725/eclipse'
@@ -241,13 +266,16 @@ if [[ "1" == "1" ]]; then
   
   # ---------------------------------------------------------------------------------------------------- git
   # only needed once?
-  # git config --global core.editor "emacs -nw -fg black  -bg white1"
-  # git config --global user.name "Mike Kleyn"
-  # git config --global user.email michael.kleyn@diamond.ac.uk
-  # git config --global color.status auto
-  # git config --global color.branch auto
+function gitcfg () { 
+  # only needed once?
+  git config --global core.editor "emacs -nw -fg black -bg white1"
+  git config --global user.name "Mike Kleyn"
+  git config --global user.email michfkl@btinternet.com
+  git config --global color.status auto
+  git config --global color.branch auto
   # git config --global core.excludesfile ~/.gitignore_global
-
+  }
+  
   # include git completions
   #. ~/.git-completion.bash
 
@@ -259,20 +287,23 @@ if [[ "1" == "1" ]]; then
   alias gitb='git branch -av'
   alias gitbd='git branch --edit-description'
   alias gitbm='git branch --merged'
-  alias gitbnm='git branch --no-merged'
+  alias gitbpnm='git branch --no-merged'
   alias gitbc='git checkout -b '
   alias gitsb='git show-branch'
   alias gitc='git commit'
   alias gitg='git grep'
   alias gitca='git commit -a '
   alias gitc='git checkout'
-  alias gitcl='git clone'
+  alias gitcln='git clone'
   alias gitf='git fetch'
+  alias gitg='git grep'  
   alias gith='git help'
+  alias gitls='git ls-tree -r HEAD --name-only'
   alias gitmv='git mv'
   alias gitpl='git pull'
   alias gitps='git push'
   alias gitr='git reset -p'
+  alias gitreps='git remote -v'  
   alias gitrm='git rm'
   alias gits='echo $(git rev-parse --abbrev-ref HEAD); git config branch.$(git rev-parse --abbrev-ref HEAD).description;  git status; git stash list'
   alias gitcln='git clone'
@@ -449,6 +480,10 @@ if [[ "1" == "1" ]]; then
         echo "Argnum=$# Args: $@"
        fi
   }
+
+  function msEdge () {
+     explorer.exe 'shell:Appsfolder\Microsoft.MicrosoftEdge_8wekyb3d8bbwe!MicrosoftEdge'
+  }
   # ------------------------------------------------------------------------------- pewma
   # alias pewma-branch='        /dls_sw/dasc/pewma.py -qp git rev-parse --symbolic-full-name --abbrev-ref HEAD'
   # alias pewma-branch-status=' /dls_sw/dasc/pewma.py -qp git branch-status'
@@ -524,9 +559,10 @@ if [[ "1" == "1" ]]; then
 
   function rg_nxs () { # $1 = dir; remember to module load nexus
   # search nexus files
-    for f in $(find $1 -name '*.nxs'); 
-    do echo "----------------------- $f"; 
-     nxtraverse -f $f -r -n 50; 
+    for f in $(find $1 -name '*.nxs');
+    do
+     echo "----------------------- $f";
+     nxtraverse -f $f -r -n 50;
     done;
   }
  
@@ -548,6 +584,8 @@ if [[ "1" == "1" ]]; then
   alias lal='ls -lF'
   alias l='ls -CF'
   # search history
+  set show-all-if-ambiguous on
+  set completion-ignore-case on
   ## arrow up
   bind '"\e[A":history-search-backward'
   ## arrow down
@@ -572,6 +610,9 @@ if [[ "1" == "1" ]]; then
    emacsclient -n --eval "(ediff-files \"$1\" \"$2\")"
   }
   export EDITOR='emacsnw'
+  alias emacsCygwin='/usr/bin/emacs -l /cygdrive/L/MyDocs/dot/dotemacsCygwin.el  --debug-init &'
+  alias runEmacs='/cygdrive/C/ProgramData/emacs-26.1/bin/runemacs.exe -l $(cygpath -d ~/l_myDocs/dot/dotEmacs.el) &'
+
   # ---------------------------------------------------------------------------------------------------- greeting
   echo "PATH------------------------------------------"
   echo $PATH
@@ -587,6 +628,8 @@ if [[ "1" == "1" ]]; then
   fi
 
 fi
+echo "bashrc done"
+
 # Umask
 #
 # /etc/profile sets 022, removing write perms to group + others.

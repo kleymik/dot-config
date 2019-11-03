@@ -450,9 +450,9 @@
 
 ;; ---------------------------------------------------- Window Sizing
 (defun window-hwiden (&optional arg)
-   "Widen window"
-   (interactive "p")
-   (enlarge-window-horizontally 4))
+  "Widen window"
+  (interactive "p")
+  (enlarge-window-horizontally 10))
 (defun window-hshrink (&optional arg)
   "Shrink window"
   (interactive "p")
@@ -790,18 +790,24 @@ BEG and END (region to sort)."
 
 (message "dotEmacs.org keybindings section done")
 
-;;(defalias 'open 'find-file)
-;;(defalias 'openo 'find-file-other-window)
-;;(defun eshell/gits ()   (find-file file))
-;;(setq eshell-command-aliases-list (("gits" #("git status" 0 10 (escaped t)))))
+(require 'em-alias)
+(eshell)
+(setq eshell-command-aliases-list ())
+(add-to-list 'eshell-command-aliases-list (list "ll"   "ls -l $*"))
+(add-to-list 'eshell-command-aliases-list (list "al"   "alias"))
+(add-to-list 'eshell-command-aliases-list (list "cl"   "cd $*; ll"))
+(add-to-list 'eshell-command-aliases-list (list "gith" "git help"))
+(add-to-list 'eshell-command-aliases-list (list "gita" "git add"))
+(add-to-list 'eshell-command-aliases-list (list "gitb" "git branch -av"))
+(add-to-list 'eshell-command-aliases-list (list "gitc" "git checkout -b"))
+(add-to-list 'eshell-command-aliases-list (list "hs"   "history"))
+(add-to-list 'eshell-command-aliases-list (list "hg"   "history  | grep $*"))
 
 ;;-------------------------------------------------------------------------------
 ;(dired "/home/kleyn" nil)
 ;(desktop-change-dir "/home/uri03204/myDocs/config")
 
 (put 'narrow-to-region 'disabled nil)
-
-;custom-set-variables and custom set faces in ~/.emacs.d/init.el
 
 ;;(server-start)
 (message "dotEmacs.org done")

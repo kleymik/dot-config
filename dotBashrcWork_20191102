@@ -96,6 +96,7 @@ if [[ "1" == "1" ]]; then
   # alias ls='ls -hF --color=tty'                 # classify files in colour
   # alias dir='ls --color=auto --format=vertical'
   # alias vdir='ls --color=auto --format=long'
+  alias ll='ls -l --time-style=long-iso'                              # long list
   # alias la='ls -A'                            # all but . and ..
   alias l='ls -CF'                              #
   # alias la='ls -alF'
@@ -162,8 +163,10 @@ if [[ "1" == "1" ]]; then
   alias kill_hard='kill -9'
   alias jobs='jobs -l'
   # ---------------------------------------------------------------------------------------------------- misc
+  alias pws2345='python -m SimpleHTTPServer 2345 &'
   alias showFuns='declare -F'
   #alias calc='bc -l <<<'
+  function calc () { python -c "from math import *; print($@)"; }
   #alias gdaprocs='netstat -tlnp 2>/dev/null | grep java | sort -k 7'
   #alias jpps='/dls_sw/apps/java/x64/gda842/bin/jps'
   #alias rd='rdesktop -a 32 -x 0x80 -g 1920x1080 DIAMRL5319 -r sound:remote'
@@ -174,6 +177,14 @@ if [[ "1" == "1" ]]; then
   # ---------------------------------------------------------------------------------------------------- networky stuff
   alias netsl='netstat -tlnp'
   alias lsofi='lsof -n -i'
+  # ---------------------------------------------------------------------------------------------------- subversion
+  # alias svns='svn status -v'
+  # alias svnc='svn commit'
+  # alias svnls='svn list -v'
+  # alias svnlg='svn log  | less'
+  # alias svnu='svn update'
+  # alias svna='svn add'
+  # alias svng='alias | grep svn'
 
   # ---------------------------------------------------------------------------------------------------- hdf5/nexus
   alias h5dumpHeaders='h5dump -H'
@@ -186,12 +197,15 @@ if [[ "1" == "1" ]]; then
   #git config --global core.excludesfile ~/.gitignore_global
 
   # git clone/init
-  # git commit
+  # git add
+  # git commit 
   # git push origin master
   # git pull –all
+  # git branch
   # git checkout (consider using –b instead of git branch)
   # git merge
-
+  # git status 
+  
   # ---------------------------------------------------------------------------------------------------- git
   # only needed once?
   # git config --global core.editor "emacs -nw -fg black  -bg white1"
@@ -248,14 +262,14 @@ if [[ "1" == "1" ]]; then
   alias gitf='git fetch -v'
   alias gitfo='git fetch -v origin'
   alias gitg='git grep'
+  alias gitca='git commit -a '
+  alias gitc='git checkout'
+  alias gitcl='git clone'
+  alias gitf='git fetch'
   alias gith='git help'
   alias gitls='git ls-tree -r HEAD --name-only'
   alias gitmv='git mv'
-  # Refuse to merge and exit with a non-zero status unless the current HEAD is already up-to-date or the merge can be resolved as a fast-forward.
-  alias gitmerge='git merge --ff-only'
-  # git undo merge: git reset --keep HEAD@{1}
-  alias gitpl='git  pull --verbose'
-  alias gitpla='git pull --all --verbose'
+  alias gitpl='git pull'
   alias gitps='git push'
   alias gitr='git reset -p'
   alias gitrm='git rm'
@@ -358,7 +372,7 @@ if [[ "1" == "1" ]]; then
   # alias ptree='ps -ef --forest'
 
   # get parent and grandparent of process
-  function pspar() {
+  function pspar() { 
       if [[ "$#" == "0" ]]; then
         myPid=$$
       else
@@ -378,7 +392,7 @@ if [[ "1" == "1" ]]; then
 
 
   }
-  # grep for process
+  # grep for process 
   function psg () { ps -elf  | grep "$@"; }
 
   # ---------------------------------------------------------------------------------------------------- env
@@ -395,9 +409,9 @@ if [[ "1" == "1" ]]; then
       # evaluate $REF twice..
       PATHTMP=$(echo ${!REF} | sed "s/ /_/g")
       #echo "PATHTMP=$PATHTMP"
-      for p in $(echo $PATHTMP | sed "s/:/ /g")
-      do
-        echo $p;
+      for p in $(echo $PATHTMP | sed "s/:/ /g") 
+      do  
+        echo $p; 
       done
   }
   function evapp  () {
@@ -416,31 +430,31 @@ if [[ "1" == "1" ]]; then
 
   # -MA3  media
   #--- enscript
-  function enscPort () {
-    enscript                       -c          -T 3 -P dh.g.51.col.1  --font=Courier$@
+  function enscPort () { 
+    enscript                       -c          -T 3 -P dh.g.51.col.1  --font=Courier$@ 
   }
-  function enscPortBw () {
-    enscript                       -c          -T 3 -P dh.g.51.bw.1  --font=Courier$@
+  function enscPortBw () { 
+    enscript                       -c          -T 3 -P dh.g.51.bw.1  --font=Courier$@ 
   }
-  function enscLand () {
-   enscript                       -cr          -T 3 -P dh.g.51.col.1  --font=Courier$@
+  function enscLand () { 
+   enscript                       -cr          -T 3 -P dh.g.51.col.1  --font=Courier$@ 
   }
-  function enscLandBw () {
-   enscript                       -cr           -T 3 -P dh.g.51.bw.1  --font=Courier$@
+  function enscLandBw () { 
+   enscript                       -cr           -T 3 -P dh.g.51.bw.1  --font=Courier$@ 
   }
-  function enscpy   () {
-    enscript --pretty-print=python -c  --color=1 -T 3 -P dh.g.51.col.1 --font=Courier$@
+  function enscpy   () { 
+    enscript --pretty-print=python -c  --color=1 -T 3 -P dh.g.51.col.1 --font=Courier$@ 
   }
-  function enscpyBw   () {
-    enscript --pretty-print=python -c  --color=1 -T 3 -P dh.g.51.bw.1 --font=Courier$@
+  function enscpyBw   () { 
+    enscript --pretty-print=python -c  --color=1 -T 3 -P dh.g.51.bw.1 --font=Courier$@ 
   }
-  function enscjav  () {
-    enscript --pretty-print=java   -c  --color=1 -T 3 -P dh.g.51.col.1 --font=Courier$@
+  function enscjav  () { 
+    enscript --pretty-print=java   -c  --color=1 -T 3 -P dh.g.51.col.1 --font=Courier$@ 
   }
-  function enscjavBw  () {
-    enscript --pretty-print=java   -c  --color=1 -T 3 -P dh.g.51.bw.1 --font=Courier$@
+  function enscjavBw  () { 
+    enscript --pretty-print=java   -c  --color=1 -T 3 -P dh.g.51.bw.1 --font=Courier$@ 
   }
-  #enscript --pretty-print=python gda.py --language=html --color=1 --output=gda.py.html
+  #enscript --pretty-print=python gda.py --language=html --color=1 --output=gda.py.html 
   #  719  enscript --pretty-print=python gda.py --language=html --color=true --output=gda.py.html
   #  720  enscript --pretty-print=python gda.py --language=html --color=1 --output=gda.py.html
   #  721  enscript --pretty-print=python gda.py --language=html --color=1 --font=Courier8 --output=gda.py.html
@@ -483,7 +497,7 @@ if [[ "1" == "1" ]]; then
   alias gdaFiltClientLog='rep -vF -f ~/ubin/gda_client_filter.txt'
   # alias fd=find
   # find with exclusion
-  function fe() {
+  function fe() { 
        echo "Numargs=$# : $@"
        if [[ "$#" == "0" ]]; then
         echo "fe \$1=exludeDir \$2=searchPat"
@@ -492,7 +506,7 @@ if [[ "1" == "1" ]]; then
          find . -type d -name $1 -prune -or -iname $2
        fi
   }
-  function fd() {
+  function fd() { 
        echo "Numargs=$# : $@"
        if [[ "$#" != "2" ]]; then
         echo "fe \$1=dir \$2=pat"
@@ -502,7 +516,7 @@ if [[ "1" == "1" ]]; then
        fi
   }
 
-  function recent() {
+  function recent() { 
        echo "Numargs=$# : $@"
        if [[ "$#" != "1" ]]; then
         echo "recent \$1=dir"
@@ -511,7 +525,7 @@ if [[ "1" == "1" ]]; then
        fi
   }
 
-  function tstArgs() {
+  function tstArgs() { 
        if [[ "$#" == "0" ]]; then
         echo "No Args"
        else
@@ -861,7 +875,7 @@ if [[ "1" == "1" ]]; then
      nxtraverse -f $f -r -n 50;
     done;
   }
-
+ 
   # ---------------------------------------------------------------------------------------------------- misc/old
   # x windows mutiwindow
   # alias sxw='startxwin'
@@ -873,7 +887,12 @@ if [[ "1" == "1" ]]; then
   # powershell
   #alias pws='powershell.exe - < '
 
+
   # some more ls aliases
+  alias ll='ls -lF'
+  alias la='ls -alF'
+  alias lal='ls -lF'
+  alias l='ls -CF'
   # search history
   set show-all-if-ambiguous on
   set completion-ignore-case on
