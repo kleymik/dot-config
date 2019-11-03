@@ -602,8 +602,8 @@ BEG and END (region to sort)."
 (defun csharp-mode-untabify ()
   (if (string= (substring mode-name 0 2) "C#")
      (save-excursion
-    (delete-trailing-whitespace)
-    (untabify (point-min) (point-max)))))
+	(delete-trailing-whitespace)
+	(untabify (point-min) (point-max)))))
 (defun my-csharp-mode-fn ()
   "function that runs when csharp-mode is initialized for a buffer."
   (turn-on-auto-revert-mode)

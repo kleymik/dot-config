@@ -39,7 +39,7 @@
 ;; M-s h f 	hi-lock-find-patterns 	           Searches for Hi-Lock patterns in the buffer to use.
 ;; C-x r s r; C-x r i r                        Copy region into register "r" (copy-to-register).    Insert text from register r (insert-register).
 ;; C-ci         indent-to-column
-;; C-x r w w; C-x r j w                        Save winows config in register "w" ; jump back (where <register> is a single character) to jump back to it.
+;; C-x r w w; C-x r j w                        Save windows config in register "w" ; jump back (where <register> is a single character) to jump back to it.
 ;;              package-list-packages
 ;; C-j          eval in scratch buffer ?
 ;; C-x RTN f unix RTN  dos2unix
@@ -77,7 +77,7 @@
 (setq use-file-dialog nil)
 (setq use-dialog-box nil)
 (fset 'yes-or-no-p 'y-or-n-p)
-;(tool-bar-mode -1)
+(tool-bar-mode -1)
 (show-paren-mode 1)
 (transient-mark-mode t)
 (setq case-fold-search t)
@@ -110,7 +110,7 @@
   "Eval expression and insert value after the expression"
   (interactive)
   (eval-last-sexp 0)
-    (eval-print-looast-sexp 0))
+    (eval-print-last-sexp 0))
 ;;  (insert (format "%s" load-path) )
 
 ;; Normally, this function truncates long output according to the value
@@ -124,6 +124,7 @@
 ;;------------------------------------------------------------------------------ Shell
 (setq shell-file-name "bash")
 (setq explicit-shell-file-name shell-file-name)
+;(setq shell-command-switch "-c")
 
 (defun shell-command-on-buffer (command)
   (interactive "sShell command on buffer: ")
@@ -190,7 +191,6 @@
   ;;      (require 'rfringe)
 (add-hook  'csharp-mode-hook 'my-csharp-mode-fn t)
 ;;(add-hook 'csharp-mode-hook '(lambda () (add-hook 'write-contents-hooks 'csharp-mode-untabify nil t)))
-
 
 ; 'tbd add hs-minot-mode for hide/show t
 ;TDB (add-hook  'java-mode-hook 'my-java-mode-hook t)

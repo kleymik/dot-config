@@ -1,11 +1,11 @@
-;; invoke by ~/.emacs.d/init.el
-;;(package-initialize)
-;;(org-babel-load-file "~/dot/dotEmacs.org)
 Emacs Initialisation
+;; invoke by ~/.emacs.d/init.el
+;; (package-initialize)
+;; (org-babel-load-file "~/dot/dotEmacs.org)
 C-c C-u go up
 increase/decrease font C-cC-+/-
 
-* Premable
+* Preamble
 #+BEGIN_SRC emacs-lisp
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; File name: ` ~/.emacs '
@@ -1010,6 +1010,7 @@ alias ll ls -l $*
 ;custom-set-variables and custom set faces in ~/.emacs.d/init.el
 ; font like this?
 ;(set-default-font "Monaco 14")
+
 
 * END
 #+BEGIN_SRC emacs-lisp

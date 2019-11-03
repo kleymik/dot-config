@@ -450,9 +450,9 @@
 
 ;; ---------------------------------------------------- Window Sizing
 (defun window-hwiden (&optional arg)
-  "Widen window"
-  (interactive "p")
-  (enlarge-window-horizontally 10))
+   "Widen window"
+   (interactive "p")
+   (enlarge-window-horizontally 4))
 (defun window-hshrink (&optional arg)
   "Shrink window"
   (interactive "p")
