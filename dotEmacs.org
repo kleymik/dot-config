@@ -983,13 +983,19 @@ BEG and END (region to sort)."
 
 * ESHELL
 #+BEGIN_SRC emacs-lisp
+(setq eshellCommands '(("ll" "ls -l $*")))
+(push '("gith" "git help") eshellCommands)
+(push '("gita" "git add")  eshellCommands)
+
 ;;(defalias 'open 'find-file)
 ;;(defalias 'openo 'find-file-other-window)
 ;;(defun eshell/gits ()   (find-file file))
 ;;(setq eshell-command-aliases-list (("gits" #("git status" 0 10 (escaped t)))))
+;;(setq eshell-command-aliases-list (("gits" #("git status" 0 10 (escaped t)))))
 #+END_SRC
+
 alias ll ls -l $*
-TYBD fix $(git...) doesn't work in eshell
+TBD fix $(git...) doesn't work in eshell
 alias gits echo $(git rev-parse --abbrev-ref HEAD); git config branch.$(git rev-parse --abbrev-ref HEAD).description;  git status
 alias gitb git branch -av
 alias gita git add
@@ -997,7 +1003,29 @@ alias cl cd $*; ls
 alias hs history
 alias ll ls -l $*
 
-eshell-comman-result
+alias al='alias | less -S'
+
+alias gitb='git branch -av'
+alias gitbc='git checkout -b '
+alias gitbd='git branch --edit-description'
+alias gitbm='git branch --merged'
+alias gitbnm='git branch --no-merged'
+alias gitc='git checkout'
+alias gitca='git commit -a '
+alias gitcl='git clone'
+alias gitcln='git clone'
+alias gitf='git fetch'
+alias gitg='git grep'
+alias gitmv='git mv'
+alias gitpl='git pull'
+alias gitps='git push'
+alias gitr='git reset -p'
+alias gitreps='git remote -v'
+alias gitrm='git rm'
+alias gits='echo $(git rev-parse --abbrev-ref HEAD); git config branch.$(git rev-parse --abbrev-ref HEAD).description;  git status; git stash list'
+alias gitsb='git show-branch'
+
+eshell-command-result
 (setq foo (eshell-command-result "git rev-parse --abbrev-ref HEAD"))
 eshell-read-aliases-list
 
