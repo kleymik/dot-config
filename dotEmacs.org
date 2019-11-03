@@ -986,20 +986,39 @@ BEG and END (region to sort)."
 (require 'em-alias)
 (eshell)
 (setq eshell-command-aliases-list ())
-(add-to-list 'eshell-command-aliases-list (list "ll"   "ls -l $*"))
+(add-to-list 'eshell-command-aliases-list (list "ll"   "ls -l --time-style=long-iso $*"))
 (add-to-list 'eshell-command-aliases-list (list "al"   "alias"))
 (add-to-list 'eshell-command-aliases-list (list "ag"   "alias | grep $*"))
 (add-to-list 'eshell-command-aliases-list (list "cl"   "cd $*; ll"))
 (add-to-list 'eshell-command-aliases-list (list "gith" "git help"))
 (add-to-list 'eshell-command-aliases-list (list "gita" "git add $*"))
-(add-to-list 'eshell-command-aliases-list (list "gitb" "git branch -av "))
+(add-to-list 'eshell-command-aliases-list (list "gitb" "git branch -av"))
 (add-to-list 'eshell-command-aliases-list (list "gitc" "git checkout -b $*"))
-(add-to-list 'eshell-command-aliases-list (list "gitca""git commit -a "))
-(add-to-list 'eshell-command-aliases-list (list "gitcm""git commit -m "))
-(add-to-list 'eshell-command-aliases-list (list "hs"   "history"))
-(add-to-list 'eshell-command-aliases-list (list "hg"   "history | grep $*"))
+(add-to-list 'eshell-command-aliases-list (list "gitca""git commit -a"))
+(add-to-list 'eshell-command-aliases-list (list "gitcm""git commit -m"))
+(add-to-list 'eshell-command-aliases-list (list "gr"    "grep"))
+(add-to-list 'eshell-command-aliases-list (list "gi"    "grep -i"))
+
 
 #+END_SRC
+(add-to-list 'eshell-command-aliases-list (list "hs"   "history"))
+(add-to-list 'eshell-command-aliases-list (list "hg"   "history | grep $*")) 
+(add-to-list 'eshell-command-aliases-list (list "rgrepy "python L:\\MyDocs\\ubin\\py\\rgrep.py"))
+
+(add-to-list 'eshell-command-aliases-list (list "rgrep" "echo \"1=$1\";
+                                                        "dosPath=$(cygpath -m $1)"
+                     echo "DOSPATH $dosPath";
+                     echo "2=$2"
+                     echo "3=$3"
+                     echo "grep --color=auto -ir --include=$2 $3 $1;"
+                     # echo "grep -e --color=auto -ir --include=$2 $3 $1;"  -e is different!!!!
+                     grep --color=auto -ir --include="$2" "$3" "$1" ; }
+function hs()      { history | tee /cygdrive/L/MyDocs/history/bash/history_`date +%Y%m%d_%H%M`_$1 | tail -25;  }
+function hl()      { history | tail -80;  }
+function hg()      { history | grep -i "$@" | cut -b 8- | sort | uniq; }
+function hgg()     { grep -i "$@" /cygdrive/L/MyDocs/history/bash/hist*`date +%Y*` | cut -d: -f2- | tail -100;  }
+function hgg1()    { grep -i "$@" /cygdrive/L/MyDocs/history/bash/hist*`date +%Y*` | cut -d: -f2- | tail -5;  }
+function hggg()    { grep -i "$@" /cygdrive/L/MyDocs/history/bash/hist*          ;  }
 
 ;;(defalias 'open 'find-file)
 ;;(defalias 'openo 'find-file-other-window)
