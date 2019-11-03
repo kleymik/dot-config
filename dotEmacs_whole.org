@@ -6,16 +6,11 @@ C-c C-u go up
 increase/decrease font C-cC-+/-
 
 * Preamble
-#+BEGIN_SRC emacs-lisp
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; File name: ` ~/.emacs '
-;;--------------------------------------------------------------- Handy commands quick ref
+;;--------------------------------------------------------------- New Handy commands quick ref
 ;; rot13-region  (C-c C-r)
 ;; telnet host port     to open
 ;; ^Q^] close           to close
-
-;; new 
-;;  (xclip-mode 1) for emacs in terminal , export kill-yank
+;  (xclip-mode 1) for emacs in terminal , export kill-yank
 ;; C-c C-b associate ielm with buffer
 ;; M-6 M-x Buffer-menu-sort = sort by file name
 ;;(setq Buffer-menu-sort-column 6)
