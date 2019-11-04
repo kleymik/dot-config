@@ -1004,7 +1004,6 @@ BEG and END (region to sort)."
 (add-to-list 'eshell-command-aliases-list (list "hs"   "history"))
 (add-to-list 'eshell-command-aliases-list (list "hg"   "history | grep $*")) 
 (add-to-list 'eshell-command-aliases-list (list "rgrepy "python L:\\MyDocs\\ubin\\py\\rgrep.py"))
-
 (add-to-list 'eshell-command-aliases-list (list "rgrep" "echo \"1=$1\";
                                                         "dosPath=$(cygpath -m $1)"
                      echo "DOSPATH $dosPath";

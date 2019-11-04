@@ -485,18 +485,6 @@ if [[ "1" == "1" ]]; then
      explorer.exe 'shell:Appsfolder\Microsoft.MicrosoftEdge_8wekyb3d8bbwe!MicrosoftEdge'
   }
   # ------------------------------------------------------------------------------- pewma
-  # alias pewma-branch='        /dls_sw/dasc/pewma.py -qp git rev-parse --symbolic-full-name --abbrev-ref HEAD'
-  # alias pewma-branch-status=' /dls_sw/dasc/pewma.py -qp git branch-status'
-  # alias pewma-describe='      /dls_sw/dasc/pewma.py -qp git update-index --refresh ; /dls_sw/dasc/pewma.py -qp git describe'
-  # alias pewma-describe-dirty='/dls_sw/dasc/pewma.py -qp git describe-dirty'
-  # alias pewma-fetch='         /dls_sw/dasc/pewma.py -qp git fetch'
-  # alias pewma-fetch-all='     /dls_sw/dasc/pewma.py -qp git fetch --all'
-  # alias pewma-incoming='      /dls_sw/dasc/pewma.py -qp git fetch --dry-run'
-  # alias pewma-incoming-all='  /dls_sw/dasc/pewma.py -qp git fetch --dry-run --all'
-  # alias pewma-pull='          /dls_sw/dasc/pewma.py -qp git pull'
-  # alias pewma-pull-all='      /dls_sw/dasc/pewma.py -qp git pull --all'
-  # alias pewma-status='        /dls_sw/dasc/pewma.py -qp git status -s'
-  # alias pewma='               /dls_sw/dasc/pewma.py'
   # --------------------------------------------------------------------------------- xterm colored
   alias xtm='xterm   -sl 2000 &'
   alias xtmr='xterm  -sl 20000 -bg darkred   -fg white  -cr lightblue     &'

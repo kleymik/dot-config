@@ -162,6 +162,7 @@ increase/decrease font C-cC-+/-
  '(default ((t (:family "Courier New" :foundry "outline" :slant normal :weight normal :height 120 :width normal)))))
 
 #+END_SRC
+
 * Modes
 ** ;; ----------------------------------------------------------- Matlab Mode
 #+BEGIN_SRC elisp
@@ -310,6 +311,7 @@ increase/decrease font C-cC-+/-
 
 ** ;; ------------------------------------------------------------Dired Mode
 
+
 * Dired Stuff
 
 #+BEGIN_SRC emacs-lisp 
@@ -438,6 +440,7 @@ increase/decrease font C-cC-+/-
 
 
 #+END_SRC
+
 * Handy Funs
 #+BEGIN_SRC emacs-lisp
 ;;----------------------------------------------------- Misc
@@ -739,7 +742,7 @@ BEG and END (region to sort)."
 (message "dotEmacs.org section Handy Funs  done")
 #+END_SRC
 
-
+  
 * Markup Languages
 #+BEGIN_SRC emacs-lisp-not
 ;;------------------------------------------------------------------------------ XML
@@ -841,6 +844,7 @@ BEG and END (region to sort)."
 
 #+END_SRC
 
+
 * Bing, White Space, ZeeTree
 #+BEGIN_SRC elisp
 ;;--------------------------------------------------------------- Bing
@@ -871,6 +875,7 @@ BEG and END (region to sort)."
 
 (message "dotEmacs.org markup languages section done")
 #+END_SRC
+
 
 * Global Key Bindings
  /			;; self-insert-command
