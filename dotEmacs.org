@@ -486,49 +486,13 @@ BEG and END (region to sort)."
 
 * Modes Section
 #+BEGIN_SRC emacs-lisp
-
-;; ;;------------------------------------------------------------- Matlab Mode
-;; (require 'matlab)
-;; (setq matlab-indent-function t)
-;; (setq matlab-shell-command "matlab")
-;; ;;(autoload 'matlab-mode "/home/kleyn/myDocs/ulib/emacs/matlab.elc" "Enter Matlab mode." t)
-;; ;; User Level customizations:
-;; ;;   (setq matlab-verify-on-save-flag nil) ; turn off auto-verify on save
-;; (defun my-matlab-mode-hook ()
-;;   (matlab-mode-hilit) 			; Turn highlight on
-;;   (setq fill-column 276)		; where auto-fill should wrap
-;;   (setq matlab-indent-function t)	; if you want function bodies indented
-;;   (setq matlab-indent-level  2)         ; set matlab indentation
-;;   (set matlab-fill-code nil)
-;;   (setq indent-tabs-mode nil))
-;; (add-hook 'matlab-mode-hook 'my-matlab-mode-hook)
-
+;;------------------------------------------------------------- Magit
+(add-to-list 'magit-section-initial-visibility-alist '(stashes . hide))
 
 ;; ;; ----------------------------------------------------------- DOS Mode
 ;; ;;(autoload 'dos-mode "/home/uri03204/myDocs/ulib/emacs/dos.elc" "Enter DOS CMD mode." t)
 
 
-;; ;; ----------------------------------------------------------- CSHARP Mode
-;; ;(autload 'csharp-mode "/home/uri03204/myDocs/ulib/emacs/csharp-mode-0.8.5.elc" t)
-;; (autoload 'csharp-mode "csharp-mode" "Major mode for editing C# code." t)
-;; (defun csharp-mode-untabify ()
-;;   (if (string= (substring mode-name 0 2) "C#")
-;;      (save-excursion
-;; 	(delete-trailing-whitespace)
-;; 	(untabify (point-min) (point-max)))))
-;; (defun my-csharp-mode-fn ()
-;;   "function that runs when csharp-mode is initialized for a buffer."
-;;   (turn-on-auto-revert-mode)
-;;   (setq indent-tabs-mode nil)
-;;   (require 'flymake)
-;;   (setq flymake-mode nil)
-;;   ;;(add-hook 'write-contents-hooks 'csharp-mode-untabify nil t)
-;;   )
-;;   ;;      (require 'yasnippet)
-;;   ;;      (yas/minor-mode-on)
-;;   ;;      (require 'rfringe)
-;; (add-hook  'csharp-mode-hook 'my-csharp-mode-fn t)
-;; ;;(add-hook 'csharp-mode-hook '(lambda () (add-hook 'write-contents-hooks 'csharp-mode-untabify nil t)))
 
 
 ;; ; 'tbd add hs-minor-mode for hide/show t
@@ -607,6 +571,45 @@ BEG and END (region to sort)."
 (message "dotEmacs.org first section done")
 
 #+END_SRC
+
+** Unused
+;; ;; ----------------------------------------------------------- CSHARP Mode
+;; ;(autload 'csharp-mode "/home/uri03204/myDocs/ulib/emacs/csharp-mode-0.8.5.elc" t)
+;; (autoload 'csharp-mode "csharp-mode" "Major mode for editing C# code." t)
+;; (defun csharp-mode-untabify ()
+;;   (if (string= (substring mode-name 0 2) "C#")
+;;      (save-excursion
+;; 	(delete-trailing-whitespace)
+;; 	(untabify (point-min) (point-max)))))
+;; (defun my-csharp-mode-fn ()
+;;   "function that runs when csharp-mode is initialized for a buffer."
+;;   (turn-on-auto-revert-mode)
+;;   (setq indent-tabs-mode nil)
+;;   (require 'flymake)
+;;   (setq flymake-mode nil)
+;;   ;;(add-hook 'write-contents-hooks 'csharp-mode-untabify nil t)
+;;   )
+;;   ;;      (require 'yasnippet)
+;;   ;;      (yas/minor-mode-on)
+;;   ;;      (require 'rfringe)
+;; (add-hook  'csharp-mode-hook 'my-csharp-mode-fn t)
+;; ;;(add-hook 'csharp-mode-hook '(lambda () (add-hook 'write-contents-hooks 'csharp-mode-untabify nil t)))
+
+;; ;;------------------------------------------------------------- Matlab Mode
+;; (require 'matlab)
+;; (setq matlab-indent-function t)
+;; (setq matlab-shell-command "matlab")
+;; ;;(autoload 'matlab-mode "/home/kleyn/myDocs/ulib/emacs/matlab.elc" "Enter Matlab mode." t)
+;; ;; User Level customizations:
+;; ;;   (setq matlab-verify-on-save-flag nil) ; turn off auto-verify on save
+;; (defun my-matlab-mode-hook ()
+;;   (matlab-mode-hilit) 			; Turn highlight on
+;;   (setq fill-column 276)		; where auto-fill should wrap
+;;   (setq matlab-indent-function t)	; if you want function bodies indented
+;;   (setq matlab-indent-level  2)         ; set matlab indentation
+;;   (set matlab-fill-code nil)
+;;   (setq indent-tabs-mode nil))
+;; (add-hook 'matlab-mode-hook 'my-matlab-mode-hook)
 
 * Modes Assoc List
 #+BEGIN_SRC emacs-lisp
