@@ -959,6 +959,7 @@ BEG and END (region to sort)."
 (add-to-list 'eshell-command-aliases-list (list "al"   "alias"))
 (add-to-list 'eshell-command-aliases-list (list "ag"   "alias | grep $*"))
 (add-to-list 'eshell-command-aliases-list (list "cl"   "cd $*; ll"))
+(add-to-list 'eshell-command-aliases-list (list "gits" "git status"))
 (add-to-list 'eshell-command-aliases-list (list "gith" "git help"))
 (add-to-list 'eshell-command-aliases-list (list "gita" "git add $*"))
 (add-to-list 'eshell-command-aliases-list (list "gitb" "git branch -av"))
