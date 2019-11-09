@@ -8,6 +8,9 @@ increase/decrease font C-cC-+/-
 * Packages
 #+BEGIN_SRC emacs-lisp
 (defun ke()           (interactive) (kill-emacs))
+
+(setq load-path (append load-path '("/home/kleyn/ulib/emacs/dired-hacks"))) ;; for subtree (insert (format "%s" load-path))
+
 (require 'uniquify)
 (require 'org)
 (require 'cl)              ; for transpose
@@ -332,40 +335,9 @@ BEG and END (region to sort)."
 ;; find-dired   calls unix find
 ;; tail-mode    auto-revert-tail-mode (C-cr)
 ;; set-buffer-file-coding-system unix <--format
-
+;; package-list-packages
 ;; map-query-regexp-replace
 ;; isearch-forward-regexp
-;; M-s h l 	highlight-lines-matching-regexp    Highlights all lines matching a regular expression
-;; M-s h p 	highlight-phrase 	               Highlights everything matching a phrase
-;; M-s h r 	highlight-regexp 	               Highlights everything matching a regular expression
-;; M-s h u 	unhighlight-regexp 	               Deletes the highlighter under point
-;; M-s h w 	hi-lock-write-interactive-patterns Inserts a list of Hi-Lock patterns into the buffer
-;; M-s h f 	hi-lock-find-patterns 	           Searches for Hi-Lock patterns in the buffer to use.
-;; C-x r s r; C-x r i r                        Copy region into register "r" (copy-to-register).    Insert text from register r (insert-register).
-;; C-ci         indent-to-column
-;; C-x r w w; C-x r j w                        Save winows config in register "w" ; jump back (where <register> is a single character) to jump back to it.
-;;              package-list-packages
-;; C-j          eval in scratch buffer ?
-;; C-x RTN f unix RTN  dos2unix
-;; C-u C-space or C-u C-@ move back to previous positions (within buffer)
-;; C-x C-space or C-x C-@ move back to previous positions (between buffers)
-;; C-x n n; C-x n w                            Narrow to Region; Widen
-;; C-;                                         Highlight item for MULTIPLE edit
-;; C-a			;; move-beginning-of-line
-;; C-s			;; isearch-forward
-;; /			;; self-insert-command
-;; C-b			;; backward-char
-;; C-s			;; isearch-forward
-;; :			;; self-insert-command
-;; C-x C-x		; exchange-point-and-mark
-;; ESC			;; ESC-prefix
-;; w			;; self-insert-command
-;; C-x C-f		;; find-file
-;; C-a			;; move-beginning-of-line
-;; C-y			;; yank
-;; C-k			;; kill-line
-;; DEL			;; delete-backward-char
-;; RET			;; newline
 
 #+END_SRC
 
@@ -843,7 +815,7 @@ BEG and END (region to sort)."
 ;;(ido-mode 1)
 ;;(ido-mode t)
 ;;(windmove-default-keybindings 'shift)
-;;---------------------------------------------------------------
+;;---------------------------------------------------------------  Bing
 ;; bing!
 ;     "http://www.bing.com/search?q="
 ;; (defun goog ()
@@ -873,8 +845,39 @@ BEG and END (region to sort)."
 #+END_SRC
 
 * Global Key Bindings
-#+BEGIN_SRC emacs-lisp
 
+ /			;; self-insert-command
+ :			;; self-insert-command
+ ??                     ;; package-list-packages
+ C-;                    ;; Highlight item for MULTIPLE edit
+ C-a			;; move-beginning-of-line
+ C-a			;; move-beginning-of-line
+ C-b			;; backward-char
+ C-ci                   ;; indent-to-column
+ C-j                    ;; eval in scratch buffer ?
+ C-k			;; kill-line
+ C-s			;; isearch-forward
+ C-s			;; isearch-forward
+ C-u C-space or C-u C-@	;; move back to previous positions (within buffer)
+ C-x C-f		;; find-file
+ C-x C-space or C-x C-@	;; move back to previous positions (between buffers)
+ C-x C-x		;; exchange-point-and-mark
+ C-x RTN f unix RTN     ;; dos2unix
+ C-x n n; C-x n w       ;; Narrow to Region; Widen
+ C-x r s r; C-x r i r   ;; Copy region into register "r" (copy-to-register).    Insert text from register r (insert-register).
+ C-x r w w; C-x r j w   ;; Save winows config in register "w" ; jump back (where <register> is a single character) to jump back to it.
+ C-y			;; yank
+ DEL			;; delete-backward-char
+ ESC			;; ESC-prefix
+ M-s h f		;; hi-lock-find-patterns 	       Searches for Hi-Lock patterns in the buffer to use.
+ M-s h l		;; highlight-lines-matching-regexp     Highlights all lines matching a regular expression
+ M-s h p		;; highlight-phrase 	               Highlights everything matching a phrase
+ M-s h r		;; highlight-regexp 	               Highlights everything matching a regular expression
+ M-s h u		;; unhighlight-regexp 	               Deletes the highlighter under point
+ M-s h w		;; hi-lock-write-interactive-patterns Inserts a list of Hi-Lock patterns into the buffer
+ RET			;; newline
+ w			;; self-insert-command
+#+BEGIN_SRC emacs-lisp
 (global-set-key "\C-c<"		'selective-display-level-decr)
 (global-set-key "\C-c>"		'selective-display-level-incr)
 (global-set-key "\C-cb"		'ediff-buffers)
@@ -1088,10 +1091,11 @@ example
 #+END_SRC
 ;custom-set-variables and custom set faces in ~/.emacs.d/init.el
 
-#+STARTUP: fold
-
 * Switch to Messages
 #+BEGIN_SRC emacs-lisp
 (message "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAARGH")
 (switch-to-buffer "*Messages*")
 #+END_SRC
+
+#+STARTUP: fold
+
