@@ -7,8 +7,7 @@ increase/decrease font C-cC-+/-
 
 * Packages
 #+BEGIN_SRC emacs-lisp
-(setq load-path (append load-path '("/home/kleyn/ulib/emacs")))             ;; (insert (format "%s" load-path))
-(setq load-path (append load-path '("/home/kleyn/ulib/emacs/dired-hacks"))) ;; for subtree (insert (format "%s" load-path))
+(defun ke()           (interactive) (kill-emacs))
 (require 'uniquify)
 (require 'org)
 (require 'cl)              ; for transpose
@@ -19,6 +18,7 @@ increase/decrease font C-cC-+/-
 (load-library "dired-subtree")
 #+END_SRC
 * Function Definitions
+
 #+BEGIN_SRC emacs-lisp
 ;;----------------------------------------------------- Misc
 (defun instimestamp ()   (interactive) (insert (format-time-string "%Y%m%d_%H:%M:%S")))
@@ -347,27 +347,25 @@ BEG and END (region to sort)."
 ;;              package-list-packages
 ;; C-j          eval in scratch buffer ?
 ;; C-x RTN f unix RTN  dos2unix
-
 ;; C-u C-space or C-u C-@ move back to previous positions (within buffer)
 ;; C-x C-space or C-x C-@ move back to previous positions (between buffers)
 ;; C-x n n; C-x n w                            Narrow to Region; Widen
 ;; C-;                                         Highlight item for MULTIPLE edit
-
-;;C-a			;; move-beginning-of-line
-;;C-s			;; isearch-forward
-;;/			    ;; self-insert-command
-;;C-b			;; backward-char
-;;C-s			;; isearch-forward
-;;:			    ;; self-insert-command
-;;C-x C-x		; exchange-point-and-mark
-;;ESC			;; ESC-prefix
-;;w			    ;; self-insert-command
-;;C-x C-f		;; find-file
-;;C-a			;; move-beginning-of-line
-;;C-y			;; yank
-;;C-k			;; kill-line
-;;DEL			;; delete-backward-char
-;;RET			;; newline
+;; C-a			;; move-beginning-of-line
+;; C-s			;; isearch-forward
+;; /			;; self-insert-command
+;; C-b			;; backward-char
+;; C-s			;; isearch-forward
+;; :			;; self-insert-command
+;; C-x C-x		; exchange-point-and-mark
+;; ESC			;; ESC-prefix
+;; w			;; self-insert-command
+;; C-x C-f		;; find-file
+;; C-a			;; move-beginning-of-line
+;; C-y			;; yank
+;; C-k			;; kill-line
+;; DEL			;; delete-backward-char
+;; RET			;; newline
 
 #+END_SRC
 
@@ -492,20 +490,16 @@ BEG and END (region to sort)."
 * Modes Section
 #+BEGIN_SRC emacs-lisp
 ;;------------------------------------------------------------- Magit
-(add-to-list 'magit-section-initial-visibility-alist '(stashes . hide))
+;;(add-to-list 'magit-section-initial-visibility-alist '(stashes . hide))
 
 ;; ;; ----------------------------------------------------------- DOS Mode
-;; ;;(autoload 'dos-mode "/home/uri03204/myDocs/ulib/emacs/dos.elc" "Enter DOS CMD mode." t)
+;;(autoload 'dos-mode "/home/uri03204/myDocs/ulib/emacs/dos.elc" "Enter DOS CMD mode." t)
 
-
-
-;; ----------------------------------------------------------- Java Mode
-;; ; 'tbd add hs-minor-mode for hide/show t
-;; ;TDB (add-hook  'java-mode-hook 'my-java-mode-hook t)
+;; TBD add hs-minor-mode for hide/show t
+;; TDB (add-hook  'java-mode-hook 'my-java-mode-hook t)
 ;; ;(defun my-java-mode-hook ()
 ;; ;  (hs-minor-mode)
 ;; ;  (setq indent-tabs-mode nil))
-
 
 ;; ------------------------------------------------------ Org-Mode
 (defalias 'make-org-tbl  (kbd "ESC x org-mode RET ESC < C-SPC ESC > C-c |"))
@@ -514,7 +508,6 @@ BEG and END (region to sort)."
 (setq org-startup-folded nil)
 ;;(defalias 'see-logbooks  (kbd "C-x C-f ~/myDocs/logbook RET"))
 (defun org-collapse()     (interactive) (org-shifttab 0))
-
 (defun org-transpose-table-at-point ()
   "Transpose orgmode table at point, eliminate hlines."
   (interactive)
@@ -574,7 +567,6 @@ BEG and END (region to sort)."
 			(setq python-indent 4)))
 
 (message "dotEmacs.org first section done")
-
 #+END_SRC
 
 ** Unused
@@ -656,7 +648,6 @@ BEG and END (region to sort)."
 #+END_SRC
 
 * Dired Mode
-
 #+BEGIN_SRC emacs-lisp 
 ;(define-key dired-mode-map "r" 'wdired-change-to-wdired-mode)
 ;;(defun w32-browser (doc) (w32-shell-execute 1 doc))
@@ -746,7 +737,7 @@ BEG and END (region to sort)."
 #+END_SRC
 
 * Markup Languages
-#+BEGIN_SRC emacs-lisp-not
+#+BEGIN_SRC emacs-lisp
 ;;------------------------------------------------------------------------------ XML
 ;;{{{ XML
 
@@ -928,7 +919,7 @@ BEG and END (region to sort)."
 (global-set-key [S-up]          'scroll-one-line-down)
 
 
-(global-set-key [end]           'kill-this-buffer-volatile)
+(global-set-key [kp-subtract]      'kill-this-buffer-volatile)
 (global-set-key [f10]           'see-shell-output) ;ergoemacs-open-in-external-app
 (global-set-key [f11]           'hs-show-block)
 (global-set-key [f12]           'hs-hide-block)
@@ -942,11 +933,11 @@ BEG and END (region to sort)."
 ;(global-set-key [f8]            'ztree-dir)
 (global-set-key [f9]		'ielm)  ;; open file under cursor
 (global-set-key [kp-divide]     'toggle-window-split)
-(global-unset-key "\C-x\C-c")                            ;; ;;; don't quit so easily
 
+(global-unset-key "\C-x\C-c")                            ;; ;;; don't quit so easily
+(global-set-key "\C-x\C-c\C-v"  'save-buffers-kill-emacs) ;; But we establish a longer sequence that is harder to hit by accident:
 (message "dotEmacs.org keybindings section done")
 #+END_SRC
-;(global-set-key "\C-x\C-c\C-v"  'save-buffers-kill-emacs) ;; But we establish a longer sequence that is harder to hit by accident:
 
 ;(define-key global-map "\C-co" 'org-capture)
 ;(global-set-key "\C-!"         'shell-command) TBD
@@ -957,8 +948,8 @@ BEG and END (region to sort)."
 ;(global-unset-key (kbd "C-q"))
 ;(global-set-key [S-M-kp-down] 'sgml-fold-subelement) ;; ; M-kp ... conflicts with workspace navigation:
 ;(global-set-key [S-M-kp-end]  'sgml-fold-element)   ;  fold everything below current element
-;; (global-set-key [S-M-kp-next] 'sgml-unfold-element)
-;;(global-set-key [M-return]		'ffap)  ;; open file under cursor
+;(global-set-key [S-M-kp-next] 'sgml-unfold-element)
+;(global-set-key [M-return]		'ffap)  ;; open file under cursor
 
 * ESHELL
 #+BEGIN_SRC emacs-lisp
@@ -1085,28 +1076,22 @@ example
                                                                                                                         
   (defalias 'eshell/more 'eshell/less)
 
-* End bit
+* END BIT
 #+BEGIN_SRC emacs-lisp
-;;-------------------------------------------------------------------------------
 ;(dired "/home/kleyn" nil)
 ;(desktop-change-dir "/home/uri03204/myDocs/config")
-
 (put 'narrow-to-region 'disabled nil)
-
+;;(server-start)
+(setq dired-omit-files "^\\..*$")
+(message "dotEmacs.org done")
+(switch-to-buffer "*Messages*")
 #+END_SRC
 ;custom-set-variables and custom set faces in ~/.emacs.d/init.el
-; font like this?
-;(set-default-font "Monaco 14")
-
-* END
-#+BEGIN_SRC emacs-lisp
-;;(server-start)
-(message "dotEmacs.org done")
-(setq dired-omit-files "^\\..*$")
-(switch-to-buffer "*Messages*")
-(set-background-color "midnightblue")
-#+END_SRC
 
 #+STARTUP: fold
 
-
+* Switch to Messages
+#+BEGIN_SRC emacs-lisp
+(message "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAARGH")
+(switch-to-buffer "*Messages*")
+#+END_SRC
