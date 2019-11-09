@@ -15,6 +15,299 @@ increase/decrease font C-cC-+/-
 (require 'regexp-opt)
 (require 'em-alias)        ; for eshell 
 #+END_SRC
+* Function Definitions
+#+BEGIN_SRC emacs-lisp
+;;----------------------------------------------------- Misc
+(defun instimestamp ()   (interactive) (insert (format-time-string "%Y%m%d_%H:%M:%S")))
+(defun indent-to-col ()  (interactive) (indent-to-column 110))
+
+;; ---------------------------------------------------- Scroll One Line At a time
+(defun scroll-one-line-up (&optional arg)
+  "Scroll the selected window up (forward in the text) one line (or N lines)."
+  (interactive "p")
+  (scroll-up (or arg 1)))
+(defun scroll-one-line-down (&optional arg)
+  "Scroll the selected window down (backward in the text) one line (or N)."
+  (interactive "p")
+  (scroll-down (or arg 1)))
+
+;; ---------------------------------------------------- Window Sizing
+(defun window-hwiden (&optional arg)
+  "Widen window"
+  (interactive "p")
+  (enlarge-window-horizontally 10))
+(defun window-hshrink (&optional arg)
+  "Shrink window"
+  (interactive "p")
+  (shrink-window-horizontally 10))
+
+;;  --------------------------------------------------- Buffer List Menu
+(defun my-list-buffers (&optional files-only)
+  "Display a list of existing buffers with file only"
+  (interactive "P")
+  (switch-to-buffer (list-buffers-noselect t)))
+(setq Buffer-menu-name-width 40)
+
+;; ---------------------------------------------------- Eval
+(defun eval-and-insert ()
+  "Eval expression and insert value after the expression"
+  (interactive)
+  (eval-last-sexp 0)
+    (eval-print-last-sexp 0))
+;;  (insert (format "%s" load-path) )
+;; Normally, this function truncates long output according to the value
+;; of the variables `eval-expression-print-length' and
+;; `eval-expression-print-level'.  With a prefix argument of zero,
+;; however, there is no such truncation.  Such a prefix argument
+;; lso causes integers to be printed in several additional formats
+;; (octal, hexadecimal, and character).
+
+;; ----------------------------------------------- transpose windows [kp-divide]
+(defun toggle-window-split ()
+  (interactive)
+  (if (= (count-windows) 2)
+      (let* ((this-win-buffer (window-buffer))
+	     (next-win-buffer (window-buffer (next-window)))
+	     (this-win-edges (window-edges (selected-window)))
+	     (next-win-edges (window-edges (next-window)))
+	     (this-win-2nd (not (and (<= (car this-win-edges)
+					 (car next-win-edges))
+				     (<= (cadr this-win-edges)
+					 (cadr next-win-edges)))))
+	     (splitter
+	      (if (= (car this-win-edges)
+		     (car (window-edges (next-window))))
+		  'split-window-horizontally
+		'split-window-vertically)))
+	(delete-other-windows)
+	(let ((first-win (selected-window)))
+	  (funcall splitter)
+	  (if this-win-2nd (other-window 1))
+	  (set-window-buffer (selected-window) this-win-buffer)
+	  (set-window-buffer (next-window) next-win-buffer)
+	  (select-window first-win)
+	  (if this-win-2nd (other-window 1))))))
+
+;;------------------------------------------------ Buffer menu
+(defun buffer-menu-sort-by-filename (&optional arg)
+  (interactive "P")
+  (Buffer-menu-sort 6))
+
+;;------------------------------------------------ Kill buffer unconditionally
+(defun kill-this-buffer-volatile ()
+    "Kill current buffer, even if it has been modified."
+    (interactive)
+    (set-buffer-modified-p nil)
+    (kill-this-buffer))
+
+;;------------------------------------------------ Shell
+(defun shell-command-on-buffer (command)
+  (interactive "sShell command on buffer: ")
+  (shell-command-on-region (point-min) (point-max) command t))
+
+
+;;----------------------------------------------- Line Spacing
+(defun toggle-line-spacing ()
+  "Toggle line spacing between no extra space to extra half line height."
+  (interactive)
+  (if (eq line-spacing nil)
+      (setq-default line-spacing 0.05)	; add 0.5 height between lines
+    (setq-default line-spacing nil)))	; no extra heigh between lines
+
+;;----------------------------------------------  unjustify
+(defun unjustify-paragraph ()
+  (interactive)
+  (let ((fill-column (point-max)))
+    (fill-paragraph nil)))
+
+;;--------------------------------------------  Enhanced Line Editing
+(defun ed-copy-line (arg)
+  "Copy lines to the kill ring"
+  (interactive "p")
+  (kill-ring-save (line-beginning-position)
+                  (line-beginning-position (+ 1 arg)))
+  (message "%d line%s copied" arg (if (= 1 arg) "" "s")))
+
+(defun ed-dup-line ()
+  "Duplicate line under cursor"
+  (interactive)
+  (let ((start-column (current-column)))
+    (save-excursion                     ;save-excursion restores mark
+      (forward-line -1)
+      (ed-copy-line 1)
+      (forward-line 1)
+      (move-to-column 0)
+      (yank))
+    (move-to-column start-column))
+  (message "line is dup'ed"))
+
+;;---- option1 proto swap
+(defun proto-swap (a b)
+  (save-excursion
+    (goto-char (point-min))
+    (let ((re (regexp-opt (list a b))))
+      (while (re-search-forward re nil t nil)
+        (goto-char (match-beginning 0))
+        ; (message (format "match %d" (point)))
+        (when (looking-at (regexp-opt (list a)))
+          ; (message "match a")
+          (replace-match b))
+        (when (looking-at (regexp-opt (list b)))
+          ; (message "match b")
+          (replace-match a))
+        (goto-char (match-end 0))))))
+(with-current-buffer (current-buffer)  (proto-swap "bar" "foo"))
+
+;;---- option2 parallel swap
+(defun parallel-swap (plist &optional start end)
+  (interactive
+   `(,(loop with input = (read-from-minibuffer "Swap: ")
+            with limit = (length input)
+            for (item . index) = (read-from-string input 0)
+                            then (read-from-string input index)
+            collect (prin1-to-string item t) until (<= limit index))
+     ,@(if (use-region-p) `(,(region-beginning) ,(region-end)))))
+  (let* ((alist (list (cons (car plist) (cadr plist)) (cons (cadr plist) (car plist))))
+       ;;(alist (loop for (key val . tail) on plist by #'cddr collect (cons key val)))
+         (matcher (regexp-opt (mapcar #'car alist) 'words)))
+    (save-excursion
+      (goto-char (or start (point)))
+      (while (re-search-forward matcher (or end (point-max)) t)
+        (replace-match (cdr (assoc-string (match-string 0) alist)))))))
+
+(defun uniq-lines (beg end)
+  "Unique lines in region.
+Called from a program, there are two arguments:
+BEG and END (region to sort)."
+  (interactive "r")
+  (save-excursion
+    (save-restriction
+      (narrow-to-region beg end)
+      (goto-char (point-min))
+      (while (not (eobp))
+        (kill-line 1)
+        (yank)
+        (let ((next-line (point)))
+          (while
+              (re-search-forward
+               (format "^%s" (regexp-quote (car kill-ring))) nil t)
+            (replace-match "" nil nil))
+          (goto-char next-line))))))
+;(w32-shell-execute "open" )
+
+;;----------------------------------------------------- quotify list of items
+(defun lines-to-cslist (start end &optional arg)
+  (interactive "r\nP")
+  (let ((insertion
+         (mapconcat
+          (lambda (x) (format "'%s'" x))
+          (split-string (buffer-substring start end)) ", ")))
+    (delete-region start end)
+    (insert insertion)
+    (when arg (forward-char (length insertion)))))
+
+;;---------------------------------------------------------- Open With
+(defalias 'my-open-file  (kbd "C-a C-s / C-b C-s : C-x C-x ESC w C-x C-f C-a C-y DEL C-k RET")
+(add-hook 'find-file-hook  ;; ensure file in production can't be modified via emacs
+  '(lambda ()
+     (when (string= (substring (buffer-file-name) 0 4) "/dls")
+       (message "Toggle to read-only for existing file")
+	   ; (read-only-mode ?)
+       (toggle-read-only 1)))))
+
+;;This isn't nearly as drastic as what you're looking for, but it is possible to customize how Emacs calls ls in dired-mode.
+;;M-x customize-variable RET dired-listing-switches RET
+;; I used it to omit the group ID of files with the -o option, saving some horizontal screen real estate.
+
+(defun ergoemacs-open-in-external-app ()
+  "Open the current file or dired marked files in external app."
+  (interactive)
+  (let (doIt (myFileList
+	      (cond
+	       ((string-equal major-mode "dired-mode") (dired-get-marked-files))
+	       (t (list (buffer-file-name))) ) ) )
+    (setq doIt (if (<= (length myFileList) 5)
+                   t
+                 (y-or-n-p "Open more than 5 files?") ) )
+    (when doIt
+      (cond
+       ((string-equal system-type "window-nt")
+        (mapc (lambda (fPath) (w32-shell-execute "open" (replace-regexp-in-string "/" "\\" fPath t t)) ) myFileList))
+
+       ((string-equal system-type "cygwin")
+        (mapc (lambda (fPath) (message (concat "cygstart.exe " fPath))) myFileList)
+        (mapc (lambda (fPath) (shell-command (concat "cygstart.exe " fPath))) myFileList))
+
+       ((string-equal system-type "darwin")
+        (mapc (lambda (fPath) (shell-command (format "open \"%s\"" fPath)) )  myFileList))
+
+       ((string-equal system-type "gnu/linux")
+        (mapc (lambda (fPath) (let ((process-connection-type nil)) (start-process "" nil "xdg-open" fPath)) ) myFileList))
+       )
+      )
+    )
+)
+
+;; ------------------------------------------------------------- Selective Display
+(setq selective-display-lev 0)
+(defun selective-display-level-incr (&optional arg)
+	(interactive "P")
+	(setq selective-display-lev (+ selective-display-lev 2))
+	(set-selective-display selective-display-lev))
+(defun selective-display-level-decr (&optional arg)
+	(interactive "P")
+	(setq selective-display-lev (- selective-display-lev 2))
+	(set-selective-display selective-display-lev))
+(defun selective-display-level-zero (&optional arg)
+	(interactive "P")
+	(setq selective-display-lev 0)
+	(set-selective-display selective-display-lev))
+
+(message "dotEmacs.org section Handy Funs  done")
+#+END_SRC
+
+-------------------------------------------------- parallel cursor editing
+(defun parallel-replace-read-plist (input)
+  (loop with limit = (length input)
+        for (item . index) = (read-from-string input 0)
+        then (read-from-string input index)
+        collect (prin1-to-string item t) until (<= limit index)))
+
+(defun parallel-replace (plist &optional start end)
+  (interactive
+   (cons
+    (parallel-replace-read-plist (read-from-minibuffer "Replace: "))
+    (when (use-region-p)
+      (list (region-beginning) (region-end)))))
+  (let* ((alist (loop for (key val . tail) on plist by #'cddr
+                      collect (cons key val)))
+         (matcher (regexp-opt (mapcar #'car alist) 'words)))
+    (save-excursion
+      (goto-char (or start (point)))
+      (while (re-search-forward matcher (or end (point-max)) t)
+        (replace-match (cdr (assoc-string (match-string 0) alist)))))))
+
+(defvar parallel-replace-alist nil)
+
+(defun parallel-query-replace (plist &optional start end)
+  (interactive
+   (cons
+    (parallel-replace-read-plist (read-from-minibuffer "Replace: "))
+    (when (use-region-p)
+      (list (region-beginning) (region-end)))))
+  (let* (matcher)
+    (set (make-local-variable 'parallel-replace-alist)
+         (loop for (key val . tail) on plist by #'cddr
+               collect (cons key val)))
+    (setq matcher (regexp-optp (mapcar #'car parallel-replace-alist) 'words))
+    (query-replace-regexp matcher
+                          '(replace-eval-replacement
+                            replace-quote
+                            (cdr (assoc-string (match-string 0) parallel-replace-alist case-fold-search)))
+                          nil
+                          start
+                          end)))
+
 * Preamble
 #+BEGIN_SRC emacs-lisp
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -32,7 +325,6 @@ increase/decrease font C-cC-+/-
 ;; C-x C-v = find alternate file   -> then grab filepath
 (setq header-line-format mode-line-format)
 (setq uniquify-buffer-name-style 'forward)
-(require 'uniquify)
 ;; proced       to view processes
 ;; find-dired   calls unix find
 ;; tail-mode    auto-revert-tail-mode (C-cr)
@@ -104,6 +396,9 @@ increase/decrease font C-cC-+/-
 (show-paren-mode 1)
 (tool-bar-mode -1)
 (transient-mark-mode t)
+(global-set-key (kbd "C-x C-b") 'my-list-buffers)
+;; (global-set-key [remap eval-expression] 'pp-eval-expression)
+
 ;(global-mark-ring-max 50)
 ;(global-set-key "\C-." 'pop-global-mark)
 ;(global-set-key [M-SPC] 'pop-global-mark)
@@ -182,32 +477,14 @@ increase/decrease font C-cC-+/-
 (autoload 'cycle-buffer-backward-permissive "cycle-buffer" "Cycle backward allowing *buffers*." t)
 (autoload 'cycle-buffer-toggle-interesting "cycle-buffer" "Toggle if this buffer will be considered." t)
 
-;; --------------------------------------------- Custom Variables
+;; --------------------------------------------- Custom Variables go in ~/emacs.d/init.el
 (setq default-truncate-lines t)
-(setq tab-width 4)
-;;(setq tab-width 2)
+(setq tab-width 4)  ;;(setq tab-width 2)
 (setq-default x-stretch-cursor t)
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(blink-cursor-mode nil)
- '(display-time-mode t)
- '(matlab-auto-fill nil)
- '(matlab-fill-code nil)
- '(show-paren-mode t)
- '(tool-bar-mode nil))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(default ((t (:family "Courier New" :foundry "outline" :slant normal :weight normal :height 120 :width normal)))))
 
 #+END_SRC
 
-* First Section
+* Modes Section
 #+BEGIN_SRC emacs-lisp
 
 ;; ;;------------------------------------------------------------- Matlab Mode
@@ -370,7 +647,7 @@ increase/decrease font C-cC-+/-
 (message "dotEmacs.org section Modes Assoc List done")
 #+END_SRC
 
-* Dired Stuff
+* Dired Mode
 
 #+BEGIN_SRC emacs-lisp 
 ;(define-key dired-mode-map "r" 'wdired-change-to-wdired-mode)
@@ -461,307 +738,6 @@ increase/decrease font C-cC-+/-
 
 
 (message "dotEmacs.org section Dired done")
-#+END_SRC
-
-* Handy Funs
-#+BEGIN_SRC emacs-lisp
-;;----------------------------------------------------- Misc
-(defun instimestamp ()
-   (interactive)
-   (insert (format-time-string "%Y%m%d_%H:%M:%S")))
-(defun indent-to-col ()
-   (interactive)
-   (indent-to-column 110))
-
-;; ---------------------------------------------------- Scroll One Line At a time
-(defun scroll-one-line-up (&optional arg)
-  "Scroll the selected window up (forward in the text) one line (or N lines)."
-  (interactive "p")
-  (scroll-up (or arg 1)))
-(defun scroll-one-line-down (&optional arg)
-  "Scroll the selected window down (backward in the text) one line (or N)."
-  (interactive "p")
-  (scroll-down (or arg 1)))
-
-;; ---------------------------------------------------- Window Sizing
-(defun window-hwiden (&optional arg)
-  "Widen window"
-  (interactive "p")
-  (enlarge-window-horizontally 10))
-(defun window-hshrink (&optional arg)
-  "Shrink window"
-  (interactive "p")
-  (shrink-window-horizontally 10))
-
-;;  --------------------------------------------------- Buffer List Menu
-(global-set-key (kbd "C-x C-b") 'my-list-buffers)
-(defun my-list-buffers (&optional files-only)
-  "Display a list of existing buffers with file only"
-  (interactive "P")
-  (switch-to-buffer (list-buffers-noselect t)))
-(setq Buffer-menu-name-width 40)
-
-;; ---------------------------------------------------- Eval
-;; (global-set-key [remap eval-expression] 'pp-eval-expression)
-(defun eval-and-insert ()
-  "Eval expression and insert value after the expression"
-  (interactive)
-  (eval-last-sexp 0)
-    (eval-print-last-sexp 0))
-;;  (insert (format "%s" load-path) )
-;; Normally, this function truncates long output according to the value
-;; of the variables `eval-expression-print-length' and
-;; `eval-expression-print-level'.  With a prefix argument of zero,
-;; however, there is no such truncation.  Such a prefix argument
-;; lso causes integers to be printed in several additional formats
-;; (octal, hexadecimal, and character).
-
-
-;; ----------------------------------------------- transpose windows [kp-divide]
-(defun toggle-window-split ()
-  (interactive)
-  (if (= (count-windows) 2)
-      (let* ((this-win-buffer (window-buffer))
-	     (next-win-buffer (window-buffer (next-window)))
-	     (this-win-edges (window-edges (selected-window)))
-	     (next-win-edges (window-edges (next-window)))
-	     (this-win-2nd (not (and (<= (car this-win-edges)
-					 (car next-win-edges))
-				     (<= (cadr this-win-edges)
-					 (cadr next-win-edges)))))
-	     (splitter
-	      (if (= (car this-win-edges)
-		     (car (window-edges (next-window))))
-		  'split-window-horizontally
-		'split-window-vertically)))
-	(delete-other-windows)
-	(let ((first-win (selected-window)))
-	  (funcall splitter)
-	  (if this-win-2nd (other-window 1))
-	  (set-window-buffer (selected-window) this-win-buffer)
-	  (set-window-buffer (next-window) next-win-buffer)
-	  (select-window first-win)
-	  (if this-win-2nd (other-window 1))))))
-
-;;------------------------------------------------ Buffer menu
-(defun buffer-menu-sort-by-filename (&optional arg)
-  (interactive "P")
-  (Buffer-menu-sort 6))
-
-;;------------------------------------------------ Kill buffer unconditionally
-(defun kill-this-buffer-volatile ()
-    "Kill current buffer, even if it has been modified."
-    (interactive)
-    (set-buffer-modified-p nil)
-    (kill-this-buffer))
-
-;;------------------------------------------------ Shell
-(defun shell-command-on-buffer (command)
-  (interactive "sShell command on buffer: ")
-  (shell-command-on-region (point-min) (point-max) command t))
-
-
-;;----------------------------------------------- Line Spacing
-(defun toggle-line-spacing ()
-  "Toggle line spacing between no extra space to extra half line height."
-  (interactive)
-  (if (eq line-spacing nil)
-      (setq-default line-spacing 0.05)	; add 0.5 height between lines
-    (setq-default line-spacing nil)))	; no extra heigh between lines
-
-;;----------------------------------------------  unjustify
-(defun unjustify-paragraph ()
-  (interactive)
-  (let ((fill-column (point-max)))
-    (fill-paragraph nil)))
-
-;;--------------------------------------------  Enhanced Line Editing
-(defun ed-copy-line (arg)
-  "Copy lines to the kill ring"
-  (interactive "p")
-  (kill-ring-save (line-beginning-position)
-                  (line-beginning-position (+ 1 arg)))
-  (message "%d line%s copied" arg (if (= 1 arg) "" "s")))
-
-(defun ed-dup-line ()
-  "Duplicate line under cursor"
-  (interactive)
-  (let ((start-column (current-column)))
-    (save-excursion                     ;save-excursion restores mark
-      (forward-line -1)
-      (ed-copy-line 1)
-      (forward-line 1)
-      (move-to-column 0)
-      (yank))
-    (move-to-column start-column))
-  (message "line is dup'ed"))
-
-;;---- option1 proto swap
-(require 'regexp-opt)
-(defun proto-swap (a b)
-  (save-excursion
-    (goto-char (point-min))
-    (let ((re (regexp-opt (list a b))))
-      (while (re-search-forward re nil t nil)
-        (goto-char (match-beginning 0))
-        ; (message (format "match %d" (point)))
-        (when (looking-at (regexp-opt (list a)))
-          ; (message "match a")
-          (replace-match b))
-        (when (looking-at (regexp-opt (list b)))
-          ; (message "match b")
-          (replace-match a))
-        (goto-char (match-end 0))))))
-(with-current-buffer (current-buffer)  (proto-swap "bar" "foo"))
-
-;;---- option2 parallel swap
-(require 'cl)
-(defun parallel-swap (plist &optional start end)
-  (interactive
-   `(,(loop with input = (read-from-minibuffer "Swap: ")
-            with limit = (length input)
-            for (item . index) = (read-from-string input 0)
-                            then (read-from-string input index)
-            collect (prin1-to-string item t) until (<= limit index))
-     ,@(if (use-region-p) `(,(region-beginning) ,(region-end)))))
-  (let* ((alist (list (cons (car plist) (cadr plist)) (cons (cadr plist) (car plist))))
-       ;;(alist (loop for (key val . tail) on plist by #'cddr collect (cons key val)))
-         (matcher (regexp-opt (mapcar #'car alist) 'words)))
-    (save-excursion
-      (goto-char (or start (point)))
-      (while (re-search-forward matcher (or end (point-max)) t)
-        (replace-match (cdr (assoc-string (match-string 0) alist)))))))
-
-;;-------------------------------------------------- parallel cursor editing
-;; (defun parallel-replace-read-plist (input)
-;;   (loop with limit = (length input)
-;;         for (item . index) = (read-from-string input 0)
-;;         then (read-from-string input index)
-;;         collect (prin1-to-string item t) until (<= limit index)))
-
-;; (defun parallel-replace (plist &optional start end)
-;;   (interactive
-;;    (cons
-;;     (parallel-replace-read-plist (read-from-minibuffer "Replace: "))
-;;     (when (use-region-p)
-;;       (list (region-beginning) (region-end)))))
-;;   (let* ((alist (loop for (key val . tail) on plist by #'cddr
-;;                       collect (cons key val)))
-;;          (matcher (regexp-opt (mapcar #'car alist) 'words)))
-;;     (save-excursion
-;;       (goto-char (or start (point)))
-;;       (while (re-search-forward matcher (or end (point-max)) t)
-;;         (replace-match (cdr (assoc-string (match-string 0) alist)))))))
-
-;; (defvar parallel-replace-alist nil)
-
-;; (defun parallel-query-replace (plist &optional start end)
-;;   (interactive
-;;    (cons
-;;     (parallel-replace-read-plist (read-from-minibuffer "Replace: "))
-;;     (when (use-region-p)
-;;       (list (region-beginning) (region-end)))))
-;;   (let* (matcher)
-;;     (set (make-local-variable 'parallel-replace-alist)
-;;          (loop for (key val . tail) on plist by #'cddr
-;;                collect (cons key val)))
-;;     (setq matcher (regexp-optp (mapcar #'car parallel-replace-alist) 'words))
-;;     (query-replace-regexp matcher
-;;                           '(replace-eval-replacement
-;;                             replace-quote
-;;                             (cdr (assoc-string (match-string 0) parallel-replace-alist case-fold-search)))
-;;                           nil
-;;                           start
-;;                           end)))
-(defun uniq-lines (beg end)
-  "Unique lines in region.
-Called from a program, there are two arguments:
-BEG and END (region to sort)."
-  (interactive "r")
-  (save-excursion
-    (save-restriction
-      (narrow-to-region beg end)
-      (goto-char (point-min))
-      (while (not (eobp))
-        (kill-line 1)
-        (yank)
-        (let ((next-line (point)))
-          (while
-              (re-search-forward
-               (format "^%s" (regexp-quote (car kill-ring))) nil t)
-            (replace-match "" nil nil))
-          (goto-char next-line))))))
-;(w32-shell-execute "open" )
-
-;;----------------------------------------------------- quotify list of items
-(defun lines-to-cslist (start end &optional arg)
-  (interactive "r\nP")
-  (let ((insertion
-         (mapconcat
-          (lambda (x) (format "'%s'" x))
-          (split-string (buffer-substring start end)) ", ")))
-    (delete-region start end)
-    (insert insertion)
-    (when arg (forward-char (length insertion)))))
-
-;;---------------------------------------------------------- Open With
-(defalias 'my-open-file  (kbd "C-a C-s / C-b C-s : C-x C-x ESC w C-x C-f C-a C-y DEL C-k RET")
-(add-hook 'find-file-hook  ;; ensure file in production can't be modified via emacs
-  '(lambda ()
-     (when (string= (substring (buffer-file-name) 0 4) "/dls")
-       (message "Toggle to read-only for existing file")
-	   ; (read-only-mode ?)
-       (toggle-read-only 1)))))
-
-;;This isn't nearly as drastic as what you're looking for, but it is possible to customize how Emacs calls ls in dired-mode.
-;;M-x customize-variable RET dired-listing-switches RET
-;; I used it to omit the group ID of files with the -o option, saving some horizontal screen real estate.
-
-(defun ergoemacs-open-in-external-app ()
-  "Open the current file or dired marked files in external app."
-  (interactive)
-  (let (doIt (myFileList
-	      (cond
-	       ((string-equal major-mode "dired-mode") (dired-get-marked-files))
-	       (t (list (buffer-file-name))) ) ) )
-    (setq doIt (if (<= (length myFileList) 5)
-                   t
-                 (y-or-n-p "Open more than 5 files?") ) )
-    (when doIt
-      (cond
-       ((string-equal system-type "window-nt")
-        (mapc (lambda (fPath) (w32-shell-execute "open" (replace-regexp-in-string "/" "\\" fPath t t)) ) myFileList))
-
-       ((string-equal system-type "cygwin")
-        (mapc (lambda (fPath) (message (concat "cygstart.exe " fPath))) myFileList)
-        (mapc (lambda (fPath) (shell-command (concat "cygstart.exe " fPath))) myFileList))
-
-       ((string-equal system-type "darwin")
-        (mapc (lambda (fPath) (shell-command (format "open \"%s\"" fPath)) )  myFileList))
-
-       ((string-equal system-type "gnu/linux")
-        (mapc (lambda (fPath) (let ((process-connection-type nil)) (start-process "" nil "xdg-open" fPath)) ) myFileList))
-       )
-      )
-    )
-)
-
-;; ------------------------------------------------------------- Selective Display
-(setq selective-display-lev 0)
-(defun selective-display-level-incr (&optional arg)
-	(interactive "P")
-	(setq selective-display-lev (+ selective-display-lev 2))
-	(set-selective-display selective-display-lev))
-(defun selective-display-level-decr (&optional arg)
-	(interactive "P")
-	(setq selective-display-lev (- selective-display-lev 2))
-	(set-selective-display selective-display-lev))
-(defun selective-display-level-zero (&optional arg)
-	(interactive "P")
-	(setq selective-display-lev 0)
-	(set-selective-display selective-display-lev))
-
-(message "dotEmacs.org section Handy Funs  done")
 #+END_SRC
 
 * Markup Languages
@@ -995,9 +971,10 @@ BEG and END (region to sort)."
 (add-to-list 'eshell-command-aliases-list (list "gitcm""git commit -m"))
 (add-to-list 'eshell-command-aliases-list (list "gr"    "grep"))
 (add-to-list 'eshell-command-aliases-list (list "gi"    "grep -i"))
-
-
+(add-to-list 'eshell-command-aliases-list (list "hs"   "history"))
+(add-to-list 'eshell-command-aliases-list (list "hg"   "history | grep $*")) 
 #+END_SRC
+
 (add-to-list 'eshell-command-aliases-list (list "hs"   "history"))
 (add-to-list 'eshell-command-aliases-list (list "hg"   "history | grep $*")) 
 (add-to-list 'eshell-command-aliases-list (list "rgrepy "python L:\\MyDocs\\ubin\\py\\rgrep.py"))
