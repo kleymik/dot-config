@@ -7,6 +7,8 @@ increase/decrease font C-cC-+/-
 
 * Packages
 #+BEGIN_SRC emacs-lisp
+(setq load-path (append load-path '("/home/kleyn/ulib/emacs")))             ;; (insert (format "%s" load-path))
+(setq load-path (append load-path '("/home/kleyn/ulib/emacs/dired-hacks"))) ;; for subtree (insert (format "%s" load-path))
 (require 'uniquify)
 (require 'org)
 (require 'cl)              ; for transpose
@@ -14,6 +16,7 @@ increase/decrease font C-cC-+/-
 (require 'wdired)
 (require 'regexp-opt)
 (require 'em-alias)        ; for eshell 
+(load-library "dired-subtree")
 #+END_SRC
 * Function Definitions
 #+BEGIN_SRC emacs-lisp
@@ -375,7 +378,6 @@ BEG and END (region to sort)."
 ;;  (if (file-directory-p "c:/cygwin/bin")      (add-to-list 'exec-path "c:/cygwin/bin"))
 ;;------------------------------------------------------------------------------- Switches
 ;(desktop-save-mode 1)  ; desktop-revert desktop-change-dir
-(setq load-path (append load-path '("/home/kleyn/ulib/emacs"))) ;; (insert (format "%s" load-path))
 
 (blink-cursor-mode 0)
 (fset 'yes-or-no-p 'y-or-n-p)
@@ -439,8 +441,11 @@ BEG and END (region to sort)."
 ;(setq desktop-auto-save-timeout 300)
 
 ;; ----------------------------------------------- Backup location
-(setq backup-directory-alist          `((".*" . , "/data/data/com.termux/files/home/internalBackup/emacs")))
-(setq auto-save-file-name-transforms  `((".*" ,   "/data/data/com.termux/files/home/internalBackup/emacs" t)))
+(setq backup-directory-alist          `((".*" . , "/data/data/com.termux/files/home/internalBackup/emacs")))   ; gem
+(setq backup-directory-alist          `((".*" . , "/home/kleyn/history/emacsBackups")))                        ; maxwell
+(setq auto-save-file-name-transforms  `((".*" ,   "/data/data/com.termux/files/home/internalBackup/emacs" t))) ; gem
+(setq auto-save-file-name-transforms  `((".*" ,   "/home/kleyn/history/emacsBackups" t)))                      ; gem
+
 
 ;; -------------------------- new stuff
 ;; ;; Save point position between sessions.
@@ -494,7 +499,7 @@ BEG and END (region to sort)."
 
 
 
-
+;; ----------------------------------------------------------- Java Mode
 ;; ; 'tbd add hs-minor-mode for hide/show t
 ;; ;TDB (add-hook  'java-mode-hook 'my-java-mode-hook t)
 ;; ;(defun my-java-mode-hook ()
@@ -683,8 +688,7 @@ BEG and END (region to sort)."
       (defalias 'dired-up (kbd "ESC < C-e C-r / NUL C-a ESC w C-x d C-a C-y C-k C-a ESC \\ C-e RET C-x b RET C-x k RET"))
       (defalias 'dired-go-subdir-kbm (kbd "f C-x b RET C-x k RET")))))
 
-;
-;Dired Listing Switches: Hide Value -ahl --time-style=long-iso
+; Dired Listing Switches: Hide Value -ahl --time-style=long-iso
 ;   State: SET for current session only.
 (defun see-logbook1()     (interactive) (find-file "/home/kleyn/logbook/Diamond.org"))
 (defun see-logbook2()     (interactive) (find-file "/home/kleyn/logbook/GDA.org"))
@@ -700,8 +704,6 @@ BEG and END (region to sort)."
    (goto-char (point-min))
    (forward-line 3))
 
-(setq load-path (append load-path '("/home/kleyn/ulib/emacs/dired-hacks"))) ;; for subtree (insert (format "%s" load-path))
-(load-library "dired-subtree")
 (setq dired-subtree-line-prefix "     ")
 
 ;; (add-hook 'dired-mode-hook
