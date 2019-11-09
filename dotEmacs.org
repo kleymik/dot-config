@@ -5,6 +5,16 @@ Emacs Initialisation
 C-c C-u go up
 increase/decrease font C-cC-+/-
 
+* Packages
+#+BEGIN_SRC emacs-lisp
+(require 'uniquify)
+(require 'org)
+(require 'cl)              ; for transpose
+(require 'dired-x)
+(require 'wdired)
+(require 'regexp-opt)
+(require 'em-alias)        ; for eshell 
+#+END_SRC
 * Preamble
 #+BEGIN_SRC emacs-lisp
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -65,7 +75,6 @@ increase/decrease font C-cC-+/-
 ;;RET			;; newline
 
 #+END_SRC
-
 
 * Settings
 #+BEGIN_SRC emacs-lisp
@@ -198,7 +207,6 @@ increase/decrease font C-cC-+/-
 
 #+END_SRC
 
-  
 * First Section
 #+BEGIN_SRC emacs-lisp
 
@@ -254,7 +262,6 @@ increase/decrease font C-cC-+/-
 
 
 ;; ------------------------------------------------------ Org-Mode
-(require 'org)
 (defalias 'make-org-tbl  (kbd "ESC x org-mode RET ESC < C-SPC ESC > C-c |"))
 (setq org-default-notes-file "~/myDocs/logbook/notes.org")
 (setq org-cycle-include-plain-lists t)
@@ -262,7 +269,6 @@ increase/decrease font C-cC-+/-
 ;;(defalias 'see-logbooks  (kbd "C-x C-f ~/myDocs/logbook RET"))
 (defun org-collapse()     (interactive) (org-shifttab 0))
 
-(require 'cl)
 (defun org-transpose-table-at-point ()
   "Transpose orgmode table at point, eliminate hlines."
   (interactive)
@@ -325,7 +331,6 @@ increase/decrease font C-cC-+/-
 
 #+END_SRC
 
-
 * Modes Assoc List
 #+BEGIN_SRC emacs-lisp
 
@@ -365,7 +370,6 @@ increase/decrease font C-cC-+/-
 (message "dotEmacs.org section Modes Assoc List done")
 #+END_SRC
 
-
 * Dired Stuff
 
 #+BEGIN_SRC emacs-lisp 
@@ -375,8 +379,6 @@ increase/decrease font C-cC-+/-
 ;;			    (lambda ()
 ;;			      (interactive)
 ;;			      (w32-browser (dired-replace-in-string "/" "\\" (dired-replace-in-string "/cygdrive/C/" "C:\\" (dired-get-filename)))))))
-(require 'dired-x)
-(require 'wdired)
 
 (add-hook 'dired-load-hook
    (lambda ()			;(load "dired-x")
@@ -461,7 +463,6 @@ increase/decrease font C-cC-+/-
 (message "dotEmacs.org section Dired done")
 #+END_SRC
 
-  
 * Handy Funs
 #+BEGIN_SRC emacs-lisp
 ;;----------------------------------------------------- Misc
@@ -763,7 +764,6 @@ BEG and END (region to sort)."
 (message "dotEmacs.org section Handy Funs  done")
 #+END_SRC
 
-
 * Markup Languages
 #+BEGIN_SRC emacs-lisp-not
 ;;------------------------------------------------------------------------------ XML
@@ -900,7 +900,6 @@ BEG and END (region to sort)."
 (message "dotEmacs.org markup languages section done")
 #+END_SRC
 
-
 * Global Key Bindings
 #+BEGIN_SRC emacs-lisp
 
@@ -980,10 +979,8 @@ BEG and END (region to sort)."
 ;; (global-set-key [S-M-kp-next] 'sgml-unfold-element)
 ;;(global-set-key [M-return]		'ffap)  ;; open file under cursor
 
-
 * ESHELL
 #+BEGIN_SRC emacs-lisp
-(require 'em-alias)
 (eshell)
 (setq eshell-command-aliases-list ())
 (add-to-list 'eshell-command-aliases-list (list "ll"   "ls -l --time-style=long-iso $*"))
@@ -1106,7 +1103,6 @@ example
                                                                                                                         
   (defalias 'eshell/more 'eshell/less)
 
-  
 * End bit
 #+BEGIN_SRC emacs-lisp
 ;;-------------------------------------------------------------------------------
@@ -1119,7 +1115,6 @@ example
 ;custom-set-variables and custom set faces in ~/.emacs.d/init.el
 ; font like this?
 ;(set-default-font "Monaco 14")
-
 
 * END
 #+BEGIN_SRC emacs-lisp
