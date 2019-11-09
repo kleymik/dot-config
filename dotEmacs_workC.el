@@ -1,31 +1,10 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;
-;;; SEE ALSO: c:/Users/kleynmi/AppData/Roaming/.emacs
-;;; see also  c:/Users/kleynmi/AppData/Roaming/.emacs
-;;; File name: ` ~/.emacs '
-;;;
-;;;
-
-;;; last ommand, command history
+;;; last command, command history
 ;;(global-set-key "\C-r" #'(lambda () (interactive)
 ;;                           (eval (car command-history))))
-
 ;; rectangle-number-lines
-
-(defun describe-last-function() 
-  (interactive) 
-  (describe-function last-command))
-
 ;;; dired copy path M-0 w
 
 (setq max-lisp-eval-depth 1200) ; 800
-;;; edif-revision
-;;; vc-ediff
-;;; indent-to-column
-;;; read-kbd-macro
-;;; (setq tab-stop-list '(60))
-;;; (server-start)
-
 ;; --- redo
 ;; repeat last         command C-x z, then z again
 ;; repeat last complex command C-x ESC ESC
@@ -39,32 +18,11 @@
 ;; If INSERT (the prefix arg) is non-nil, insert the message in the buffer.
 
 ;;--------------------------------------------------------------- Handy commands quick ref
-;; rot13-region  (C-c C-r)
-;; telnet host port     to open
-;; ^Q^] close           to close
-
 ;;
 ;; TBD dired-find-file-otherwindow open a cygwin link by inspecting it
-;;
-;;
 ;; flush-lines
 ;; C-h f describe-finction Info-goto-emacs-command-node
 ;; C-h F Info-goto-emacs-command-node
-;; REPLACE REGEXP
-;; replace unprintable ""
-;; (replace-string "" "")
-;; (replace-string "" "")
-;; (replace-string "" "")
-;; (replace-regexp "0\.999999([0-9]+)[$,]" "" nil (point-min) (point-max))
-;; (replace-regexp "[ \t]+" " ")    ; REPLACE mutli-space with single-space
-;; (replace-regexp "[ \t]+|" "_" )    % space -> _
-;; (replace-regexp "'[ \t]+'" "|" )   % space between quotes ->
-;; (goto-char (mark-marker))
-;; (replace-regexp "A" "B" nil (if (and transient-mark-mode mark-active) (region-beginning)) (if (and transient-mark-mode mark-active) (region-end)) nil)
-;; (replace-regexp "A" "B" nil (mark-marker) (point-max))
-;; (replace-regexp "(line [0-9]+)" "" nil (point-min) (point-max)) ; clear (line 62)
-;; (replace-regexp " [0-9][0-9]:[0-9][0-9]:[0-9][0-9]" "" nil (point-min) (point-max)) ; clear " HH:MM:SS" 
-;; N.B. TBD drop last ","
 ;; (goto-char (mark-marker))
 ;; (goto-char (pop-global-mark))
 ;;  beginning-of-line
@@ -89,16 +47,9 @@
   ;;(align-regexp beg end (concat "\\(\\s-*\\)" pat) 1 1 nil)
   )
 
-(defun slashFwd () (interactive) (replace-string "\\"  "/" nil (line-beginning-position) (line-end-position)))
-(defun slashBwd () (interactive) (replace-string  "/" "\\" nil (line-beginning-position) (line-end-position)))
 
 ;;(defalias 'flipslash     (kbd "C-SPC C-e C-SPC ESC < ESC w C-x b *scratch* RET C-e RET C-y C-r SPC C-f C-SPC C-r total SPC use C-x C-x C-w ESC \ 2*DEL / C-a ESC \ ESC x replace-string / RET \ RET C-a"))
 ;;
-(defun hide-ctrl-M ()
-  "Hides the disturbing '^M' showing up in files containing mixed UNIX and DOS line endings."
-  (interactive)
-  (setq buffer-display-table (make-display-table))
-  (aset buffer-display-table ?\^M []))
 ;;---------------------------------------------------------------------REVERT
 ;; revert buffer coding C-x C-m
 ;;   variable:  buffer-file-coding-system
@@ -134,43 +85,6 @@
 ;;   http:   http://SCHRODERS.COM\username:password@cfactive.london.schroders.com:8080
 ;;   https: https://SCHRODERS.COM\username:password@cfactive.london.schroders.com:8080
 
-;;-------------------------------------------------------------------- DEBUG
-;;Go to where your function is defined and type M-x edebug-defun,
-;;This will work the next time the function is called. You can check the docs[1]or just type ?.
-
-;; edebug-defun inside function definition  <- revert by re-evaluating the defun
-;; debug-on-entry
-;; (toggle-debug-on-error)
-;; toggle-debug-on-quit
-;; insert (debug)
-(defun set-debug-on()   (interactive) (setq debug-on-error t))
-(defun set-debug-off()  (interactive) (setq debug-on-error nil))
-;;(setq debug-on-error t)
-;;(setq debug-on-error t)
-;;(setq debug-on-error nil)
-
-;; S     Stop: don't execute any more of the program, but wait for more Edebug commands (edebug-stop). 
-;; <SPC> Step: stop at the next stop point encountered (edebug-step-mode).
-;; d     display stack
-;; n     Next: stop at the next stop point encountered after an expression (edebug-next-mode). Also see edebug-forward-sexp in Jumping. 
-;; t     Trace: pause (normally one second) at each Edebug stop point (edebug-trace-mode). 
-;; T     Rapid trace: update the display at each stop point, but don't actually pause (edebug-Trace-fast-mode). 
-;; g     Go: run until the next breakpoint (edebug-go-mode). See Breakpoints. 
-;; c     Continue: pause one second at each breakpoint, and then continue (edebug-continue-mode). 
-;; C     Rapid continue: move point to each breakpoint, but don't pause (edebug-Continue-fast-mode). 
-;; G     Go non-stop: ignore breakpoints (edebug-Go-nonstop-mode). You can still stop the program by typing S, or any editing command.
-;; ESC-: eval expr
-
-;; Edebug can record an execution trace, storing it in a buffer named *edebug-trace*. This is a log of function calls and returns, showing the function names and their arguments and values. To enable trace recording, set edebug-trace to a non-nil value.
-;; Making a trace buffer is not the same thing as using trace execution mode (see Edebug Execution Modes).
-;; When trace recording is enabled, each function entry and exit adds lines to the trace buffer. A function entry record consists of ‘::::{’, followed by the function name and argument values. A function exit record consists of ‘::::}’, followed by the function name and result of the function.
-;; The number of ‘:’s in an entry shows its recursion depth. You can use the braces in the trace buffer to find the matching beginning or end of function calls.
-;; You can customize trace recording for function entry and exit by redefining the functions edebug-print-trace-before and edebug-print-trace-after.
-;; — Macro: edebug-tracing string body...
-;; This macro requests additional trace information around the execution of the body forms. The argument string specifies text to put in the trace buffer, after the ‘{’ or ‘}’. All the arguments are evaluated, and edebug-tracing returns the value of the last form in body.
-;; — Function: edebug-trace format-string &rest format-args
-;; This function inserts text in the trace buffer. It computes the text with (apply 'format format-string format-args). It also appends a newline to separate entries.
-;; edebug-tracing and edebug-trace insert lines in the trace buffer whenever they are called, even if Edebug is not active. Adding text to the trace buffer also scrolls its window to show the last lines inserted.
 
 
 ;;-------------------- mouse and region
@@ -288,12 +202,6 @@
 
 ;; map-query-regexp-replace
 ;; isearch-forward-regexp
-;; M-s h l     highlight-lines-matching-regexp    Highlights all lines matching a regular expression
-;; M-s h p     highlight-phrase                    Highlights everything matching a phrase
-;; M-s h r     highlight-regexp                    Highlights everything matching a regular expression
-;; M-s h u     unhighlight-regexp                    Deletes the highlighter under point
-;; M-s h w     hi-lock-write-interactive-patterns Inserts a list of Hi-Lock patterns into the buffer
-;; M-s h f     hi-lock-find-patterns                Searches for Hi-Lock patterns in the buffer to use.
 
 ;; C-x r s r Copy region into register "r" (copy-to-register).
 ;; C-x r i r Insert text from register r (insert-register).
