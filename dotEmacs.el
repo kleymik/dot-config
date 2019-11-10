@@ -1,10 +1,5 @@
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; File name: ` ~/.emacs '
-;;--------------------------------------------------------------- Handy commands quick ref
-;; rot13-region  (C-c C-r)
-;; telnet host port     to open
-;; ^Q^] close           to close
+;(ivy-mode)
 
 ;; new 
 ;;  (xclip-mode 1) for emacs in terminal , export kill-yank
@@ -15,53 +10,6 @@
 (setq header-line-format mode-line-format)
 (setq uniquify-buffer-name-style 'forward)
 (require 'uniquify)
-;; proced       to view processes
-;; find-dired   calls unix find
-;; tail-mode    auto-revert-tail-mode (C-cr)
-;; set-buffer-file-coding-system unix <--format
-
-;; map-query-regexp-replace
-;; isearch-forward-regexp
-;; M-s h l      highlight-lines-matching-regexp    Highlights all lines matching a regular expression
-;; M-s h p      highlight-phrase                       Highlights everything matching a phrase
-;; M-s h r      highlight-regexp                       Highlights everything matching a regular expression
-;; M-s h u      unhighlight-regexp                     Deletes the highlighter under point
-;; M-s h w      hi-lock-write-interactive-patterns Inserts a list of Hi-Lock patterns into the buffer
-;; M-s h f      hi-lock-find-patterns              Searches for Hi-Lock patterns in the buffer to use.
-;; C-x r s r; C-x r i r                        Copy region into register "r" (copy-to-register).    Insert text from register r (insert-register).
-;; C-ci         indent-to-column
-;; C-x r w w; C-x r j w                        Save windows config in register "w" ; jump back (where <register> is a single character) to jump back to it.
-;;              package-list-packages
-;; C-j          eval in scratch buffer ?
-;; C-x RTN f unix RTN  dos2unix
-
-;; C-u C-space or C-u C-@ move back to previous positions (within buffer)
-;; C-x C-space or C-x C-@ move back to previous positions (between buffers)
-;; C-x n n; C-x n w                            Narrow to Region; Widen
-;; C-;                                         Highlight item for MULTIPLE edit
-
-;;C-a			;; move-beginning-of-line
-;;C-s			;; isearch-forward
-;;/			    ;; self-insert-command
-;;C-b			;; backward-char
-;;C-s			;; isearch-forward
-;;:			    ;; self-insert-command
-;;C-x C-x		; exchange-point-and-mark
-;;ESC			;; ESC-prefix
-;;w			    ;; self-insert-command
-;;C-x C-f		;; find-file
-;;C-a			;; move-beginning-of-line
-;;C-y			;; yank
-;;C-k			;; kill-line
-;;DEL			;; delete-backward-char
-;;RET			;; newline
-
-;;; ----------------------------------------------------------------------
-;(setq ediff-shell "C:/cygwin/bin/mintty.exe")
-;;  (if (file-directory-p "c:/cygwin/bin")      (add-to-list 'exec-path "c:/cygwin/bin"))
-;;------------------------------------------------------------------------------- Switches
-;(desktop-save-mode 1)  ; desktop-revert desktop-change-dir
-
 (blink-cursor-mode 0)
 (fset 'yes-or-no-p 'y-or-n-p)
 (global-hl-line-mode t)
@@ -82,6 +30,7 @@
 (show-paren-mode 1)
 (tool-bar-mode -1)
 (transient-mark-mode t)
+;(desktop-save-mode 1)  ; desktop-revert desktop-change-dir
 ;(global-mark-ring-max 50)
 ;(global-set-key "\C-." 'pop-global-mark)
 ;(global-set-key [M-SPC] 'pop-global-mark)
@@ -90,6 +39,11 @@
 ;(setq set-mark-command-repeat-pop 1) - needs emacs version 22
 ;(setq-default frame-title-format "%b %p %p(%f)")
 ;; M-x clone-indirect-buffer RET
+;; find-dired   calls unix find
+;; map-query-regexp-replace
+;; proced       to view processes
+;; set-buffer-file-coding-system unix <--format
+;; tail-mode    auto-revert-tail-mode (C-cr)
 
 ;; --------------------------------------------- Shell
 (setq shell-file-name "bash")

@@ -102,24 +102,7 @@
 ;; ;;------------------------------------------------------------------------------- iedit Mode
 ;; ;; TBD (autoload 'iedit-mode "/home/uri03204/myDocs/ulib/emacs/iedit.elc" "Enter iedit mode" t)
 ;; 
-;; ;;------------------------------------------------------------------------------- Language Modes
-;; ;;(insert (format "%s" auto-mode-alist))((\.m\' . matlab-mode) (\.py$ . python-mode) (\.te?xt\' . text-mode) (\.c\' . c-mode) (\.h\' . c-mode) (\.tex\' . tex-mode) (\.ltx\' . latex-mode) (\.el\' . emacs-lisp-mode) (\.scm\' . scheme-mode) (\.l\' . lisp-mode) (\.lisp\' . lisp-mode) (\.f\' . fortran-mode) (\.F\' . fortran-mode) (\.for\' . fortran-mode) (\.p\' . pascal-mode) (\.pas\' . pascal-mode) (\.ad[abs]\' . ada-mode) (\.\([pP]\([Llm]\|erl\)\|al\)\' . perl-mode) (\.s?html?\' . html-mode) (\.cc\' . c++-mode) (\.hh\' . c++-mode) (\.hpp\' . c++-mode) (\.C\' . c++-mode) (\.H\' . c++-mode) (\.cpp\' . c++-mode) (\.cxx\' . c++-mode) (\.hxx\' . c++-mode) (\.c\+\+\' . c++-mode) (\.h\+\+\' . c++-mode) (\.m\' . objc-mode) (\.java\' . java-mode) (\.mk\' . makefile-mode) (\(M\|m\|GNUm\)akefile\(\.in\)?\' . makefile-mode) (\.am\' . makefile-mode) (\.texinfo\' . texinfo-mode) (\.te?xi\' . texinfo-mode) (\.s\' . asm-mode) (\.S\' . asm-mode) (\.asm\' . asm-mode) (ChangeLog\' . change-log-mode) (change\.log\' . change-log-mode) (changelo\' . change-log-mode) (ChangeLog\.[0-9]+\' . change-log-mode) (changelog\' . change-log-mode) (changelog\.[0-9]+\' . change-log-mode) (\$CHANGE_LOG\$\.TXT . change-log-mode) (\.scm\.[0-9]*\' . scheme-mode) (\.[ck]?sh\'\|\.shar\'\|/\.z?profile\' . sh-mode) (\(/\|\`\)\.\(bash_profile\|z?login\|bash_login\|z?logout\)\' . sh-mode) (\(/\|\`\)\.\(bash_logout\|shrc\|[kz]shrc\|bashrc\|t?cshrc\|esrc\)\' . sh-mode) (\(/\|\`\)\.\([kz]shenv\|xinitrc\|startxrc\|xsession\)\' . sh-mode) (\.m?spec\' . sh-mode) (\.mm\' . nroff-mode) (\.me\' . nroff-mode) (\.ms\' . nroff-mode) (\.man\' . nroff-mode) (\.\(u?lpc\|pike\|pmod\)\' . pike-mode) (\.TeX\' . tex-mode) (\.sty\' . latex-mode) (\.cls\' . latex-mode) (\.clo\' . latex-mode) (\.bbl\' . latex-mode) (\.bib\' . bibtex-mode) (\.sql\' . sql-mode) (\.m4\' . m4-mode) (\.mc\' . m4-mode) (\.mf\' . metafont-mode) (\.mp\' . metapost-mode) (\.vhdl?\' . vhdl-mode) (\.article\' . text-mode) (\.letter\' . text-mode) (\.tcl\' . tcl-mode) (\.exp\' . tcl-mode) (\.itcl\' . tcl-mode) (\.itk\' . tcl-mode) (\.icn\' . icon-mode) (\.sim\' . simula-mode) (\.mss\' . scribe-mode) (\.f90\' . f90-mode) (\.indent\.pro\' . fundamental-mode) (\.pro\' . idlwave-mode) (\.lsp\' . lisp-mode) (\.awk\' . awk-mode) (\.prolog\' . prolog-mode) (\.tar\' . tar-mode) (\.\(arc\|zip\|lzh\|zoo\|jar\)\' . archive-mode) (\.\(ARC\|ZIP\|LZH\|ZOO\|JAR\)\' . archive-mode) (\`/tmp/Re . text-mode) (/Message[0-9]*\' . text-mode) (/drafts/[0-9]+\' . mh-letter-mode) (\.zone\' . zone-mode) (\`/tmp/fol/ . text-mode) (\.y\' . c-mode) (\.lex\' . c-mode) (\.oak\' . scheme-mode) (\.sgml?\' . sgml-mode) (\.xml\' . sgml-mode) (\.dtd\' . sgml-mode) (\.ds\(ss\)?l\' . dsssl-mode) (\.idl\' . idl-mode) ([]>:/\]\..*emacs\' . emacs-lisp-mode) (\`\..*emacs\' . emacs-lisp-mode) ([:/]_emacs\' . emacs-lisp-mode) (/crontab\.X*[0-9]+\' . shell-script-mode) (\.ml\' . lisp-mode) (\.\(asn\|mib\|smi\)\' . snmp-mode) (\.\(as\|mi\|sm\)2\' . snmpv2-mode) (\.\(diffs?\|patch\|rej\)\' . diff-mode) (\.\(dif\|pat\)\' . diff-mode) (\.[eE]?[pP][sS]\' . ps-mode) (configure\.\(ac\|in\)\' . autoconf-mode) (BROWSE\' . ebrowse-tree-mode) (\.ebrowse\' . ebrowse-tree-mode) (#\*mail\* . mail-mode) (\.~?[0-9]+\.[0-9][-.0-9]*~?\' ignore t) (\.[1-9]\' . nroff-mode) (\.g\' . antlr-mode))
-;; (add-to-list 'auto-mode-alist '("\\.cp\\'"    . c++-mode)     )
-;; (add-to-list 'auto-mode-alist '("\\.sql\\'"   . sql-mode)     )
-;; (add-to-list 'auto-mode-alist '("\\.make\\'"  . makefile-mode))
-;; (add-to-list 'auto-mode-alist '("\\.org$"     . org-mode)     )
-;; (add-to-list 'auto-mode-alist '("\\.csv$"     . org-mode)     )
-;; (add-to-list 'auto-mode-alist '("\\.bat$"     . dos-mode)     )
-;; (add-to-list 'auto-mode-alist '("\\.xml$"     . xml-mode)     )
-;; (add-to-list 'auto-mode-alist '("\\.java\\'"  . java-mode)    )
-;; (add-to-list 'auto-mode-alist '("\\.js\\'"    . java-mode)    )
-;; (add-to-list 'auto-mode-alist '("\\.jad\\'"   . java-mode)    )
-;; (add-to-list 'auto-mode-alist '("\\.cs$"      . csharp-mode)  )
-;; 
-;; ;;(setq auto-mode-alist   (append '(("\\.cs$" . csharp-mode)) auto-mode-alist))
-;; ;;(insert (format "%s" auto-mode-alist))((\.m\' . matlab-mode) (\.py$ . python-mode) (\.te?xt\' . text-mode) (\.c\' . c-mode) (\.h\' . c-mode) (\.tex\' . tex-mode) (\.ltx\' . latex-mode) (\.el\' . emacs-lisp-mode) (\.scm\' . scheme-mode) (\.l\' . lisp-mode) (\.lisp\' . lisp-mode) (\.f\' . fortran-mode) (\.F\' . fortran-mode) (\.for\' . fortran-mode) (\.p\' . pascal-mode) (\.pas\' . pascal-mode) (\.ad[abs]\' . ada-mode) (\.\([pP]\([Llm]\|erl\)\|al\)\' . perl-mode) (\.s?html?\' . html-mode) (\.cc\' . c++-mode) (\.hh\' . c++-mode) (\.hpp\' . c++-mode) (\.C\' . c++-mode) (\.H\' . c++-mode) (\.cpp\' . c++-mode) (\.cxx\' . c++-mode) (\.hxx\' . c++-mode) (\.c\+\+\' . c++-mode) (\.h\+\+\' . c++-mode) (\.m\' . objc-mode) (\.java\' . java-mode) (\.mk\' . makefile-mode) (\(M\|m\|GNUm\)akefile\(\.in\)?\' . makefile-mode) (\.am\' . makefile-mode) (\.texinfo\' . texinfo-mode) (\.te?xi\' . texinfo-mode) (\.s\' . asm-mode) (\.S\' . asm-mode) (\.asm\' . asm-mode) (ChangeLog\' . change-log-mode) (change\.log\' . change-log-mode) (changelo\' . change-log-mode) (ChangeLog\.[0-9]+\' . change-log-mode) (changelog\' . change-log-mode) (changelog\.[0-9]+\' . change-log-mode) (\$CHANGE_LOG\$\.TXT . change-log-mode) (\.scm\.[0-9]*\' . scheme-mode) (\.[ck]?sh\'\|\.shar\'\|/\.z?profile\' . sh-mode) (\(/\|\`\)\.\(bash_profile\|z?login\|bash_login\|z?logout\)\' . sh-mode) (\(/\|\`\)\.\(bash_logout\|shrc\|[kz]shrc\|bashrc\|t?cshrc\|esrc\)\' . sh-mode) (\(/\|\`\)\.\([kz]shenv\|xinitrc\|startxrc\|xsession\)\' . sh-mode) (\.m?spec\' . sh-mode) (\.mm\' . nroff-mode) (\.me\' . nroff-mode) (\.ms\' . nroff-mode) (\.man\' . nroff-mode) (\.\(u?lpc\|pike\|pmod\)\' . pike-mode) (\.TeX\' . tex-mode) (\.sty\' . latex-mode) (\.cls\' . latex-mode) (\.clo\' . latex-mode) (\.bbl\' . latex-mode) (\.bib\' . bibtex-mode) (\.sql\' . sql-mode) (\.m4\' . m4-mode) (\.mc\' . m4-mode) (\.mf\' . metafont-mode) (\.mp\' . metapost-mode) (\.vhdl?\' . vhdl-mode) (\.article\' . text-mode) (\.letter\' . text-mode) (\.tcl\' . tcl-mode) (\.exp\' . tcl-mode) (\.itcl\' . tcl-mode) (\.itk\' . tcl-mode) (\.icn\' . icon-mode) (\.sim\' . simula-mode) (\.mss\' . scribe-mode) (\.f90\' . f90-mode) (\.indent\.pro\' . fundamental-mode) (\.pro\' . idlwave-mode) (\.lsp\' . lisp-mode) (\.awk\' . awk-mode) (\.prolog\' . prolog-mode) (\.tar\' . tar-mode) (\.\(arc\|zip\|lzh\|zoo\|jar\)\' . archive-mode) (\.\(ARC\|ZIP\|LZH\|ZOO\|JAR\)\' . archive-mode) (\`/tmp/Re . text-mode) (/Message[0-9]*\' . text-mode) (/drafts/[0-9]+\' . mh-letter-mode) (\.zone\' . zone-mode) (\`/tmp/fol/ . text-mode) (\.y\' . c-mode) (\.lex\' . c-mode) (\.oak\' . scheme-mode) (\.sgml?\' . sgml-mode) (\.xml\' . sgml-mode) (\.dtd\' . sgml-mode) (\.ds\(ss\)?l\' . dsssl-mode) (\.idl\' . idl-mode) ([]>:/\]\..*emacs\' . emacs-lisp-mode) (\`\..*emacs\' . emacs-lisp-mode) ([:/]_emacs\' . emacs-lisp-mode) (/crontab\.X*[0-9]+\' . shell-script-mode) (\.ml\' . lisp-mode) (\.\(asn\|mib\|smi\)\' . snmp-mode) (\.\(as\|mi\|sm\)2\' . snmpv2-mode) (\.\(diffs?\|patch\|rej\)\' . diff-mode) (\.\(dif\|pat\)\' . diff-mode) (\.[eE]?[pP][sS]\' . ps-mode) (configure\.\(ac\|in\)\' . autoconf-mode) (BROWSE\' . ebrowse-tree-mode) (\.ebrowse\' . ebrowse-tree-mode) (#\*mail\* . mail-mode) (\.~?[0-9]+\.[0-9][-.0-9]*~?\' ignore t) (\.[1-9]\' . nroff-mode) (\.g\' . antlr-mode))
-;; ;(add-to-list 'auto-mode-alist '("\\.m\\'"     . octave-mode)  )
-;; 
+
 ;; ;;-------------------------------------------------------------------------------- Save Session as Desktop
 ;; ;;  use desktop-change-dir to /home/uri03204/.emacs.d/desktop to get it back
 ;; ;;    say "no" to save-desktop?
@@ -142,13 +125,7 @@
 ;;   (switch-to-buffer (list-buffers-noselect t)))
 ;; (setq Buffer-menu-name-width 40)
 ;; 
-;; ;;------------------------------------------------------------------------ Cycle Buffer
-;; ;(load-library "cycle-buffer")
-;; (autoload 'cycle-buffer "cycle-buffer" "Cycle forward." t)
-;; (autoload 'cycle-buffer-backward "cycle-buffer" "Cycle backward." t)
-;; (autoload 'cycle-buffer-permissive "cycle-buffer" "Cycle forward allowing *buffers*." t)
-;; (autoload 'cycle-buffer-backward-permissive "cycle-buffer" "Cycle backward allowing *buffers*." t)
-;; (autoload 'cycle-buffer-toggle-interesting "cycle-buffer" "Toggle if this buffer will be considered." t)
+
 ;; ;;------------------------------------------------------------------------ Kill buffer unconditionally
 (defun kill-this-buffer-volatile (&optional arg)
      "Kill current buffer, even if it has been modified."
@@ -276,72 +253,13 @@
 ;;  ;; If there is more than one, they won't work right.
 ;;  '(default ((t (:family "Courier New" :foundry "outline" :slant normal :weight normal :height 120 :width normal)))))
 ;; 
-;; ;; ------------------------------------------------------------------------------ Scroll One Line At a time
-(defun scroll-one-line-up (&optional arg)
-  "Scroll the selected window up (forward in the text) one line (or N lines)."
-  (interactive "p")
-  (scroll-up (or arg 1)))
-(defun scroll-one-line-down (&optional arg)
-  "Scroll the selected window down (backward in the text) one line (or N)."
-  (interactive "p")
-  (scroll-down (or arg 1)))
 
-;; ---------------------------------------------------- Window Sizing
-(defun window-hwiden (&optional arg)
-   "Widen window"
-   (interactive "p")
-   (enlarge-window-horizontally 4))
-(defun window-hshrink (&optional arg)
-   "Shrink window"
-   (interactive "p")
-   (shrink-window-horizontally 4))
-;; 
-;; ;; ------------------------------------------------------------------------------ transpose windows [kp-divide]
-;; (defun toggle-window-split ()
-;;   (interactive)
-;;   (if (= (count-windows) 2)
-;;       (let* ((this-win-buffer (window-buffer))
-;; 	     (next-win-buffer (window-buffer (next-window)))
-;; 	     (this-win-edges (window-edges (selected-window)))
-;; 	     (next-win-edges (window-edges (next-window)))
-;; 	     (this-win-2nd (not (and (<= (car this-win-edges)
-;; 					 (car next-win-edges))
-;; 				     (<= (cadr this-win-edges)
-;; 					 (cadr next-win-edges)))))
-;; 	     (splitter
-;; 	      (if (= (car this-win-edges)
-;; 		     (car (window-edges (next-window))))
-;; 		  'split-window-horizontally
-;; 		'split-window-vertically)))
-;; 	(delete-other-windows)
-;; 	(let ((first-win (selected-window)))
-;; 	  (funcall splitter)
-;; 	  (if this-win-2nd (other-window 1))
-;; 	  (set-window-buffer (selected-window) this-win-buffer)
-;; 	  (set-window-buffer (next-window) next-win-buffer)
-;; 	  (select-window first-win)
-;; 	  (if this-win-2nd (other-window 1))))))
 ;; 
 ;; ;; ------------------------------------------------------------- Buffer menu
 ;; (defun buffer-menu-sort-by-filename (&optional arg)
 ;;   (interactive "P")
 ;;   (Buffer-menu-sort 6))
-;; 
-;; ;; ------------------------------------------------------------- Selective Display
-;; (setq selective-display-lev 0)
-;; (defun selective-display-level-incr (&optional arg)
-;; 	(interactive "P")
-;; 	(setq selective-display-lev (+ selective-display-lev 2))
-;; 	(set-selective-display selective-display-lev))
-;; (defun selective-display-level-decr (&optional arg)
-;; 	(interactive "P")
-;; 	(setq selective-display-lev (- selective-display-lev 2))
-;; 	(set-selective-display selective-display-lev))
-;; (defun selective-display-level-zero (&optional arg)
-;; 	(interactive "P")
-;; 	(setq selective-display-lev 0)
-;; 	(set-selective-display selective-display-lev))
-;; 
+
 ;; ;;--------------------------------------------------------------  unjustify
 ;; (defun unjustify-paragraph ()
 ;;   (interactive)
@@ -388,7 +306,6 @@
 ;; (with-current-buffer (current-buffer)  (proto-swap "bar" "foo"))
 ;; 
 ;; ;;---- option2 parallel swap
-;; (require 'cl)
 ;; (defun parallel-swap (plist &optional start end)
 ;;   (interactive
 ;;    `(,(loop with input = (read-from-minibuffer "Swap: ")
@@ -405,78 +322,8 @@
 ;;       (while (re-search-forward matcher (or end (point-max)) t)
 ;;         (replace-match (cdr (assoc-string (match-string 0) alist)))))))
 ;; 
-;; ;;-------------------------------------------------- parallel cursor editing
-;; ;; (defun parallel-replace-read-plist (input)
-;; ;;   (loop with limit = (length input)
-;; ;;         for (item . index) = (read-from-string input 0)
-;; ;;         then (read-from-string input index)
-;; ;;         collect (prin1-to-string item t) until (<= limit index)))
-;; 
-;; ;; (defun parallel-replace (plist &optional start end)
-;; ;;   (interactive
-;; ;;    (cons
-;; ;;     (parallel-replace-read-plist (read-from-minibuffer "Replace: "))
-;; ;;     (when (use-region-p)
-;; ;;       (list (region-beginning) (region-end)))))
-;; ;;   (let* ((alist (loop for (key val . tail) on plist by #'cddr
-;; ;;                       collect (cons key val)))
-;; ;;          (matcher (regexp-opt (mapcar #'car alist) 'words)))
-;; ;;     (save-excursion
-;; ;;       (goto-char (or start (point)))
-;; ;;       (while (re-search-forward matcher (or end (point-max)) t)
-;; ;;         (replace-match (cdr (assoc-string (match-string 0) alist)))))))
-;; 
-;; ;; (defvar parallel-replace-alist nil)
-;; 
-;; ;; (defun parallel-query-replace (plist &optional start end)
-;; ;;   (interactive
-;; ;;    (cons
-;; ;;     (parallel-replace-read-plist (read-from-minibuffer "Replace: "))
-;; ;;     (when (use-region-p)
-;; ;;       (list (region-beginning) (region-end)))))
-;; ;;   (let* (matcher)
-;; ;;     (set (make-local-variable 'parallel-replace-alist)
-;; ;;          (loop for (key val . tail) on plist by #'cddr
-;; ;;                collect (cons key val)))
-;; ;;     (setq matcher (regexp-optp (mapcar #'car parallel-replace-alist) 'words))
-;; ;;     (query-replace-regexp matcher
-;; ;;                           '(replace-eval-replacement
-;; ;;                             replace-quote
-;; ;;                             (cdr (assoc-string (match-string 0) parallel-replace-alist case-fold-search)))
-;; ;;                           nil
-;; ;;                           start
-;; ;;                           end)))
-;; (defun uniq-lines (beg end)
-;;   "Unique lines in region.
-;; Called from a program, there are two arguments:
-;; BEG and END (region to sort)."
-;;   (interactive "r")
-;;   (save-excursion
-;;     (save-restriction
-;;       (narrow-to-region beg end)
-;;       (goto-char (point-min))
-;;       (while (not (eobp))
-;;         (kill-line 1)
-;;         (yank)
-;;         (let ((next-line (point)))
-;;           (while
-;;               (re-search-forward
-;;                (format "^%s" (regexp-quote (car kill-ring))) nil t)
-;;             (replace-match "" nil nil))
-;;           (goto-char next-line))))))
-;; ;(w32-shell-execute "open" )
-;; 
-;; ;;---------------------------------------------------------------------------- quotify list of items
-;; (defun lines-to-cslist (start end &optional arg)
-;;   (interactive "r\nP")
-;;   (let ((insertion
-;;          (mapconcat
-;;           (lambda (x) (format "'%s'" x))
-;;           (split-string (buffer-substring start end)) ", ")))
-;;     (delete-region start end)
-;;     (insert insertion)
-;;     (when arg (forward-char (length insertion)))))
-;; 
+
+
 ;; ;;------------------------------------------------------------------------------- Open With
 ;; (defalias 'my-open-file  (kbd "C-a C-s / C-b C-s : C-x C-x ESC w C-x C-f C-a C-y DEL C-k RET")
 ;; (add-hook 'find-file-hook  ;; ensure file in production can't be modified via emacs
