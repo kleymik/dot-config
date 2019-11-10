@@ -31,12 +31,12 @@
 
 ;; map-query-regexp-replace
 ;; isearch-forward-regexp
-;; M-s h l 	highlight-lines-matching-regexp    Highlights all lines matching a regular expression
-;; M-s h p 	highlight-phrase 	               Highlights everything matching a phrase
-;; M-s h r 	highlight-regexp 	               Highlights everything matching a regular expression
-;; M-s h u 	unhighlight-regexp 	               Deletes the highlighter under point
-;; M-s h w 	hi-lock-write-interactive-patterns Inserts a list of Hi-Lock patterns into the buffer
-;; M-s h f 	hi-lock-find-patterns 	           Searches for Hi-Lock patterns in the buffer to use.
+;; M-s h l      highlight-lines-matching-regexp    Highlights all lines matching a regular expression
+;; M-s h p      highlight-phrase                       Highlights everything matching a phrase
+;; M-s h r      highlight-regexp                       Highlights everything matching a regular expression
+;; M-s h u      unhighlight-regexp                     Deletes the highlighter under point
+;; M-s h w      hi-lock-write-interactive-patterns Inserts a list of Hi-Lock patterns into the buffer
+;; M-s h f      hi-lock-find-patterns              Searches for Hi-Lock patterns in the buffer to use.
 ;; C-x r s r; C-x r i r                        Copy region into register "r" (copy-to-register).    Insert text from register r (insert-register).
 ;; C-ci         indent-to-column
 ;; C-x r w w; C-x r j w                        Save windows config in register "w" ; jump back (where <register> is a single character) to jump back to it.
@@ -69,34 +69,34 @@
 ;(setq ediff-shell "C:/cygwin/bin/mintty.exe")
 ;;  (if (file-directory-p "c:/cygwin/bin")      (add-to-list 'exec-path "c:/cygwin/bin"))
 ;;------------------------------------------------------------------------------- Switches
-(setq load-path (append load-path '("/home/kleyn/ulib/emacs"))) ;; (insert (format "%s" load-path))
-;(desktop-save-mode 1)  ; desktop-revert desktop-change-dir
-(setq default-truncate-lines t)
-(setq inhibit-splash-screen t)
-(setq font-lock-maximum-decoration t) ;; 3
-(setq use-file-dialog nil)
-(setq use-dialog-box nil)
-(fset 'yes-or-no-p 'y-or-n-p)
-(tool-bar-mode -1)
-(show-paren-mode 1)
-(transient-mark-mode t)
-(setq case-fold-search t)
 (blink-cursor-mode 0)
-(setq bell-volume 0)
-(setq display-time-day-and-date t) (display-time)
-(setq visible-bell t)
-(setq line-number-mode t)
-(setq column-number-mode t)
+(fset 'yes-or-no-p 'y-or-n-p)
 (global-hl-line-mode t)
-;(setq-default frame-title-format "%b %p %p(%f)")
+(setq bell-volume 0)
+(setq case-fold-search t)
+(setq column-number-mode t)
+(setq default-truncate-lines t)
+(setq display-time-day-and-date t) (display-time)
+(setq font-lock-maximum-decoration t) ;; 3
+(setq inhibit-splash-screen t)
+(setq line-number-mode t)
+(setq load-path (append load-path '("/home/kleyn/ulib/emacs"))) ;; (insert (format "%s" load-path))
+(setq use-dialog-box nil)
+(setq use-file-dialog nil)
+(setq visible-bell t)
 (setq-default frame-title-format "%f")
 (setq-default line-spacing 0.06)
+(show-paren-mode 1)
+(tool-bar-mode -1)
+(transient-mark-mode t)
+;(desktop-save-mode 1)  ; desktop-revert desktop-change-dir
 ;(global-mark-ring-max 50)
-;(setq set-mark-command-repeat-pop 1) - needs emacs version 22
-;(global-set-key [M-SPC] 'pop-global-mark)
 ;(global-set-key "\C-." 'pop-global-mark)
-;(setq mark-ring-max 50)
+;(global-set-key [M-SPC] 'pop-global-mark)
 ;(global-set-key [S-right] 'forward-word)
+;(setq mark-ring-max 50)
+;(setq set-mark-command-repeat-pop 1) - needs emacs version 22
+;(setq-default frame-title-format "%b %p %p(%f)")
 										; M-x clone-indirect-buffer RET
 ;;------------------------------------------------------------------------------ Eval
 ;; (global-set-key [remap eval-expression] 'pp-eval-expression)

@@ -1,8 +1,6 @@
 ;;; last command, command history
 ;; rectangle-number-lines
-
-;; --- redo
-;; 
+;; ------------------------------------------------------------ redo
 ;; (global-set-key "ESC-r" #'(lambda () (interactive)    (eval (car command-history))))
 ;; C-x M-: (mnemonic: like M-: but with the elisp expression already filled in for you). – phils Jan 27 '13 at 22:29
 ;; C-h w runs the command where-is (found in global-map), which is an
@@ -16,8 +14,6 @@
 ;;
 ;; TBD dired-find-file-otherwindow open a cygwin link by inspecting it
 ;; flush-lines
-;; C-h f describe-function Info-goto-emacs-command-node
-;; C-h F Info-goto-emacs-command-node
 ;;
 
 (defun alignFoo (pat)
@@ -55,8 +51,6 @@
 ;;                      nil (region-beginning) (region-end))
 ;;     (replace-regexp "^\(.*[0-9]+?:[0-9]+\)" "[[https://www.lds.org/scriptures/search?lang=eng&query=\1&x=0&y=0][\1]]")
 ;;     ))
-
-
 
 
 (defun insPyDb ()
@@ -107,8 +101,6 @@
 ;; you could also try the solution here which, if I remember correctly, can be used if the above solution doesn't work.
 ;; permalinkembed
 
-;;------------------------------------------------------------------------------- Language Modes
-
 ;;-------------------------------------------------------------------------------- Save Session as Desktop
 ;;  use desktop-change-dir to /home/uri03204/.emacs.d/desktop to get it back
 ;;    say "no" to save-desktop?
@@ -120,14 +112,7 @@
 (setq desktop-auto-save-timeout 300)
 
 ;;-------------------------------------------------------------------------------- History
-(setq history-length 10000)
-(setq list-command-history-max 300)
-(savehist-mode 1)
-; list-command-history-filter TBD filter out kill-buffer
-(defun show-hist()
-  (interactive)
-  (list-command-history))
-; (list-command-history)
+
 ;;-------------------------------------------------------------------------------- Buffer List Menu
 (global-set-key (kbd "C-x C-b") 'my-list-buffers)
 (defun my-list-buffers (&optional files-only)
@@ -135,34 +120,17 @@
   (interactive "P")
   (switch-to-buffer (list-buffers-noselect t)))
 (setq Buffer-menu-name-width 40)
-;;-------------------------------------------------------------------------------- Kill buffer unconditionally
-(defun kill-this-buffer-volatile ()
-    "Kill current buffer, even if it has been modified."
-    (interactive)
-    (set-buffer-modified-p nil)
-    (kill-this-buffer))
 
 ;;------------------------------------------------------------------------------- Org-Mode
-(require 'org)
-(require 'ob)
-(require 'cl)
+
 ;(add-to-list 'org-file-apps '(directory . emacs)) always open in dired
-;(define-key global-map "\C-cl" 'org-store-link)
-;(define-key global-map "\C-ca" 'org-agenda)
-(defalias 'make-org-tbl  (kbd "ESC x org-mode RET ESC < C-SPC ESC > C-c |"))
 
-
-(setq org-default-notes-file "~/myDocs/history/logbook.org")
-(setq org-cycle-include-plain-lists t)
-(setq org-startup-folded nil)
 (setq org-catch-invisible-edits 'show-and-error)
 (setq org-cycle-separator-lines 0)
 ;;(defalias 'see-logbooks  (kbd "C-x C-f ~/myDocs/logbook RET"))
 (defun org-collapse()     (interactive) (org-shifttab 0))
 
 (setq org-src-fontify-natively t)
-
-
 
 (defun org-transpose-table-at-point ()
   "Transpose orgmode table at point, eliminate hlines."
@@ -178,30 +146,6 @@
     (org-table-align)))
 
 
-
-(defun org-table-to-sql ()
-  (interactive)
-  (goto-char (point-min))
-  (forward-line 2)
-  (beginning-of-line)
-  (push-mark)
-  (goto-char (mark-marker)) (replace-regexp "^|"           "("      ) ;; replace leading  | with (
-  (goto-char (mark-marker)) (replace-regexp "|$"         t     ) ;; replace trailing |/LOCAL/USR/MK with ),
-  (goto-char (mark-marker)) (replace-regexp "|$"           "),"     ) ;; replace trailing | with ),
-  (goto-char (mark-marker)) (replace-regexp "\|"           ","      ) ;; replace          | with ,
-  (goto-char (mark-marker)) (replace-regexp "[0-9a-z._-]+" "'\\&'"  ) ;; wrap single quotes around words
-  (goto-char (mark-marker)) (replace-regexp ",[ \t]+,"     ",NULL," ) ;; NULL in gaps 
-  (goto-char (mark-marker)) (replace-regexp ",[ \t]+,"     ",NULL," ) ;; NULL in gaps  need to run twice!!!
-  (goto-char (mark-marker)) (replace-regexp ",[ \t]+)"     ",NULL)" ) ;; NULL at end
-  (goto-char (point-max)) (search-backward ",") (delete-char 1)       ;; delete comma after list end
-  (goto-char (point-min))
-  (forward-line 2)
-  (insert "INSERT INTO [EQTYBASKETS_R].dbo.returnSeriesRecord")  (newline)
-  (insert "(rsStrategyName, rsOrigin, rsCurrency, rsType, Description, rsAsOfDate, rsShortCode)") (newline)
-  (insert "VALUES") (newline)
-)
-
-
 ;; (print (cadr info) (get-buffer "*scratch*"))
 ;; (write-region (cadr info) nil "L:/MyDocs/history/matlabCmds/org_cmd.m")
 ;; (write-region (cadr info) nil "C:/MyMAQS/grepHist/aaa_org_cmd.m"))
@@ -215,14 +159,6 @@
   (copy-to-buffer "foo" (point-min) (point-max))
   (save-buffer "foo")
   (org-edit-src-abort))
-
-;(org-babel-do-load-languages
-; 'org-babel-load-languages
-; '((python . t)))
-
-(org-babel-do-load-languages 'org-babel-load-languages '((matlab . t) (python . t) (emacs-lisp . t)))
-
-
 
 ;;-------------------------------------------------------------------------------- python mode
 ;(add-hook 'python-mode-hook
@@ -267,56 +203,11 @@
 ;;       apropos-do-all t
 ;;       mouse-yank-at-point t)
 
-;; transpose items in list
-(defun my-transpose-sexps ()
-  "If point is after certain chars transpose chunks around that.
-   Otherwise transpose sexps."
-  (interactive "*")
-  (if (not (looking-back "[,]\\s-*" (point-at-bol)))
-      (progn (transpose-sexps 1) (forward-sexp -1))
-    (let ((beg (point)) end rhs lhs)
-      (while (and (not (eobp))
-                  (not (looking-at "\\s-*\\([,]\\|\\s)\\)")))
-        (forward-sexp 1))
-      (setq rhs (buffer-substring beg (point)))
-      (delete-region beg (point))
-      (re-search-backward "[,]\\s-*" nil t)
-      (setq beg (point))
-      (while (and (not (bobp))
-                  (not (looking-back "\\([,]\\|\\s(\\)\\s-*" (point-at-bol))))
-        (forward-sexp -1))
-      (setq lhs (buffer-substring beg (point)))
-      (delete-region beg (point))
-      (insert rhs)
-      (re-search-forward "[,]\\s-*" nil t)
-      (save-excursion (insert lhs)))))
-
-;; ------------------------------------------------------------------------------ Window Sizing
-(defun window-hwiden (&optional arg)
-  "Widen window"
-  (interactive "p")
-  (enlarge-window-horizontally 10))
-(defun window-hshrink (&optional arg)
-  "Shrink window"
-  (interactive "p")
-  (shrink-window-horizontally 10))
 
 ;; ------------------------------------------------------------- Buffer menu
 (defun buffer-menu-sort-by-filename (&optional arg)
   (interactive "P")
   (Buffer-menu-sort 6))
-
-;; for function keys
-;; for function keys
-(defun see-logbook1()      (interactive) (find-file "L:/MyDocs/history/logbook.org"))
-(defun see-sql()           (interactive) (find-file "C:/MyMAQS/notebooks/sqlScripts.org"))
-(defun see-matlab()        (interactive) (find-file "//lon0302/dfs/DATA/MULTI_ASSET/MAQS/dataCollection/FI/LOCAL/USR/MK/vc/rs1/SSI.scratch.wt1/notebooks/matlabScripts.org"))
-(defun see-dotBashRc()     (interactive) (find-file "L:/MyDocs/dot/dotBashrc"))
-(defun see-dotEmacs()      (interactive) (find-file "L:/MyDocs/dot/dotEmacs.el"))
-;;(defun nok900()          (interactive) (dired "/scpc:root@192.168.1.187:/home/user/MyDocs/aNotes/"))
-(defun see-orglink-dired() (interactive) (org-open-at-point t)) ; (current-buffer)
-(defun see-shell-output()  (interactive) (switch-to-buffer-other-window "*Shell Command Output*"))
-(defun diredHome()         (interactive) (dired "L:/MyDocs/" nil))
 
 ;;-------------------------------------------------------------------------------- Dired
 ;(define-key dired-mode-map "r" 'wdired-change-to-wdired-mode)
@@ -325,8 +216,6 @@
 ;;                (lambda ()
 ;;                  (interactive)
 ;;                  (w32-browser (dired-replace-in-string "/" "\\" (dired-replace-in-string "/cygdrive/C/" "C:\\" (dired-get-filename)))))))
-(require 'dired-x)
-(require 'wdired)
 
 (defun dired-load-hook-addsettings ()
   (interactive)
@@ -372,43 +261,6 @@
    (goto-char (point-min))
    (goto-line 3))
 
-;;------------------------------------dired peek
-
-(defun dired-view-next ()
-  "Move down one line and view the current file in another window."
-  (interactive)
-  (dired-next-line 1)
-  (dired-view-current)
-  ;(other-window 1)
-  ;(switch-to-buffer (previous-buffer))
-  )
-
-(defun dired-view-previous ()
-  "Move up one line and view the current file in another window."
-  (interactive)
-  (dired-previous-line 1)
-  (dired-view-current)
-  ;(other-window 1)  
-  ;(switch-to-buffer (previous-buffer))
-  )
-
-(defun dired-view-current ()
-  "View the current file in another window (possibly newly created)."
-  (interactive)
-  (if (not (window-parent))
-      (split-window nil nil t))                         ; create a new window -right side if necessary
-  (let ((file (dired-get-file-for-visit))
-        (dbuffer (current-buffer)))
-    (other-window 1)                                    ; switch to the other window
-    (unless (equal dbuffer (current-buffer))            ; don't kill the dired buffer
-      (if (or view-mode (equal major-mode 'dired-mode)) ; only if in view- or dired-mode
-          (kill-buffer)))                               ; ... kill it
-    (let ((filebuffer (get-file-buffer file)))
-      (if filebuffer                                    ; does a buffer already look at the file
-          (switch-to-buffer filebuffer)                 ; simply switch 
-        (view-file file))                               ; ... view it
-      (other-window -1))))                              ; give the attention back to the dired buffer
-
 ;;----------------------------------- dired subtree
 (setq load-path (append load-path '("L:/MyDocs/ulib/emacs/subtree")))
 (load-library "dired-subtree")
@@ -451,38 +303,8 @@
 )
 
 
-(define-key dired-mode-map [right]           'dired-go-subdir-kbm)
-(define-key dired-mode-map [left]            'dired-up) ;; dired-up-directory
-(define-key dired-mode-map [M-up]            'dired-view-previous)  ; was dired-next-line
-(define-key dired-mode-map [M-down]          'dired-view-next)      ; was dired-previous-line
-(define-key dired-mode-map (kbd "<S-right>") 'dired-subtree-insert)
-(define-key dired-mode-map (kbd "<S-left>")  'dired-subtree-remove)
-(define-key dired-mode-map (kbd "<S-up>")    'dired-subtree-previous-sibling)
-(define-key dired-mode-map (kbd "<S-down>")  'dired-subtree-next-sibling)
-;'dired-view-current)     ; was dired-display-file
-(define-key dired-mode-map (kbd "C-n")       'dired-next-line)
-(define-key dired-mode-map (kbd "C-p")       'dired-previous-line)
-(define-key dired-mode-map (kbd "e")         'dired-subtree-only-this-file)
-(define-key dired-mode-map (kbd "c")         'dired-ediff-git)
-(define-key dired-mode-map "r"               'wdired-change-to-wdired-mode)
-(define-key dired-mode-map "J"               'dired-move-to-old) ; junk
-(define-key dired-mode-map "O"                (lambda () (interactive) (w32-browser (dired-replace-in-string "/" "\\" (dired-get-filename)))))
-
-
 ;;(eval-after-load "dired" '(define-key dired-mode-map [f3] (lambda () (interactive) (w32-browser (dired-replace-in-string "/" "\\" (dired-get-filename))))))
 
-;; * `dired-subtree-remove`
-;; * `dired-subtree-revert`
-;; * `dired-subtree-narrow`
-;; * `dired-subtree-up`
-;; * `dired-subtree-down`
-;; * `dired-subtree-previous-sibling`
-;; * `dired-subtree-beginning`
-;; * `dired-subtree-end`
-;; * `dired-subtree-mark-subtree`
-;; * `dired-subtree-unmark-subtree`
-;; * `dired-subtree-only-this-file`
-;; * `dired-subtree-only-this-directory`
 
 ; (define-key dired-mode-map (kbd "p")  'dired-subtree-only-this-file) ; tbd: pick-off the path of the given file into clipboard
 
@@ -495,25 +317,9 @@
 ;(add-hook 'ediff-mode-hook (lambda () (setq ediff-shell "C:/cygwin/bin/mintty.exe")))
 ;(add-hook 'ediff-load-hook (lambda () (setq ediff-shell "C:/cygwin/bin/mintty.exe")))
 
-;;--------------------------------------------------------------------- Misc
-(defun instimestamp ()
-   (interactive)
-   (insert (format-time-string "%Y%m%d_%H:%M:%S")))
-(defun indent-to-col ()
-   (interactive)
-   (indent-to-column 110))
 ;;--------------------------------------------------------------------- Key Bindings
-(defun mk-new-buffer ()
-  (interactive)
-  (switch-to-buffer (generate-new-buffer (make-temp-name "foo")))
-  (clipboard-yank))
 
-   ;;(x-get-selection-value)
-
-(defun my-revert-buffer ()
-  (interactive)
-  (revert-buffer nil t) ; don't ask to confirm
-  (goto-char (point-max)))
+;;(x-get-selection-value)
 
 ;;; don't quit so easily
 (global-unset-key "\C-x\C-c")                            ;; The following key-binding quits emacs -- we disable it too
@@ -532,9 +338,7 @@
 
 ;(define-key global-map "\C-co" 'org-capture)
 
-
 ;; f4 for use by org-mode?
-
 (global-set-key [f3]            'see-dotEmacs) ; my-openfile  'neotree-show
 (global-set-key [f4]            'see-orglink-dired) ;;     'desktop-save)
 (global-set-key [f5]            'ffap) ; bookmark-bmenu-list
@@ -623,7 +427,6 @@
 ;;           ("~/.emacs.d/lib/" . 1)
 ;;           ("//lon0302/dfs/DATA/MULTI_ASSET/MAQS/dataCollection/FI/LOCAL/USR/MK/vc/rs1/SSI.scratch" . 1)
 ;;           ("//lon0302/dfs/DATA/MULTI_ASSET/MAQS/dataCollection/FI/LOCAL/USR/MK/vc/rs3/SSI.scratch" . 1)))
-
 (global-set-key  [C-tab]        'hs-toggle-hiding)
 
 ;; with a C-0 prefix argument.

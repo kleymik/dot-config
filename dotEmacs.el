@@ -30,7 +30,7 @@
 ;; M-s h f      hi-lock-find-patterns              Searches for Hi-Lock patterns in the buffer to use.
 ;; C-x r s r; C-x r i r                        Copy region into register "r" (copy-to-register).    Insert text from register r (insert-register).
 ;; C-ci         indent-to-column
-;; C-x r w w; C-x r j w                        Save winows config in register "w" ; jump back (where <register> is a single character) to jump back to it.
+;; C-x r w w; C-x r j w                        Save windows config in register "w" ; jump back (where <register> is a single character) to jump back to it.
 ;;              package-list-packages
 ;; C-j          eval in scratch buffer ?
 ;; C-x RTN f unix RTN  dos2unix
@@ -40,28 +40,27 @@
 ;; C-x n n; C-x n w                            Narrow to Region; Widen
 ;; C-;                                         Highlight item for MULTIPLE edit
 
-;;C-a                   ;; move-beginning-of-line
-;;C-s                   ;; isearch-forward
-;;/                         ;; self-insert-command
-;;C-b                   ;; backward-char
-;;C-s                   ;; isearch-forward
-;;:                         ;; self-insert-command
-;;C-x C-x               ; exchange-point-and-mark
-;;ESC                   ;; ESC-prefix
-;;w                         ;; self-insert-command
-;;C-x C-f               ;; find-file
-;;C-a                   ;; move-beginning-of-line
-;;C-y                   ;; yank
-;;C-k                   ;; kill-line
-;;DEL                   ;; delete-backward-char
-;;RET                   ;; newline
+;;C-a			;; move-beginning-of-line
+;;C-s			;; isearch-forward
+;;/			    ;; self-insert-command
+;;C-b			;; backward-char
+;;C-s			;; isearch-forward
+;;:			    ;; self-insert-command
+;;C-x C-x		; exchange-point-and-mark
+;;ESC			;; ESC-prefix
+;;w			    ;; self-insert-command
+;;C-x C-f		;; find-file
+;;C-a			;; move-beginning-of-line
+;;C-y			;; yank
+;;C-k			;; kill-line
+;;DEL			;; delete-backward-char
+;;RET			;; newline
 
 ;;; ----------------------------------------------------------------------
 ;(setq ediff-shell "C:/cygwin/bin/mintty.exe")
 ;;  (if (file-directory-p "c:/cygwin/bin")      (add-to-list 'exec-path "c:/cygwin/bin"))
 ;;------------------------------------------------------------------------------- Switches
 ;(desktop-save-mode 1)  ; desktop-revert desktop-change-dir
-(setq load-path (append load-path '("/home/kleyn/ulib/emacs"))) ;; (insert (format "%s" load-path))
 
 (blink-cursor-mode 0)
 (fset 'yes-or-no-p 'y-or-n-p)
@@ -74,6 +73,7 @@
 (setq font-lock-maximum-decoration t) ;; 3
 (setq inhibit-splash-screen t)
 (setq line-number-mode t)
+(setq load-path (append load-path '("/home/kleyn/ulib/emacs"))) ;; (insert (format "%s" load-path))
 (setq use-dialog-box nil)
 (setq use-file-dialog nil)
 (setq visible-bell t)
@@ -198,40 +198,6 @@
 ;;   (set matlab-fill-code nil)
 ;;   (setq indent-tabs-mode nil))
 ;; (add-hook 'matlab-mode-hook 'my-matlab-mode-hook)
-
-
-;; ;; ----------------------------------------------------------- DOS Mode
-;; ;;(autoload 'dos-mode "/home/uri03204/myDocs/ulib/emacs/dos.elc" "Enter DOS CMD mode." t)
-
-
-;; ;; ----------------------------------------------------------- CSHARP Mode
-;; ;(autload 'csharp-mode "/home/uri03204/myDocs/ulib/emacs/csharp-mode-0.8.5.elc" t)
-;; (autoload 'csharp-mode "csharp-mode" "Major mode for editing C# code." t)
-;; (defun csharp-mode-untabify ()
-;;   (if (string= (substring mode-name 0 2) "C#")
-;;      (save-excursion
-;;      (delete-trailing-whitespace)
-;;      (untabify (point-min) (point-max)))))
-;; (defun my-csharp-mode-fn ()
-;;   "function that runs when csharp-mode is initialized for a buffer."
-;;   (turn-on-auto-revert-mode)
-;;   (setq indent-tabs-mode nil)
-;;   (require 'flymake)
-;;   (setq flymake-mode nil)
-;;   ;;(add-hook 'write-contents-hooks 'csharp-mode-untabify nil t)
-;;   )
-;;   ;;      (require 'yasnippet)
-;;   ;;      (yas/minor-mode-on)
-;;   ;;      (require 'rfringe)
-;; (add-hook  'csharp-mode-hook 'my-csharp-mode-fn t)
-;; ;;(add-hook 'csharp-mode-hook '(lambda () (add-hook 'write-contents-hooks 'csharp-mode-untabify nil t)))
-
-
-;; ; 'tbd add hs-minor-mode for hide/show t
-;; ;TDB (add-hook  'java-mode-hook 'my-java-mode-hook t)
-;; ;(defun my-java-mode-hook ()
-;; ;  (hs-minor-mode)
-;; ;  (setq indent-tabs-mode nil))
 
 
 ;; ------------------------------------------------------ Org-Mode

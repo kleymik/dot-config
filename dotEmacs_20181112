@@ -296,6 +296,7 @@
 ;;------------------------------------------------------------------------------ Shell
 (setq shell-file-name "bash")
 (setq explicit-shell-file-name shell-file-name)
+;(setq shell-command-switch "-c")
 
 (defun shell-command-on-buffer (command)
   (interactive "sShell command on buffer: ")
@@ -345,24 +346,26 @@ BEG and END (region to sort)."
 ;(set-face-background 'default "lightblue")
 
 ;;------------------------------------------------------------------------------ Matlab Mode
-(require 'matlab)
-(setq matlab-indent-function t)
-(setq matlab-shell-command "matlab")
-;(autoload 'matlab-mode "L:/myDocs/ulib/emacs/matlab.elc" "Enter Matlab mode." t)
-(setq auto-mode-alist (cons '("\\.m\\'" . matlab-mode) auto-mode-alist))
-;;; User Level customizations:
-;;;   (setq matlab-verify-on-save-flag nil) ; turn off auto-verify on save
-(defun my-matlab-mode-hook ()
-  ; (matlab-mode-hilit)             ; Turn highlight on
-  (setq font-lock-mode 1)
-  (setq fill-column 276)        ; where auto-fill should wrap
-  (setq matlab-indent-function t)    ; if you want function bodies indented
-  (setq matlab-indent-level  4)         ; set matlab indentation
-  (setq matlab-verify-on-save-flag nil)
-  ; (set matlab-fill-code nil)  
-  (setq indent-tabs-mode nil))
-(add-hook 'matlab-mode-hook 'my-matlab-mode-hook)
-;(remove-hook 'matlab-mode-hook 'my-matlab-mode-hook)
+;; (require 'matlab)
+;; (setq matlab-indent-function t)
+;; (setq matlab-shell-command "matlab")
+;; ;(autoload 'matlab-mode "L:/myDocs/ulib/emacs/matlab.elc" "Enter Matlab mode." t)
+;; ;(setq auto-mode-alist (cons '("\\.m\\'" . matlab-mode) auto-mode-alist))
+;; (setq auto-mode-alist (cons '("\\.m\\'" . octave-mode) auto-mode-alist))
+;; ;;; User Level customizations:
+;; ;;;   (setq matlab-verify-on-save-flag nil) ; turn off auto-verify on save
+;; (defun my-matlab-mode-hook ()
+;;   ; (matlab-mode-hilit)             ; Turn highlight on
+;;   (setq font-lock-mode 1)
+;;   (setq fill-column 276)        ; where auto-fill should wrap
+;;   (setq-default fill-column     276)
+;;   (setq matlab-indent-function t)    ; if you want function bodies indented
+;;   (setq matlab-indent-level  4)         ; set matlab indentation
+;;   (setq matlab-verify-on-save-flag nil)
+;;   ; (set matlab-fill-code nil)  
+;;   (setq indent-tabs-mode nil))
+;; (add-hook 'matlab-mode-hook 'my-matlab-mode-hook)
+;; ;(remove-hook 'matlab-mode-hook 'my-matlab-mode-hook)
 
 ;;------------------------------------------------------------------------------ Diff Stuff
 ;; make patch files look like ediff
@@ -428,8 +431,8 @@ BEG and END (region to sort)."
 (defun csharp-mode-untabify ()
   (if (string= (substring mode-name 0 2) "C#")
      (save-excursion
-    (delete-trailing-whitespace)
-    (untabify (point-min) (point-max)))))
+	(delete-trailing-whitespace)
+	(untabify (point-min) (point-max)))))
 (defun my-csharp-mode-fn ()
   "function that runs when csharp-mode is initialized for a buffer."
   (turn-on-auto-revert-mode)
@@ -463,7 +466,7 @@ BEG and END (region to sort)."
 
 ;;------------------------------------------------------------------------------- Language Modes
 (add-to-list 'auto-mode-alist '("\\.sas\\'"   . sas-mode)     )
-;(add-to-list 'auto-mode-alist '("\\.m\\'"    . octave-mode)  )
+(add-to-list 'auto-mode-alist '("\\.m\\'"     . octave-mode)   )
 (add-to-list 'auto-mode-alist '("\\.cp\\'"    . c++-mode)     )
 
 (add-to-list 'auto-mode-alist '("\\.proc\\'"  . sql-mode)     )
@@ -522,11 +525,20 @@ BEG and END (region to sort)."
 ;;-------------------------------------------------------------------------------- Cycle Buffer
 ;; to be commented in
 (load-library "cycle-buffer")
-(autoload 'cycle-buffer "cycle-buffer" "Cycle forward." t)
-(autoload 'cycle-buffer-backward "cycle-buffer" "Cycle backward." t)
-(autoload 'cycle-buffer-permissive "cycle-buffer" "Cycle forward allowing *buffers*." t)
-(autoload 'cycle-buffer-backward-permissive "cycle-buffer" "Cycle backward allowing *buffers*." t)
-(autoload 'cycle-buffer-toggle-interesting "cycle-buffer" "Toggle if this buffer will be considered." t)
+(autoload 'cycle-buffer                     "cycle-buffer" "Cycle forward."                            t)
+(autoload 'cycle-buffer-backward            "cycle-buffer" "Cycle backward."                           t)
+(autoload 'cycle-buffer-permissive          "cycle-buffer" "Cycle forward allowing *buffers*."         t)
+(autoload 'cycle-buffer-backward-permissive "cycle-buffer" "Cycle backward allowing *buffers*."        t)
+(autoload 'cycle-buffer-toggle-interesting  "cycle-buffer" "Toggle if this buffer will be considered." t)
+;; (defvar cycle-buffer-filter
+;;   '((not (eq (aref (buffer-name) 0) ? )) ; " buffer"
+;;     (not (member (buffer-name)           ; uninteresting buffers
+;;                  '("lispdir.dat" "*reportmail*" ".newsrc-dribble" "info dir" ".infonotes")))
+;;     (not (string-match "^\\(TAGS\\|\\*?sent\\)" (buffer-name)))
+;;     (or (eq cycle-buffer-allow-visible t) ; visible buffers
+;;         (eq (current-buffer) cycle-buffer-current)
+;;         (not (get-buffer-window (current-buffer) (if cycle-buffer-allow-visible nil 'visible)))))
+
 ;;-------------------------------------------------------------------------------- Kill buffer unconditionally
 (defun kill-this-buffer-volatile ()
     "Kill current buffer, even if it has been modified."
@@ -550,6 +562,8 @@ BEG and END (region to sort)."
 (setq org-default-notes-file "~/myDocs/history/logbook.org")
 (setq org-cycle-include-plain-lists t)
 (setq org-startup-folded nil)
+(setq org-catch-invisible-edits 'show-and-error)
+(setq org-cycle-separator-lines 0)
 ;;(defalias 'see-logbooks  (kbd "C-x C-f ~/myDocs/logbook RET"))
 (defun org-collapse()     (interactive) (org-shifttab 0))
 
@@ -612,7 +626,7 @@ BEG and END (region to sort)."
   (interactive "r")
   (save-restriction (narrow-to-region p1 p2) (rot13-region (point-min) (point-max))))
 
-                                        ;---------------------------------------- expand and collapse
+;---------------------------------------- expand and collapse
 (defun org-advance ()
   (interactive)
   (when (buffer-narrowed-p)
