@@ -1,5 +1,7 @@
 Emacs Initialisation
-;; invoke by ~/.emacs.d/init.el
+;; invoked by ~/.emacs.d/init.el
+;;; SEE ALSO: c:/Users/kleynmi/AppData/Roaming/.emacs
+
 ;; (package-initialize)
 ;; (org-babel-load-file "~/dot/dotEmacs.org)
 C-c C-u go up
@@ -10,6 +12,11 @@ increase/decrease font C-cC-+/-
 (defun ke()           (interactive) (kill-emacs))
 
 (setq load-path (append load-path '("/home/kleyn/ulib/emacs/dired-hacks"))) ;; for subtree (insert (format "%s" load-path))
+
+(require 'package)
+;;(add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/") t)
+;;(add-to-list 'package-archives '("melpa-stable" . "http://melpa.org/packages/") t)
+(add-to-list 'package-archives   '("melpa-stable" . "http://stable.melpa.org/packages/") t)
 
 (require 'uniquify)
 (require 'org)
@@ -23,9 +30,30 @@ increase/decrease font C-cC-+/-
 * Function Definitions
 
 #+BEGIN_SRC emacs-lisp
-;;----------------------------------------------------- Misc
-(defun instimestamp ()   (interactive) (insert (format-time-string "%Y%m%d_%H:%M:%S")))
-(defun indent-to-col ()  (interactive) (indent-to-column 110))
+;;----------------------------------------------------- One liners
+(defun describe-last-function() (interactive) (describe-function last-command))
+(defun slashFwd      () (interactive) (replace-string "\\"  "/" nil (line-beginning-position) (line-end-position)))
+(defun slashBwd      () (interactive) (replace-string  "/" "\\" nil (line-beginning-position) (line-end-position)))
+(defun instimestamp  () (interactive) (insert (format-time-string "%Y%m%d_%H:%M:%S")))
+(defun indent-to-col () (interactive) (indent-to-column 110))
+;;----------------------------------------------------- Other
+(defun filepath-on-clipboard ()
+  "Put the current file name on the clipboard"
+  (interactive)
+  (let ((filename (if (equal major-mode 'dired-mode)
+                      default-directory
+                    (buffer-file-name))))
+    (when filename
+      (with-temp-buffer
+        (insert filename)
+        (clipboard-kill-region (point-min) (point-max)))
+      (message filename))))
+
+(defun hide-ctrl-M ()
+  "Hides the disturbing '^M' showing up in files containing mixed UNIX and DOS line endings."
+  (interactive)
+  (setq buffer-display-table (make-display-table))
+  (aset buffer-display-table ?\^M []))
 
 ;; ---------------------------------------------------- Scroll One Line At a time
 (defun scroll-one-line-up (&optional arg)
@@ -315,18 +343,12 @@ BEG and END (region to sort)."
                           end)))
 
 * Preamble
-#+BEGIN_SRC emacs-lisp
 ;;--------------------------------------------------------------- Handy commands quick ref
 ;; rot13-region  (C-c C-r)
 ;; telnet host port     to open
 ;; ^Q^] close           to close
 ;;  (xclip-mode 1) for emacs in terminal , export kill-yank
-;; C-c C-b associate ielm with buffer
-;; M-6 M-x Buffer-menu-sort = sort by file name
 ;;(setq Buffer-menu-sort-column 6)
-;; C-x C-v = find alternate file   -> then grab filepath
-(setq header-line-format mode-line-format)
-(setq uniquify-buffer-name-style 'forward)
 ;; proced       to view processes
 ;; find-dired   calls unix find
 ;; tail-mode    auto-revert-tail-mode (C-cr)
@@ -334,7 +356,33 @@ BEG and END (region to sort)."
 ;; package-list-packages
 ;; map-query-regexp-replace
 ;; isearch-forward-regexp
+;;; ediff-revision
+;; vc-ediff
+;; indent-to-column
+;; read-kbd-macro
+;; (setq tab-stop-list '(60))
+;; (server-start)
 
+;;--------------------------------------------------------------- Sample regexps
+;; REPLACE REGEXP
+;; replace unprintable ""
+;; (replace-string "" "")
+;; (replace-string "" "")
+;; (replace-string "" "")
+;; (replace-regexp "0\.999999([0-9]+)[$,]" "" nil (point-min) (point-max))
+;; (replace-regexp "[ \t]+" " ")    ; REPLACE mutli-space with single-space
+;; (replace-regexp "[ \t]+|" "_" )    % space -> _
+;; (replace-regexp "'[ \t]+'" "|" )   % space between quotes ->
+;; (goto-char (mark-marker))
+;; (replace-regexp "A" "B" nil (if (and transient-mark-mode mark-active) (region-beginning)) (if (and transient-mark-mode mark-active) (region-end)) nil)
+;; (replace-regexp "A" "B" nil (mark-marker) (point-max))
+;; (replace-regexp "(line [0-9]+)" "" nil (point-min) (point-max)) ; clear (line 62)
+;; (replace-regexp " [0-9][0-9]:[0-9][0-9]:[0-9][0-9]" "" nil (point-min) (point-max)) ; clear " HH:MM:SS" 
+;; N.B. TBD drop last ","
+
+#+BEGIN_SRC emacs-lisp
+(setq header-line-format mode-line-format)
+(setq uniquify-buffer-name-style 'forward)
 #+END_SRC
 
 * Settings
@@ -348,6 +396,7 @@ BEG and END (region to sort)."
 (blink-cursor-mode 0)
 (fset 'yes-or-no-p 'y-or-n-p)
 (global-hl-line-mode t)
+(global-set-key (kbd "C-x C-b") 'my-list-buffers)
 (setq bell-volume 0)
 (setq case-fold-search t)
 (setq column-number-mode t)
@@ -355,6 +404,7 @@ BEG and END (region to sort)."
 (setq display-time-day-and-date t) (display-time)
 (setq font-lock-maximum-decoration t) ;; 3
 (setq inhibit-splash-screen t)
+(setq kill-ring-max 12)
 (setq line-number-mode t)
 (setq use-dialog-box nil)
 (setq use-file-dialog nil)
@@ -364,7 +414,6 @@ BEG and END (region to sort)."
 (show-paren-mode 1)
 (tool-bar-mode -1)
 (transient-mark-mode t)
-(global-set-key (kbd "C-x C-b") 'my-list-buffers)
 ;; (global-set-key [remap eval-expression] 'pp-eval-expression)
 
 ;(global-mark-ring-max 50)
@@ -375,6 +424,13 @@ BEG and END (region to sort)."
 ;(setq set-mark-command-repeat-pop 1) - needs emacs version 22
 ;(setq-default frame-title-format "%b %p %p(%f)")
 ;; M-x clone-indirect-buffer RET
+
+;;-------------------- mouse and region
+(setq mouse-drag-copy-region t)
+(setq save-interprogram-paste-before-kill t)
+;;(setq x-select-enable-primary t)
+;;(setq select-enable-primary t)
+;;(setq mouse-drag-copy-region t)
 
 ;; --------------------------------------------- Shell
 (setq shell-file-name "bash")
@@ -843,17 +899,19 @@ BEG and END (region to sort)."
 
 * Global Key Bindings
 
+ C-x C-v = find alternate file   -> then grab filepath
  /			;; self-insert-command
  :			;; self-insert-command
  ??                     ;; package-list-packages
  C-;                    ;; Highlight item for MULTIPLE edit
  C-a			;; move-beginning-of-line
- C-a			;; move-beginning-of-line
  C-b			;; backward-char
+ C-c C-b associate ielm with buffer
  C-ci                   ;; indent-to-column
+ C-h C-a		;; about-emacs
  C-j                    ;; eval in scratch buffer ?
  C-k			;; kill-line
- C-s			;; isearch-forward
+ C-q			;; unfill-paragraph
  C-s			;; isearch-forward
  C-u C-space or C-u C-@	;; move back to previous positions (within buffer)
  C-x C-f		;; find-file
@@ -866,6 +924,7 @@ BEG and END (region to sort)."
  C-y			;; yank
  DEL			;; delete-backward-char
  ESC			;; ESC-prefix
+ M-6 M-x Buffer-menu-sort = sort by file name
  M-s h f		;; hi-lock-find-patterns 	       Searches for Hi-Lock patterns in the buffer to use.
  M-s h l		;; highlight-lines-matching-regexp     Highlights all lines matching a regular expression
  M-s h p		;; highlight-phrase 	               Highlights everything matching a phrase
@@ -875,6 +934,8 @@ BEG and END (region to sort)."
  RET			;; newline
  w			;; self-insert-command
 #+BEGIN_SRC emacs-lisp
+(global-set-key "\C-x\C-b" 'ibuffer)
+
 (global-set-key "\C-c<"		'selective-display-level-decr)
 (global-set-key "\C-c>"		'selective-display-level-incr)
 (global-set-key "\C-cb"		'ediff-buffers)
@@ -950,6 +1011,75 @@ BEG and END (region to sort)."
 ;(global-set-key [S-M-kp-end]  'sgml-fold-element)   ;  fold everything below current element
 ;(global-set-key [S-M-kp-next] 'sgml-unfold-element)
 ;(global-set-key [M-return]		'ffap)  ;; open file under cursor
+;(global-set-key "\C-r" #'(lambda () (interactive)  (eval (car command-history))))
+
+** not used
+;;------------------------------------------------------------------------------ TFS Version Control
+;; ;; 1. Place `tfs.el' in your `load-path'.
+;; ;; 2. In your .emacs file:
+;; (require 'tfs)
+;; (setq tfs/tf-exe  "C:\\TF.exe")
+;; (setq tfs/tf-exe  "C:\\Program Files \(x86\)\\TF.exe")
+;; ;;(setq tfs/tf-exe  "C:\\Program\ Files\ \(x86\)\\Microsoft Visual Studio 12.0\\Common7\\IDE\\tf.exe")
+;; ;;(setq tfs/tf-exe  "C:\\Program Files\ \(x86\)\\Microsoft\ Visual\ Studio\ 12.0\\Common7\\IDE\\TF.exe")
+;; (setq tfs/login "/login:snd\\kleynmi,password")
+;; ;; 3. also in your .emacs file:
+;; ;;      set local or global key bindings for tfs commands.  like so:
+
+;; (global-set-key  "\C-xvo" 'tfs/checkout)
+;; (global-set-key  "\C-xvi" 'tfs/checkin)
+;; (global-set-key  "\C-xvp" 'tfs/properties)
+;; (global-set-key  "\C-xvg" 'tfs/get)
+;; (global-set-key  "\C-xvh" 'tfs/history)
+;; (global-set-key  "\C-xvu" 'tfs/undo)
+;; (global-set-key  "\C-xvd" 'tfs/diff)
+;; (global-set-key  "\C-xvs" 'tfs/status)
+;; (global-set-key  "\C-xva" 'tfs/annotate)
+;; (global-set-key  "\C-xvw" 'tfs/workitem)
+;; (global-set-key  "\C-xv+" 'tfs/add)
+;; (global-set-key  "\C-xv-" 'tfs/delete)
+;; (global-set-key  "\C-xvc" 'tfs/changeset)
+
+* Debugging
+;;-------------------------------------------------------------------- DEBUG
+;;Go to where your function is defined and type M-x edebug-defun,
+;;This will work the next time the function is called. You can check the docs[1]or just type ?.
+
+;; edebug-defun inside function definition  <- revert by re-evaluating the defun
+;; debug-on-entry
+;; (toggle-debug-on-error)
+;; toggle-debug-on-quit
+;; insert (debug)
+#+BEGIN_SRC
+(defun set-debug-on()   (interactive) (setq debug-on-error t))
+(defun set-debug-off()  (interactive) (setq debug-on-error nil))
+#+END_SRC
+;;(setq debug-on-error t)
+;;(setq debug-on-error t)
+;;(setq debug-on-error nil)
+
+;; S     Stop: don't execute any more of the program, but wait for more Edebug commands (edebug-stop). 
+;; <SPC> Step: stop at the next stop point encountered (edebug-step-mode).
+;; d     display stack
+;; n     Next: stop at the next stop point encountered after an expression (edebug-next-mode). Also see edebug-forward-sexp in Jumping. 
+;; t     Trace: pause (normally one second) at each Edebug stop point (edebug-trace-mode). 
+;; T     Rapid trace: update the display at each stop point, but don't actually pause (edebug-Trace-fast-mode). 
+;; g     Go: run until the next breakpoint (edebug-go-mode). See Breakpoints. 
+;; c     Continue: pause one second at each breakpoint, and then continue (edebug-continue-mode). 
+;; C     Rapid continue: move point to each breakpoint, but don't pause (edebug-Continue-fast-mode). 
+;; G     Go non-stop: ignore breakpoints (edebug-Go-nonstop-mode). You can still stop the program by typing S, or any editing command.
+;; ESC-: eval expr
+
+;; Edebug can record an execution trace, storing it in a buffer named *edebug-trace*. This is a log of function calls and returns, showing the function names and their arguments and values. To enable trace recording, set edebug-trace to a non-nil value.
+;; Making a trace buffer is not the same thing as using trace execution mode (see Edebug Execution Modes).
+;; When trace recording is enabled, each function entry and exit adds lines to the trace buffer. A function entry record consists of ‘::::{’, followed by the function name and argument values. A function exit record consists of ‘::::}’, followed by the function name and result of the function.
+;; The number of ‘:’s in an entry shows its recursion depth. You can use the braces in the trace buffer to find the matching beginning or end of function calls.
+;; You can customize trace recording for function entry and exit by redefining the functions edebug-print-trace-before and edebug-print-trace-after.
+;; — Macro: edebug-tracing string body...
+;; This macro requests additional trace information around the execution of the body forms. The argument string specifies text to put in the trace buffer, after the ‘{’ or ‘}’. All the arguments are evaluated, and edebug-tracing returns the value of the last form in body.
+;; — Function: edebug-trace format-string &rest format-args
+;; This function inserts text in the trace buffer. It computes the text with (apply 'format format-string format-args). It also appends a newline to separate entries.
+;; edebug-tracing and edebug-trace insert lines in the trace buffer whenever they are called, even if Edebug is not active. Adding text to the trace buffer also scrolls its window to show the last lines inserted.
 
 * ESHELL
 #+BEGIN_SRC emacs-lisp
