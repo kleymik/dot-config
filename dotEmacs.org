@@ -1,5 +1,8 @@
 Emacs Initialisation
-;; invoke by ~/.emacs.d/init.el
+;; invoked by ~/.emacs.d/init.el
+;; good fonts "Ubuntu Mono"
+;;; SEE ALSO: c:/Users/kleynmi/AppData/Roaming/.emacs
+
 ;; (package-initialize)
 ;; (org-babel-load-file "~/dot/dotEmacs.org)
 C-c C-u go up
@@ -9,7 +12,13 @@ increase/decrease font C-cC-+/-
 #+BEGIN_SRC emacs-lisp
 (defun ke()           (interactive) (kill-emacs))
 
+(setq load-path (append load-path '("/home/kleyn/ulib/emacs/"))) 
 (setq load-path (append load-path '("/home/kleyn/ulib/emacs/dired-hacks"))) ;; for subtree (insert (format "%s" load-path))
+
+(require 'package)
+;;(add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/") t)
+;;(add-to-list 'package-archives '("melpa-stable" . "http://melpa.org/packages/") t)
+(add-to-list 'package-archives   '("melpa-stable" . "http://stable.melpa.org/packages/") t)
 
 (require 'uniquify)
 (require 'org)
@@ -23,9 +32,30 @@ increase/decrease font C-cC-+/-
 * Function Definitions
 
 #+BEGIN_SRC emacs-lisp
-;;----------------------------------------------------- Misc
-(defun instimestamp ()   (interactive) (insert (format-time-string "%Y%m%d_%H:%M:%S")))
-(defun indent-to-col ()  (interactive) (indent-to-column 110))
+;;----------------------------------------------------- One liners
+(defun describe-last-function() (interactive) (describe-function last-command))
+(defun slashFwd      () (interactive) (replace-string "\\"  "/" nil (line-beginning-position) (line-end-position)))
+(defun slashBwd      () (interactive) (replace-string  "/" "\\" nil (line-beginning-position) (line-end-position)))
+(defun instimestamp  () (interactive) (insert (format-time-string "%Y%m%d_%H:%M:%S")))
+(defun indent-to-col () (interactive) (indent-to-column 110))
+;;----------------------------------------------------- Other
+(defun filepath-on-clipboard ()
+  "Put the current file name on the clipboard"
+  (interactive)
+  (let ((filename (if (equal major-mode 'dired-mode)
+                      default-directory
+                    (buffer-file-name))))
+    (when filename
+      (with-temp-buffer
+        (insert filename)
+        (clipboard-kill-region (point-min) (point-max)))
+      (message filename))))
+
+(defun hide-ctrl-M ()
+  "Hides the disturbing '^M' showing up in files containing mixed UNIX and DOS line endings."
+  (interactive)
+  (setq buffer-display-table (make-display-table))
+  (aset buffer-display-table ?\^M []))
 
 ;; ---------------------------------------------------- Scroll One Line At a time
 (defun scroll-one-line-up (&optional arg)
@@ -36,6 +66,11 @@ increase/decrease font C-cC-+/-
   "Scroll the selected window down (backward in the text) one line (or N)."
   (interactive "p")
   (scroll-down (or arg 1)))
+
+;;------------------------------------------------------------------------------ Column space
+(defun go-to-column (column)
+  (interactive "nColumn: ")
+  (move-to-column column t))
 
 ;; ---------------------------------------------------- Window Sizing
 (defun window-hwiden (&optional arg)
@@ -60,7 +95,9 @@ increase/decrease font C-cC-+/-
   (interactive)
   (eval-last-sexp 0)
     (eval-print-last-sexp 0))
-;;  (insert (format "%s" load-path) )
+
+;;  (insert (format "%s" load-path))
+
 ;; Normally, this function truncates long output according to the value
 ;; of the variables `eval-expression-print-length' and
 ;; `eval-expression-print-level'.  With a prefix argument of zero,
@@ -201,6 +238,22 @@ BEG and END (region to sort)."
           (goto-char next-line))))))
 ;(w32-shell-execute "open" )
 
+;;----------------------------------------------------- number a region
+(defun number-region (start end)
+  (interactive "r")
+  (let* ((count 1)
+     (indent-region-function (lambda (start end)
+                   (save-excursion
+                     (setq end (copy-marker end))
+                     (goto-char start)
+                     (while (< (point) end)
+                       (or (and (bolp) (eolp))
+                       (insert (format ",%d " count))
+                       (setq count (1+ count)))
+                       (forward-line 1))
+                     (move-marker end nil)))))
+    (indent-region start end)))
+
 ;;----------------------------------------------------- quotify list of items
 (defun lines-to-cslist (start end &optional arg)
   (interactive "r\nP")
@@ -211,6 +264,34 @@ BEG and END (region to sort)."
     (delete-region start end)
     (insert insertion)
     (when arg (forward-char (length insertion)))))
+
+;;-------------------------------------------------------------------- swap
+(defun swaperooni ()
+  "Swap two tab-separated fields in each line in buffer."
+  (interactive)
+  (let ((re-1 "\\(.+\\)\t\\(.+\\)") (re-2 "\\2\t\\1"))
+    (save-restriction
+      (save-excursion
+        (save-match-data
+          (widen)
+          (goto-char (point-min))
+          (while (not (eobp))
+            (let ((line (buffer-substring (point-at-bol) (point-at-eol))))
+              (when (string-match re-1 line)
+                (delete-region (point-at-bol) (point-at-eol))
+                (insert (replace-regexp-in-string re-1 re-2 line)))
+              (forward-line 1))))))))
+
+;;--------------------------------------------------------- align
+(defun align-repeat (start end regexp)
+  "Repeat alignment with respect to the given regular expression. Provide arg [[:space:]]+"
+  (interactive "r\nsAlign regexp: ")
+  ;; 1) First, the regular expression to align with. This expression begins with \(\s-*\), which stands for “an arbitrary number of spacing characters”.
+  ;; 2) Then the parenthesis group to modify, 1 by default. This will align the expression by modifying the matching whitespaces in front of the regular expression, if any.
+  ;;   The modification amounts to adding some number of whitespaces to that part of the regular expression.
+  ;; 3) Additional number of whitespaces to add, the default 1 is fine. Set to 0 if no additional whitespace is needed.
+  ;; 4) Finally, answer n/y, depending whether the alignment must be done once or repeated.
+  (align-regexp start end (concat "\\(\\s-*\\)" regexp) 1 1 t))
 
 ;;---------------------------------------------------------- Open With
 (defalias 'my-open-file  (kbd "C-a C-s / C-b C-s : C-x C-x ESC w C-x C-f C-a C-y DEL C-k RET")
@@ -314,19 +395,12 @@ BEG and END (region to sort)."
                           start
                           end)))
 
-* Preamble
-#+BEGIN_SRC emacs-lisp
-;;--------------------------------------------------------------- Handy commands quick ref
+* Handy commands quick ref
 ;; rot13-region  (C-c C-r)
 ;; telnet host port     to open
 ;; ^Q^] close           to close
-;;  (xclip-mode 1) for emacs in terminal , export kill-yank
-;; C-c C-b associate ielm with buffer
-;; M-6 M-x Buffer-menu-sort = sort by file name
-;;(setq Buffer-menu-sort-column 6)
-;; C-x C-v = find alternate file   -> then grab filepath
-(setq header-line-format mode-line-format)
-(setq uniquify-buffer-name-style 'forward)
+;; (xclip-mode 1) for emacs in terminal , export kill-yank
+;; (setq Buffer-menu-sort-column 6)
 ;; proced       to view processes
 ;; find-dired   calls unix find
 ;; tail-mode    auto-revert-tail-mode (C-cr)
@@ -334,7 +408,37 @@ BEG and END (region to sort)."
 ;; package-list-packages
 ;; map-query-regexp-replace
 ;; isearch-forward-regexp
+;;; ediff-revision
+;; vc-ediff
+;; indent-to-column
+;; read-kbd-macro
+;; (setq tab-stop-list '(60))
+;; (server-start)
+;; (goto-char (mark-marker))
+;; (goto-char (pop-global-mark))
+;; (beginning-of-line)
+;; (end-of-line)
 
+;;--------------------------------------------------------------- Sample regexps
+;; REPLACE REGEXP
+;; replace unprintable ""
+;; (replace-string "" "")
+;; (replace-string "" "")
+;; (replace-string "" "")
+;; (replace-regexp "0\.999999([0-9]+)[$,]" "" nil (point-min) (point-max))
+;; (replace-regexp "[ \t]+" " ")    ; REPLACE mutli-space with single-space
+;; (replace-regexp "[ \t]+|" "_" )    % space -> _
+;; (replace-regexp "'[ \t]+'" "|" )   % space between quotes ->
+;; (goto-char (mark-marker))
+;; (replace-regexp "A" "B" nil (if (and transient-mark-mode mark-active) (region-beginning)) (if (and transient-mark-mode mark-active) (region-end)) nil)
+;; (replace-regexp "A" "B" nil (mark-marker) (point-max))
+;; (replace-regexp "(line [0-9]+)" "" nil (point-min) (point-max)) ; clear (line 62)
+;; (replace-regexp " [0-9][0-9]:[0-9][0-9]:[0-9][0-9]" "" nil (point-min) (point-max)) ; clear " HH:MM:SS" 
+;; N.B. TBD drop last ","
+
+#+BEGIN_SRC emacs-lisp
+(setq header-line-format mode-line-format)
+(setq uniquify-buffer-name-style 'forward)
 #+END_SRC
 
 * Settings
@@ -348,6 +452,7 @@ BEG and END (region to sort)."
 (blink-cursor-mode 0)
 (fset 'yes-or-no-p 'y-or-n-p)
 (global-hl-line-mode t)
+(global-set-key (kbd "C-x C-b") 'my-list-buffers)
 (setq bell-volume 0)
 (setq case-fold-search t)
 (setq column-number-mode t)
@@ -355,7 +460,10 @@ BEG and END (region to sort)."
 (setq display-time-day-and-date t) (display-time)
 (setq font-lock-maximum-decoration t) ;; 3
 (setq inhibit-splash-screen t)
+(setq kill-ring-max 12)
 (setq line-number-mode t)
+(setq max-lisp-eval-depth 1200) ; 800
+(setq uniquify-buffer-name-style 'forward)
 (setq use-dialog-box nil)
 (setq use-file-dialog nil)
 (setq visible-bell t)
@@ -364,7 +472,6 @@ BEG and END (region to sort)."
 (show-paren-mode 1)
 (tool-bar-mode -1)
 (transient-mark-mode t)
-(global-set-key (kbd "C-x C-b") 'my-list-buffers)
 ;; (global-set-key [remap eval-expression] 'pp-eval-expression)
 
 ;(global-mark-ring-max 50)
@@ -376,10 +483,17 @@ BEG and END (region to sort)."
 ;(setq-default frame-title-format "%b %p %p(%f)")
 ;; M-x clone-indirect-buffer RET
 
+;;-------------------- mouse and region
+(setq mouse-drag-copy-region t)
+(setq save-interprogram-paste-before-kill t)
+;;(setq x-select-enable-primary t)
+;;(setq select-enable-primary t)
+;;(setq mouse-drag-copy-region t)
+
 ;; --------------------------------------------- Shell
 (setq shell-file-name "bash")
 (setq explicit-shell-file-name shell-file-name)
-
+;;(setq shell-command-switch "-c")
 ;; --------------------------------------------- History
 (setq history-length 10000)
 (savehist-mode 1)
@@ -407,9 +521,11 @@ BEG and END (region to sort)."
 ;(setq desktop-auto-save-timeout 300)
 
 ;; ----------------------------------------------- Backup location
-(setq backup-directory-alist          `((".*" . , "/data/data/com.termux/files/home/internalBackup/emacs")))   ; gem
+;;(setq backup-directory-alist          `((".*" . , "/data/data/com.termux/files/home/internalBackup/emacs")))   ; gem
+;;(setq auto-save-file-name-transforms  `((".*" ,   "/data/data/com.termux/files/home/internalBackup/emacs" t))) ; gem
+;;(setq backup-directory-alist          `((".*" . , "L:/MyDocs/history/emacsBackupFiles")))
+;;(setq auto-save-file-name-transforms  `((".*" ,   "L:/MyDocs/history/emacsBackupFiles" t)))
 (setq backup-directory-alist          `((".*" . , "/home/kleyn/history/emacsBackups")))                        ; maxwell
-(setq auto-save-file-name-transforms  `((".*" ,   "/data/data/com.termux/files/home/internalBackup/emacs" t))) ; gem
 (setq auto-save-file-name-transforms  `((".*" ,   "/home/kleyn/history/emacsBackups" t)))                      ; gem
 
 
@@ -441,7 +557,7 @@ BEG and END (region to sort)."
 ;;       mouse-yank-at-point t)
 
 ;;---------------------------------------------- Cycle Buffer
-;(load-library "cycle-buffer")
+(load-library "cycle-buffer")
 (autoload 'cycle-buffer "cycle-buffer" "Cycle forward." t)
 (autoload 'cycle-buffer-backward "cycle-buffer" "Cycle backward." t)
 (autoload 'cycle-buffer-permissive "cycle-buffer" "Cycle forward allowing *buffers*." t)
@@ -454,6 +570,22 @@ BEG and END (region to sort)."
 (setq-default x-stretch-cursor t)
 
 #+END_SRC
+
+** Web Proxy
+;;-------------------------------------------------------------------- WEB PROXY
+(setq url-proxy-services '(("no_proxy" . "work\\.com")
+                            ("http" . "proxy.work.com:911")))
+ (setq url-proxy-services
+    '(("no_proxy" . "^\\(localhost\\|10.*\\)")
+      ("http" . "proxy.com:8080")
+      ("https" . "proxy.com:8080")))
+
+ (setq url-http-proxy-basic-auth-storage
+     (list (list "proxy.com:8080"
+                 (cons "Input your LDAP UID !"
+                       (base64-encode-string "LOGIN:PASSWORD")))))
+   http:   http://SCHRODERS.COM\username:password@cfactive.london.schroders.com:8080
+   https: https://SCHRODERS.COM\username:password@cfactive.london.schroders.com:8080
 
 * Modes Section
 #+BEGIN_SRC emacs-lisp
@@ -501,6 +633,10 @@ BEG and END (region to sort)."
 ;(define-key global-map "\C-ca" 'org-agenda)
 (define-key org-mode-map (kbd "C-c C->") 'org-demote-subtree)
 (define-key org-mode-map (kbd "C-c C-<") 'org-promote-subtree)
+(define-key org-mode-map (kbd "<S-up>")   'scroll-one-line-down)
+(define-key org-mode-map (kbd "<S-down>") 'scroll-one-line-up)
+(define-key org-mode-map (kbd "<C-up>")   'outline-up-heading)
+
 ;; needs ox.el = org-exporter.el
 ;;(require 'ox-confluence)
 
@@ -577,11 +713,12 @@ BEG and END (region to sort)."
 ;;   (setq indent-tabs-mode nil))
 ;; (add-hook 'matlab-mode-hook 'my-matlab-mode-hook)
 
+;;--------------------------------------------------------- iedit Mode
+;; TBD (autoload 'iedit-mode "/home/uri03204/myDocs/ulib/emacs/iedit.elc" "Enter iedit mode" t)
+
 * Modes Assoc List
 #+BEGIN_SRC emacs-lisp
 
-;;--------------------------------------------------------- iedit Mode
-;; TBD (autoload 'iedit-mode "/home/uri03204/myDocs/ulib/emacs/iedit.elc" "Enter iedit mode" t)
 
 ;;--------------------------------------------------------- Language Modes
 ;;(insert (format "%s" auto-mode-alist))((\.m\' . matlab-mode) (\.py$ . python-mode) (\.te?xt\' . text-mode) (\.c\' . c-mode) (\.h\' . c-mode) (\.tex\' . tex-mode) (\.ltx\' . latex-mode) (\.el\' . emacs-lisp-mode) (\.scm\' . scheme-mode) (\.l\' . lisp-mode) (\.lisp\' . lisp-mode) (\.f\' . fortran-mode) (\.F\' . fortran-mode) (\.for\' . fortran-mode) (\.p\' . pascal-mode) (\.pas\' . pascal-mode) (\.ad[abs]\' . ada-mode) (\.\([pP]\([Llm]\|erl\)\|al\)\' . perl-mode) (\.s?html?\' . html-mode) (\.cc\' . c++-mode) (\.hh\' . c++-mode) (\.hpp\' . c++-mode) (\.C\' . c++-mode) (\.H\' . c++-mode) (\.cpp\' . c++-mode) (\.cxx\' . c++-mode) (\.hxx\' . c++-mode) (\.c\+\+\' . c++-mode) (\.h\+\+\' . c++-mode) (\.m\' . objc-mode) (\.java\' . java-mode) (\.mk\' . makefile-mode) (\(M\|m\|GNUm\)akefile\(\.in\)?\' . makefile-mode) (\.am\' . makefile-mode) (\.texinfo\' . texinfo-mode) (\.te?xi\' . texinfo-mode) (\.s\' . asm-mode) (\.S\' . asm-mode) (\.asm\' . asm-mode) (ChangeLog\' . change-log-mode) (change\.log\' . change-log-mode) (changelo\' . change-log-mode) (ChangeLog\.[0-9]+\' . change-log-mode) (changelog\' . change-log-mode) (changelog\.[0-9]+\' . change-log-mode) (\$CHANGE_LOG\$\.TXT . change-log-mode) (\.scm\.[0-9]*\' . scheme-mode) (\.[ck]?sh\'\|\.shar\'\|/\.z?profile\' . sh-mode) (\(/\|\`\)\.\(bash_profile\|z?login\|bash_login\|z?logout\)\' . sh-mode) (\(/\|\`\)\.\(bash_logout\|shrc\|[kz]shrc\|bashrc\|t?cshrc\|esrc\)\' . sh-mode) (\(/\|\`\)\.\([kz]shenv\|xinitrc\|startxrc\|xsession\)\' . sh-mode) (\.m?spec\' . sh-mode) (\.mm\' . nroff-mode) (\.me\' . nroff-mode) (\.ms\' . nroff-mode) (\.man\' . nroff-mode) (\.\(u?lpc\|pike\|pmod\)\' . pike-mode) (\.TeX\' . tex-mode) (\.sty\' . latex-mode) (\.cls\' . latex-mode) (\.clo\' . latex-mode) (\.bbl\' . latex-mode) (\.bib\' . bibtex-mode) (\.sql\' . sql-mode) (\.m4\' . m4-mode) (\.mc\' . m4-mode) (\.mf\' . metafont-mode) (\.mp\' . metapost-mode) (\.vhdl?\' . vhdl-mode) (\.article\' . text-mode) (\.letter\' . text-mode) (\.tcl\' . tcl-mode) (\.exp\' . tcl-mode) (\.itcl\' . tcl-mode) (\.itk\' . tcl-mode) (\.icn\' . icon-mode) (\.sim\' . simula-mode) (\.mss\' . scribe-mode) (\.f90\' . f90-mode) (\.indent\.pro\' . fundamental-mode) (\.pro\' . idlwave-mode) (\.lsp\' . lisp-mode) (\.awk\' . awk-mode) (\.prolog\' . prolog-mode) (\.tar\' . tar-mode) (\.\(arc\|zip\|lzh\|zoo\|jar\)\' . archive-mode) (\.\(ARC\|ZIP\|LZH\|ZOO\|JAR\)\' . archive-mode) (\`/tmp/Re . text-mode) (/Message[0-9]*\' . text-mode) (/drafts/[0-9]+\' . mh-letter-mode) (\.zone\' . zone-mode) (\`/tmp/fol/ . text-mode) (\.y\' . c-mode) (\.lex\' . c-mode) (\.oak\' . scheme-mode) (\.sgml?\' . sgml-mode) (\.xml\' . sgml-mode) (\.dtd\' . sgml-mode) (\.ds\(ss\)?l\' . dsssl-mode) (\.idl\' . idl-mode) ([]>:/\]\..*emacs\' . emacs-lisp-mode) (\`\..*emacs\' . emacs-lisp-mode) ([:/]_emacs\' . emacs-lisp-mode) (/crontab\.X*[0-9]+\' . shell-script-mode) (\.ml\' . lisp-mode) (\.\(asn\|mib\|smi\)\' . snmp-mode) (\.\(as\|mi\|sm\)2\' . snmpv2-mode) (\.\(diffs?\|patch\|rej\)\' . diff-mode) (\.\(dif\|pat\)\' . diff-mode) (\.[eE]?[pP][sS]\' . ps-mode) (configure\.\(ac\|in\)\' . autoconf-mode) (BROWSE\' . ebrowse-tree-mode) (\.ebrowse\' . ebrowse-tree-mode) (#\*mail\* . mail-mode) (\.~?[0-9]+\.[0-9][-.0-9]*~?\' ignore t) (\.[1-9]\' . nroff-mode) (\.g\' . antlr-mode))
@@ -843,38 +980,47 @@ BEG and END (region to sort)."
 
 * Global Key Bindings
 
- /			;; self-insert-command
- :			;; self-insert-command
- ??                     ;; package-list-packages
- C-;                    ;; Highlight item for MULTIPLE edit
- C-a			;; move-beginning-of-line
- C-a			;; move-beginning-of-line
- C-b			;; backward-char
- C-ci                   ;; indent-to-column
- C-j                    ;; eval in scratch buffer ?
- C-k			;; kill-line
- C-s			;; isearch-forward
- C-s			;; isearch-forward
- C-u C-space or C-u C-@	;; move back to previous positions (within buffer)
- C-x C-f		;; find-file
- C-x C-space or C-x C-@	;; move back to previous positions (between buffers)
- C-x C-x		;; exchange-point-and-mark
- C-x RTN f unix RTN     ;; dos2unix
- C-x n n; C-x n w       ;; Narrow to Region; Widen
- C-x r s r; C-x r i r   ;; Copy region into register "r" (copy-to-register).    Insert text from register r (insert-register).
- C-x r w w; C-x r j w   ;; Save winows config in register "w" ; jump back (where <register> is a single character) to jump back to it.
- C-y			;; yank
- DEL			;; delete-backward-char
- ESC			;; ESC-prefix
- M-s h f		;; hi-lock-find-patterns 	       Searches for Hi-Lock patterns in the buffer to use.
- M-s h l		;; highlight-lines-matching-regexp     Highlights all lines matching a regular expression
- M-s h p		;; highlight-phrase 	               Highlights everything matching a phrase
- M-s h r		;; highlight-regexp 	               Highlights everything matching a regular expression
- M-s h u		;; unhighlight-regexp 	               Deletes the highlighter under point
- M-s h w		;; hi-lock-write-interactive-patterns Inserts a list of Hi-Lock patterns into the buffer
- RET			;; newline
- w			;; self-insert-command
+ C-x C-v                     ;; find alternate file   -> then grab filepath
+ /			     ;; self-insert-command												   
+ :			     ;; self-insert-command												   
+ ??                          ;; package-list-packages											   
+ C-;                         ;; Highlight item for MULTIPLE edit										   
+ C-a			     ;; move-beginning-of-line											   
+ C-b			     ;; backward-char
+ C-c C-b                     ;;  associate ielm with buffer												   
+ C-ci                        ;; indent-to-column												   
+ C-h C-a		     ;; about-emacs
+ C-j                         ;; eval in scratch buffer ?											   
+ C-k			     ;; kill-line													   
+ C-q			     ;; unfill-paragraph
+ C-s			     ;; isearch-forward												   
+ C-u C-space or C-u C-@	     ;; move back to previous positions (within buffer)								   
+ C-x C-f		     ;; find-file													   
+ C-x C-space or C-x C-@	     ;; move back to previous positions (between buffers)								   
+ C-x C-x		     ;; exchange-point-and-mark											   
+ C-x RTN f unix RTN          ;; dos2unix													   
+ C-x n n; C-x n w            ;; Narrow to Region; Widen											   
+ C-x r s r; C-x r i r        ;; Copy region into register "r" (copy-to-register).    Insert text from register r (insert-register).		   
+ C-x r w w; C-x r j w        ;; Save winows config in register "w" ; jump back (where <register> is a single character) to jump back to it.	   
+ C-y			     ;; yank														   
+ DEL			     ;; delete-backward-char												   
+ ESC			     ;; ESC-prefix													   
+ M-6 M-x                     ;; Buffer-menu-sort = sort by file name
+ M-s h f		     ;; hi-lock-find-patterns 	       Searches for Hi-Lock patterns in the buffer to use.			   
+ M-s h l		     ;; highlight-lines-matching-regexp     Highlights all lines matching a regular expression			   
+ M-s h p		     ;; highlight-phrase 	               Highlights everything matching a phrase					   
+ M-s h r		     ;; highlight-regexp 	               Highlights everything matching a regular expression			   
+ M-s h u		     ;; unhighlight-regexp 	               Deletes the highlighter under point					   
+ M-s h w		     ;; hi-lock-write-interactive-patterns Inserts a list of Hi-Lock patterns into the buffer			   
+ RET			     ;; newline													   
+ w			     ;; self-insert-command												   
+ M-0 w                       ;; dired copy path
+ command C-x z, then z again ;; repear last
+ complex command C-x ESC ESC ;; repeat last 
+
 #+BEGIN_SRC emacs-lisp
+;(global-set-key "\C-x\C-b" 'ibuffer)
+
 (global-set-key "\C-c<"		'selective-display-level-decr)
 (global-set-key "\C-c>"		'selective-display-level-incr)
 (global-set-key "\C-cb"		'ediff-buffers)
@@ -889,12 +1035,14 @@ BEG and END (region to sort)."
 (global-set-key "\C-ct"		'org-table-convert-region)
 (global-set-key "\C-cw"		'delete-trailing-whitespace)
 (global-set-key "\C-xd"         'dired)
+(global-set-key "\C-xg"         'magit-status)
 (global-set-key "\C-xi"         'eval-print-last-sexp) ; ielm
 (global-set-key "\C-xl"		'list-matching-lines)
 (global-set-key "\C-xt"		'instimestamp)
 (global-set-key "\C-z"		'undo) ; replace-string
 (global-set-key "\M-$"		'query-replace-regexp)
 (global-set-key (kbd "C-.")     'repeat)
+(global-set-key (kbd "\C-c;")   'comment-or-uncomment-region)
 (global-set-key [(next)]        'cycle-buffer)
 (global-set-key [(prior)]       'cycle-buffer-backward)
 
@@ -919,7 +1067,7 @@ BEG and END (region to sort)."
 (global-set-key [S-up]          'scroll-one-line-down)
 
 
-(global-set-key [kp-subtract]      'kill-this-buffer-volatile)
+(global-set-key [kp-subtract]   'kill-this-buffer-volatile)
 (global-set-key [f10]           'see-shell-output) ;ergoemacs-open-in-external-app
 (global-set-key [f11]           'hs-show-block)
 (global-set-key [f12]           'hs-hide-block)
@@ -950,6 +1098,75 @@ BEG and END (region to sort)."
 ;(global-set-key [S-M-kp-end]  'sgml-fold-element)   ;  fold everything below current element
 ;(global-set-key [S-M-kp-next] 'sgml-unfold-element)
 ;(global-set-key [M-return]		'ffap)  ;; open file under cursor
+;(global-set-key "\C-r" #'(lambda () (interactive)  (eval (car command-history))))
+
+** not used
+;;------------------------------------------------------------------------------ TFS Version Control
+;; ;; 1. Place `tfs.el' in your `load-path'.
+;; ;; 2. In your .emacs file:
+;; (require 'tfs)
+;; (setq tfs/tf-exe  "C:\\TF.exe")
+;; (setq tfs/tf-exe  "C:\\Program Files \(x86\)\\TF.exe")
+;; ;;(setq tfs/tf-exe  "C:\\Program\ Files\ \(x86\)\\Microsoft Visual Studio 12.0\\Common7\\IDE\\tf.exe")
+;; ;;(setq tfs/tf-exe  "C:\\Program Files\ \(x86\)\\Microsoft\ Visual\ Studio\ 12.0\\Common7\\IDE\\TF.exe")
+;; (setq tfs/login "/login:snd\\kleynmi,password")
+;; ;; 3. also in your .emacs file:
+;; ;;      set local or global key bindings for tfs commands.  like so:
+
+;; (global-set-key  "\C-xvo" 'tfs/checkout)
+;; (global-set-key  "\C-xvi" 'tfs/checkin)
+;; (global-set-key  "\C-xvp" 'tfs/properties)
+;; (global-set-key  "\C-xvg" 'tfs/get)
+;; (global-set-key  "\C-xvh" 'tfs/history)
+;; (global-set-key  "\C-xvu" 'tfs/undo)
+;; (global-set-key  "\C-xvd" 'tfs/diff)
+;; (global-set-key  "\C-xvs" 'tfs/status)
+;; (global-set-key  "\C-xva" 'tfs/annotate)
+;; (global-set-key  "\C-xvw" 'tfs/workitem)
+;; (global-set-key  "\C-xv+" 'tfs/add)
+;; (global-set-key  "\C-xv-" 'tfs/delete)
+;; (global-set-key  "\C-xvc" 'tfs/changeset)
+
+* Debugging
+;;-------------------------------------------------------------------- DEBUG
+;;Go to where your function is defined and type M-x edebug-defun,
+;;This will work the next time the function is called. You can check the docs[1]or just type ?.
+
+;; edebug-defun inside function definition  <- revert by re-evaluating the defun
+;; debug-on-entry
+;; (toggle-debug-on-error)
+;; toggle-debug-on-quit
+;; insert (debug)
+#+BEGIN_SRC
+(defun set-debug-on()   (interactive) (setq debug-on-error t))
+(defun set-debug-off()  (interactive) (setq debug-on-error nil))
+#+END_SRC
+;;(setq debug-on-error t)
+;;(setq debug-on-error t)
+;;(setq debug-on-error nil)
+
+;; S     Stop: don't execute any more of the program, but wait for more Edebug commands (edebug-stop). 
+;; <SPC> Step: stop at the next stop point encountered (edebug-step-mode).
+;; d     display stack
+;; n     Next: stop at the next stop point encountered after an expression (edebug-next-mode). Also see edebug-forward-sexp in Jumping. 
+;; t     Trace: pause (normally one second) at each Edebug stop point (edebug-trace-mode). 
+;; T     Rapid trace: update the display at each stop point, but don't actually pause (edebug-Trace-fast-mode). 
+;; g     Go: run until the next breakpoint (edebug-go-mode). See Breakpoints. 
+;; c     Continue: pause one second at each breakpoint, and then continue (edebug-continue-mode). 
+;; C     Rapid continue: move point to each breakpoint, but don't pause (edebug-Continue-fast-mode). 
+;; G     Go non-stop: ignore breakpoints (edebug-Go-nonstop-mode). You can still stop the program by typing S, or any editing command.
+;; ESC-: eval expr
+
+;; Edebug can record an execution trace, storing it in a buffer named *edebug-trace*. This is a log of function calls and returns, showing the function names and their arguments and values. To enable trace recording, set edebug-trace to a non-nil value.
+;; Making a trace buffer is not the same thing as using trace execution mode (see Edebug Execution Modes).
+;; When trace recording is enabled, each function entry and exit adds lines to the trace buffer. A function entry record consists of ‘::::{’, followed by the function name and argument values. A function exit record consists of ‘::::}’, followed by the function name and result of the function.
+;; The number of ‘:’s in an entry shows its recursion depth. You can use the braces in the trace buffer to find the matching beginning or end of function calls.
+;; You can customize trace recording for function entry and exit by redefining the functions edebug-print-trace-before and edebug-print-trace-after.
+;; — Macro: edebug-tracing string body...
+;; This macro requests additional trace information around the execution of the body forms. The argument string specifies text to put in the trace buffer, after the ‘{’ or ‘}’. All the arguments are evaluated, and edebug-tracing returns the value of the last form in body.
+;; — Function: edebug-trace format-string &rest format-args
+;; This function inserts text in the trace buffer. It computes the text with (apply 'format format-string format-args). It also appends a newline to separate entries.
+;; edebug-tracing and edebug-trace insert lines in the trace buffer whenever they are called, even if Edebug is not active. Adding text to the trace buffer also scrolls its window to show the last lines inserted.
 
 * ESHELL
 #+BEGIN_SRC emacs-lisp
