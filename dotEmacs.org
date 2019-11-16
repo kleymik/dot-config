@@ -24,12 +24,14 @@ increase/decrease font C-c kepad+ keypad-
 (require 'ob)
 (require 'org)
 (require 'cl)              ; for transpose
-;; (require 'diffview)      ;; make patch files look like ediff
+
 (require 'dired-x)
 (require 'wdired)
 (require 'regexp-opt)
 (require 'em-alias)        ; for eshell 
 (load-library "dired-subtree")
+;; (require 'dired-k)
+;; (require 'diffview)      ; make patch files look like ediff
 #+END_SRC
 * Function Definitions
 
@@ -69,7 +71,14 @@ increase/decrease font C-c kepad+ keypad-
   (setq buffer-display-table (make-display-table))
   (aset buffer-display-table ?\^M []))
 
-;; ---------------------------------------------------- Scroll One Line At a time
+;; ------------------------------------------------------------------- Open App
+;;(defun w32-browser (doc) (w32-shell-execute 1 doc))
+;;(eval-after-load "dired" '(define-key dired-mode-map [f3]
+;;                (lambda ()
+;;                  (interactive)
+;;                  (w32-browser (dired-replace-in-string "/" "\\" (dired-replace-in-string "/cygdrive/C/" "C:\\" (dired-get-filename)))))))
+
+;; ------------------------------------------------------------------- Scroll One Line At a time
 (defun scroll-one-line-up (&optional arg)
   "Scroll the selected window up (forward in the text) one line (or N lines)."
   (interactive "p")
@@ -79,7 +88,7 @@ increase/decrease font C-c kepad+ keypad-
   (interactive "p")
   (scroll-down (or arg 1)))
 
-;;------------------------------------------------------------------------------ Column space
+;;-------------------------------------------------------------------- Column space
 (defun go-to-column (column)
   (interactive "nColumn: ")
   (move-to-column column t))
@@ -109,6 +118,10 @@ increase/decrease font C-c kepad+ keypad-
   (interactive "P")
   (switch-to-buffer (list-buffers-noselect t)))
 (setq Buffer-menu-name-width 40)
+
+(defun buffer-menu-sort-by-filename (&optional arg)
+  (interactive "P")
+  (Buffer-menu-sort 6))
 
 ;; ------------------------------------------------------------------- Eval
 (defun eval-and-insert ()
@@ -353,6 +366,11 @@ BEG and END (region to sort)."
   ;; 3) Additional number of whitespaces to add, the default 1 is fine. Set to 0 if no additional whitespace is needed.
   ;; 4) Finally, answer n/y, depending whether the alignment must be done once or repeated.
   (align-regexp start end (concat "\\(\\s-*\\)" regexp) 1 1 t))
+(defun alignFoo (pat)
+  (interactive "spattern?")
+  (align-regexp (region-beginning) (region-end) (concat "\\(\\s-*\\)" pat) 1 1 nil)
+  ;;(align-regexp beg end (concat "\\(\\s-*\\)" pat) 1 1 nil)
+  )
 
 ;;---------------------------------------------------------- Open With
 (defalias 'my-open-file  (kbd "C-a C-s / C-b C-s : C-x C-x ESC w C-x C-f C-a C-y DEL C-k RET")
@@ -464,6 +482,7 @@ BEG and END (region to sort)."
 ;; (setq Buffer-menu-sort-column 6)
 ;; proced       to view processes
 ;; find-dired   calls unix find
+;; flush-lines
 ;; tail-mode    auto-revert-tail-mode (C-cr)
 ;; set-buffer-file-coding-system unix <--format
 ;; package-list-packages
@@ -545,7 +564,17 @@ BEG and END (region to sort)."
 ;; (setq-default line-spacing 0.06)
 ;; M-x clone-indirect-buffer RET
 
-;;-------------------- mouse and region
+;; ----------------------------------------------- Show keystrokes in progress
+(setq echo-keystrokes 0.1)
+;;------------------------------------------------ buffer reverting
+;; Auto refresh buffers when edits occur outside emacs
+(global-auto-revert-mode 1)
+
+;; Also auto refresh dired, but be quiet about it
+(setq global-auto-revert-non-file-buffers t)
+(setq auto-revert-verbose nil)
+
+;;------------------------------------------------ mouse and region
 (setq mouse-drag-copy-region t)
 (setq save-interprogram-paste-before-kill t)
 ;; (setq x-select-enable-primary t)
@@ -557,11 +586,11 @@ BEG and END (region to sort)."
 ;; (setq mwheel-scroll-down-function 'mwheel-scroll-all-scroll-down-all)
 
 
-;; --------------------------------------------- Shell
+;; ----------------------------------------------- Shell
 (setq shell-file-name "bash")
 (setq explicit-shell-file-name shell-file-name)
 ;;(setq shell-command-switch "-c")
-;; --------------------------------------------- History
+;; ----------------------------------------------- History
 (setq history-length 10000)
 (setq list-command-history-max 300)
 (savehist-mode 1)
@@ -569,7 +598,7 @@ BEG and END (region to sort)."
 
 ; (list-command-history)
 
-;; --------------------------------------------- Colour
+;; ----------------------------------------------- Colour
 (set-background-color "bisque")
 ;(set-background-color "bisque2")
 ;(set-background-color "bisque3")
@@ -608,15 +637,7 @@ BEG and END (region to sort)."
 ;; ;; Fix empty pasteboard error.
 ;; (setq save-interprogram-paste-before-kill nil)
 
-;; ;; Auto refresh buffers when edits occur outside emacs
-;; (global-auto-revert-mode 1)
 
-;; ;; Also auto refresh dired, but be quiet about it
-;; (setq global-auto-revert-non-file-buffers t)
-;; (setq auto-revert-verbose nil)
-
-;; ;; Show keystrokes in progress
-;; (setq echo-keystrokes 0.1)
 (global-subword-mode 1)
 ;; from 'better-defaults.el'
 ;; Allow clipboard from outside emacs
@@ -1010,8 +1031,15 @@ BEG and END (region to sort)."
       (defalias 'dired-up (kbd "ESC < C-e C-r / NUL C-a ESC w C-x d C-a C-y C-k C-a ESC \\ C-e RET C-x b RET C-x k RET"))
       (defalias 'dired-go-subdir-kbm (kbd "f C-x b RET C-x k RET")))))
 
+;; (add-hook 'dired-mode-hook
+;;           (lambda ()
+;;             (setq-local ace-jump-search-filter
+;;                         (lambda ()
+;;                           (get-text-property (point) 'dired-filename)))))
+
+
 ; Dired Listing Switches: Hide Value -ahl --time-style=long-iso
-;   State: SET for current session only.
+;  State: SET for current session only.
 (defun see-logbook1()     (interactive) (find-file "/home/kleyn/logbook/Diamond.org"))
 (defun see-logbook2()     (interactive) (find-file "/home/kleyn/logbook/GDA.org"))
 (defun nok900()           (interactive) (dired "/scpc:root@192.168.0.6:/home/user/MyDocs/aNotes/")) ;; barnes
@@ -1026,55 +1054,19 @@ BEG and END (region to sort)."
    (goto-char (point-min))
    (forward-line 3))
 
+(defun dired-ediff-git (&optional arg)
+  (interactive)
+  (setq ffn (dired-get-filename))
+  (setq fn  (dired-get-filename "no-dir"))
+  (setq-default fill-column     200)
+  (ediff-revision fn)
+  ;;(dired-rename-file ffn (concat "//lon0302/dfs/DATA/MULTI_ASSET/MAQS/dataCollection/FI/LOCAL/ARCHIVE/OLD/" fn))
+  ;;dired-rename-file (file newname ok-if-already-exists)
+)
+
 (setq dired-subtree-line-prefix "     ")
 
-;; (add-hook 'dired-mode-hook
-;;           (lambda ()
-;;             (setq-local ace-jump-search-filter
-;;                         (lambda ()
-;;                           (get-text-property (point) 'dired-filename)))))
-
-
-(define-key dired-mode-map "J"               'dired-move-to-old) ; junk
-(define-key dired-mode-map "O"                (lambda () (interactive) (w32-browser (dired-replace-in-string "/" "\\" (dired-get-filename)))))
-(define-key dired-mode-map "r"               'wdired-change-to-wdired-mode)
-(define-key dired-mode-map (kbd "<S-down>")  'dired-subtree-next-sibling)
-(define-key dired-mode-map (kbd "<S-left>")  'dired-subtree-remove)
-(define-key dired-mode-map (kbd "<S-right>") 'dired-subtree-insert)
-(define-key dired-mode-map (kbd "<S-up>")    'dired-subtree-previous-sibling)
-(define-key dired-mode-map (kbd "C-n")       'dired-next-line)
-(define-key dired-mode-map (kbd "C-p")       'dired-previous-line)
-(define-key dired-mode-map (kbd "c")         'dired-ediff-git)
-(define-key dired-mode-map (kbd "e")         'dired-subtree-only-this-file)
-(define-key dired-mode-map [M-down]          'dired-view-next)      ; was dired-previous-line
-(define-key dired-mode-map [M-up]            'dired-view-previous)  ; was dired-next-line
-(define-key dired-mode-map [left]            'dired-up) ;; dired-up-directory
-;(define-key dired-mode-map [left]            'dired-up-directory)
-(define-key dired-mode-map [right]           'dired-go-subdir-kbm)
-;; dired-view-current)     ; was dired-display-file
-
-; (define-key dired-mode-map (kbd "p")  'dired-subtree-only-this-file) ; tbd: pick-off the path of the given file into clipboard
-;; of emacs.  It is adviced to place bindings for these into a
-;; convenient prefix key map, for example `C-,`
-
-;; * `dired-subtree-remove`
-;; * `dired-subtree-revert`
-;; * `dired-subtree-narrow`
-;; * `dired-subtree-up`
-;; * `dired-subtree-down`
-;; * `dired-subtree-previous-sibling`
-;; * `dired-subtree-beginning`
-;; * `dired-subtree-end`
-;; * `dired-subtree-mark-subtree`
-;; * `dired-subtree-unmark-subtree`
-;; * `dired-subtree-only-this-file`
-;; * `dired-subtree-only-this-directory`
-
-;(add-hook 'ediff-mode-hook (lambda () (setq ediff-shell "C:/cygwin/bin/mintty.exe")))
-;(add-hook 'ediff-load-hook (lambda () (setq ediff-shell "C:/cygwin/bin/mintty.exe")))
-
 ;;------------------------------------dired peek
-
 (defun dired-view-next ()
   "Move down one line and view the current file in another window."
   (interactive)
@@ -1109,6 +1101,48 @@ BEG and END (region to sort)."
           (switch-to-buffer filebuffer)                 ; simply switch 
         (view-file file))                               ; ... view it
       (other-window -1))))                              ; give the attention back to the dired buffer
+
+
+(define-key dired-mode-map "J"               'dired-move-to-old) ; junk
+(define-key dired-mode-map "O"                (lambda () (interactive) (w32-browser (dired-replace-in-string "/" "\\" (dired-get-filename)))))
+(define-key dired-mode-map "r"               'wdired-change-to-wdired-mode)
+(define-key dired-mode-map (kbd "<S-down>")  'dired-subtree-next-sibling)
+(define-key dired-mode-map (kbd "<S-left>")  'dired-subtree-remove)
+(define-key dired-mode-map (kbd "<S-right>") 'dired-subtree-insert)
+(define-key dired-mode-map (kbd "<S-up>")    'dired-subtree-previous-sibling)
+(define-key dired-mode-map (kbd "C-n")       'dired-next-line)
+(define-key dired-mode-map (kbd "C-p")       'dired-previous-line)
+(define-key dired-mode-map (kbd "c")         'dired-ediff-git)
+(define-key dired-mode-map (kbd "e")         'dired-subtree-only-this-file)
+(define-key dired-mode-map [M-down]          'dired-view-next)      ; was dired-previous-line
+(define-key dired-mode-map [M-up]            'dired-view-previous)  ; was dired-next-line
+(define-key dired-mode-map [left]            'dired-up) ;; dired-up-directory
+;(define-key dired-mode-map [left]            'dired-up-directory)
+(define-key dired-mode-map [right]           'dired-go-subdir-kbm)
+;; dired-view-current)     ; was dired-display-file
+;; (define-key dired-mode-map "r" 'wdired-change-to-wdired-mode)
+;; (define-key dired-mode-map (kbd "K") 'dired-k)
+;; (define-key dired-mode-map (kbd "p")  'dired-subtree-only-this-file) 
+;;       tbd: pick-off the path of the given file into clipboard
+;;       of emacs.  It is adviced to place bindings for these into a
+;;       convenient prefix key map, for example `C-,`
+
+;; * `dired-subtree-remove`
+;; * `dired-subtree-revert`
+;; * `dired-subtree-narrow`
+;; * `dired-subtree-up`
+;; * `dired-subtree-down`
+;; * `dired-subtree-previous-sibling`
+;; * `dired-subtree-beginning`
+;; * `dired-subtree-end`
+;; * `dired-subtree-mark-subtree`
+;; * `dired-subtree-unmark-subtree`
+;; * `dired-subtree-only-this-file`
+;; * `dired-subtree-only-this-directory`
+
+;(add-hook 'ediff-mode-hook (lambda () (setq ediff-shell "C:/cygwin/bin/mintty.exe")))
+;(add-hook 'ediff-load-hook (lambda () (setq ediff-shell "C:/cygwin/bin/mintty.exe")))
+
 
 
 (message "dotEmacs.org section Dired done")
@@ -1305,6 +1339,7 @@ BEG and END (region to sort)."
 #+BEGIN_SRC emacs-lisp
 ;(global-set-key "\C-x\C-b" 'ibuffer)
 
+;;  (global-set-key "\C-q"          'quoted-insert)  ; for resetting, already default
 (global-set-key "\C-c<"		'selective-display-level-decr)
 (global-set-key "\C-c>"		'selective-display-level-incr)
 (global-set-key "\C-cb"		'ediff-buffers)
@@ -1318,10 +1353,12 @@ BEG and END (region to sort)."
 (global-set-key "\C-cs"		'parallel-swap)
 (global-set-key "\C-ct"		'org-table-convert-region)
 (global-set-key "\C-cw"		'delete-trailing-whitespace)
+(global-set-key "\C-xc"         'filepath-on-clipboard)
 (global-set-key "\C-xd"         'dired)
 (global-set-key "\C-xg"         'magit-status)
 (global-set-key "\C-xi"         'eval-print-last-sexp) ; ielm
 (global-set-key "\C-xl"		'list-matching-lines)
+(global-set-key "\C-xp"         'my-transpose-sexps)
 (global-set-key "\C-xt"		'instimestamp)
 (global-set-key "\C-z"		'undo) ; replace-string
 (global-set-key "\M-$"		'query-replace-regexp)
@@ -1340,8 +1377,11 @@ BEG and END (region to sort)."
 (global-set-key [C-up]          'windmove-up)          ;(global-set-key (kbd "C-c <up>")    'windmove-up)
 (global-set-key [M-home]	'org-collapse)
 (global-set-key [S-down]        'scroll-one-line-up)
-(global-set-key [S-f7]          'buffer-menu-sort-by-filename)
+(global-set-key [S-f4]          'org-save-code-block)
+(global-set-key [S-f6]          'bool-flip-do-flip)
+(global-set-key [S-f7]          'show-hist)            ;(global-set-key [S-f7]          'buffer-menu-sort-by-filename) 
 (global-set-key [S-f8]          'dired-omit-mode)
+(global-set-key [S-f9]          'insertLastSexp) ; (lambda () (interactive) (dired "C:/[pm][rya][qoadmp][parsd]*" nil)))
 (global-set-key [S-insert]      'clipboard-yank)
 (global-set-key [C-f3]          #'(lambda () (interactive) (switch-to-buffer "*eshell*")))
 (global-set-key [S-kp-4]        'selective-display-level-decr)
@@ -1353,7 +1393,7 @@ BEG and END (region to sort)."
 
 
 (global-set-key [kp-subtract]   'kill-this-buffer-volatile)
-(global-set-key [f10]           'see-shell-output) ;ergoemacs-open-in-external-app
+(global-set-key [f10]           'kmacro-end-and-call-macro) ; see-shell-output) ;ergoemacs-open-in-external-app
 (global-set-key [f11]           'hs-show-block)
 (global-set-key [f12]           'hs-hide-block)
 (global-set-key [f1]            'see-logbook1)
@@ -1364,7 +1404,7 @@ BEG and END (region to sort)."
 (global-set-key [f6]            'ergoemacs-open-in-external-app)
 (global-set-key [f7]            'my-list-buffers)
 ;(global-set-key [f8]            'ztree-dir)
-(global-set-key [f9]		'ielm)  ;; open file under cursor
+(global-set-key [f9]            'kmacro-start-macro)  ; 	'ielm)  ;; open file under cursor
 (global-set-key [kp-divide]     'toggle-window-split)
 
 (global-unset-key "\C-x\C-c")                            ;; ;;; don't quit so easily
