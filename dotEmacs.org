@@ -6,7 +6,7 @@ Emacs Initialisation
 ;; (package-initialize)
 ;; (org-babel-load-file "~/dot/dotEmacs.org)
 C-c C-u go up
-increase/decrease font C-cC-+/-
+increase/decrease font C-c kepad+ keypad-
 
 * Packages
 #+BEGIN_SRC emacs-lisp
@@ -1343,6 +1343,7 @@ BEG and END (region to sort)."
 (global-set-key [S-f7]          'buffer-menu-sort-by-filename)
 (global-set-key [S-f8]          'dired-omit-mode)
 (global-set-key [S-insert]      'clipboard-yank)
+(global-set-key [C-f3]          #'(lambda () (interactive) (switch-to-buffer "*eshell*")))
 (global-set-key [S-kp-4]        'selective-display-level-decr)
 (global-set-key [S-kp-5]        'selective-display-level-zero)
 (global-set-key [S-kp-6]        'selective-display-level-incr)
