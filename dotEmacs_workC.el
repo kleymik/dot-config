@@ -81,50 +81,21 @@
 
 (global-set-key  [C-tab]        'hs-toggle-hiding)
 
-(global-set-key "\M-$"          'query-replace-regexp)
-(global-set-key [(end)]         'my-list-buffers)
-(global-set-key [(next)]        'cycle-buffer)
-(global-set-key [(prior)]       'cycle-buffer-backward)
-(global-set-key [C-down]        'cycle-buffer)        ;(global-set-key (kbd "C-c <down>")  'windmove-down)
-(global-set-key [C-f10]         '(lambda () (interactive) (dired "//lon0302/dfs/DATA/MULTI_ASSET/MAQS/dataCollection/FI/LOCAL/USR/MK" nil)))
-(global-set-key [C-f11]         '(lambda () (interactive) (dired "//lon0302/dfs/DATA/MULTI_ASSET/MAQS/dataCollection/FI/LOCAL/USR/MK/vc/rs1" nil)))
-(global-set-key [C-f12]         '(lambda () (interactive) (dired "L:/MyDocs" nil)))
-(global-set-key [C-f1]          'mk-new-buffer)
-(global-set-key [C-f4]          'org-transpose-table-at-point)
-(global-set-key [C-f5]          '(lambda () (interactive) (dired "//lon06179/Logs" nil))) ; prod
-(global-set-key [C-f6]          '(lambda () (interactive) (dired "//lon76179/" nil)))     ; dev //lon0302/dfs/DATA/MULTI_ASSET/MAQ?
-(global-set-key [C-f7]          '(lambda () (interactive) (dired "C:/" nil)))
-(global-set-key [C-f8]          '(lambda () (interactive) (dired "//lon0301/dfs/DATA/DTA/PERFDATA/Inv Risk/Stock Baskets/ForSharepoint/BasketPerfReport" nil)))
-(global-set-key [C-f9]          '(lambda () (interactive) (dired "//lon0302/dfs/DATA/MULTI_ASSET/MAQS" nil)))
-(global-set-key [C-insert]      'clipboard-kill-ring-save)
-(global-set-key [C-left]        'kill-this-buffer-volatile)
-(global-set-key [C-up]          'cycle-buffer-backward)          ;(global-set-key (kbd "C-c <up>")    'windmove-up)
-(global-set-key [M-f10]         'see-shell-output) ;ergoemacs-open-in-external-app
-(global-set-key [M-f11]         'set-debug-on)
-(global-set-key [M-f12]         'set-debug-off)
-(global-set-key [M-f2]          'buffer-menu-sort-by-filename)
-(global-set-key [M-f3]          '(lambda () (interactive) (dired "L:/MyDocs/history/bash/history_2019-*" nil)))
-(global-set-key [M-f9]          'ielm)  ;; open file under cursor ;;(global-set-key [M-f9]        'insertLastSexp);; insert result
-(global-set-key [M-home]        'org-collapse)
-(global-set-key [S-f12]         'hs-hide-block)
-
-(global-set-key [f11]           'kmacro-end-macro)
-(global-set-key [f3]            'see-dotEmacs) ; my-openfile  'neotree-show
 (global-set-key [f4]            'see-orglink-dired) ;;     'desktop-save)
 (global-set-key [f5]            'ffap) ; bookmark-bmenu-list
-(global-set-key [f7]            'go-to-column)
+
 
 ;(define-key global-map "\C-co" 'org-capture)
-;(global-set-key "\C-cq"        'lines-to-cslist)
-;(global-set-key [C-down]        'windmove-down)        ;(global-set-key (kbd "C-c <down>")  'windmove-down)
-;(global-set-key [C-kp-insert]  'kill-ring-save)
-;(global-set-key [C-left]        'windmove-left)        ;(global-set-key (kbd "C-c <left>")  'windmove-left)
-;(global-set-key [C-right]       'windmove-right)       ;(global-set-key (kbd "C-c <right>") 'windmove-right)
-;(global-set-key [C-up]          'windmove-up)          ;(global-set-key (kbd "C-c <up>")    'windmove-up)
-;(global-set-key [M-up]            'other-window)
-;(global-set-key [S-kp-insert]  'yank)
-;(global-set-key [S-wheel-own].
-;(global-set-key [S-wheel-up].
+;;(global-set-key "\C-cq"        'lines-to-cslist)
+;;(global-set-key [C-down]        'windmove-down)        ;(global-set-key (kbd "C-c <down>")  'windmove-down)
+;;(global-set-key [C-kp-insert]  'kill-ring-save)
+;;(global-set-key [C-left]        'windmove-left)        ;(global-set-key (kbd "C-c <left>")  'windmove-left)
+;;(global-set-key [C-right]       'windmove-right)       ;(global-set-key (kbd "C-c <right>") 'windmove-right)
+;;(global-set-key [C-up]          'windmove-up)          ;(global-set-key (kbd "C-c <up>")    'windmove-up)
+;;(global-set-key [M-up]            'other-window)
+;;(global-set-key [S-kp-insert]  'yank)
+;;(global-set-key [S-wheel-own].
+;;(global-set-key [S-wheel-up].
                                         ;(global-unset-key (kbd "C-q"))
 ;; (global-set-key [S-M-kp-down] 'sgml-fold-subelement) 
 ;; (global-set-key [S-M-kp-end]  'sgml-fold-element)   ;  fold everything below current element
@@ -138,7 +109,7 @@
 ;;(global-set-key [M-return]        'ffap)  ;; open file under cursor
 ;;(global-set-key [S-f11]       'debug-function-on-entry)
 ;;(global-set-key [f8]          'vigenere-decrypt-buffer)
-;;; don't quit so easily
+
 ;;-------------------------------------------------------------------------------
 (dired "L:/" nil)
 (setq dired-dwim-target t)
