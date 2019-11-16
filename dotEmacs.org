@@ -1577,6 +1577,157 @@ example
                                                                                                                         
   (defalias 'eshell/more 'eshell/less)
 
+* ESHELL TBD
+
+
+1.2 Code snippet (from emacswiki and other website)
+add below to your .emacs
+
+1.2.1 setting up environment related variable
+1:  (require 'eshell)
+2:  ;; setting up environment related variable in eshell
+3:  (setenv "JAVA_HOME" "/usr/local/java")
+4:  (setenv "CATALINA_HOME" "/var/lib/tomcat4")
+5:  (setenv "LC_ALL" "C")
+6:  (setenv "PATH" "/usr/local/java/bin:/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin:/home/gnmk/bin")
+7:  (setenv "LANG" "en_US.UTF8")
+8:  (setenv "EDITOR" "emacsclient")
+
+1.2.2 eshell history size and saving history while exit.
+1:  (setq eshell-history-size 20000)
+2:  (setq eshell-save-history-on-exit t)
+3:  (setq eshell-hist-ignoredups t)
+4:  (setq eshell-cmpl-cycle-completions nil)
+
+1.2.3 scroll to the bottom
+1:  (setq eshell-scroll-to-bottom-on-output t)
+2:  (setq eshell-scroll-show-maximum-output t)
+
+1.2.4 run top/ps from eshell, require term to be open
+ 1:  (eval-after-load 'esh-opt
+ 2:    '(progn
+ 3:       (require 'em-cmpl)
+ 4:       (require 'em-prompt)
+ 5:       (require 'em-term)
+ 6:       (add-hook 'eshell-mode-hook 
+ 7:                 '(lambda () (define-key eshell-mode-map "\C-a" 'eshell-bol)))
+ 8:       (add-to-list 'eshell-visual-commands "ssh")
+ 9:       (add-to-list 'eshell-visual-commands "tail")
+10:       (add-to-list 'eshell-visual-commands "top")
+11:       (add-to-list 'eshell-command-completions-alist
+12:                    '("gunzip" "gz\\'"))
+13:       (add-to-list 'eshell-command-completions-alist
+14:                    '("tar" "\\(\\.tar|\\.tgz\\|\\.tar\\.gz\\)\\'"))
+15:       (add-to-list 'eshell-output-filter-functions 'eshell-handle-ansi-color)))
+
+1.2.5 eshell/clear function
+1:  ;;from http://www.khngai.com/emacs/eshell.php
+2:  (defun eshell/clear ()
+3:  "04Dec2001 - sailor, to clear the eshell buffer."
+4:  (interactive)
+5:  (let ((inhibit-read-only t))
+6:  (erase-buffer)))
+
+1.2.6 eshell short and long prompt on request (from emacswiki)
+ 1:  ;; Returns the short propmpt string for eshell
+ 2:  (defun eshell-prompt-function-short ()
+ 3:    "Makes a short eshell prompt to avoid moving out of the buffer
+ 4:      window boundary"
+ 5:    (let* ((pwd (eshell/pwd))
+ 6:           (pwdlst (split-string pwd "/"))
+ 7:           (rpwdlst (reverse pwdlst))
+ 8:           (base (car rpwdlst)))
+ 9:      (concat (if (string= base "")
+10:                  "/"
+11:                (if (cdr pwdlst) "<...> /" ""))
+12:              base
+13:              (if (= (user-uid) 0) " # " " $ "))))
+14:  
+15:  ;; Returns the long prompt string for eshell
+16:  (defun eshell-prompt-function-long ()
+17:    "Makes a long standard eshell prompt"
+18:    (concat (format-time-string "%l:%M %p") "| "
+19:            (getenv "USER") "@" (getenv "HOSTNAME") ":"
+20:            (eshell/pwd) (if (= (user-uid) 0) " # " " $ ")))
+21:  
+22:  (setq eshell-prompt-function
+23:        'eshell-prompt-function-long)
+24:  
+25:  (defun eshell/sprompt ()
+26:    "Makes a short eshell prompt to avoid moving out of the buffer
+27:        window boundary (link to eshell-prompt-function-short)"
+28:    (setq eshell-prompt-function
+29:          'eshell-prompt-function-short))
+30:  
+31:  (defun eshell/lprompt ()
+32:    "Makes a long standard eshell prompt (link to
+33:        eshell-prompt-function-long)"
+34:    (setq eshell-prompt-function
+35:          'eshell-prompt-function-long))
+
+1.2.7 find file when use emacs as one of the command
+1:  (defun eshell/emacs (file)
+2:  "find-file alias"
+3:    (find-file file))
+
+1.2.8 find file when use w3m
+1:  (defun eshell/w3m (file)
+2:  "w3m-find-file alias"
+3:    (w3m-find-file file))
+
+1.2.9 info command
+1:  (defun eshell/info ()
+2:    "info alias"
+3:    (info))
+
+1.2.10 display emacs manual when type einfo
+1:  (defun eshell/einfo ()
+2:    "Display emacs manual"
+3:    (info-emacs-manual))
+
+1.2.11 aliase
+1:  (defun eshell/ll (&rest args)
+2:    "ls -alh alias"
+3:    (eshell/ls "-alh" args))
+4:  
+5:  (defun eshell/la (&rest args)
+6:    "ls -a alias"
+7:    (eshell/ls "-a" args))
+
+1.2.12 convert ansi color faces in eshell
+ 1:  ;; This will transform ansi color to faces in Emacs shell!
+ 2:  (ansi-color-for-comint-mode-on)
+ 3:  (defun eshell-handle-ansi-color ()
+ 4:    (ansi-color-apply-on-region eshell-last-output-start
+ 5:                                eshell-last-output-end))
+ 6:  (add-hook 'eshell-mode-hook
+ 7:            '(lambda ()
+ 8:               (add-to-list
+ 9:                'eshell-output-filter-functions
+10:                'eshell-handle-ansi-color)))
+
+1.2.13 compile process in background
+ 1:  ;;Here’s how to compile in the background, also by Kai.
+ 2:  (defun eshell/ec (&rest args)
+ 3:    "Use `compile' to do background makes."
+ 4:    (if (eshell-interactive-output-p)
+ 5:        (let ((compilation-process-setup-function
+ 6:               (list 'lambda nil
+ 7:                     (list 'setq 'process-environment
+ 8:                           (list 'quote (eshell-copy-environment))))))
+ 9:          (compile (eshell-flatten-and-stringify args))
+10:          (pop-to-buffer compilation-last-buffer))
+11:      (throw 'eshell-replace-command
+12:             (let ((l (eshell-stringify-list (eshell-flatten-list args))))
+13:               (eshell-parse-command (car l) (cdr l))))))
+14:  (put 'eshell/ec 'eshell-no-numeric-conversions t)
+
+Type ec <command> from eshll prompt will open another buffer with command output/status.
+
+
+
+
+ 
 * END BIT
 #+BEGIN_SRC emacs-lisp
 ;(dired "/home/kleyn" nil)
