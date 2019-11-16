@@ -8,6 +8,29 @@ Emacs Initialisation
 C-c C-u go up
 increase/decrease font C-c kepad+ keypad-
 
+* To be processed
+;; Print message listing key sequences that invoke the command DEFINITION.
+;; Argument is a command definition, usually a symbol with a function definition.
+;; If INSERT (the prefix arg) is non-nil, insert the message in the buffer.
+
+;; TBD dired-find-file-otherwindow open a cygwin link by inspecting it
+
+;;------------------------------------------------------------------------------- Org-Mode
+;; (print (cadr info) (get-buffer "*scratch*"))
+;; (write-region (cadr info) nil "L:/MyDocs/history/matlabCmds/org_cmd.m")
+;; (write-region (cadr info) nil "C:/MyMAQS/grepHist/aaa_org_cmd.m"))
+;; (save-restriction (org-mark-subtree) (rot13-region (point) (mark))))
+
+;; find-dired   calls unix find
+;; Dired Listing Switches: Hide Value -ahl --time-style=long-iso
+;; of emacs.  It is adviced to place bindings for these into a
+;; convenient prefix key map, for example `C-,`
+
+;;--------------------------------------------------------------------- Key Bindings
+;; (global-set-key [f4]            'see-orglink-dired) ;;     'desktop-save)
+;; (define-key global-map "\C-co" 'org-capture)
+;;-------------------------------------------------------------------------------
+
 * Packages
 #+BEGIN_SRC emacs-lisp
 (defun ke()           (interactive) (kill-emacs))
@@ -640,7 +663,7 @@ BEG and END (region to sort)."
 ;; (set-face-background 'default "palevioletred")
 ;; (set-face-background 'default "lightblue")
 ;; (set-face-background 'default "paleturquoise")
-;;( set-face-background 'default "lightblue")
+;; (set-face-background 'default "lightblue")
 
 ;; ---------------------------------------------- Save Session as Desktop
 ;;  use desktop-change-dir to /home/uri03204/.emacs.d/desktop to get it back
@@ -850,6 +873,8 @@ BEG and END (region to sort)."
 (setq org-cycle-include-plain-lists t)
 (setq org-startup-folded nil)
 (setq org-src-fontify-natively t)
+(setq org-list-allow-alphabetical t)
+
 ;; (org-babel-do-load-languages 'org-babel-load-languages '((matlab . t) 
 ;;                                                          (python . t) 
 ;;                                                          (emacs-lisp . t)))
@@ -1032,6 +1057,7 @@ BEG and END (region to sort)."
 * Dired Mode
 #+BEGIN_SRC emacs-lisp 
 
+(setq dired-dwim-target t)
 (setq dired-subtree-line-prefix "     ")
 
 ;(define-key dired-mode-map "r" 'wdired-change-to-wdired-mode)
@@ -1858,7 +1884,7 @@ Type ec <command> from eshll prompt will open another buffer with command output
 
 
 
- 
+
 * END BIT
 #+BEGIN_SRC emacs-lisp
 ;(dired "/home/kleyn" nil)
