@@ -71,6 +71,28 @@ increase/decrease font C-c kepad+ keypad-
   (setq buffer-display-table (make-display-table))
   (aset buffer-display-table ?\^M []))
 
+(defun insertcodePyCodeSnippet ()
+  (interactive)
+  (move-beginning-of-line nil)
+  ;;(newline-and-indent)
+  ;; (end-of-line)
+  ;; (open-line)
+  (indent-according-to-mode)
+  (insert "from util import dbg_toolbag as t; t.brk()")
+  ; (insert "from see import see; import ipdb; ipdb.set_trace(context=15) # breakpoint()")
+  (newline)
+  (indent-according-to-mode)
+  )
+
+;;(defun replace-selected ()
+;;  (interactive)
+;;  (if (region-active-p)
+;;      (replace-string "^\(.*[0-9]+?:[0-9]+\)" "[[https://www.lds.org/scriptures/search?lang=eng&query=\1&x=0&y=0][\1]]"
+;;                      nil (region-beginning) (region-end))
+;;     (replace-regexp "^\(.*[0-9]+?:[0-9]+\)" "[[https://www.lds.org/scriptures/search?lang=eng&query=\1&x=0&y=0][\1]]")
+;;     ))
+
+
 ;; ------------------------------------------------------------------- Open App
 ;;(defun w32-browser (doc) (w32-shell-execute 1 doc))
 ;;(eval-after-load "dired" '(define-key dired-mode-map [f3]
@@ -373,7 +395,6 @@ BEG and END (region to sort)."
   )
 
 ;;---------------------------------------------------------- Open With
-(defalias 'my-open-file  (kbd "C-a C-s / C-b C-s : C-x C-x ESC w C-x C-f C-a C-y DEL C-k RET")
 (add-hook 'find-file-hook  ;; ensure file in production can't be modified via emacs
   '(lambda ()
      (when (string= (substring (buffer-file-name) 0 4) "/dls")
@@ -500,6 +521,8 @@ BEG and END (region to sort)."
 ;; (end-of-line)
 ;; clone-indirect-buffer RET
 ;; (x-get-selection-value)
+;; (remove-hook 'html-mode-hook 'xah-html-mode-keys) ; removing a hook
+
 ;;--------------------------------------------------------------- Sample regexps
 ;; REPLACE REGEXP
 ;; replace unprintable ""
@@ -516,6 +539,16 @@ BEG and END (region to sort)."
 ;; (replace-regexp "(line [0-9]+)" "" nil (point-min) (point-max)) ; clear (line 62)
 ;; (replace-regexp " [0-9][0-9]:[0-9][0-9]:[0-9][0-9]" "" nil (point-min) (point-max)) ; clear " HH:MM:SS" 
 ;; N.B. TBD drop last ","
+
+;; ------------------------------------------------------------------- defalias
+(defalias 'my-open-file  (kbd "C-a C-s / C-b C-s : C-x C-x ESC w C-x C-f C-a C-y DEL C-k RET")
+(defalias 'flipslash     (kbd "C-SPC C-e C-SPC ESC < ESC w C-x b *scratch* RET C-e RET C-y C-r SPC C-f C-SPC C-r total SPC use C-x C-x C-w ESC \ 2*DEL / C-a ESC \ ESC x replace-string / RET \ RET C-a"))
+(defalias 'make-org-tbl  (kbd "ESC x org-mode RET ESC < C-SPC ESC > C-c |"))
+(defalias 'see-logbooks  (kbd "C-x C-f ~/myDocs/logbook RET"))
+; cleanMlLog
+;;[			;; self-insert-command
+;;3*C-k			;; kill-line
+(fset 'cleanMlLog [?\C-s ?\[ ?\C-q ?\C-h ?\C-a escape ?\C-k ?\C-k ?\C-k])
 
 * Settings
 #+BEGIN_SRC emacs-lisp
@@ -600,24 +633,24 @@ BEG and END (region to sort)."
 
 ;; ----------------------------------------------- Colour
 (set-background-color "bisque")
-;(set-background-color "bisque2")
-;(set-background-color "bisque3")
-;(set-face-background 'default "green3")
-;(set-face-background 'default "lightyellow2")
-;(set-face-background 'default "palevioletred")
-;(set-face-background 'default "lightblue")
-;(set-face-background 'default "paleturquoise")
-;(set-face-background 'default "lightblue")
+;; (set-background-color "bisque2")
+;; (set-background-color "bisque3")
+;; (set-face-background 'default "green3")
+;; (set-face-background 'default "lightyellow2")
+;; (set-face-background 'default "palevioletred")
+;; (set-face-background 'default "lightblue")
+;; (set-face-background 'default "paleturquoise")
+;;( set-face-background 'default "lightblue")
 
 ;; ---------------------------------------------- Save Session as Desktop
 ;;  use desktop-change-dir to /home/uri03204/.emacs.d/desktop to get it back
 ;;    say "no" to save-desktop?
 ;;    say "yes" to steal from PID?
-;;(desktop-save-mode 1)  ; desktop-revert desktop-change-dir
-;;(desktop-change-dir "/home/uri03204/myDocs/config")
-;(setq desktop-path "/home/kleyn/.emacs.d/desktop")
-;(desktop-save-mode 1)
-;(setq desktop-auto-save-timeout 300)
+;; (desktop-save-mode 1)  ; desktop-revert desktop-change-dir
+;; (desktop-change-dir "/home/uri03204/myDocs/config")
+;; (setq desktop-path "/home/kleyn/.emacs.d/desktop")
+;; (desktop-save-mode 1)
+;; (setq desktop-auto-save-timeout 300)
 
 ;; ----------------------------------------------- Backup location
 ;;(setq backup-directory-alist          `((".*" . , "/data/data/com.termux/files/home/internalBackup/emacs")))   ; gem
@@ -719,7 +752,7 @@ BEG and END (region to sort)."
 #+BEGIN_SRC emacs-lisp
 
 ;;------------------------------------------------------------- ediff
-;(setq ediff-shell "C:/cygwin/bin/mintty.exe")
+;; (setq ediff-shell "C:/cygwin/bin/mintty.exe")
 ;;  (if (file-directory-p "c:/cygwin/bin")      (add-to-list 'exec-path "c:/cygwin/bin"))
 ;;------------------------------------------------------------------------------ Diff Stuff
 ;; (diffview-current)
@@ -738,10 +771,10 @@ BEG and END (region to sort)."
 ;;------------------------------------------------------------------------------- Switches
 
 ;;------------------------------------------------------------- Magit
-;;(add-to-list 'magit-section-initial-visibility-alist '(stashes . hide))
+;; (add-to-list 'magit-section-initial-visibility-alist '(stashes . hide))
 
 ;; ;; ----------------------------------------------------------- DOS Mode
-;;(autoload 'dos-mode "/home/uri03204/myDocs/ulib/emacs/dos.elc" "Enter DOS CMD mode." t)
+;; (autoload 'dos-mode "/home/uri03204/myDocs/ulib/emacs/dos.elc" "Enter DOS CMD mode." t)
 
 ;; ------------------------------------------------------------------- Java
 ;; TBD add hs-minor-mode for hide/show t
@@ -813,7 +846,6 @@ BEG and END (region to sort)."
 * Org Mode
 ;; ------------------------------------------------------ Org-Mode
 #+BEGIN_SRC emacs-lisp
-(defalias 'make-org-tbl  (kbd "ESC x org-mode RET ESC < C-SPC ESC > C-c |"))
 (setq org-default-notes-file "~/myDocs/logbook/notes.org")
 (setq org-cycle-include-plain-lists t)
 (setq org-startup-folded nil)
@@ -821,8 +853,6 @@ BEG and END (region to sort)."
 ;; (org-babel-do-load-languages 'org-babel-load-languages '((matlab . t) 
 ;;                                                          (python . t) 
 ;;                                                          (emacs-lisp . t)))
-
-;;(defalias 'see-logbooks  (kbd "C-x C-f ~/myDocs/logbook RET"))
 
 (defun org-collapse()     (interactive) (org-shifttab 0))
 
@@ -1001,6 +1031,9 @@ BEG and END (region to sort)."
 #+END_SRC
 * Dired Mode
 #+BEGIN_SRC emacs-lisp 
+
+(setq dired-subtree-line-prefix "     ")
+
 ;(define-key dired-mode-map "r" 'wdired-change-to-wdired-mode)
 ;;(defun w32-browser (doc) (w32-shell-execute 1 doc))
 ;;(eval-after-load "dired" '(define-key dired-mode-map [f3]
@@ -1062,9 +1095,24 @@ BEG and END (region to sort)."
   (ediff-revision fn)
   ;;(dired-rename-file ffn (concat "//lon0302/dfs/DATA/MULTI_ASSET/MAQS/dataCollection/FI/LOCAL/ARCHIVE/OLD/" fn))
   ;;dired-rename-file (file newname ok-if-already-exists)
-)
+  )
 
-(setq dired-subtree-line-prefix "     ")
+(defun dired-move-to-old (&optional arg)
+  (interactive)
+  (setq curDrdBuff (current-buffer))
+  (setq ffn (dired-get-filename))
+  (setq fn  (dired-get-filename "no-dir"))
+  (switch-to-buffer "*Scratch*")
+  (insert "hello dired-move-to-old") (newline)
+  (insert ffn)  (newline)  
+  (insert fn)   (newline)
+  (insert "bye dired-move-to-old")  (newline)
+  (rename-file ffn (concat "//lon0302/dfs/DATA/MULTI_ASSET/MAQS/dataCollection/FI/LOCAL/ARCHIVE/OLD/" fn))
+  (switch-to-buffer curDrdBuff)
+  (revert-buffer)
+  ;;(dired-rename-file ffn (concat "//lon0302/dfs/DATA/MULTI_ASSET/MAQS/dataCollection/FI/LOCAL/ARCHIVE/OLD/" fn))
+  ;;dired-rename-file (file newname ok-if-already-exists)
+)
 
 ;;------------------------------------dired peek
 (defun dired-view-next ()
@@ -1218,6 +1266,9 @@ BEG and END (region to sort)."
 	  (setq sgml-set-face t) ; turn faces on
           (setq sgml-indent-data t))))
 ; 3 bottom keys of keypad, upper 6 are work 6 virtual screens
+;; (global-set-key [S-M-kp-down] 'sgml-fold-subelement) 
+;; (global-set-key [S-M-kp-end]  'sgml-fold-element)   ;  fold everything below current element
+;; (global-set-key [S-M-kp-next] 'sgml-unfold-element)
 
 ;;--------------------------------------------------------------------------------nXML mode
 ;(add-to-list 'hs-special-modes-alist
@@ -1305,6 +1356,7 @@ BEG and END (region to sort)."
  C-h C-a		     ;; about-emacs
  C-h f                       ;; describe-function 
  C-h F                       ;; Info-goto-emacs-command-node
+ C-h w                       ;; command where-is (found in global-map) (where-is DEFINITION &optional INSERT)
  C-j                         ;; eval in scratch buffer ?											   
  C-k			     ;; kill-line													   
  C-q			     ;; unfill-paragraph
@@ -1320,6 +1372,7 @@ BEG and END (region to sort)."
  C-x r i r                   ;; Register "r" Insert text from  (insert-register).		   
  C-x r w w                   ;; Save winows config in register "w" 
  C-x r j w                   ;; jump back (where <register> is a single character) to jump back to it.	   
+ C-x M-:                     ;; like M-: but with the elisp expression already filled in for youo
  C-y			     ;; yank														   
  DEL			     ;; delete-backward-char												   
  ESC			     ;; ESC-prefix													   
@@ -1389,7 +1442,7 @@ BEG and END (region to sort)."
 (global-set-key [f2]            'see-logbook2)
 (global-set-key [f3]            'see-dotEmacs)             ; nok900  'my-openfile  'neotree-show
 (global-set-key [f4]            'desktop-save)
-(global-set-key [f5]            'ffap) ; bookmark-bmenu-list
+(global-set-key [f5]            'ffap) ; bookmark-menu-list
 (global-set-key [f6]            'ergoemacs-open-in-external-app)
 (global-set-key [f7]            'go-to-column)  ; (global-set-key [f7]            'my-list-buffers)
 ;(global-set-key [f8]            'ztree-dir)
@@ -1414,7 +1467,8 @@ BEG and END (region to sort)."
 (global-set-key [S-f7]          'show-hist)            ;(global-set-key [S-f7]          'buffer-menu-sort-by-filename) 
 (global-set-key [S-f8]          'dired-omit-mode)
 (global-set-key [S-f9]          'insertLastSexp) ; (lambda () (interactive) (dired "C:/[pm][rya][qoadmp][parsd]*" nil)))
-(global-set-key [S-f11]           'hs-show-block)
+(global-set-key [S-f10]         'hs-show-block)
+(global-set-key [S-f11]         'hs-toggle-hiding)
 (global-set-key [S-f12]         'hs-hide-block)
 
 (global-set-key [M-f2]          'buffer-menu-sort-by-filename)
@@ -1436,18 +1490,30 @@ BEG and END (region to sort)."
 (message "dotEmacs.org keybindings section done")
 #+END_SRC
 
-;(define-key global-map "\C-co" 'org-capture)
-;(global-set-key "\C-!"         'shell-command) TBD
-;(global-set-key "\C-q"		'quoted-insert)
-;(global-set-key [C-kp-insert]  'kill-ring-save)
-;(global-set-key [M-up]	        'other-window)
-;(global-set-key [S-kp-insert]  'yank)
-;(global-unset-key (kbd "C-q"))
-;(global-set-key [S-M-kp-down] 'sgml-fold-subelement) ;; ; M-kp ... conflicts with workspace navigation:
-;(global-set-key [S-M-kp-end]  'sgml-fold-element)   ;  fold everything below current element
-;(global-set-key [S-M-kp-next] 'sgml-unfold-element)
-;(global-set-key [M-return]		'ffap)  ;; open file under cursor
-;(global-set-key "\C-r" #'(lambda () (interactive)  (eval (car command-history))))
+;;(global-set-key [C-down]        'windmove-down)        ;(global-set-key (kbd "C-c <down>")  'windmove-down);
+;;(global-set-key [C-left]        'windmove-left)        ;(global-set-key (kbd "C-c <left>")  'windmove-left)
+;;(global-set-key [C-right]       'windmove-right)       ;(global-set-key (kbd "C-c <right>") 'windmove-right)
+;;(global-set-key [C-up]          'windmove-up)          ;(global-set-key (kbd "C-c <up>")    'windmove-up)
+
+;; (define-key global-map "\C-co" 'org-capture)
+
+;; (global-set-key "\C-!"        'shell-command) TBD
+;; (global-set-key "\C-q"	 'quoted-insert)
+;; (global-set-key [C-kp-insert] 'kill-ring-save)
+;; (global-set-key [M-up]	 'other-window)
+;; (global-set-key [S-kp-insert] 'yank)
+;; (global-set-key [S-M-kp-down] 'sgml-fold-subelement) ;; ; M-kp ... conflicts with workspace navigation:
+;; (global-set-key [S-M-kp-end]  'sgml-fold-element)   ;  fold everything below current element
+;; (global-set-key [S-M-kp-next] 'sgml-unfold-element)
+;; (global-set-key [M-return]	 'ffap)  ;; open file under cursor
+;; (global-set-key "\C-r"       #'(lambda () (interactive)  (eval (car command-history))))
+;; (global-set-key "\C-Q"        'unfill-paragraph)
+;; (global-set-key [M-f8]        'vigenere-encrypt-buffer)
+;; (global-set-key [f8]          'vigenere-decrypt-buffer)
+;; (global-set-key [M-return]    'ffap)  ;; open file under cursor
+;; (global-set-key [S-f11]       'debug-function-on-entry)
+
+;; (global-unset-key (kbd "C-q"))
 
 ** not used
 ;;------------------------------------------------------------------------------ TFS Version Control
