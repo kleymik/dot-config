@@ -47,7 +47,7 @@ increase/decrease font C-c kepad+ keypad-
 (defun see-sql()                (interactive) (find-file "C:/MyMAQS/notebooks/sqlScripts.org"))
 (defun see-matlab()             (interactive) (find-file "//lon0302/dfs/DATA/MULTI_ASSET/MAQS/dataCollection/FI/LOCAL/USR/MK/vc/rs1/SSI.scratch.wt1/notebooks/matlabScripts.org"))
 (defun see-dotBashRc()          (interactive) (find-file "L:/MyDocs/dot/dotBashrc"))
-(defun see-dotEmacs()           (interactive) (find-file "L:/MyDocs/dot/dotEmacs.el"))
+(defun see-dotEmacs()           (interactive) (find-file "/home/kleyn/.emacs.d/dotEmacs.org"))
 (defun see-orglink-dired()      (interactive) (org-open-at-point t)) ; (current-buffer)
 (defun see-shell-output()       (interactive) (switch-to-buffer-other-window "*Shell Command Output*"))
 (defun diredHome()              (interactive) (dired "L:/MyDocs/" nil))
@@ -1398,7 +1398,7 @@ BEG and END (region to sort)."
 (global-set-key [f12]           'hs-hide-block)
 (global-set-key [f1]            'see-logbook1)
 (global-set-key [f2]            'see-logbook2)
-(global-set-key [f3]            'nok900) ; my-openfile  'neotree-show
+(global-set-key [f3]            'see-dotEmacs)             ; nok900  'my-openfile  'neotree-show
 (global-set-key [f4]            'desktop-save)
 (global-set-key [f5]            'ffap) ; bookmark-bmenu-list
 (global-set-key [f6]            'ergoemacs-open-in-external-app)
