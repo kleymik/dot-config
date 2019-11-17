@@ -16,38 +16,14 @@
 ;; flush-lines
 ;; C-h f describe-finction Info-goto-emacs-command-node
 ;; C-h F Info-goto-emacs-command-node
-;; REPLACE REGEXP
-;; (replace-regexp "0\.999999([0-9]+)[$,]" "" nil (point-min) (point-max))
-;; (replace-regexp "[ \t]+" " ")    ; REPLACE mutli-space with single-space
-;; (replace-regexp "[ \t]+|" "_" )    % space -> _
-;; (replace-regexp "'[ \t]+'" "|" )   % space between quotes ->
-;; (goto-char (mark-marker))
-;; (replace-regexp "A" "B" nil (if (and transient-mark-mode mark-active) (region-beginning)) (if (and transient-mark-mode mark-active) (region-end)) nil)
-;; (replace-regexp "A" "B" nil (mark-marker) (point-max))
-;; (replace-regexp "(line [0-9]+)" "" nil (point-min) (point-max)) ; clear (line 62)
-;; (replace-regexp " [0-9][0-9]:[0-9][0-9]:[0-9][0-9]" "" nil (point-min) (point-max)) ; clear " HH:MM:SS" 
-;; N.B. TBD drop last ","
 ;; (goto-char (mark-marker))
 ;; (goto-char (pop-global-mark))
 ;;  beginning-of-line
 ;; end-of-line
 ;;
 
-(defun slashFwd ()
-  (interactive)
-  (replace-string "\\"  "/" nil (line-beginning-position) (line-end-position)))
 
-(defun slashBwd ()
-  (interactive)
-  (replace-string  "/" "\\" nil (line-beginning-position) (line-end-position)))
-
-;;(defalias 'flipslash     (kbd "C-SPC C-e C-SPC ESC < ESC w C-x b *scratch* RET C-e RET C-y C-r SPC C-f C-SPC C-r total SPC use C-x C-x C-w ESC \ 2*DEL / C-a ESC \ ESC x replace-string / RET \ RET C-a"))
 ;;
-(defun hide-ctrl-M ()
-  "Hides the disturbing '^M' showing up in files containing mixed UNIX and DOS line endings."
-  (interactive)
-  (setq buffer-display-table (make-display-table))
-  (aset buffer-display-table ?\^M []))
 ;;---------------------------------------------------------------------REVERT
 ;; revert buffer coding C-x C-m
 ;;   variable:  buffer-file-coding-system
@@ -68,21 +44,6 @@
 ;; save the file with using M-x set-buffer-file-coding-system (or
 ;; C-x C-m f for short).
 
-;;-------------------------------------------------------------------- WEB PROXY
-;(setq url-proxy-services '(("no_proxy" . "work\\.com")
-;                           ("http" . "proxy.work.com:911")))
-;; (setq url-proxy-services
-;;    '(("no_proxy" . "^\\(localhost\\|10.*\\)")
-;;      ("http" . "proxy.com:8080")
-;;      ("https" . "proxy.com:8080")))
-
-;; (setq url-http-proxy-basic-auth-storage
-;;     (list (list "proxy.com:8080"
-;;                 (cons "Input your LDAP UID !"
-;;                       (base64-encode-string "LOGIN:PASSWORD")))))
-;;   http: http://SCHRODERS.COM\username:password@cfactive.london.schroders.com:8080
-;;   https: https://SCHRODERS.COM\username:password@cfactive.london.schroders.com:8080
-
 ;;-------------------------------------------------------------------- DEBUG
 ;;Go to where your function is defined and type M-x edebug-defun,
 ;;This will work the next time the function is called. You can check the docs[1]or just type ?.
@@ -92,50 +53,7 @@
 ;; toggle-debug-on-error
 ;; toggle-debug-on-quit
 ;; insert (debug)
-(defun set-debug-on()      (interactive) (setq debug-on-error t))
-(defun set-debug-off()     (interactive) (setq debug-on-error nil))
 
-;;-------------------- mouse and region
-(setq mouse-drag-copy-region t)
-(setq save-interprogram-paste-before-kill t)
-;;(setq x-select-enable-primary t)
-;;(setq select-enable-primary t)
-;;(setq mouse-drag-copy-region t)
-
-;; replace selected 
-;;(defun replace-selected ()
-;;  (interactive)
-;;  (if (region-active-p)
-;;      (replace-string "^\(.*[0-9]+?:[0-9]+\)" "[[https://www.lds.org/scriptures/search?lang=eng&query=\1&x=0&y=0][\1]]"
-;;                      nil (region-beginning) (region-end))
-;;     (replace-regexp "^\(.*[0-9]+?:[0-9]+\)" "[[https://www.lds.org/scriptures/search?lang=eng&query=\1&x=0&y=0][\1]]")
-;;     ))
-
-(defun swaperooni ()
-  "Swap two tab-separated fields in each line in buffer."
-  (interactive)
-  (let ((re-1 "\\(.+\\)\t\\(.+\\)") (re-2 "\\2\t\\1"))
-    (save-restriction
-      (save-excursion
-        (save-match-data
-          (widen)
-          (goto-char (point-min))
-          (while (not (eobp))
-            (let ((line (buffer-substring (point-at-bol) (point-at-eol))))
-              (when (string-match re-1 line)
-                (delete-region (point-at-bol) (point-at-eol))
-                (insert (replace-regexp-in-string re-1 re-2 line)))
-              (forward-line 1))))))))
-
-(defun align-repeat (start end regexp)
-  "Repeat alignment with respect to the given regular expression. Provide arg [[:space:]]+"
-  (interactive "r\nsAlign regexp: ")
-  ;; 1) First, the regular expression to align with. This expression begins with \(\s-*\), which stands for “an arbitrary number of spacing characters”.
-  ;; 2) Then the parenthesis group to modify, 1 by default. This will align the expression by modifying the matching whitespaces in front of the regular expression, if any.
-  ;;   The modification amounts to adding some number of whitespaces to that part of the regular expression.
-  ;; 3) Additional number of whitespaces to add, the default 1 is fine. Set to 0 if no additional whitespace is needed.
-  ;; 4) Finally, answer n/y, depending whether the alignment must be done once or repeated.
-  (align-regexp start end (concat "\\(\\s-*\\)" regexp) 1 1 t))
 
 (require 'ido)
 (ido-mode t)
@@ -144,39 +62,12 @@
 
 (global-set-key "\C-x\C-b" 'ibuffer)
 
-(defun number-region (start end)
-  (interactive "r")
-  (let* ((count 1)
-     (indent-region-function (lambda (start end)
-                   (save-excursion
-                     (setq end (copy-marker end))
-                     (goto-char start)
-                     (while (< (point) end)
-                       (or (and (bolp) (eolp))
-                       (insert (format ",%d " count))
-                       (setq count (1+ count)))
-                       (forward-line 1))
-                     (move-marker end nil)))))
-    (indent-region start end)))
 
-;;; Stefan Monnier <foo at acm.org>. It is the opposite of 
-;;; fill-paragraph. Takes a multi-line paragraph and makes 
-;;; it into a single line of text.
-(defun unfill-paragraph ()
-  (interactive)
-  (let ((fill-column (point-max)))
-    (fill-paragraph nil)))
-
-(defun insertLastSexp ()
-    (interactive)
-    (let ((value (eval (preceding-sexp))))
-      ;;(kill-sexp -1)
-      (insert (format " = %S" value))))
 
 ;;(setq hscroll-margin 30)
 ;;(setq hscroll-step 20) ;; # 0 
 (delete-selection-mode 0) ; don't delete selection with next char
-(setq kill-ring-max 6)
+(setq kill-ring-max 20)
 (setq-default indent-tabs-mode nil)
 ;;(setq debug-on-error t)
 ;;(setq debug-on-error nil)
@@ -248,22 +139,8 @@
 (setq ediff-shell "C:/cygwin64/bin/mintty.exe")
 (if (file-directory-p "C:/cygwin64/bin")      (add-to-list 'exec-path "C:/cygwin64/bin"))
 ;;------------------------------------------------------------------------------- Switches
-(setq default-truncate-lines t)
-(setq inhibit-splash-screen t)
-(setq font-lock-maximum-decoration t) ;; 3
-(setq use-file-dialog nil)
-(setq use-dialog-box nil)
-(fset 'yes-or-no-p 'y-or-n-p)
-(tool-bar-mode -1)
-(show-paren-mode 1)
-(transient-mark-mode t)
-(setq case-fold-search t)
 (blink-cursor-mode 0)
-(setq bell-volume 0)
-(setq display-time-day-and-date t) (display-time)
-(setq visible-bell t)
-(setq line-number-mode t)
-(setq column-number-mode t)
+(fset 'yes-or-no-p 'y-or-n-p)
 (global-hl-line-mode t)
 ;(setq-default frame-title-format "%b %p %p(%f)")
 (setq-default frame-title-format "%f")
@@ -334,86 +211,13 @@ BEG and END (region to sort)."
   (interactive "nColumn: ")
   (move-to-column column t))
 
-;;------------------------------------------------------------------------------ Colour
-(set-background-color "bisque")
-;(set-background-color "bisque2")
-;(set-background-color "bisque3")
-;(set-face-background 'default "green3")
-;(set-face-background 'default "lightyellow2")
-;(set-face-background 'default "palevioletred")
-;(set-face-background 'default "lightblue")
-;(set-face-background 'default "paleturquoise")
-;(set-face-background 'default "lightblue")
-
-;;------------------------------------------------------------------------------ Matlab Mode
-;; (require 'matlab)
-;; (setq matlab-indent-function t)
-;; (setq matlab-shell-command "matlab")
-;; ;(autoload 'matlab-mode "L:/myDocs/ulib/emacs/matlab.elc" "Enter Matlab mode." t)
-;; ;(setq auto-mode-alist (cons '("\\.m\\'" . matlab-mode) auto-mode-alist))
-;; (setq auto-mode-alist (cons '("\\.m\\'" . octave-mode) auto-mode-alist))
-;; ;;; User Level customizations:
-;; ;;;   (setq matlab-verify-on-save-flag nil) ; turn off auto-verify on save
-;; (defun my-matlab-mode-hook ()
-;;   ; (matlab-mode-hilit)             ; Turn highlight on
-;;   (setq font-lock-mode 1)
-;;   (setq fill-column 276)        ; where auto-fill should wrap
-;;   (setq-default fill-column     276)
-;;   (setq matlab-indent-function t)    ; if you want function bodies indented
-;;   (setq matlab-indent-level  4)         ; set matlab indentation
-;;   (setq matlab-verify-on-save-flag nil)
-;;   ; (set matlab-fill-code nil)  
-;;   (setq indent-tabs-mode nil))
-;; (add-hook 'matlab-mode-hook 'my-matlab-mode-hook)
-;; ;(remove-hook 'matlab-mode-hook 'my-matlab-mode-hook)
-
-;;------------------------------------------------------------------------------ Diff Stuff
-;; make patch files look like ediff
-(require 'diffview)
-;; (diffview-current)
-;; scroll-all-mode < toggles
-;; (defun mwheel-scroll-all-function-all (func &optional arg)
-;;   (if (and scroll-all-mode arg)
-;;       (save-selected-window
-;;         (walk-windows
 ;;          (lambda (win)
 ;;            (select-window win)
 ;;            (condition-case nil
 ;;                (funcall func arg)
 ;;              (error nil)))))
 ;;     (funcall func arg)))
-;(defun mwheel-scroll-all-scroll-up-all (&optional arg)  (mwheel-scroll-all-function-all 'scroll-up arg))
 
-;(defun mwheel-scroll-all-scroll-down-all (&optional arg)  (mwheel-scroll-all-function-all 'scroll-down arg))
-
-;;(setq mwheel-scroll-up-function 'mwheel-scroll-all-scroll-up-all)
-;;(setq mwheel-scroll-down-function 'mwheel-scroll-all-scroll-down-all)
-
-;;------------------------------------------------------------------------------ TFS Version Control
-;; ;; 1. Place `tfs.el' in your `load-path'.
-;; ;; 2. In your .emacs file:
-;; (require 'tfs)
-;; (setq tfs/tf-exe  "C:\\TF.exe")
-;; (setq tfs/tf-exe  "C:\\Program Files \(x86\)\\TF.exe")
-;; ;;(setq tfs/tf-exe  "C:\\Program\ Files\ \(x86\)\\Microsoft Visual Studio 12.0\\Common7\\IDE\\tf.exe")
-;; ;;(setq tfs/tf-exe  "C:\\Program Files\ \(x86\)\\Microsoft\ Visual\ Studio\ 12.0\\Common7\\IDE\\TF.exe")
-;; (setq tfs/login "/login:snd\\kleynmi,password")
-;; ;; 3. also in your .emacs file:
-;; ;;      set local or global key bindings for tfs commands.  like so:
-
-;; (global-set-key  "\C-xvo" 'tfs/checkout)
-;; (global-set-key  "\C-xvi" 'tfs/checkin)
-;; (global-set-key  "\C-xvp" 'tfs/properties)
-;; (global-set-key  "\C-xvg" 'tfs/get)
-;; (global-set-key  "\C-xvh" 'tfs/history)
-;; (global-set-key  "\C-xvu" 'tfs/undo)
-;; (global-set-key  "\C-xvd" 'tfs/diff)
-;; (global-set-key  "\C-xvs" 'tfs/status)
-;; (global-set-key  "\C-xva" 'tfs/annotate)
-;; (global-set-key  "\C-xvw" 'tfs/workitem)
-;; (global-set-key  "\C-xv+" 'tfs/add)
-;; (global-set-key  "\C-xv-" 'tfs/delete)
-;; (global-set-key  "\C-xvc" 'tfs/changeset)
  
 ;; ----------------------------------------------------------------------------- DOS Mode
 ;;(autoload 'dos-mode "/home/uri03204/myDocs/ulib/emacs/dos.elc" "Enter DOS CMD mode." t)7
@@ -424,34 +228,6 @@ BEG and END (region to sort)."
 ;; if Windows
 ;;  (when (string-equal system-type "windows-nt")
 ;;    (w32-shell-execute "explore" (replace-regexp-in-string "/" "\\" default-directory t t)))
-
-;; ----------------------------------------------------------------------------- CSHARP Mode
-;(autload 'csharp-mode "/home/uri03204/myDocs/ulib/emacs/csharp-mode-0.8.5.elc" t)
-(autoload 'csharp-mode "csharp-mode" "Major mode for editing C# code." t)
-(defun csharp-mode-untabify ()
-  (if (string= (substring mode-name 0 2) "C#")
-     (save-excursion
-	(delete-trailing-whitespace)
-	(untabify (point-min) (point-max)))))
-(defun my-csharp-mode-fn ()
-  "function that runs when csharp-mode is initialized for a buffer."
-  (turn-on-auto-revert-mode)
-  (setq indent-tabs-mode nil)
-  (require 'flymake)
-  (setq flymake-mode nil)
-  ;;(add-hook 'write-contents-hooks 'csharp-mode-untabify nil t)
-  )
-  ;;      (require 'yasnippet)
-  ;;      (yas/minor-mode-on)
-  ;;      (require 'rfringe)
-(add-hook  'csharp-mode-hook 'my-csharp-mode-fn t)
-;;(add-hook 'csharp-mode-hook '(lambda () (add-hook 'write-contents-hooks 'csharp-mode-untabify nil t)))
-
-; 'tbd add hs-minot-mode for hide/show t
-;TDB (add-hook  'java-mode-hook 'my-java-mode-hook t)
-;(defun my-java-mode-hook ()
-;  (hs-minor-mode)
-;  (setq indent-tabs-mode nil))
 
 ;;------------------------------------------------------------------------------- iedit Mode
 ;; TBD (autoload 'iedit-mode "/home/uri03204/myDocs/ulib/emacs/iedit.elc" "Enter iedit mode" t)
@@ -465,32 +241,7 @@ BEG and END (region to sort)."
 ;; permalinkembed
 
 ;;------------------------------------------------------------------------------- Language Modes
-(add-to-list 'auto-mode-alist '("\\.sas\\'"   . sas-mode)     )
-(add-to-list 'auto-mode-alist '("\\.m\\'"     . octave-mode)   )
-(add-to-list 'auto-mode-alist '("\\.cp\\'"    . c++-mode)     )
-
-(add-to-list 'auto-mode-alist '("\\.proc\\'"  . sql-mode)     )
-(add-to-list 'auto-mode-alist '("\\.sql\\'"   . sql-mode)     )
-
-(add-to-list 'auto-mode-alist '("\\.make\\'"  . makefile-mode))
-
-(add-to-list 'auto-mode-alist '("\\.org$"     . org-mode)     )
-(add-to-list 'auto-mode-alist '("\\.csv$"     . org-mode)     )
-(add-to-list 'auto-mode-alist '("\\.bat$"     . bat-mode)     )
-
-(add-to-list 'auto-mode-alist '("\\.xml$"     . xml-mode)     )
-(add-to-list 'auto-mode-alist '("\\.aspx$"    . xml-mode)     )
-(add-to-list 'auto-mode-alist '("\\.master$"  . xml-mode)     )
-
-(add-to-list 'auto-mode-alist '("\\.mocha\\'" . java-mode)    )
-(add-to-list 'auto-mode-alist '("\\.java\\'"  . java-mode)    )
-(add-to-list 'auto-mode-alist '("\\.js\\'"    . java-mode)    )
-(add-to-list 'auto-mode-alist '("\\.jad\\'"   . java-mode)    )
-
-(add-to-list 'auto-mode-alist '("\\.cs$"      . csharp-mode)  )
-
 ;;(add-to-list 'auto-mode-alist '("\\.diff$"    . ediff-mode)   )
-
 ;;(setq auto-mode-alist   (append '(("\\.cs$" . csharp-mode)) auto-mode-alist))
 ;;(insert (format "%s" auto-mode-alist))((\.m\' . matlab-mode) (\.py$ . python-mode) (\.te?xt\' . text-mode) (\.c\' . c-mode) (\.h\' . c-mode) (\.tex\' . tex-mode) (\.ltx\' . latex-mode) (\.el\' . emacs-lisp-mode) (\.scm\' . scheme-mode) (\.l\' . lisp-mode) (\.lisp\' . lisp-mode) (\.f\' . fortran-mode) (\.F\' . fortran-mode) (\.for\' . fortran-mode) (\.p\' . pascal-mode) (\.pas\' . pascal-mode) (\.ad[abs]\' . ada-mode) (\.\([pP]\([Llm]\|erl\)\|al\)\' . perl-mode) (\.s?html?\' . html-mode) (\.cc\' . c++-mode) (\.hh\' . c++-mode) (\.hpp\' . c++-mode) (\.C\' . c++-mode) (\.H\' . c++-mode) (\.cpp\' . c++-mode) (\.cxx\' . c++-mode) (\.hxx\' . c++-mode) (\.c\+\+\' . c++-mode) (\.h\+\+\' . c++-mode) (\.m\' . objc-mode) (\.java\' . java-mode) (\.mk\' . makefile-mode) (\(M\|m\|GNUm\)akefile\(\.in\)?\' . makefile-mode) (\.am\' . makefile-mode) (\.texinfo\' . texinfo-mode) (\.te?xi\' . texinfo-mode) (\.s\' . asm-mode) (\.S\' . asm-mode) (\.asm\' . asm-mode) (ChangeLog\' . change-log-mode) (change\.log\' . change-log-mode) (changelo\' . change-log-mode) (ChangeLog\.[0-9]+\' . change-log-mode) (changelog\' . change-log-mode) (changelog\.[0-9]+\' . change-log-mode) (\$CHANGE_LOG\$\.TXT . change-log-mode) (\.scm\.[0-9]*\' . scheme-mode) (\.[ck]?sh\'\|\.shar\'\|/\.z?profile\' . sh-mode) (\(/\|\`\)\.\(bash_profile\|z?login\|bash_login\|z?logout\)\' . sh-mode) (\(/\|\`\)\.\(bash_logout\|shrc\|[kz]shrc\|bashrc\|t?cshrc\|esrc\)\' . sh-mode) (\(/\|\`\)\.\([kz]shenv\|xinitrc\|startxrc\|xsession\)\' . sh-mode) (\.m?spec\' . sh-mode) (\.mm\' . nroff-mode) (\.me\' . nroff-mode) (\.ms\' . nroff-mode) (\.man\' . nroff-mode) (\.\(u?lpc\|pike\|pmod\)\' . pike-mode) (\.TeX\' . tex-mode) (\.sty\' . latex-mode) (\.cls\' . latex-mode) (\.clo\' . latex-mode) (\.bbl\' . latex-mode) (\.bib\' . bibtex-mode) (\.sql\' . sql-mode) (\.m4\' . m4-mode) (\.mc\' . m4-mode) (\.mf\' . metafont-mode) (\.mp\' . metapost-mode) (\.vhdl?\' . vhdl-mode) (\.article\' . text-mode) (\.letter\' . text-mode) (\.tcl\' . tcl-mode) (\.exp\' . tcl-mode) (\.itcl\' . tcl-mode) (\.itk\' . tcl-mode) (\.icn\' . icon-mode) (\.sim\' . simula-mode) (\.mss\' . scribe-mode) (\.f90\' . f90-mode) (\.indent\.pro\' . fundamental-mode) (\.pro\' . idlwave-mode) (\.lsp\' . lisp-mode) (\.awk\' . awk-mode) (\.prolog\' . prolog-mode) (\.tar\' . tar-mode) (\.\(arc\|zip\|lzh\|zoo\|jar\)\' . archive-mode) (\.\(ARC\|ZIP\|LZH\|ZOO\|JAR\)\' . archive-mode) (\`/tmp/Re . text-mode) (/Message[0-9]*\' . text-mode) (/drafts/[0-9]+\' . mh-letter-mode) (\.zone\' . zone-mode) (\`/tmp/fol/ . text-mode) (\.y\' . c-mode) (\.lex\' . c-mode) (\.oak\' . scheme-mode) (\.sgml?\' . sgml-mode) (\.xml\' . sgml-mode) (\.dtd\' . sgml-mode) (\.ds\(ss\)?l\' . dsssl-mode) (\.idl\' . idl-mode) ([]>:/\]\..*emacs\' . emacs-lisp-mode) (\`\..*emacs\' . emacs-lisp-mode) ([:/]_emacs\' . emacs-lisp-mode) (/crontab\.X*[0-9]+\' . shell-script-mode) (\.ml\' . lisp-mode) (\.\(asn\|mib\|smi\)\' . snmp-mode) (\.\(as\|mi\|sm\)2\' . snmpv2-mode) (\.\(diffs?\|patch\|rej\)\' . diff-mode) (\.\(dif\|pat\)\' . diff-mode) (\.[eE]?[pP][sS]\' . ps-mode) (configure\.\(ac\|in\)\' . autoconf-mode) (BROWSE\' . ebrowse-tree-mode) (\.ebrowse\' . ebrowse-tree-mode) (#\*mail\* . mail-mode) (\.~?[0-9]+\.[0-9][-.0-9]*~?\' ignore t) (\.[1-9]\' . nroff-mode) (\.g\' . antlr-mode))
 ;;(insert (format "%s" auto-mode-alist))((\.m\' . matlab-mode) (\.py$ . python-mode) (\.te?xt\' . text-mode) (\.c\' . c-mode) (\.h\' . c-mode) (\.tex\' . tex-mode) (\.ltx\' . latex-mode) (\.el\' . emacs-lisp-mode) (\.scm\' . scheme-mode) (\.l\' . lisp-mode) (\.lisp\' . lisp-mode) (\.f\' . fortran-mode) (\.F\' . fortran-mode) (\.for\' . fortran-mode) (\.p\' . pascal-mode) (\.pas\' . pascal-mode) (\.ad[abs]\' . ada-mode) (\.\([pP]\([Llm]\|erl\)\|al\)\' . perl-mode) (\.s?html?\' . html-mode) (\.cc\' . c++-mode) (\.hh\' . c++-mode) (\.hpp\' . c++-mode) (\.C\' . c++-mode) (\.H\' . c++-mode) (\.cpp\' . c++-mode) (\.cxx\' . c++-mode) (\.hxx\' . c++-mode) (\.c\+\+\' . c++-mode) (\.h\+\+\' . c++-mode) (\.m\' . objc-mode) (\.java\' . java-mode) (\.mk\' . makefile-mode) (\(M\|m\|GNUm\)akefile\(\.in\)?\' . makefile-mode) (\.am\' . makefile-mode) (\.texinfo\' . texinfo-mode) (\.te?xi\' . texinfo-mode) (\.s\' . asm-mode) (\.S\' . asm-mode) (\.asm\' . asm-mode) (ChangeLog\' . change-log-mode) (change\.log\' . change-log-mode) (changelo\' . change-log-mode) (ChangeLog\.[0-9]+\' . change-log-mode) (changelog\' . change-log-mode) (changelog\.[0-9]+\' . change-log-mode) (\$CHANGE_LOG\$\.TXT . change-log-mode) (\.scm\.[0-9]*\' . scheme-mode) (\.[ck]?sh\'\|\.shar\'\|/\.z?profile\' . sh-mode) (\(/\|\`\)\.\(bash_profile\|z?login\|bash_login\|z?logout\)\' . sh-mode) (\(/\|\`\)\.\(bash_logout\|shrc\|[kz]shrc\|bashrc\|t?cshrc\|esrc\)\' . sh-mode) (\(/\|\`\)\.\([kz]shenv\|xinitrc\|startxrc\|xsession\)\' . sh-mode) (\.m?spec\' . sh-mode) (\.mm\' . nroff-mode) (\.me\' . nroff-mode) (\.ms\' . nroff-mode) (\.man\' . nroff-mode) (\.\(u?lpc\|pike\|pmod\)\' . pike-mode) (\.TeX\' . tex-mode) (\.sty\' . latex-mode) (\.cls\' . latex-mode) (\.clo\' . latex-mode) (\.bbl\' . latex-mode) (\.bib\' . bibtex-mode) (\.sql\' . sql-mode) (\.m4\' . m4-mode) (\.mc\' . m4-mode) (\.mf\' . metafont-mode) (\.mp\' . metapost-mode) (\.vhdl?\' . vhdl-mode) (\.article\' . text-mode) (\.letter\' . text-mode) (\.tcl\' . tcl-mode) (\.exp\' . tcl-mode) (\.itcl\' . tcl-mode) (\.itk\' . tcl-mode) (\.icn\' . icon-mode) (\.sim\' . simula-mode) (\.mss\' . scribe-mode) (\.f90\' . f90-mode) (\.indent\.pro\' . fundamental-mode) (\.pro\' . idlwave-mode) (\.lsp\' . lisp-mode) (\.awk\' . awk-mode) (\.prolog\' . prolog-mode) (\.tar\' . tar-mode) (\.\(arc\|zip\|lzh\|zoo\|jar\)\' . archive-mode) (\.\(ARC\|ZIP\|LZH\|ZOO\|JAR\)\' . archive-mode) (\`/tmp/Re . text-mode) (/Message[0-9]*\' . text-mode) (/drafts/[0-9]+\' . mh-letter-mode) (\.zone\' . zone-mode) (\`/tmp/fol/ . text-mode) (\.y\' . c-mode) (\.lex\' . c-mode) (\.oak\' . scheme-mode) (\.sgml?\' . sgml-mode) (\.xml\' . sgml-mode) (\.dtd\' . sgml-mode) (\.ds\(ss\)?l\' . dsssl-mode) (\.idl\' . idl-mode) ([]>:/\]\..*emacs\' . emacs-lisp-mode) (\`\..*emacs\' . emacs-lisp-mode) ([:/]_emacs\' . emacs-lisp-mode) (/crontab\.X*[0-9]+\' . shell-script-mode) (\.ml\' . lisp-mode) (\.\(asn\|mib\|smi\)\' . snmp-mode) (\.\(as\|mi\|sm\)2\' . snmpv2-mode) (\.\(diffs?\|patch\|rej\)\' . diff-mode) (\.\(dif\|pat\)\' . diff-mode) (\.[eE]?[pP][sS]\' . ps-mode) (configure\.\(ac\|in\)\' . autoconf-mode) (BROWSE\' . ebrowse-tree-mode) (\.ebrowse\' . ebrowse-tree-mode) (#\*mail\* . mail-mode) (\.~?[0-9]+\.[0-9][-.0-9]*~?\' ignore t) (\.[1-9]\' . nroff-mode) (\.g\' . antlr-mode))
@@ -559,9 +310,6 @@ BEG and END (region to sort)."
 (defalias 'make-org-tbl  (kbd "ESC x org-mode RET ESC < C-SPC ESC > C-c |"))
 
 
-(setq org-default-notes-file "~/myDocs/history/logbook.org")
-(setq org-cycle-include-plain-lists t)
-(setq org-startup-folded nil)
 (setq org-catch-invisible-edits 'show-and-error)
 (setq org-cycle-separator-lines 0)
 ;;(defalias 'see-logbooks  (kbd "C-x C-f ~/myDocs/logbook RET"))
@@ -579,42 +327,9 @@ BEG and END (region to sort)."
 
 (require 'cl)
 
-(defun org-transpose-table-at-point ()
-  "Transpose orgmode table at point, eliminate hlines."
-  (interactive)
-  (let ((contents (apply #'mapcar* #'list ;; <== LOB magic imported here
-                         (remove-if-not 'listp ;; remove 'hline from list
-                                        (org-table-to-lisp)))) ;; signals error if not table
-        )
-    (delete-region (org-table-begin) (org-table-end))
-    (insert (mapconcat (lambda(x) (concat "| " (mapconcat 'identity x " | " ) " |\n" ))
-                       contents
-                       ""))
-    (org-table-align)))
 
 
 
-(defun org-table-to-sql ()
-  (interactive)
-  (goto-char (point-min))
-  (forward-line 2)
-  (beginning-of-line)
-  (push-mark)
-  (goto-char (mark-marker)) (replace-regexp "^|"           "("      ) ;; replace leading  | with (
-  (goto-char (mark-marker)) (replace-regexp "|$"         t     ) ;; replace trailing |/LOCAL/USR/MK with ),
-  (goto-char (mark-marker)) (replace-regexp "|$"           "),"     ) ;; replace trailing | with ),
-  (goto-char (mark-marker)) (replace-regexp "\|"           ","      ) ;; replace          | with ,
-  (goto-char (mark-marker)) (replace-regexp "[0-9a-z._-]+" "'\\&'"  ) ;; wrap single quotes around words
-  (goto-char (mark-marker)) (replace-regexp ",[ \t]+,"     ",NULL," ) ;; NULL in gaps 
-  (goto-char (mark-marker)) (replace-regexp ",[ \t]+,"     ",NULL," ) ;; NULL in gaps  need to run twice!!!
-  (goto-char (mark-marker)) (replace-regexp ",[ \t]+)"     ",NULL)" ) ;; NULL at end
-  (goto-char (point-max)) (search-backward ",") (delete-char 1)       ;; delete comma after list end
-  (goto-char (point-min))
-  (forward-line 2)
-  (insert "INSERT INTO [EQTYBASKETS_R].dbo.returnSeriesRecord")  (newline)
-  (insert "(rsStrategyName, rsOrigin, rsCurrency, rsType, Description, rsAsOfDate, rsShortCode)") (newline)
-  (insert "VALUES") (newline)
-)
 
 ;;------------------------------------- org-mode crypt
 (defun rot-region(p1 p2)
@@ -719,22 +434,6 @@ BEG and END (region to sort)."
 ;(require 'org-trello)
 
 
-;;-------------------------------------------------------------------------------- python mode
-;(add-hook 'python-mode-hook
-;  #'(lambda ()
-;      (define-key python-mode-map "\C-m" 'newline-and-indent)))
-;(add-hook 'python-mode-hook
-;          (lambda ()
-;            (setq-default indent-tabs-mode t)
-;            (setq-default tab-width 4)
-;            (setq-default python-indent 4)))
-(add-hook 'python-mode-hook
-          (lambda ()
-            (setq indent-tabs-mode nil) ;; spaces not tabs!
-            (setq tab-width 4)
-            (hs-minor-mode)
-            (setq python-indent 4)))
-
 ;; -------------------------- new stuff
 ;; ;; Save point position between sessions.
 ;; (use-package saveplace)
@@ -743,9 +442,6 @@ BEG and END (region to sort)."
 
 ;; ;; Fix empty pasteboard error.
 ;; (setq save-interprogram-paste-before-kill nil)
-
-;; ;; Auto refresh buffers when edits occur outside emacs
-(global-auto-revert-mode 1)
 
 ;; ;; Also auto refresh dired, but be quiet about it
 ;; (setq global-auto-revert-non-file-buffers t)
@@ -763,8 +459,6 @@ BEG and END (region to sort)."
 ;;       mouse-yank-at-point t)
 
 ;; ------------------------------------------------------------------------------ Custom Variables
-(setq default-truncate-lines t)
-(setq tab-width 4) ;;(setq tab-width 2)
 (setq-default x-stretch-cursor t)
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -786,106 +480,6 @@ BEG and END (region to sort)."
  '(default ((t (:family "Courier New" :foundry "outline" :slant normal :weight normal :height 98 :width normal)))))
 
 ;; ------------------------------------------------------------------------------ Scroll One Line At a time
-(defun scroll-one-line-up (&optional arg)
-  "Scroll the selected window up (forward in the text) one line (or N lines)."
-  (interactive "p")
-  (scroll-up (or arg 1)))
-(defun scroll-one-line-down (&optional arg)
-  "Scroll the selected window down (backward in the text) one line (or N)."
-  (interactive "p")
-  (scroll-down (or arg 1)))
-
-;; transpose items in list
-(defun my-transpose-sexps ()
-  "If point is after certain chars transpose chunks around that.
-   Otherwise transpose sexps."
-  (interactive "*")
-  (if (not (looking-back "[,]\\s-*" (point-at-bol)))
-      (progn (transpose-sexps 1) (forward-sexp -1))
-    (let ((beg (point)) end rhs lhs)
-      (while (and (not (eobp))
-                  (not (looking-at "\\s-*\\([,]\\|\\s)\\)")))
-        (forward-sexp 1))
-      (setq rhs (buffer-substring beg (point)))
-      (delete-region beg (point))
-      (re-search-backward "[,]\\s-*" nil t)
-      (setq beg (point))
-      (while (and (not (bobp))
-                  (not (looking-back "\\([,]\\|\\s(\\)\\s-*" (point-at-bol))))
-        (forward-sexp -1))
-      (setq lhs (buffer-substring beg (point)))
-      (delete-region beg (point))
-      (insert rhs)
-      (re-search-forward "[,]\\s-*" nil t)
-      (save-excursion (insert lhs)))))
-
-;; ------------------------------------------------------------------------------ Window Flip
-(defun toggle-window-split ()
-  (interactive)
-  (if (= (count-windows) 2)
-      (let* ((this-win-buffer (window-buffer))
-	     (next-win-buffer (window-buffer (next-window)))
-	     (this-win-edges (window-edges (selected-window)))
-	     (next-win-edges (window-edges (next-window)))
-	     (this-win-2nd (not (and (<= (car this-win-edges)
-					 (car next-win-edges))
-				     (<= (cadr this-win-edges)
-					 (cadr next-win-edges)))))
-	     (splitter
-	      (if (= (car this-win-edges)
-		     (car (window-edges (next-window))))
-		  'split-window-horizontally
-		'split-window-vertically)))
-	(delete-other-windows)
-	(let ((first-win (selected-window)))
-	  (funcall splitter)
-	  (if this-win-2nd (other-window 1))
-	  (set-window-buffer (selected-window) this-win-buffer)
-	  (set-window-buffer (next-window) next-win-buffer)
-	  (select-window first-win)
-	  (if this-win-2nd (other-window 1))))))
-
-;; ------------------------------------------------------------------------------ Window Sizing
-(defun window-hwiden (&optional arg)
-  "Widen window"
-  (interactive "p")
-  (enlarge-window-horizontally 10))
-(defun window-hshrink (&optional arg)
-  "Shrink window"
-  (interactive "p")
-  (shrink-window-horizontally 10))
-
-;; ------------------------------------------------------------- Buffer menu
-(defun buffer-menu-sort-by-filename (&optional arg)
-  (interactive "P")
-  (Buffer-menu-sort 6))
-
-;; ------------------------------------------------------------- Selective Display
-(setq selective-display-lev 0)
-(defun selective-display-level-incr (&optional arg)
-    (interactive "P")
-    (setq selective-display-lev (% (+ selective-display-lev 2) 16))
-    (set-selective-display selective-display-lev))
-(defun selective-display-level-decr (&optional arg)
-    (interactive "P")
-    (setq selective-display-lev (- selective-display-lev 2))
-    (set-selective-display selective-display-lev))
-(defun selective-display-level-zero (&optional arg)
-    (interactive "P")
-    (setq selective-display-lev 0)
-    (set-selective-display selective-display-lev))
-
-;; for function keys
-;; for function keys
-(defun see-logbook1()      (interactive) (find-file "L:/MyDocs/history/logbook.org"))
-(defun see-sql()           (interactive) (find-file "C:/MyMAQS/notebooks/sqlScripts.org"))
-(defun see-matlab()        (interactive) (find-file "//lon0302/dfs/DATA/MULTI_ASSET/MAQS/dataCollection/FI/LOCAL/USR/MK/vc/rs1/SSI.scratch.wt1/notebooks/matlabScripts.org"))
-(defun see-dotBashRc()     (interactive) (find-file "L:/MyDocs/dot/dotBashrc"))
-(defun see-dotEmacs()      (interactive) (find-file "L:/MyDocs/dot/dotEmacs.el"))
-;;(defun nok900()          (interactive) (dired "/scpc:root@192.168.1.187:/home/user/MyDocs/aNotes/"))
-(defun see-orglink-dired() (interactive) (org-open-at-point t)) ; (current-buffer)
-(defun see-shell-output()  (interactive) (switch-to-buffer-other-window "*Shell Command Output*"))
-(defun diredHome()         (interactive) (dired "L:/MyDocs/" nil))
 
 ;;-------------------------------------------------------------------------------- Dired
 ;(define-key dired-mode-map "r" 'wdired-change-to-wdired-mode)
@@ -1047,156 +641,96 @@ BEG and END (region to sort)."
 ;(add-hook 'ediff-mode-hook (lambda () (setq ediff-shell "C:/cygwin/bin/mintty.exe")))
 ;(add-hook 'ediff-load-hook (lambda () (setq ediff-shell "C:/cygwin/bin/mintty.exe")))
 
-;;--------------------------------------------------------------------- Misc
-(defun instimestamp ()
-   (interactive)
-   (insert (format-time-string "%Y%m%d_%H:%M:%S")))
-(defun indent-to-col ()
-   (interactive)
-   (indent-to-column 110))
-;;--------------------------------------------------------------------- Key Bindings
-(defun mk-new-buffer ()
-  (interactive)
-  (switch-to-buffer (generate-new-buffer (make-temp-name "foo")))
-  (clipboard-yank))
 
-   ;;(x-get-selection-value)
 
-(defun my-revert-buffer ()
-  (interactive)
-  (revert-buffer nil t) ; don't ask to confirm
-  (goto-char (point-max)))
 
-;;; don't quit so easily
-(global-unset-key "\C-x\C-c")                            ;; The following key-binding quits emacs -- we disable it too
-(global-set-key "\C-x\C-c\C-v" 'save-buffers-kill-emacs) ;; But we establish a longer sequence that is harder to hit by accident:
-;;(global-set-key [M-return]        'ffap)  ;; open file under cursor
-(global-set-key [M-home]    'org-collapse)
-;(global-set-key [M-up]            'other-window)
+
 (global-set-key "\M-$"         'query-replace-regexp)
-;(global-unset-key (kbd "C-q"))
-(global-set-key "\C-q"         'quoted-insert)
-;;(global-set-key "\C-Q"         'unfill-paragraph)
-(global-set-key "\C-cb"        'ediff-buffers)
-(global-set-key "\C-cd"        'ediff-directories)
-(global-set-key "\C-ch"        'diredHome)
-(global-set-key "\C-ci"        'indent-to-col)
-(global-set-key "\C-cl"        'ed-dup-line)
-(global-set-key "\C-cq"        'quick-calc)
-;(global-set-key "\C-cq"        'lines-to-cslist)
-(global-set-key "\C-cr"        'auto-revert-tail-mode)
-(global-set-key "\C-cs"        'parallel-swap)
-(global-set-key "\C-ct"        'org-table-convert-region)
-(global-set-key "\C-cw"        'delete-trailing-whitespace)
-(global-set-key "\C-xl"        'list-matching-lines)
-(global-set-key "\C-xt"        'instimestamp)
-(global-set-key "\C-z"         'undo)
-(global-set-key [kp-divide]    'toggle-window-split)
-(global-set-key "\C-xg"         'my-transpose-sexps)
-
-;(define-key global-map "\C-co" 'org-capture)
-
-;; f4 for use by org-mode?
-(global-set-key [f1]            'see-logbook1)
-(global-set-key [S-f1]          'my-revert-buffer) ; my-openfile  'neotree-show
-(global-set-key [C-f1]          'mk-new-buffer)
-
-(global-set-key [f2]            'see-matlab)
-(global-set-key [S-f2]          'my-list-buffers)
-(global-set-key [M-f2]          'buffer-menu-sort-by-filename)
-
-(global-set-key [f3]            'see-dotEmacs) ; my-openfile  'neotree-show
-(global-set-key [S-f3]          'see-dotBashRc)
-
-(global-set-key [f4]            'see-orglink-dired) ;;     'desktop-save)
-(global-set-key [S-f4]          'org-save-code-block)
-(global-set-key [C-f4]          'org-transpose-table-at-point)
-
-(global-set-key [f5]            'ffap) ; bookmark-bmenu-list
-(global-set-key [C-f5]          '(lambda () (interactive) (dired "//lon06179/ProdData" nil)))
-(global-set-key [S-f5]          'my-revert-buffer)
-
-(global-set-key [f6]            'ergoemacs-open-in-external-app)
-(global-set-key [C-f6]          '(lambda () (interactive) (dired "D:/" nil))) ; //lon0302/dfs/DATA/MULTI_ASSET/MAQ?
-
-(global-set-key [f7]            'go-to-column)
-(global-set-key [S-f7]          'show-hist)
-(global-set-key [C-f7]         '(lambda () (interactive) (dired "C:/" nil)))
-
-(global-set-key [f8]            'rot-region)
-(global-set-key [C-f8]          '(lambda () (interactive) (dired "//lon0301/dfs/DATA/DTA/PERFDATA/Inv Risk/Stock Baskets/DmSov" nil)))
-(global-set-key [S-f8]          'dired-omit-mode)
-
-(global-set-key [f9]            'kmacro-start-macro)
-(global-set-key [C-f9]         '(lambda () (interactive) (dired "//lon0302/dfs/DATA/MULTI_ASSET/MAQS/dataCollection/FI" nil)))
-(global-set-key [S-f9]          '(lambda () (interactive) (dired "C:/[pm][rya][qoadmp][parsd]*" nil)))
-(global-set-key [M-f9]          'ielm)  ;; open file under cursor ;;(global-set-key [M-f9]        'insertLastSexp);; insert result
-
-(global-set-key [f10]           'kmacro-end-and-call-macro) ; see-shell-output) ;ergoemacs-open-in-external-app
+(global-set-key (kbd "C-.")     'repeat)
+(global-set-key (kbd "\C-c;")    'comment-or-uncomment-region)
+(global-set-key [(end)]         'my-list-buffers)
+(global-set-key [(next)]        'cycle-buffer)
+(global-set-key [(prior)]       'cycle-buffer-backward)
 (global-set-key [C-f10]          '(lambda () (interactive) (dired "//lon0302/dfs/DATA/MULTI_ASSET/MAQS/dataCollection/FI/LOCAL/USR/MK" nil)))
-(global-set-key [M-f10]         'see-shell-output) ;ergoemacs-open-in-external-app
-
-(global-set-key [f11]           'kmacro-end-macro)
 (global-set-key [C-f11]         '(lambda () (interactive) (dired "L:/MyDocs" nil)))
-;(global-set-key [S-f11]         'debug-function-on-entry)
-(global-set-key [M-f11]         'set-debug-on)
-
-(global-set-key [f12]           'hs-show-block)
 (global-set-key [C-f12]         '(lambda () (interactive) (dired "//lon0301/dfs/APPS/MultiAssetQuant/AB/FI/dmSov" nil)))
-(global-set-key [S-f12]         'hs-hide-block)
+(global-set-key [C-f1]          'mk-new-buffer)
+(global-set-key [C-f4]          'org-transpose-table-at-point)
+(global-set-key [C-f5]          '(lambda () (interactive) (dired "//lon06179/ProdData" nil)))
+(global-set-key [C-f6]          '(lambda () (interactive) (dired "D:/" nil))) ; //lon0302/dfs/DATA/MULTI_ASSET/MAQ?
+(global-set-key [C-f7]         '(lambda () (interactive) (dired "C:/" nil)))
+(global-set-key [C-f8]          '(lambda () (interactive) (dired "//lon0301/dfs/DATA/DTA/PERFDATA/Inv Risk/Stock Baskets/DmSov" nil)))
+(global-set-key [C-f9]         '(lambda () (interactive) (dired "//lon0302/dfs/DATA/MULTI_ASSET/MAQS/dataCollection/FI" nil)))
+(global-set-key [C-insert]      'clipboard-kill-ring-save)
+(global-set-key [C-kp-add]      'text-scale-increase)
+(global-set-key [C-kp-subtract] 'text-scale-decrease)
+(global-set-key [M-f10]         'see-shell-output) ;ergoemacs-open-in-external-app
+(global-set-key [M-f11]         'set-debug-on)
 (global-set-key [M-f12]         'set-debug-off)
-
-;; M-kp ... conflicts with workspace navigation:
+(global-set-key [M-f2]          'buffer-menu-sort-by-filename)
+(global-set-key [M-f9]          'ielm)  ;; open file under cursor ;;(global-set-key [M-f9]        'insertLastSexp);; insert result
+(global-set-key [S-down]        'scroll-one-line-up)
+(global-set-key [S-f12]         'hs-hide-block)
+(global-set-key [S-f1]          'my-revert-buffer) ; my-openfile  'neotree-show
+(global-set-key [S-f2]          'my-list-buffers)
+(global-set-key [S-f3]          'see-dotBashRc)
+(global-set-key [S-f4]          'org-save-code-block)
+(global-set-key [S-f5]          'my-revert-buffer)
+(global-set-key [S-f7]          'show-hist)
+(global-set-key [S-f8]          'dired-omit-mode)
+(global-set-key [S-f9]          '(lambda () (interactive) (dired "C:/[pm][rya][qoadmp][parsd]*" nil)))
+(global-set-key [S-insert]      'clipboard-yank)
+(global-set-key [S-left]        'window-hshrink)
+(global-set-key [S-right]       'window-hwiden)
+(global-set-key [S-up]          'scroll-one-line-down)
+(global-set-key [S-wheel-down]  'next-buffer) 
+(global-set-key [S-wheel-up]    'previous-buffer)
+(global-set-key [f10]           'kmacro-end-and-call-macro) ; see-shell-output) ;ergoemacs-open-in-external-app
+(global-set-key [f11]           'kmacro-end-macro)
+(global-set-key [f12]           'hs-show-block)
+(global-set-key [f1]            'see-logbook1)
+(global-set-key [f2]            'see-matlab)
+(global-set-key [f3]            'see-dotEmacs) ; my-openfile  'neotree-show
+(global-set-key [f4]            'see-orglink-dired) ;;     'desktop-save)
+(global-set-key [f5]            'ffap) ; bookmark-bmenu-list
+(global-set-key [f6]            'ergoemacs-open-in-external-app)
+(global-set-key [f7]            'go-to-column)
+(global-set-key [f8]            'rot-region)
+(global-set-key [f9]            'kmacro-start-macro)
+(global-set-key [kp-divide]    'toggle-window-split)
+(global-set-key [kp-left]       'selective-display-level-decr)
+(global-set-key [kp-multiply]   'other-window)
+(global-set-key [kp-right]      'selective-display-level-incr)
+(global-set-key [kp-space]      'selective-display-level-zero)
+(global-set-key [kp-subtract]   'kill-this-buffer-volatile)
+(global-unset-key "\C-x\C-c")                            ;; The following key-binding quits emacs -- we disable it too
+;(define-key global-map "\C-co" 'org-capture)
+;(global-set-key "\C-!"         'shell-command) TBD
+;(global-set-key "\C-cq"        'lines-to-cslist)
+;(global-set-key (kbd "<wheel-up>")   'previous-buffer)
+;(global-set-key [C-down]        'windmove-down)        ;(global-set-key (kbd "C-c <down>")  'windmove-down)
+;(global-set-key [C-kp-insert]  'kill-ring-save)
+;(global-set-key [C-left]        'windmove-left)        ;(global-set-key (kbd "C-c <left>")  'windmove-left)
+;(global-set-key [C-right]       'windmove-right)       ;(global-set-key (kbd "C-c <right>") 'windmove-right)
+;(global-set-key [C-up]          'windmove-up)          ;(global-set-key (kbd "C-c <up>")    'windmove-up)
+;(global-set-key [M-up]            'other-window)
+;(global-set-key [S-f11]         'debug-function-on-entry)
+;(global-set-key [S-kp-4]       'selective-display-level-decr)
+;(global-set-key [S-kp-5]       'selective-display-level-zero)
+;(global-set-key [S-kp-6]       'selective-display-level-incr)
+;(global-set-key [S-kp-insert]  'yank)
+;(global-set-key [S-wheel-own].
+;(global-set-key [S-wheel-up].
+;(global-unset-key (kbd "C-q"))
 ;; (global-set-key [S-M-kp-down] 'sgml-fold-subelement) 
 ;; (global-set-key [S-M-kp-end]  'sgml-fold-element)   ;  fold everything below current element
 ;; (global-set-key [S-M-kp-next] 'sgml-unfold-element)
-
-(global-set-key "\C-c>"         'selective-display-level-incr)
-(global-set-key "\C-c<"         'selective-display-level-decr)
-;(global-set-key [S-kp-6]       'selective-display-level-incr)
-;(global-set-key [S-kp-4]       'selective-display-level-decr)
-;(global-set-key [S-kp-5]       'selective-display-level-zero)
-(global-set-key [kp-left]       'selective-display-level-decr)
-(global-set-key [kp-space]      'selective-display-level-zero)
-(global-set-key [kp-right]      'selective-display-level-incr)
-(global-set-key [kp-multiply]   'other-window)
-;(global-set-key [S-kp-insert]  'yank)
-;(global-set-key [C-kp-insert]  'kill-ring-save)
-(global-set-key [S-insert]      'clipboard-yank)
-(global-set-key [C-insert]      'clipboard-kill-ring-save)
-(global-set-key "\C-c\C-y" '(lambda () (interactive) (popup-menu 'yank-menu)))
-
-(global-set-key [(prior)]       'cycle-buffer-backward)
-(global-set-key [(next)]        'cycle-buffer)
-(global-set-key [(end)]         'my-list-buffers)
-(global-set-key [kp-subtract]   'kill-this-buffer-volatile)
-(global-set-key [S-wheel-up]    'previous-buffer)
-(global-set-key [S-wheel-down]  'next-buffer) 
-
-;(global-set-key "\C-!"         'shell-command) TBD
-
-(global-set-key "\C-xd"         'dired)
-(global-set-key "\C-xi"         'eval-print-last-sexp) ; ielm
-(global-set-key (kbd "C-.")     'repeat)
-(global-set-key (kbd "\C-c;")    'comment-or-uncomment-region)
-
+;; M-kp ... conflicts with workspace navigation:
+;; f4 for use by org-mode?
 ;; with a C-0 prefix argument.
-(global-set-key [C-kp-subtract] 'text-scale-decrease)
-(global-set-key [C-kp-add]      'text-scale-increase)
-
-(global-set-key [S-up]          'scroll-one-line-down)
-(global-set-key [S-down]        'scroll-one-line-up)
-(global-set-key [S-right]       'window-hwiden)
-(global-set-key [S-left]        'window-hshrink)
-
-;(global-set-key [C-up]          'windmove-up)          ;(global-set-key (kbd "C-c <up>")    'windmove-up)
-;(global-set-key [C-down]        'windmove-down)        ;(global-set-key (kbd "C-c <down>")  'windmove-down)
-;(global-set-key [C-left]        'windmove-left)        ;(global-set-key (kbd "C-c <left>")  'windmove-left)
-;(global-set-key [C-right]       'windmove-right)       ;(global-set-key (kbd "C-c <right>") 'windmove-right)
-
-;(global-set-key (kbd "<wheel-up>")   'previous-buffer)
-;(global-set-key [S-wheel-up].
-;(global-set-key [S-wheel-own].
+;;(global-set-key "\C-Q"         'unfill-paragraph)
+;;(global-set-key [M-return]        'ffap)  ;; open file under cursor
+;;; don't quit so easily
 ;;-------------------------------------------------------------------------------
 (dired "L:/" nil)
 (setq dired-dwim-target t)
