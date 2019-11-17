@@ -581,7 +581,6 @@ BEG and END (region to sort)."
 (delete-selection-mode 0) ; don't delete selection with next char
 (fset 'yes-or-no-p 'y-or-n-p)
 (global-hl-line-mode t)
-(global-set-key (kbd "C-x C-b") 'my-list-buffers)
 (setq bell-volume 0)
 (setq case-fold-search t)
 (setq column-number-mode t)
@@ -593,6 +592,7 @@ BEG and END (region to sort)."
 (setq kill-ring-max 12)
 (setq line-number-mode t)
 (setq max-lisp-eval-depth 1200) ; 800
+(setq ediff-window-setup-function 'ediff-setup-windows-plain)
 (setq uniquify-buffer-name-style 'forward)
 (setq use-dialog-box nil)
 (setq use-file-dialog nil)
@@ -866,6 +866,77 @@ BEG and END (region to sort)."
 ;;--------------------------------------------------------- iedit Mode
 ;; TBD (autoload 'iedit-mode "/home/uri03204/myDocs/ulib/emacs/iedit.elc" "Enter iedit mode" t)
 
+* Ivy mode
+(ivy-mode 1)  ; M-i to insert and modify
+(counsel-mode 1)
+
+;;(define-key counsel-find-file-map (kbd "C-x C-f") 'counsel-find-file-fallback-command)
+(define-key ivy-minibuffer-map (kbd "<up>") 'previous-line-or-history-element)
+(define-key ivy-minibuffer-map (kbd "<down>") 'next-line-or-history-element)
+
+;; previous-line-or-history-element
+
+(defun counsel-find-file-fallback-command ()
+  "Fallback to non-counsel version of current command."
+  (interactive)
+  (when (bound-and-true-p ivy-mode)
+    (ivy-mode -1)
+    (add-hook 'minibuffer-setup-hook
+              'counsel-find-file-fallback-command--enable-ivy))
+  (ivy-set-action
+   (lambda (current-path)
+     (let ((old-default-directory default-directory))
+       (let ((i (length current-path)))
+         (while (> i 0)
+           (push (aref current-path (setq i (1- i))) unread-command-events)))
+       (let ((default-directory "")) (call-interactively 'find-file))
+       (setq default-directory old-default-directory))))
+  (ivy-done))
+
+(defun counsel-find-file-fallback-command--enable-ivy ()
+  (remove-hook 'minibuffer-setup-hook
+               'counsel-find-file-fallback-command--enable-ivy)
+  (ivy-mode t))
+
+;;Ivy-based interface to standard commands
+
+;;(global-set-key (kbd "C-s") 'swiper-isearch)
+;;(global-set-key (kbd "M-x") 'counsel-M-x)
+;;(global-set-key (kbd "C-x C-f") 'counsel-find-file)
+;;(global-set-key (kbd "M-y") 'counsel-yank-pop)
+;;(global-set-key (kbd "<f1> f") 'counsel-describe-function)
+;;(global-set-key (kbd "<f1> v") 'counsel-describe-variable)
+;;(global-set-key (kbd "<f1> l") 'counsel-find-library)
+;;(global-set-key (kbd "<f2> i") 'counsel-info-lookup-symbol)
+;;(global-set-key (kbd "<f2> u") 'counsel-unicode-char)
+;;(global-set-key (kbd "<f2> j") 'counsel-set-variable)
+;;(global-set-key (kbd "C-x b") 'ivy-switch-buffer)
+;;(global-set-key (kbd "C-c v") 'ivy-push-view)
+;;(global-set-key (kbd "C-c V") 'ivy-pop-view)
+
+;;Ivy-based interface to shell and system tools
+;;(global-set-key (kbd "C-c c") 'counsel-compile)
+;;(global-set-key (kbd "C-c g") 'counsel-git)
+;;(global-set-key (kbd "C-c j") 'counsel-git-grep)
+;;(global-set-key (kbd "C-c L") 'counsel-git-log)
+;;(global-set-key (kbd "C-c k") 'counsel-rg)
+;;(global-set-key (kbd "C-c m") 'counsel-linux-app)
+;;(global-set-key (kbd "C-c n") 'counsel-fzf)
+;;(global-set-key (kbd "C-x l") 'counsel-locate)
+;;(global-set-key (kbd "C-c J") 'counsel-file-jump)
+;;(global-set-key (kbd "C-S-o") 'counsel-rhythmbox)
+;;(global-set-key (kbd "C-c w") 'counsel-wmctrl)
+
+;;Ivy-resume and other commands
+;;ivy-resume resumes the last Ivy-based completion.
+;;(global-set-key (kbd "C-c C-r") 'ivy-resume)
+;;(global-set-key (kbd "C-c b") 'counsel-bookmark)
+;;(global-set-key (kbd "C-c d") 'counsel-descbinds)
+;;(global-set-key (kbd "C-c g") 'counsel-git)
+;;(global-set-key (kbd "C-c o") 'counsel-outline)
+;;(global-set-key (kbd "C-c t") 'counsel-load-theme)
+;;(global-set-key (kbd "C-c F") 'counsel-org-file)
+
 * Org Mode
 ;; ------------------------------------------------------ Org-Mode
 #+BEGIN_SRC emacs-lisp
@@ -874,6 +945,13 @@ BEG and END (region to sort)."
 (setq org-startup-folded nil)
 (setq org-src-fontify-natively t)
 (setq org-list-allow-alphabetical t)
+(setq org-file-apps '( ("\\.xlsx\\'"    . w2-browser)
+                       ("\\.mm\\'"      . default)
+                       ("\\.x?html?\\'" . default)
+                       ("\\.pdf\\'"     . default)
+                       (directory . emacs)
+                       (auto-mode . emacs)
+                       ))
 
 ;; (org-babel-do-load-languages 'org-babel-load-languages '((matlab . t) 
 ;;                                                          (python . t) 
@@ -1416,7 +1494,6 @@ BEG and END (region to sort)."
  complex command C-x ESC ESC ;; repeat last 
 
 #+BEGIN_SRC emacs-lisp
-;(global-set-key "\C-x\C-b" 'ibuffer)
 
 ;;  (global-set-key "\C-q"          'quoted-insert)  ; for resetting, already default
 (global-set-key "\C-c<"		'selective-display-level-decr)
@@ -1439,6 +1516,7 @@ BEG and END (region to sort)."
 (global-set-key "\C-xl"		'list-matching-lines)
 (global-set-key "\C-xp"         'my-transpose-sexps)
 (global-set-key "\C-xt"		'instimestamp)
+(global-set-key "\C-x\C-b" 'ibuffer);; (global-set-key (kbd "C-x C-b") 'my-list-buffers)
 (global-set-key "\C-z"		'undo) ; replace-string
 (global-set-key "\M-$"		'query-replace-regexp)
 (global-set-key (kbd "C-.")     'repeat)
@@ -1446,7 +1524,6 @@ BEG and END (region to sort)."
 (global-set-key [(next)]        'cycle-buffer)
 (global-set-key [C-down]        'cycle-buffer)        ; avoid default binding (global-set-key (kbd "C-c <down>")  'windmove-down)
 (global-set-key [(prior)]       'cycle-buffer-backward)
-
 
 (global-set-key [C-down]        'windmove-down)        ;(global-set-key (kbd "C-c <down>")  'windmove-down)
 (global-set-key [C-insert]      'clipboard-kill-ring-save)
@@ -1880,7 +1957,6 @@ add below to your .emacs
 14:  (put 'eshell/ec 'eshell-no-numeric-conversions t)
 
 Type ec <command> from eshll prompt will open another buffer with command output/status.
-
 
 
 
