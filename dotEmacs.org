@@ -1707,6 +1707,17 @@ BEG and END (region to sort)."
 (add-to-list 'eshell-command-aliases-list (list "hg"   "history | grep $*")) 
 #+END_SRC
 
+;;-------------------------------------------------------------------------------- eshell
+;(eshell/alias "ff" "find-file $1")
+;(eshell/alias "fw" "find-file-other-window $1")
+;(eshell/alias "fr" "find-file-other-frame $1")
+(setq eshell-prompt-function
+      (lambda ()
+        (concat (format-time-string "%Y%m%d|%H:%M" (current-time)) "|" (substring (pwd) (max -25 (- (length (pwd)))))
+                (if (= (user-uid) 0) " # " " $ "))))
+(setq eshell-save-history-on-exit t)
+(setq eshell-hist-ignoredups t)
+
 (add-to-list 'eshell-command-aliases-list (list "hs"   "history"))
 (add-to-list 'eshell-command-aliases-list (list "hg"   "history | grep $*")) 
 (add-to-list 'eshell-command-aliases-list (list "rgrepy "python L:\\MyDocs\\ubin\\py\\rgrep.py"))
