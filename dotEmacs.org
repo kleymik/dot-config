@@ -9,53 +9,58 @@ C-c C-u go up
 increase/decrease font C-c kepad+ keypad-
 
 * To be processed
-;; Print message listing key sequences that invoke the command DEFINITION.
-;; Argument is a command definition, usually a symbol with a function definition.
-;; If INSERT (the prefix arg) is non-nil, insert the message in the buffer.
+  ;; Print message listing key sequences that invoke the command DEFINITION.
+  ;; Argument is a command definition, usually a symbol with a function definition.
+  ;; If INSERT (the prefix arg) is non-nil, insert the message in the buffer.
 
-;; TBD dired-find-file-otherwindow open a cygwin link by inspecting it
+  ;; TBD dired-find-file-otherwindow open a cygwin link by inspecting it
 
-;;------------------------------------------------------------------------------- Org-Mode
-;; (print (cadr info) (get-buffer "*scratch*"))
-;; (write-region (cadr info) nil "L:/MyDocs/history/matlabCmds/org_cmd.m")
-;; (write-region (cadr info) nil "C:/MyMAQS/grepHist/aaa_org_cmd.m"))
-;; (save-restriction (org-mark-subtree) (rot13-region (point) (mark))))
+  ;;------------------------------------------------------------------------------- Org-Mode
+  ;; (print (cadr info) (get-buffer "*scratch*"))
+  ;; (write-region (cadr info) nil "L:/MyDocs/history/matlabCmds/org_cmd.m")
+  ;; (write-region (cadr info) nil "C:/MyMAQS/grepHist/aaa_org_cmd.m"))
+  ;; (save-restriction (org-mark-subtree) (rot13-region (point) (mark))))
 
-;; find-dired   calls unix find
-;; Dired Listing Switches: Hide Value -ahl --time-style=long-iso
-;; of emacs.  It is adviced to place bindings for these into a
-;; convenient prefix key map, for example `C-,`
+  ;; find-dired   calls unix find
+  ;; Dired Listing Switches: Hide Value -ahl --time-style=long-iso
+  ;; of emacs.  It is adviced to place bindings for these into a
+  ;; convenient prefix key map, for example `C-,`
 
-;;--------------------------------------------------------------------- Key Bindings
-;; (global-set-key [f4]            'see-orglink-dired) ;;     'desktop-save)
-;; (define-key global-map "\C-co" 'org-capture)
-;;-------------------------------------------------------------------------------
+  ;;--------------------------------------------------------------------- Key Bindings
+  ;; (global-set-key [f4]            'see-orglink-dired) ;;     'desktop-save)
+  ;; (define-key global-map "\C-co" 'org-capture)
+  ;;-------------------------------------------------------------------------------
 
 * Packages
-#+BEGIN_SRC emacs-lisp
-(defun ke()           (interactive) (kill-emacs))
+  #+BEGIN_SRC emacs-lisp
+  (defun ke()           (interactive) (kill-emacs))
 
-(setq load-path (append load-path '("/home/kleyn/ulib/emacs/"))) 
-(setq load-path (append load-path '("/home/kleyn/ulib/emacs/dired-hacks"))) ;; for subtree (insert (format "%s" load-path))
+  (setq load-path (append load-path '("/home/kleyn/ulib/emacs/")))
+  (setq load-path (append load-path '("/home/kleyn/ulib/emacs/dired-hacks"))) ;; for subtree (insert (format "%s" load-path))
 
-(require 'package)
-;;(add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/") t)
-;;(add-to-list 'package-archives '("melpa-stable" . "http://melpa.org/packages/") t)
-(add-to-list 'package-archives   '("melpa-stable" . "http://stable.melpa.org/packages/") t)
+  (require 'package)
+  ;;(add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/") t)
+  ;;(add-to-list 'package-archives '("melpa-stable" . "http://melpa.org/packages/") t)
+  (add-to-list 'package-archives   '("melpa-stable" . "http://stable.melpa.org/packages/") t)
 
-(require 'uniquify)
-(require 'ob)
-(require 'org)
-(require 'cl)              ; for transpose
+  (require 'uniquify)
+  (require 'ob)
+  (require 'org)
+  (require 'cl)              ; for transpose
 
-(require 'dired-x)
-(require 'wdired)
-(require 'regexp-opt)
-(require 'em-alias)        ; for eshell 
-(load-library "dired-subtree")
-;; (require 'dired-k)
-;; (require 'diffview)      ; make patch files look like ediff
-#+END_SRC
+  (require 'dired-x)
+  (require 'wdired)
+  (require 'regexp-opt)
+  (require 'em-alias)        ; for eshell
+  (load-library "dired-subtree")
+  ;; (require 'dired-k)
+  ;; (require 'diffview)      ; make patch files look like ediff
+  (message "Done: Packages")
+  #+END_SRC
+
+
+
+
 * Function Definitions
 
 #+BEGIN_SRC emacs-lisp
@@ -73,7 +78,7 @@ increase/decrease font C-c kepad+ keypad-
 (defun see-dotEmacs()           (interactive) (find-file "/home/kleyn/.emacs.d/dotEmacs.org"))
 (defun see-orglink-dired()      (interactive) (org-open-at-point t)) ; (current-buffer)
 (defun see-shell-output()       (interactive) (switch-to-buffer-other-window "*Shell Command Output*"))
-(defun diredHome()              (interactive) (dired "L:/MyDocs/" nil))
+;;(defun diredHome()              (interactive) (dired "L:/MyDocs/" nil))
 ;;(defun nok900()               (interactive) (dired "/scpc:root@192.168.1.187:/home/user/MyDocs/aNotes/"))
 ;;----------------------------------------------------- Other
 (defun filepath-on-clipboard ()
@@ -116,6 +121,8 @@ increase/decrease font C-c kepad+ keypad-
 ;;     ))
 
 
+
+
 ;; ------------------------------------------------------------------- Open App
 ;;(defun w32-browser (doc) (w32-shell-execute 1 doc))
 ;;(eval-after-load "dired" '(define-key dired-mode-map [f3]
@@ -149,8 +156,8 @@ increase/decrease font C-c kepad+ keypad-
   (shrink-window-horizontally 10))
 
 ;; ------------------------------------------------------------------- unfill-paragraph
-;;; Stefan Monnier <foo at acm.org>. It is the opposite of 
-;;; fill-paragraph. Takes a multi-line paragraph and makes 
+;;; Stefan Monnier <foo at acm.org>. It is the opposite of
+;;; fill-paragraph. Takes a multi-line paragraph and makes
 ;;; it into a single line of text.
 (defun unfill-paragraph ()
   (interactive)
@@ -303,6 +310,7 @@ increase/decrease font C-c kepad+ keypad-
     (move-to-column start-column))
   (message "line is dup'ed"))
 
+
 ;;---- option1 proto swap
 (defun proto-swap (a b)
   (save-excursion
@@ -318,7 +326,8 @@ increase/decrease font C-c kepad+ keypad-
           ; (message "match b")
           (replace-match a))
         (goto-char (match-end 0))))))
-(with-current-buffer (current-buffer)  (proto-swap "bar" "foo"))
+
+;; (with-current-buffer (current-buffer)  (proto-swap "bar" "foo"))
 
 ;;---- option2 parallel swap
 (defun parallel-swap (plist &optional start end)
@@ -400,6 +409,7 @@ BEG and END (region to sort)."
                 (delete-region (point-at-bol) (point-at-eol))
                 (insert (replace-regexp-in-string re-1 re-2 line)))
               (forward-line 1))))))))
+
 
 ;;--------------------------------------------------------- align
 (defun align-repeat (start end regexp)
@@ -655,7 +665,7 @@ BEG and END (region to sort)."
 ; (list-command-history)
 
 ;; ----------------------------------------------- Colour
-(set-background-color "bisque")
+;; (set-background-color "bisque")
 ;; (set-background-color "bisque2")
 ;; (set-background-color "bisque3")
 ;; (set-face-background 'default "green3")
@@ -768,7 +778,7 @@ BEG and END (region to sort)."
 ;;(insert (format "%s" auto-mode-alist))((\.m\' . matlab-mode) (\.py$ . python-mode) (\.te?xt\' . text-mode) (\.c\' . c-mode) (\.h\' . c-mode) (\.tex\' . tex-mode) (\.ltx\' . latex-mode) (\.el\' . emacs-lisp-mode) (\.scm\' . scheme-mode) (\.l\' . lisp-mode) (\.lisp\' . lisp-mode) (\.f\' . fortran-mode) (\.F\' . fortran-mode) (\.for\' . fortran-mode) (\.p\' . pascal-mode) (\.pas\' . pascal-mode) (\.ad[abs]\' . ada-mode) (\.\([pP]\([Llm]\|erl\)\|al\)\' . perl-mode) (\.s?html?\' . html-mode) (\.cc\' . c++-mode) (\.hh\' . c++-mode) (\.hpp\' . c++-mode) (\.C\' . c++-mode) (\.H\' . c++-mode) (\.cpp\' . c++-mode) (\.cxx\' . c++-mode) (\.hxx\' . c++-mode) (\.c\+\+\' . c++-mode) (\.h\+\+\' . c++-mode) (\.m\' . objc-mode) (\.java\' . java-mode) (\.mk\' . makefile-mode) (\(M\|m\|GNUm\)akefile\(\.in\)?\' . makefile-mode) (\.am\' . makefile-mode) (\.texinfo\' . texinfo-mode) (\.te?xi\' . texinfo-mode) (\.s\' . asm-mode) (\.S\' . asm-mode) (\.asm\' . asm-mode) (ChangeLog\' . change-log-mode) (change\.log\' . change-log-mode) (changelo\' . change-log-mode) (ChangeLog\.[0-9]+\' . change-log-mode) (changelog\' . change-log-mode) (changelog\.[0-9]+\' . change-log-mode) (\$CHANGE_LOG\$\.TXT . change-log-mode) (\.scm\.[0-9]*\' . scheme-mode) (\.[ck]?sh\'\|\.shar\'\|/\.z?profile\' . sh-mode) (\(/\|\`\)\.\(bash_profile\|z?login\|bash_login\|z?logout\)\' . sh-mode) (\(/\|\`\)\.\(bash_logout\|shrc\|[kz]shrc\|bashrc\|t?cshrc\|esrc\)\' . sh-mode) (\(/\|\`\)\.\([kz]shenv\|xinitrc\|startxrc\|xsession\)\' . sh-mode) (\.m?spec\' . sh-mode) (\.mm\' . nroff-mode) (\.me\' . nroff-mode) (\.ms\' . nroff-mode) (\.man\' . nroff-mode) (\.\(u?lpc\|pike\|pmod\)\' . pike-mode) (\.TeX\' . tex-mode) (\.sty\' . latex-mode) (\.cls\' . latex-mode) (\.clo\' . latex-mode) (\.bbl\' . latex-mode) (\.bib\' . bibtex-mode) (\.sql\' . sql-mode) (\.m4\' . m4-mode) (\.mc\' . m4-mode) (\.mf\' . metafont-mode) (\.mp\' . metapost-mode) (\.vhdl?\' . vhdl-mode) (\.article\' . text-mode) (\.letter\' . text-mode) (\.tcl\' . tcl-mode) (\.exp\' . tcl-mode) (\.itcl\' . tcl-mode) (\.itk\' . tcl-mode) (\.icn\' . icon-mode) (\.sim\' . simula-mode) (\.mss\' . scribe-mode) (\.f90\' . f90-mode) (\.indent\.pro\' . fundamental-mode) (\.pro\' . idlwave-mode) (\.lsp\' . lisp-mode) (\.awk\' . awk-mode) (\.prolog\' . prolog-mode) (\.tar\' . tar-mode) (\.\(arc\|zip\|lzh\|zoo\|jar\)\' . archive-mode) (\.\(ARC\|ZIP\|LZH\|ZOO\|JAR\)\' . archive-mode) (\`/tmp/Re . text-mode) (/Message[0-9]*\' . text-mode) (/drafts/[0-9]+\' . mh-letter-mode) (\.zone\' . zone-mode) (\`/tmp/fol/ . text-mode) (\.y\' . c-mode) (\.lex\' . c-mode) (\.oak\' . scheme-mode) (\.sgml?\' . sgml-mode) (\.xml\' . sgml-mode) (\.dtd\' . sgml-mode) (\.ds\(ss\)?l\' . dsssl-mode) (\.idl\' . idl-mode) ([]>:/\]\..*emacs\' . emacs-lisp-mode) (\`\..*emacs\' . emacs-lisp-mode) ([:/]_emacs\' . emacs-lisp-mode) (/crontab\.X*[0-9]+\' . shell-script-mode) (\.ml\' . lisp-mode) (\.\(asn\|mib\|smi\)\' . snmp-mode) (\.\(as\|mi\|sm\)2\' . snmpv2-mode) (\.\(diffs?\|patch\|rej\)\' . diff-mode) (\.\(dif\|pat\)\' . diff-mode) (\.[eE]?[pP][sS]\' . ps-mode) (configure\.\(ac\|in\)\' . autoconf-mode) (BROWSE\' . ebrowse-tree-mode) (\.ebrowse\' . ebrowse-tree-mode) (#\*mail\* . mail-mode) (\.~?[0-9]+\.[0-9][-.0-9]*~?\' ignore t) (\.[1-9]\' . nroff-mode) (\.g\' . antlr-mode))
 ;(add-to-list 'auto-mode-alist '("\\.m\\'"     . octave-mode)  )
 
-(message "dotEmacs.org section Modes Assoc List done")
+(message "Done: dotEmacs.org section Modes Assoc List")
 #+END_SRC
 
 * Modes Section
@@ -821,7 +831,7 @@ BEG and END (region to sort)."
 			(setq tab-width 4)
 			(setq python-indent 4)))
 
-(message "dotEmacs.org first section done")
+(message "Done: dotEmacs.org first section")
 #+END_SRC
 
 ** Unused
@@ -1028,12 +1038,12 @@ BEG and END (region to sort)."
 ;;(setq org-tags-exclude-from-inheritance (quote ("crypt")))
 ;;(setq org-crypt-key nil)
 ;;
-;;(defun crypt-region (p1 p2) 
-;;  "replace region with crypted" 
-;;  (interactive "r") 
-;;  (save-restriction 
-;;    (narrow-to-region p1 p2) 
-;;    (goto-char (point-min)) 
+;;(defun crypt-region (p1 p2)
+;;  "replace region with crypted"
+;;  (interactive "r")
+;;  (save-restriction
+;;    (narrow-to-region p1 p2)
+;;    (goto-char (point-min))
 ;;    (while (re-search-forward REGEXP nil t)
 ;;      (replace-match TO-STRING nil nil))
 ;;    )
@@ -1050,7 +1060,7 @@ BEG and END (region to sort)."
   (goto-char (mark-marker)) (replace-regexp "|$"           "),"     ) ;; replace trailing | with ),
   (goto-char (mark-marker)) (replace-regexp "\|"           ","      ) ;; replace          | with ,
   (goto-char (mark-marker)) (replace-regexp "[0-9a-z._-]+" "'\\&'"  ) ;; wrap single quotes around words
-  (goto-char (mark-marker)) (replace-regexp ",[ \t]+,"     ",NULL," ) ;; NULL in gaps 
+  (goto-char (mark-marker)) (replace-regexp ",[ \t]+,"     ",NULL," ) ;; NULL in gaps
   (goto-char (mark-marker)) (replace-regexp ",[ \t]+,"     ",NULL," ) ;; NULL in gaps  need to run twice!!!
   (goto-char (mark-marker)) (replace-regexp ",[ \t]+)"     ",NULL)" ) ;; NULL at end
   (goto-char (point-max)) (search-backward ",") (delete-char 1)       ;; delete comma after list end
@@ -1707,6 +1717,14 @@ BEG and END (region to sort)."
 (add-to-list 'eshell-command-aliases-list (list "hg"   "history | grep $*")) 
 #+END_SRC
 
+(add-to-list 'eshell-command-aliases-list (list "gitst"  "git rev-parse --abbrev-ref HEAD;
+                                                          git config branch.$(git rev-parse --abbrev-ref HEAD).description;
+                                                          git status -uno --ahead-behind;
+                                                          git log -n 10 --pretty=oneline --abbrev-commit --no-merges --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(bold yellow)%d%C(reset)';               
+                                                          git branch -v;
+                                                          echo '';
+                                                          git stash;"))
+
 ;;-------------------------------------------------------------------------------- eshell
 ;(eshell/alias "ff" "find-file $1")
 ;(eshell/alias "fw" "find-file-other-window $1")
@@ -1968,7 +1986,8 @@ add below to your .emacs
 14:  (put 'eshell/ec 'eshell-no-numeric-conversions t)
 
 Type ec <command> from eshll prompt will open another buffer with command output/status.
-
+(print foo) === echo $foo
+eshell-parse-command 'ls -l'
 
 
 
