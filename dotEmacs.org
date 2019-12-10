@@ -35,8 +35,8 @@ increase/decrease font C-c kepad+ keypad-
 #+BEGIN_SRC emacs-lisp
 (defun ke()           (interactive) (kill-emacs))
 
-(setq load-path (append load-path '("/home/kleyn/ulib/emacs/")))
-(setq load-path (append load-path '("/home/kleyn/ulib/emacs/dired-hacks"))) ;; for subtree (insert (format "%s" load-path))
+(setq load-path (append load-path '("~/ulib/emacs/")))
+(setq load-path (append load-path '("~/ulib/emacs/dired-hacks"))) ;; for subtree (insert (format "%s" load-path))
 
 (require 'package)
 ;;(add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/") t)
@@ -592,6 +592,7 @@ BEG and END (region to sort)."
 (delete-selection-mode 0) ; don't delete selection with next char
 (fset 'yes-or-no-p 'y-or-n-p)
 (global-hl-line-mode t)
+;;(global-mark-ring-max 50)
 (setq bell-volume 0)
 (setq case-fold-search t)
 (setq column-number-mode t)
@@ -617,6 +618,7 @@ BEG and END (region to sort)."
 (global-hl-line-mode t)
 (setq-default frame-title-format "%f")  ;;(setq-default frame-title-format "%b %p %p(%f)")
 
+;; (setq set-mark-command-repeat-pop 1) ;;-- needs emacs version 22
 ;; (setq hscroll-margin 30)
 ;; (setq hscroll-step 20) ;; # 0 
 ;; (setq header-line-format mode-line-format)
@@ -662,10 +664,17 @@ BEG and END (region to sort)."
 (setq list-command-history-max 300)
 (savehist-mode 1)
 ; list-command-history-filter TBD filter out kill-buffer
-
 ; (list-command-history)
 
-;; ----------------------------------------------- Colour
+;;(helm-mode 0)
+;;(ivy-mode 1)
+;;(counsel-mode 1)
+;; swiper
+;; (global-set-key "\C-s" 'swiper)
+;; (global-set-key "\C-s" 'isearch-forward)  
+;; (xclip-mode 1) for emacs in terminal , export kill-yank
+;; (set-background-color "black")
+;; (set-background-color "darkgrey")
 ;; (set-background-color "bisque")
 ;; (set-background-color "bisque2")
 ;; (set-background-color "bisque3")
@@ -947,9 +956,22 @@ BEG and END (region to sort)."
 ;;(global-set-key (kbd "C-c o") 'counsel-outline)
 ;;(global-set-key (kbd "C-c t") 'counsel-load-theme)
 ;;(global-set-key (kbd "C-c F") 'counsel-org-file)
+;;(global-set-key "\C-." 'pop-global-mark)
+;;(global-set-key [M-SPC] 'pop-global-mark)
+;;(global-set-key [S-right] 'forward-word)
+;;(global-set-key [remap eval-expression] 'pp-eval-expression)
 
 * Org Mode
 ;; ------------------------------------------------------ Org-Mode
+;; ;(define-key global-map "\C-cl" 'org-store-link)
+;; ;(define-key global-map "\C-ca" 'org-agenda)
+;; (defalias 'make-org-tbl  (kbd "ESC x org-mode RET ESC < C-SPC ESC > C-c |"))
+;; (setq org-default-notes-file "~/myDocs/logbook/notes.org")
+;; (setq org-cycle-include-plain-lists t);; (setq org-startup-folded nil)
+;; ;;(defalias 'see-logbooks  (kbd "C-x C-f ~/myDocs/logbook RET"))
+;; (defun org-collapse()     (interactive) (org-shifttab 0))
+;; 
+
 #+BEGIN_SRC emacs-lisp
 (setq org-default-notes-file "~/myDocs/logbook/notes.org")
 (setq org-cycle-include-plain-lists t)
@@ -997,6 +1019,9 @@ BEG and END (region to sort)."
 (define-key org-mode-map (kbd "<S-up>")   'scroll-one-line-down)
 (define-key org-mode-map (kbd "<S-down>") 'scroll-one-line-up)
 (define-key org-mode-map (kbd "<C-up>")   'outline-up-heading)
+(define-key org-mode-map (kbd "C-c d")  'org-demote-subtree)
+(define-key org-mode-map (kbd "C-c p")  'org-promote-subtree)
+(define-key org-mode-map (kbd "C-c u") 'outline-up-heading)
 
 ;; needs ox.el = org-exporter.el
 ;;(require 'ox-confluence)
@@ -1146,6 +1171,7 @@ BEG and END (region to sort)."
 * Dired Mode
 #+BEGIN_SRC emacs-lisp 
 
+;;(setq dired-use-ls-dired nil)
 (setq dired-dwim-target t)
 (setq dired-subtree-line-prefix "     ")
 
@@ -1559,13 +1585,9 @@ BEG and END (region to sort)."
 (global-set-key [C-down]        'cycle-buffer)        ; avoid default binding (global-set-key (kbd "C-c <down>")  'windmove-down)
 (global-set-key [(prior)]       'cycle-buffer-backward)
 
-(global-set-key [C-down]        'windmove-down)        ;(global-set-key (kbd "C-c <down>")  'windmove-down)
 (global-set-key [C-insert]      'clipboard-kill-ring-save)
 (global-set-key [C-kp-add]      'text-scale-increase)
 (global-set-key [C-kp-subtract] 'text-scale-decrease) ;; with a C-0 prefix argument.
-(global-set-key [C-left]        'windmove-left)        ;(global-set-key (kbd "C-c <left>")  'windmove-left)
-(global-set-key [C-right]       'windmove-right)       ;(global-set-key (kbd "C-c <right>") 'windmove-right)
-(global-set-key [C-up]          'windmove-up)          ;(global-set-key (kbd "C-c <up>")    'windmove-up)
 (global-set-key [M-home]	'org-collapse)
 (global-set-key [S-down]        'scroll-one-line-up)
 (global-set-key [S-insert]      'clipboard-yank)
@@ -1625,6 +1647,8 @@ BEG and END (region to sort)."
 (global-unset-key "\C-x\C-c")                            ;; ;;; don't quit so easily
 (global-set-key "\C-x\C-c\C-v"  'save-buffers-kill-emacs) ;; But we establish a longer sequence that is harder to hit by accident:
 (message "dotEmacs.org keybindings section done")
+
+(defun sf8() (interactive) (dired-omit-mode))
 #+END_SRC
 
 ;;(global-set-key [C-down]        'windmove-down)        ;(global-set-key (kbd "C-c <down>")  'windmove-down);
@@ -1635,20 +1659,20 @@ BEG and END (region to sort)."
 ;; (define-key global-map "\C-co" 'org-capture)
 
 ;; (global-set-key "\C-!"        'shell-command) TBD
+;; (global-set-key "\C-Q"        'unfill-paragraph)
 ;; (global-set-key "\C-q"	 'quoted-insert)
+;; (global-set-key "\C-r"       #'(lambda () (interactive)  (eval (car command-history))))
 ;; (global-set-key [C-kp-insert] 'kill-ring-save)
+;; (global-set-key [M-f8]        'vigenere-encrypt-buffer)
+;; (global-set-key [M-return]	 'ffap)  ;; open file under cursor
+;; (global-set-key [M-return]    'ffap)  ;; open file under cursor
 ;; (global-set-key [M-up]	 'other-window)
-;; (global-set-key [S-kp-insert] 'yank)
 ;; (global-set-key [S-M-kp-down] 'sgml-fold-subelement) ;; ; M-kp ... conflicts with workspace navigation:
 ;; (global-set-key [S-M-kp-end]  'sgml-fold-element)   ;  fold everything below current element
 ;; (global-set-key [S-M-kp-next] 'sgml-unfold-element)
-;; (global-set-key [M-return]	 'ffap)  ;; open file under cursor
-;; (global-set-key "\C-r"       #'(lambda () (interactive)  (eval (car command-history))))
-;; (global-set-key "\C-Q"        'unfill-paragraph)
-;; (global-set-key [M-f8]        'vigenere-encrypt-buffer)
-;; (global-set-key [f8]          'vigenere-decrypt-buffer)
-;; (global-set-key [M-return]    'ffap)  ;; open file under cursor
 ;; (global-set-key [S-f11]       'debug-function-on-entry)
+;; (global-set-key [S-kp-insert] 'yank)
+;; (global-set-key [f8]          'vigenere-decrypt-buffer)
 
 ;; (global-unset-key (kbd "C-q"))
 
