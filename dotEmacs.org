@@ -32,31 +32,30 @@ increase/decrease font C-c kepad+ keypad-
   ;;-------------------------------------------------------------------------------
 
 * Packages
-  #+BEGIN_SRC emacs-lisp
-  (defun ke()           (interactive) (kill-emacs))
+#+BEGIN_SRC emacs-lisp
+(defun ke()           (interactive) (kill-emacs))
 
-  (setq load-path (append load-path '("/home/kleyn/ulib/emacs/")))
-  (setq load-path (append load-path '("/home/kleyn/ulib/emacs/dired-hacks"))) ;; for subtree (insert (format "%s" load-path))
+(setq load-path (append load-path '("/home/kleyn/ulib/emacs/")))
+(setq load-path (append load-path '("/home/kleyn/ulib/emacs/dired-hacks"))) ;; for subtree (insert (format "%s" load-path))
 
-  (require 'package)
-  ;;(add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/") t)
-  ;;(add-to-list 'package-archives '("melpa-stable" . "http://melpa.org/packages/") t)
-  (add-to-list 'package-archives   '("melpa-stable" . "http://stable.melpa.org/packages/") t)
+(require 'package)
+;;(add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/") t)
+;;(add-to-list 'package-archives '("melpa-stable" . "http://melpa.org/packages/") t)
+(add-to-list 'package-archives   '("melpa-stable" . "http://stable.melpa.org/packages/") t)
 
-  (require 'uniquify)
-  (require 'ob)
-  (require 'org)
-  (require 'cl)              ; for transpose
-
-  (require 'dired-x)
-  (require 'wdired)
-  (require 'regexp-opt)
-  (require 'em-alias)        ; for eshell
-  (load-library "dired-subtree")
-  ;; (require 'dired-k)
-  ;; (require 'diffview)      ; make patch files look like ediff
-  (message "Done: Packages")
-  #+END_SRC
+(require 'uniquify)
+(require 'ob)
+(require 'org)
+(require 'cl)              ; for transpose
+(require 'dired-x)
+(require 'wdired)
+(require 'regexp-opt)
+(require 'em-alias)        ; for eshell
+(load-library "dired-subtree")
+;; (require 'dired-k)
+;; (require 'diffview)      ; make patch files look like ediff
+(message "Done: Packages")
+#+END_SRC
 
 
 
@@ -80,6 +79,7 @@ increase/decrease font C-c kepad+ keypad-
 (defun see-shell-output()       (interactive) (switch-to-buffer-other-window "*Shell Command Output*"))
 ;;(defun diredHome()              (interactive) (dired "L:/MyDocs/" nil))
 ;;(defun nok900()               (interactive) (dired "/scpc:root@192.168.1.187:/home/user/MyDocs/aNotes/"))
+(defun diredFaraday  () (interactve) (dired "/scp:kleyn@192.168.1.89:/home/kleyn"))
 ;;----------------------------------------------------- Other
 (defun filepath-on-clipboard ()
   "Put the current file name on the clipboard"
@@ -312,7 +312,7 @@ increase/decrease font C-c kepad+ keypad-
 
 
 ;;---- option1 proto swap
-(defun proto-swap (a b)
+(defun proto-swap (a b)  ;; (require 'regexp-opt)
   (save-excursion
     (goto-char (point-min))
     (let ((re (regexp-opt (list a b))))
@@ -330,7 +330,7 @@ increase/decrease font C-c kepad+ keypad-
 ;; (with-current-buffer (current-buffer)  (proto-swap "bar" "foo"))
 
 ;;---- option2 parallel swap
-(defun parallel-swap (plist &optional start end)
+(defun parallel-swap (plist &optional start end)  ;; (require 'cl)
   (interactive
    `(,(loop with input = (read-from-minibuffer "Swap: ")
             with limit = (length input)
@@ -415,12 +415,13 @@ BEG and END (region to sort)."
 (defun align-repeat (start end regexp)
   "Repeat alignment with respect to the given regular expression. Provide arg [[:space:]]+"
   (interactive "r\nsAlign regexp: ")
-  ;; 1) First, the regular expression to align with. This expression begins with \(\s-*\), which stands for “an arbitrary number of spacing characters”.
-  ;; 2) Then the parenthesis group to modify, 1 by default. This will align the expression by modifying the matching whitespaces in front of the regular expression, if any.
+  ;; 1 First, the regular expression to align with. This expression begins with \(\s-*\), which stands for “an arbitrary number of spacing characters”.
+  ;; 2 Then the parenthesis group to modify, 1 by default. This will align the expression by modifying the matching whitespaces in front of the regular expression, if any.
   ;;   The modification amounts to adding some number of whitespaces to that part of the regular expression.
-  ;; 3) Additional number of whitespaces to add, the default 1 is fine. Set to 0 if no additional whitespace is needed.
-  ;; 4) Finally, answer n/y, depending whether the alignment must be done once or repeated.
+  ;; 3 Additional number of whitespaces to add, the default 1 is fine. Set to 0 if no additional whitespace is needed.
+  ;; 4 Finally, answer n/y, depending whether the alignment must be done once or repeated.
   (align-regexp start end (concat "\\(\\s-*\\)" regexp) 1 1 t))
+
 (defun alignFoo (pat)
   (interactive "spattern?")
   (align-regexp (region-beginning) (region-end) (concat "\\(\\s-*\\)" pat) 1 1 nil)
@@ -433,7 +434,7 @@ BEG and END (region to sort)."
      (when (string= (substring (buffer-file-name) 0 4) "/dls")
        (message "Toggle to read-only for existing file")
 	   ; (read-only-mode ?)
-       (toggle-read-only 1)))))
+       (toggle-read-only 1))))
 
 ;;This isn't nearly as drastic as what you're looking for, but it is possible to customize how Emacs calls ls in dired-mode.
 ;;M-x customize-variable RET dired-listing-switches RET
@@ -607,7 +608,7 @@ BEG and END (region to sort)."
 (setq use-dialog-box nil)
 (setq use-file-dialog nil)
 (setq visible-bell t)
-(setq-default frame-title-format "%f")
+(setq-default frame-title-format "%f")  ;;(setq-default frame-title-format "%b %p %p(%f)")
 (setq-default line-spacing 0.06)
 (setq-default indent-tabs-mode nil)
 (show-paren-mode 1)
@@ -1184,9 +1185,31 @@ BEG and END (region to sort)."
 ;;                         (lambda ()
 ;;                           (get-text-property (point) 'dired-filename)))))
 
-
 ; Dired Listing Switches: Hide Value -ahl --time-style=long-iso
 ;  State: SET for current session only.
+(defun ds()  (interactive)  (eshell))
+(defun cf3() (interactive)  (eshell))
+(defun da()  (interactive)  (find-file "/data/data/com.termux/files/home/org/access.org"))
+(defun sf3() (interactive)  (find-file "/data/data/com.termux/files/home/dot/dotBashrc"))
+(defun db()  (interactive)  (find-file "/data/data/com.termux/files/home/dot/dotBashrc"))
+(defun dd()  (interactive)  (find-file "/data/data/com.termux/files/home/MyDocs/aNotes/org/doAndDone.org"))
+(defun de()  (interactive)  (find-file "/data/data/com.termux/files/home/.emacs.d/dotEmacs.org"))
+(defun f3()  (interactive)  (find-file "/data/data/com.termux/files/home/.emacs.d/dotEmacs.org"))
+;(defun dz() (interactive)   (ztree-dir "/data/data/com.termux/files/home"))
+(defun dz() (interactive)
+           (progn
+              (ztree-dir "/data/data/com.termux/files/home/MyDocs/projects")
+              (split-window-right 40)))
+(defun diredKleyqs501()		(interactive) (dired "/scp:kleyn@62.233.104.49:/home/kleyn"))
+(defun diredGem()		(interactive) (dired "/scp:u0_a94@192.168.1.93#8022:/data/data/com.termux/files/home/MyDocs"))  ;; ‘/ssh:daniel@melancholia#42:.emacs’  /ssh:foo@192.168.1.93#8022:
+(defun diredGem2()		(interactive) (dired "/ssh:u0_a94@192.168.1.93#8022:/data/data/com.termux/files/home/MyDocs"))  ;; ‘/ssh:daniel@melancholia#42:.emacs’  /ssh:foo@192.168.1.93#8022:
+(defun diredTuringIn()		(interactive) (dired "/scp:kleyn@192.168.1.243:/home/kleyn"))
+(defun diredTuringOut()		(interactive) (dired "/scp:kleyn@192.168.1.8:/home/kleyn"))
+(defun diredFaraday()		(interactive) (dired "/scp:kleyn@192.168.1.89:/home/kleyn"))
+;;(defun see-nok900-doAndDone()	(interactive) (find-file "/scp:root@192.168.1.187:/home/user/MyDocs/aNotes/doAndDone.org"))
+;;(defun diamond()		(interactive) (dired "/scp:uri03204@nx-staff.diamond.ac.uk:/home/uri03204/dot"))
+(defun see-dotEmacs()		(interactive) (find-file "/home/kleyn/.emacs"))
+
 (defun see-logbook1()     (interactive) (find-file "/home/kleyn/logbook/Diamond.org"))
 (defun see-logbook2()     (interactive) (find-file "/home/kleyn/logbook/GDA.org"))
 (defun nok900()           (interactive) (dired "/scpc:root@192.168.0.6:/home/user/MyDocs/aNotes/")) ;; barnes
@@ -1198,7 +1221,7 @@ BEG and END (region to sort)."
 ;; when sorting in dired mode, move cursor back to top
 (defadvice dired-sort-toggle-or-edit (after dired-sort-to-top activate)
    "Move to beginning of buffer (instead of keeping point on the current file)."
-   (goto-char (point-min))
+   (goto-char (npoint-min))
    (forward-line 3))
 
 (defun dired-ediff-git (&optional arg)
@@ -1517,7 +1540,8 @@ BEG and END (region to sort)."
 (global-set-key "\C-cr"		'auto-revert-tail-mode)
 
 (global-set-key "\C-cs"		'parallel-swap)
-(global-set-key "\C-ct"		'org-table-convert-region)
+(global-set-key "\C-c\C-t"	'org-table-convert-region)
+(global-set-key "\C-ct"		'toggle-truncate-lines)
 (global-set-key "\C-cw"		'delete-trailing-whitespace)
 (global-set-key "\C-xc"         'filepath-on-clipboard)
 (global-set-key "\C-xd"         'dired)
@@ -1526,7 +1550,7 @@ BEG and END (region to sort)."
 (global-set-key "\C-xl"		'list-matching-lines)
 (global-set-key "\C-xp"         'my-transpose-sexps)
 (global-set-key "\C-xt"		'instimestamp)
-(global-set-key "\C-x\C-b" 'ibuffer);; (global-set-key (kbd "C-x C-b") 'my-list-buffers)
+(global-set-key "\C-x\C-b"      'ibuffer);; (global-set-key (kbd "C-x C-b") 'my-list-buffers)
 (global-set-key "\C-z"		'undo) ; replace-string
 (global-set-key "\M-$"		'query-replace-regexp)
 (global-set-key (kbd "C-.")     'repeat)
