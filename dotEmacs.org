@@ -68,21 +68,49 @@ increase/decrease font C-c kepad+ keypad-
 #+BEGIN_SRC emacs-lisp
 ;;----------------------------------------------------- One liners
 (defun describe-last-function() (interactive) (describe-function last-command))
+(defun diamond()                (interactive) (dired "/scpc:uri03204@nx-staff.diamond.ac.uk:/home/uri03204/dot"))
+(defun diredFaraday()           (interactive) (dired "/scp:kleyn@192.168.1.89:/home/kleyn"))
+(defun diredGem()               (interactive) (dired "/scp:u0_a94@192.168.1.93#8022:/data/data/com.termux/files/home/MyDocs"))  ;; ‘/ssh:daniel@melancholia#42:.emacs’  /ssh:foo@192.168.1.93#8022:
+(defun diredGem2()              (interactive) (dired "/ssh:u0_a94@192.168.1.93#8022:/data/data/com.termux/files/home/MyDocs"))  ;; ‘/ssh:daniel@melancholia#42:.emacs’  /ssh:foo@192.168.1.93#8022:
+(defun diredHome ()             (interactive) (dired "/home/kleyn/" nil))
+(defun diredKleyqs501()         (interactive) (dired "/scp:kleyn@62.233.104.49:/home/kleyn"))
+(defun diredTuringIn()          (interactive) (dired "/scp:kleyn@192.168.1.243:/home/kleyn"))
+(defun diredTuringOut()         (interactive) (dired "/scp:kleyn@192.168.1.8:/home/kleyn"))
 (defun indent-to-col()          (interactive) (indent-to-column 110))
 (defun instimestamp()           (interactive) (insert (format-time-string "%Y%m%d_%H:%M:%S")))
-(defun show-hist()              (interactive)  (list-command-history))
-(defun slashBwd()               (interactive) (replace-string  "/" "\\" nil (line-beginning-position) (line-end-position)))
-(defun slashFwd()               (interactive) (replace-string "\\"  "/" nil (line-beginning-position) (line-end-position)))
-(defun see-logbook1()           (interactive) (find-file "L:/MyDocs/history/logbook.org"))
-(defun see-sql()                (interactive) (find-file "C:/MyMAQS/notebooks/sqlScripts.org"))
-(defun see-matlab()             (interactive) (find-file "//lon0302/dfs/DATA/MULTI_ASSET/MAQS/dataCollection/FI/LOCAL/USR/MK/vc/rs1/SSI.scratch.wt1/notebooks/matlabScripts.org"))
+(defun nok900()                 (interactive) (dired "/scpc:root@192.168.0.6:/home/user/MyDocs/aNotes/")) ;; barnes
 (defun see-dotBashRc()          (interactive) (find-file "L:/MyDocs/dot/dotBashrc"))
 (defun see-dotEmacs()           (interactive) (find-file "/home/kleyn/.emacs.d/dotEmacs.org"))
+(defun see-logbook1()           (interactive) (find-file "L:/MyDocs/history/logbook.org"))
+(defun see-matlab()             (interactive) (find-file "//lon0302/dfs/DATA/MULTI_ASSET/MAQS/dataCollection/FI/LOCAL/USR/MK/vc/rs1/SSI.scratch.wt1/notebooks/matlabScripts.org"))
 (defun see-orglink-dired()      (interactive) (org-open-at-point t)) ; (current-buffer)
 (defun see-shell-output()       (interactive) (switch-to-buffer-other-window "*Shell Command Output*"))
-;;(defun diredHome()              (interactive) (dired "L:/MyDocs/" nil))
-;;(defun nok900()               (interactive) (dired "/scpc:root@192.168.1.187:/home/user/MyDocs/aNotes/"))
-(defun diredFaraday  () (interactve) (dired "/scp:kleyn@192.168.1.89:/home/kleyn"))
+(defun see-sql()                (interactive) (find-file "C:/MyMAQS/notebooks/sqlScripts.org"))
+(defun show-hist()              (interactive) (list-command-history))
+(defun slashBwd()               (interactive) (replace-string  "/" "\\" nil (line-beginning-position) (line-end-position)))
+(defun slashFwd()               (interactive) (replace-string "\\"  "/" nil (line-beginning-position) (line-end-position)))
+(defun turing()                 (interactive) (dired "/scpc:kleyn@192.168.1.243:/home/kleyn"))
+
+;; for restricted keyboards
+(defun ds()  (interactive)  (eshell))
+(defun cf3() (interactive)  (eshell))
+(defun da()  (interactive)  (find-file "/data/data/com.termux/files/home/org/access.org"))
+(defun sf3() (interactive)  (find-file "/data/data/com.termux/files/home/dot/dotBashrc"))
+(defun db()  (interactive)  (find-file "/data/data/com.termux/files/home/dot/dotBashrc"))
+(defun dd()  (interactive)  (find-file "/data/data/com.termux/files/home/MyDocs/aNotes/org/doAndDone.org"))
+(defun de()  (interactive)  (find-file "/data/data/com.termux/files/home/.emacs.d/dotEmacs.org"))
+(defun f3()  (interactive)  (find-file "/data/data/com.termux/files/home/.emacs.d/dotEmacs.org"))
+(defun dz()  (interactive)  (progn (ztree-dir "/data/data/com.termux/files/home/MyDocs/projects") (split-window-right 40)))
+
+;; /adb::/path/to/file.
+;; C-x C-f /:adb::/storage/emulated/0
+;; C-x C-f /adb::/storage/emulated/0
+;; (defun diredGemA()        (interactive) (dired "/adb::/data/data/com.termux/files/home/MyDocs"))  ;; /storage/emulated/0 ‘/ssh:daniel@melancholia#42:.emacs’  /ssh:foo@192.168.1.93#8022:
+;; (defun diredGemA()        (interactive) (dired "/adb::/storage"))  ;; /storage/emulated/0 ‘/ssh:daniel@melancholia#42:.emacs’  /ssh:foo@192.168.1.93#8022:
+;; (defun see-nok900-doAndDone()	(interactive) (find-file "/scp:root@192.168.1.187:/home/user/MyDocs/aNotes/doAndDone.org"))
+;; (defun diredHome()              (interactive) (dired "L:/MyDocs/" nil))
+;; (defun nok900()               (interactive) (dired "/scpc:root@192.168.1.187:/home/user/MyDocs/aNotes/"))
+
 ;;----------------------------------------------------- Other
 (defun filepath-on-clipboard ()
   "Put the current file name on the clipboard"
@@ -1274,42 +1302,6 @@ BEG and END (region to sort)."
 
 ; Dired Listing Switches: Hide Value -ahl --time-style=long-iso
 ;  State: SET for current session only.
-(defun ds()  (interactive)  (eshell))
-(defun cf3() (interactive)  (eshell))
-(defun da()  (interactive)  (find-file "/data/data/com.termux/files/home/org/access.org"))
-(defun sf3() (interactive)  (find-file "/data/data/com.termux/files/home/dot/dotBashrc"))
-(defun db()  (interactive)  (find-file "/data/data/com.termux/files/home/dot/dotBashrc"))
-(defun dd()  (interactive)  (find-file "/data/data/com.termux/files/home/MyDocs/aNotes/org/doAndDone.org"))
-(defun de()  (interactive)  (find-file "/data/data/com.termux/files/home/.emacs.d/dotEmacs.org"))
-(defun f3()  (interactive)  (find-file "/data/data/com.termux/files/home/.emacs.d/dotEmacs.org"))
-;(defun dz() (interactive)   (ztree-dir "/data/data/com.termux/files/home"))
-(defun dz() (interactive)
-           (progn
-              (ztree-dir "/data/data/com.termux/files/home/MyDocs/projects")
-              (split-window-right 40)))
-
-;; /adb::/path/to/file.
-;; C-x C-f /:adb::/storage/emulated/0
-;; C-x C-f /adb::/storage/emulated/0
-(defun diredGemA()        (interactive) (dired "/adb::/data/data/com.termux/files/home/MyDocs"))  ;; /storage/emulated/0 ‘/ssh:daniel@melancholia#42:.emacs’  /ssh:foo@192.168.1.93#8022:
-(defun diredGemA()        (interactive) (dired "/adb::/storage"))  ;; /storage/emulated/0 ‘/ssh:daniel@melancholia#42:.emacs’  /ssh:foo@192.168.1.93#8022:
-
-(defun diamond()          (interactive) (dired "/scpc:uri03204@nx-staff.diamond.ac.uk:/home/uri03204/dot"))
-(defun diredFaraday()     (interactive) (dired "/scp:kleyn@192.168.1.89:/home/kleyn"))
-(defun diredGem()         (interactive) (dired "/scp:u0_a94@192.168.1.93#8022:/data/data/com.termux/files/home/MyDocs"))  ;; ‘/ssh:daniel@melancholia#42:.emacs’  /ssh:foo@192.168.1.93#8022:
-(defun diredGem2()        (interactive) (dired "/ssh:u0_a94@192.168.1.93#8022:/data/data/com.termux/files/home/MyDocs"))  ;; ‘/ssh:daniel@melancholia#42:.emacs’  /ssh:foo@192.168.1.93#8022:
-(defun diredHome ()       (interactive) (dired "/home/kleyn/" nil))
-(defun diredKleyqs501()   (interactive) (dired "/scp:kleyn@62.233.104.49:/home/kleyn"))
-(defun diredTuringIn()    (interactive) (dired "/scp:kleyn@192.168.1.243:/home/kleyn"))
-(defun diredTuringOut()   (interactive) (dired "/scp:kleyn@192.168.1.8:/home/kleyn"))
-(defun nok900()           (interactive) (dired "/scpc:root@192.168.0.6:/home/user/MyDocs/aNotes/")) ;; barnes
-(defun turing()           (interactive) (dired "/scpc:kleyn@192.168.1.243:/home/kleyn"))
-(defun see-dotEmacs()     (interactive) (find-file "/home/kleyn/.emacs"))
-;;(defun see-nok900-doAndDone()	(interactive) (find-file "/scp:root@192.168.1.187:/home/user/MyDocs/aNotes/doAndDone.org"))
-
-(defun see-logbook1()     (interactive) (find-file "/home/kleyn/logbook/Diamond.org"))
-(defun see-logbook2()     (interactive) (find-file "/home/kleyn/logbook/GDA.org"))
-(defun see-shell-output() (interactive) (switch-to-buffer-other-window "*Shell Command Output*"))
 
 ;; when sorting in dired mode, move cursor back to top
 (defadvice dired-sort-toggle-or-edit (after dired-sort-to-top activate)
