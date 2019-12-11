@@ -39,9 +39,10 @@ increase/decrease font C-c kepad+ keypad-
 (setq load-path (append load-path '("~/ulib/emacs/dired-hacks"))) ;; for subtree (insert (format "%s" load-path))
 
 (require 'package)
-(add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/") t)
+(add-to-list 'package-archives '("melpa" .        "http://melpa.org/packages/") t)
 (add-to-list 'package-archives '("melpa-stable" . "http://stable.melpa.org/packages/") t)
-(add-to-list 'package-archives '("melpa-milk" . "http://melpa.milkbox.net/packages/") t)
+(add-to-list 'package-archives '("melpa-milk" .   "http://melpa.milkbox.net/packages/") t)
+
 ;; Added by Package.el.  This must come before configurations of
 ;; installed packages.  Don't delete this line.  If you don't want it,
 ;; just comment it out by adding a semicolon to the start of the line.
@@ -55,14 +56,12 @@ increase/decrease font C-c kepad+ keypad-
 (require 'wdired)
 (require 'regexp-opt)
 (require 'em-alias)        ; for eshell
+(load-library "vigenere")
 (load-library "dired-subtree")
 ;; (require 'dired-k)
 ;; (require 'diffview)      ; make patch files look like ediff
 (message "-------------- Done: Packages")
 #+END_SRC
-
-
-
 
 * Function Definitions
 
@@ -1036,10 +1035,9 @@ BEG and END (region to sort)."
                        (directory . emacs)
                        (auto-mode . emacs)
                        ))
-
-;; (org-babel-do-load-languages 'org-babel-load-languages '((matlab . t) 
-;;                                                          (python . t) 
-;;                                                          (emacs-lisp . t)))
+(org-babel-do-load-languages 'org-babel-load-languages '((matlab . t) 
+                                                         (python . t) 
+                                                         (emacs-lisp . t)))
 
 (defun org-collapse()     (interactive) (org-shifttab 0))
 
@@ -1186,10 +1184,10 @@ BEG and END (region to sort)."
 ;; NO: (add-to-list 'load-path "L:/MyDocs/ulib/emacs/org-trello-master/")
 ;;its here: /home/kleynmi/l_C/cygwin64/home/kleynmi/.emacs.d/elpa/org-trello-0.8.1/org-trello.el:
 
-;; (require 'org-trello)
-;; (add-hook 'org-mode-hook 'org-trello-mode)
-;; (setq org-trello-consumer-key "fc03dd5cd067337dcb8d40c124e43a15"
-;;       org-trello-access-token "c321f58405ebeff317a262cbbf52f99c89bea2cc322fff040f1c19bfa0b0e3e2")
+(require 'org-trello)
+(add-hook 'org-mode-hook 'org-trello-mode)
+;(hiyv wvv-xwjtpd-gtsaybiw-pmc "ug03ii5kh067337sgg8i40k124i43p15"
+;      swl-bvtpqt-igrixx-bszis "h321n58405iqikk317i262gqfk52k99k89fte2hh322nju040j1h19gne0q0i3j2")
 
 ;;(org-trello-current-prefix-keybinding "C-c o" nil (org-trello))
 ;; (progn 
@@ -1227,6 +1225,12 @@ BEG and END (region to sort)."
 ;;(setq dired-use-ls-dired nil)
 (setq dired-dwim-target t)
 (setq dired-subtree-line-prefix "     ")
+
+;; ----------------------------- Tramp
+;;(setq tramp-default-method "ssh")
+(setq tramp-verbose 10)
+;; /adb::/path/to/file.
+
 
 ;;(defun w32-browser (doc) (w32-shell-execute 1 doc))
 ;;(eval-after-load "dired" '(define-key dired-mode-map [f3]
@@ -1283,28 +1287,34 @@ BEG and END (region to sort)."
            (progn
               (ztree-dir "/data/data/com.termux/files/home/MyDocs/projects")
               (split-window-right 40)))
-(defun diredKleyqs501()		(interactive) (dired "/scp:kleyn@62.233.104.49:/home/kleyn"))
-(defun diredGem()		(interactive) (dired "/scp:u0_a94@192.168.1.93#8022:/data/data/com.termux/files/home/MyDocs"))  ;; ‘/ssh:daniel@melancholia#42:.emacs’  /ssh:foo@192.168.1.93#8022:
-(defun diredGem2()		(interactive) (dired "/ssh:u0_a94@192.168.1.93#8022:/data/data/com.termux/files/home/MyDocs"))  ;; ‘/ssh:daniel@melancholia#42:.emacs’  /ssh:foo@192.168.1.93#8022:
-(defun diredTuringIn()		(interactive) (dired "/scp:kleyn@192.168.1.243:/home/kleyn"))
-(defun diredTuringOut()		(interactive) (dired "/scp:kleyn@192.168.1.8:/home/kleyn"))
-(defun diredFaraday()		(interactive) (dired "/scp:kleyn@192.168.1.89:/home/kleyn"))
+
+;; /adb::/path/to/file.
+;; C-x C-f /:adb::/storage/emulated/0
+;; C-x C-f /adb::/storage/emulated/0
+(defun diredGemA()        (interactive) (dired "/adb::/data/data/com.termux/files/home/MyDocs"))  ;; /storage/emulated/0 ‘/ssh:daniel@melancholia#42:.emacs’  /ssh:foo@192.168.1.93#8022:
+(defun diredGemA()        (interactive) (dired "/adb::/storage"))  ;; /storage/emulated/0 ‘/ssh:daniel@melancholia#42:.emacs’  /ssh:foo@192.168.1.93#8022:
+
+(defun diamond()          (interactive) (dired "/scpc:uri03204@nx-staff.diamond.ac.uk:/home/uri03204/dot"))
+(defun diredFaraday()     (interactive) (dired "/scp:kleyn@192.168.1.89:/home/kleyn"))
+(defun diredGem()         (interactive) (dired "/scp:u0_a94@192.168.1.93#8022:/data/data/com.termux/files/home/MyDocs"))  ;; ‘/ssh:daniel@melancholia#42:.emacs’  /ssh:foo@192.168.1.93#8022:
+(defun diredGem2()        (interactive) (dired "/ssh:u0_a94@192.168.1.93#8022:/data/data/com.termux/files/home/MyDocs"))  ;; ‘/ssh:daniel@melancholia#42:.emacs’  /ssh:foo@192.168.1.93#8022:
+(defun diredHome ()       (interactive) (dired "/home/kleyn/" nil))
+(defun diredKleyqs501()   (interactive) (dired "/scp:kleyn@62.233.104.49:/home/kleyn"))
+(defun diredTuringIn()    (interactive) (dired "/scp:kleyn@192.168.1.243:/home/kleyn"))
+(defun diredTuringOut()   (interactive) (dired "/scp:kleyn@192.168.1.8:/home/kleyn"))
+(defun nok900()           (interactive) (dired "/scpc:root@192.168.0.6:/home/user/MyDocs/aNotes/")) ;; barnes
+(defun turing()           (interactive) (dired "/scpc:kleyn@192.168.1.243:/home/kleyn"))
+(defun see-dotEmacs()     (interactive) (find-file "/home/kleyn/.emacs"))
 ;;(defun see-nok900-doAndDone()	(interactive) (find-file "/scp:root@192.168.1.187:/home/user/MyDocs/aNotes/doAndDone.org"))
-;;(defun diamond()		(interactive) (dired "/scp:uri03204@nx-staff.diamond.ac.uk:/home/uri03204/dot"))
-(defun see-dotEmacs()		(interactive) (find-file "/home/kleyn/.emacs"))
 
 (defun see-logbook1()     (interactive) (find-file "/home/kleyn/logbook/Diamond.org"))
 (defun see-logbook2()     (interactive) (find-file "/home/kleyn/logbook/GDA.org"))
-(defun nok900()           (interactive) (dired "/scpc:root@192.168.0.6:/home/user/MyDocs/aNotes/")) ;; barnes
-(defun turing()           (interactive) (dired "/scpc:kleyn@192.168.1.243:/home/kleyn"))
-(defun diamond()          (interactive) (dired "/scpc:uri03204@nx-staff.diamond.ac.uk:/home/uri03204/dot"))
 (defun see-shell-output() (interactive) (switch-to-buffer-other-window "*Shell Command Output*"))
-(defun diredHome ()       (interactive) (dired "/home/kleyn/" nil))
 
 ;; when sorting in dired mode, move cursor back to top
 (defadvice dired-sort-toggle-or-edit (after dired-sort-to-top activate)
    "Move to beginning of buffer (instead of keeping point on the current file)."
-   (goto-char (npoint-min))
+   (goto-char (point-min))
    (forward-line 3))
 
 (defun dired-ediff-git (&optional arg)
@@ -1327,7 +1337,7 @@ BEG and END (region to sort)."
   (insert ffn)  (newline)  
   (insert fn)   (newline)
   (insert "bye dired-move-to-old")  (newline)
-  (rename-file ffn (concat "//lon0302/dfs/DATA/MULTI_ASSET/MAQS/dataCollection/FI/LOCAL/ARCHIVE/OLD/" fn))
+  (rename-file ffn (concat "~/tmp/" fn))
   (switch-to-buffer curDrdBuff)
   (revert-buffer)
   ;;(dired-rename-file ffn (concat "//lon0302/dfs/DATA/MULTI_ASSET/MAQS/dataCollection/FI/LOCAL/ARCHIVE/OLD/" fn))
@@ -1372,8 +1382,9 @@ BEG and END (region to sort)."
 
 
 (define-key dired-mode-map "J"               'dired-move-to-old) ; junk
-(define-key dired-mode-map "O"                (lambda () (interactive) (w32-browser (dired-replace-in-string "/" "\\" (dired-get-filename)))))
+(define-key dired-mode-map "O"               'ergoemacs-open-in-external-app)  ;; '(lambda () (interactive) (w32-browser (dired-replace-in-string "/" "\\" (dired-get-filename)))))
 (define-key dired-mode-map (kbd "r")         'wdired-change-to-wdired-mode)
+(define-key dired-mode-map (kbd "t")         'dired-omit-mode)
 (define-key dired-mode-map (kbd "<S-down>")  'dired-subtree-next-sibling)
 (define-key dired-mode-map (kbd "<S-left>")  'dired-subtree-remove)
 (define-key dired-mode-map (kbd "<S-right>") 'dired-subtree-insert)
@@ -1565,8 +1576,53 @@ BEG and END (region to sort)."
 (message "-------------- Done: Markup Languages Section")
 #+END_SRC
 
-* Global Key Bindings
+;-------------------------------------------------------------------------------- NeoTree
+(add-to-list 'load-path "/home/uri03204/ulib/emacs/neotree")
+(require 'neotree)
+(global-set-key [f3] 'neotree-show)
+;-------------------------------------------------------------------------------- Ace jump
+;;
+;; ace jump mode major function
+;;
+;;(add-to-list 'load-path "/full/path/where/ace-jump-mode.el/in/")
+(autoload
+  'ace-jump-mode
+  "ace-jump-mode"
+  "Emacs quick move minor mode"
+  t)
+;; you can select the key you prefer to
+;(define-key global-map (kbd "C-c SPC") 'ace-jump-mode)
 
+;; ;;
+;; ;; enable a more powerful jump back function from ace jump mode
+;; ;;
+;; (autoload
+;;   'ace-jump-mode-pop-mark
+;;   "ace-jump-mode"
+;;   "Ace jump back:-)"
+;;   t)
+;; (eval-after-load "ace-jump-mode"
+;;   '(ace-jump-mode-enable-mark-sync))
+;; (define-key global-map (kbd "C-x SPC") 'ace-jump-mode-pop-mark)
+
+;-------------------------------------------------------------------------------- ZeeTree
+(add-to-list 'load-path "/home/kleyn/ulib/emacs/ztree-master")
+ ;(push (substitute-in-file-name "path-to-ztree-directory") load-path)
+ (require 'ztree-diff)
+ (require 'ztree-dir)
+ ;local binf to tab (ztree-perform-action)
+ ;Call the ztree-diff interactive function: M-x ztree-diff
+
+
+;;-------------------------------------------------------------------------------- NeoTree
+(add-to-list 'load-path "/home/uri03204/ulib/emacs/neotree")
+(require 'neotree)
+;;-------------------------------------------------------------------------------- ztree
+(setq load-path (append load-path '("/home/uri03204/ulib/emacs/ztree-master"))) ;; (insert (format "%s" load-path))
+(require 'ztree-diff)
+(require 'ztree-dir)
+
+* Global Key Bindings
 
  C-x C-v                     ;; find alternate file   -> then grab filepath
  /			     ;; self-insert-command												   
@@ -2132,6 +2188,7 @@ eshell-parse-command 'ls -l'
 ;(ztree-dir "/data/data/com.termux/files/home")
 (put 'narrow-to-region 'disabled nil)
 ;;(server-start)
+(setq password-cache-expiry nil)
 (setq dired-omit-files "^\\..*$")
 (message "dotEmacs.org done")
 (switch-to-buffer "*Messages*")
