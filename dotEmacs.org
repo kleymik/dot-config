@@ -1880,22 +1880,28 @@ BEG and END (region to sort)."
 * ESHELL
 #+BEGIN_SRC emacs-lisp
 (eshell)
+(setq eshell-save-history-on-exit t)
+(setq eshell-hist-ignoredups t)
 (setq eshell-command-aliases-list ())
-(add-to-list 'eshell-command-aliases-list (list "ll"   "ls -l --time-style=long-iso $*"))
-(add-to-list 'eshell-command-aliases-list (list "al"   "alias"))
-(add-to-list 'eshell-command-aliases-list (list "ag"   "alias | grep $*"))
-(add-to-list 'eshell-command-aliases-list (list "cl"   "cd $*; ll"))
-(add-to-list 'eshell-command-aliases-list (list "gits" "git status"))
-(add-to-list 'eshell-command-aliases-list (list "gith" "git help"))
-(add-to-list 'eshell-command-aliases-list (list "gita" "git add $*"))
-(add-to-list 'eshell-command-aliases-list (list "gitb" "git branch -av"))
-(add-to-list 'eshell-command-aliases-list (list "gitc" "git checkout -b $*"))
-(add-to-list 'eshell-command-aliases-list (list "gitca""git commit -a"))
-(add-to-list 'eshell-command-aliases-list (list "gitcm""git commit -m"))
+(add-to-list 'eshell-command-aliases-list (list "ll"    "ls -l --time-style=long-iso $*"))
+(add-to-list 'eshell-command-aliases-list (list "al"    "alias"))
+(add-to-list 'eshell-command-aliases-list (list "ag"    "alias | grep $*"))
+(add-to-list 'eshell-command-aliases-list (list "cl"    "cd $*; ll"))
+(add-to-list 'eshell-command-aliases-list (list "gits"  "git status"))
+(add-to-list 'eshell-command-aliases-list (list "gith"  "git help"))
+(add-to-list 'eshell-command-aliases-list (list "gita"  "git add $*"))
+(add-to-list 'eshell-command-aliases-list (list "gitb"  "git branch -av"))
+(add-to-list 'eshell-command-aliases-list (list "gitc"  "git checkout -b $*"))
+(add-to-list 'eshell-command-aliases-list (list "gitca" "git commit -a"))
+(add-to-list 'eshell-command-aliases-list (list "gitcm" "git commit -m"))
 (add-to-list 'eshell-command-aliases-list (list "gr"    "grep"))
 (add-to-list 'eshell-command-aliases-list (list "gi"    "grep -i"))
-(add-to-list 'eshell-command-aliases-list (list "hs"   "history"))
-(add-to-list 'eshell-command-aliases-list (list "hg"   "history | grep $*")) 
+(add-to-list 'eshell-command-aliases-list (list "hs"    "(setq es_hstFile (concat \"~/history/eshell/history_\" (format-time-string \"%Y%m%d-%H%M\" (current-time)) \".lst\"));     
+                                                          history > $es_hstFile; 
+                                                          cat $es_hstFile;"))
+(add-to-list 'eshell-command-aliases-list (list "hg"    "history | grep $*")) 
+(add-to-list 'eshell-command-aliases-list (list "hg"    "cat ~/history/eshell/history* | grep -i $*")) 
+(add-to-list 'eshell-command-aliases-list (list "gitl"  "git log -n 20 --pretty=oneline --abbrev-commit --no-merges --decorate --format=format:'%h - (%ar) %s - %an%d'"))
 #+END_SRC
 
 (add-to-list 'eshell-command-aliases-list (list "gitst"  "git rev-parse --abbrev-ref HEAD;
@@ -1914,11 +1920,8 @@ BEG and END (region to sort)."
       (lambda ()
         (concat (format-time-string "%Y%m%d|%H:%M" (current-time)) "|" (substring (pwd) (max -25 (- (length (pwd)))))
                 (if (= (user-uid) 0) " # " " $ "))))
-(setq eshell-save-history-on-exit t)
-(setq eshell-hist-ignoredups t)
 
-(add-to-list 'eshell-command-aliases-list (list "hs"   "history"))
-(add-to-list 'eshell-command-aliases-list (list "hg"   "history | grep $*")) 
+
 (add-to-list 'eshell-command-aliases-list (list "rgrepy "python L:\\MyDocs\\ubin\\py\\rgrep.py"))
 (add-to-list 'eshell-command-aliases-list (list "rgrep" "echo \"1=$1\";
                                                         "dosPath=$(cygpath -m $1)"
@@ -1945,7 +1948,6 @@ alias ll ls -l $*
 TBD fix $(git...) doesn't work in eshell
 alias gits echo $(git rev-parse --abbrev-ref HEAD); git config branch.$(git rev-parse --abbrev-ref HEAD).description;  git status
 alias ll ls -l $*
-
 alias gitbd='git branch --edit-description'
 alias gitbm='git branch --merged'
 alias gitbnm='git branch --no-merged'
