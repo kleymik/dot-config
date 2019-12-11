@@ -1212,8 +1212,8 @@ BEG and END (region to sort)."
 ;; NO: (add-to-list 'load-path "L:/MyDocs/ulib/emacs/org-trello-master/")
 ;;its here: /home/kleynmi/l_C/cygwin64/home/kleynmi/.emacs.d/elpa/org-trello-0.8.1/org-trello.el:
 
-(require 'org-trello)
-(add-hook 'org-mode-hook 'org-trello-mode)
+;(require 'org-trello)
+;(add-hook 'org-mode-hook 'org-trello-mode)
 ;(hiyv wvv-xwjtpd-gtsaybiw-pmc "ug03ii5kh067337sgg8i40k124i43p15"
 ;      swl-bvtpqt-igrixx-bszis "h321n58405iqikk317i262gqfk52k99k89fte2hh322nju040j1h19gne0q0i3j2")
 
