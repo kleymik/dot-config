@@ -210,14 +210,14 @@ increase/decrease font C-c kepad+ keypad-
 (defun eval-and-insert ()
   "Eval expression and insert value after the expression"
   (interactive)
-  (eval-last-sexp 0)
-    (eval-print-last-sexp 0))
+  (eval-print-last-sexp 0)
+)
 
 (defun insertLastSexp ()
     (interactive)
     (let ((value (eval (preceding-sexp))))
       ;;(kill-sexp -1)
-      (insert (format " = %S" value))))
+      (insert (format " = %S" value))))  ;; TBD format based on datatype or use C-u C-x C-e
 
 ;;  (insert (format "%s" load-path))
 
@@ -645,9 +645,8 @@ BEG and END (region to sort)."
 (setq-default indent-tabs-mode nil)
 (show-paren-mode 1)
 (tool-bar-mode -1)
-(transient-mark-mode t)
-(global-hl-line-mode t)
-(setq-default frame-title-format "%f")  ;;(setq-default frame-title-format "%b %p %p(%f)")
+(setq-default frame-title-format "%f")
+(transient-mark-mode t)  ;;(setq-default frame-title-format "%b %p %p(%f)")
 
 ;; (setq set-mark-command-repeat-pop 1) ;;-- needs emacs version 22
 ;; (setq hscroll-margin 30)
@@ -698,11 +697,11 @@ BEG and END (region to sort)."
 ; (list-command-history)
 
 ;;(helm-mode 0)
+(counsel-mode 1)
 ;;(ivy-mode 1)
-;;(counsel-mode 1)
 ;; swiper
 ;; (global-set-key "\C-s" 'swiper)
-;; (global-set-key "\C-s" 'isearch-forward)  
+(global-set-key "\C-s" 'isearch-forward)  
 ;; (xclip-mode 1) for emacs in terminal , export kill-yank
 ;; (set-background-color "black")
 ;; (set-background-color "darkgrey")
@@ -794,6 +793,17 @@ BEG and END (region to sort)."
                        (base64-encode-string "LOGIN:PASSWORD")))))
    http:   http://SCHRODERS.COM\username:password@cfactive.london.schroders.com:8080
    https: https://SCHRODERS.COM\username:password@cfactive.london.schroders.com:8080
+
+* Themes
+
+;(add-to-list 'custom-theme-load-path "~/.emacs.d/themes/") 
+
+;Now copy your theme's '.el' file to your .emacs.d/themes/ directory. A
+;good place to find custom themes is here: emacsthemes.com
+
+;Now load your custom theme by typing the following:
+
+;M-x customize-themes ;;;now press return
 
 * Modes Assoc List
 #+BEGIN_SRC emacs-lisp
@@ -965,12 +975,13 @@ BEG and END (region to sort)."
 ;; TBD (autoload 'iedit-mode "/home/uri03204/myDocs/ulib/emacs/iedit.elc" "Enter iedit mode" t)
 
 * Ivy mode
+#+BEGIN_SRC
 (ivy-mode 1)  ; M-i to insert and modify
 (counsel-mode 1)
-
-;;(define-key counsel-find-file-map (kbd "C-x C-f") 'counsel-find-file-fallback-command)
 (define-key ivy-minibuffer-map (kbd "<up>") 'previous-line-or-history-element)
 (define-key ivy-minibuffer-map (kbd "<down>") 'next-line-or-history-element)
+(global-set-key (kbd "M-y") 'counsel-yank-pop)
+;;(define-key counsel-find-file-map (kbd "C-x C-f") 'counsel-find-file-fallback-command)
 
 ;; previous-line-or-history-element
 
@@ -997,7 +1008,7 @@ BEG and END (region to sort)."
   (ivy-mode t))
 
 ;;Ivy-based interface to standard commands
-
+#+END_SRC
 ;;(global-set-key (kbd "C-s") 'swiper-isearch)
 ;;(global-set-key (kbd "M-x") 'counsel-M-x)
 ;;(global-set-key (kbd "C-x C-f") 'counsel-find-file)
@@ -1248,8 +1259,41 @@ BEG and END (region to sort)."
 
 #+END_SRC
 * Dired Mode
-#+BEGIN_SRC emacs-lisp 
 
+;; ----------------------------- Tramp
+(require 'tramp)
+;;(setq tramp-default-method "ssh")
+(setq tramp-verbose 20)
+(setq tramp-remote-path '("/data/data/com.termux/files/usr/bin" "/data/data/com.termux/files/usr/bin/applets"))
+(add-to-list 'tramp-connection-properties (list (regexp-quote "192.168.1.161") "remote-shell" "sh"))
+;(add-to-list 'tramp-remote-path 'tramp-own-remote-path)
+(add-to-list 'tramp-remote-path "/system/xbin")
+(add-to-list 'tramp-remote-process-environment "TMPDIR=$HOME")
+(add-to-list 'tramp-connection-properties (list (regexp-quote "android") "remote-shell" "sh"))
+
+;; 5.17 Android shell setup hints
+;; Tramp uses the adb method to access Android devices. Android devices provide a restricted shell access through an USB connection. The local host must have the adb program installed. 
+;; Usually, it is sufficient to open the file /adb::/. Then you can navigate in the filesystem via dired.
+;; Alternatively, applications such as Termux or SSHDroid that run sshd process on the Android device can accept any ssh-based methods provided these settings are adjusted:
+;;     sh must be specified for remote shell since Android devices do not provide /bin/sh. sh will then invoke whatever shell is installed on the device with this setting:
+;;        (add-to-list 'tramp-connection-properties (list (regexp-quote "192.168.0.26") "remote-shell" "sh"))
+;;     where ‘192.168.0.26’ is the Android device's IP address. (see Predefined connection information).
+;;     Tramp requires preserving PATH environment variable from user settings. Android devices prefer /system/xbin path over /system/bin. Both of these are set as follows:
+;;        (add-to-list 'tramp-remote-path 'tramp-own-remote-path)
+;;        (add-to-list 'tramp-remote-path "/system/xbin")
+;;     When the Android device is not ‘rooted’, specify a writable directory for temporary files:
+;;        (add-to-list 'tramp-remote-process-environment "TMPDIR=$HOME")
+;;     Open a remote connection with the command C-x C-f /ssh:192.168.0.26#2222: <RET>, where sshd is listening on port ‘2222’.
+;;     To add a corresponding entry to the ~/.ssh/config file (recommended), use this:
+;;               Host android
+;;                    HostName 192.168.0.26
+;;                    User root
+;;                    Port 2222
+;;     To use the host name ‘android’ instead of the IP address shown in the previous example, fix the connection properties as follows:
+;;     (add-to-list 'tramp-connection-properties (list (regexp-quote "android") "remote-shell" "sh"))
+;; Open a remote connection with a more concise command C-x C-f /ssh:android: <RET>.
+
+#+BEGIN_SRC emacs-lisp 
 ;;(setq dired-use-ls-dired nil)
 (setq dired-dwim-target t)
 (setq dired-subtree-line-prefix "     ")
@@ -1286,6 +1330,7 @@ BEG and END (region to sort)."
     (progn
       (dired-omit-mode 1)
       (setq dired-omit-files-p t)
+      (toggle-truncate-lines 1)
       (setq dired-no-confirm '(revert-subdirs))
       (define-key dired-mode-map [right] 'dired-find-file) 	      ;(define-key dired-mode-map [right] 'dired-go-subdir-kbm)
       (define-key dired-mode-map [left]  'dired-up-directory)
@@ -1663,6 +1708,9 @@ BEG and END (region to sort)."
 
 #+BEGIN_SRC emacs-lisp
 
+
+(global-set-key "\M-."         'hs-toggle-hiding)  ; was xref find defs
+
 ;;  (global-set-key "\C-q"          'quoted-insert)  ; for resetting, already default
 (global-set-key "\C-c<"		'selective-display-level-decr)
 (global-set-key "\C-c>"		'selective-display-level-incr)
@@ -1681,7 +1729,7 @@ BEG and END (region to sort)."
 (global-set-key "\C-xc"         'filepath-on-clipboard)
 (global-set-key "\C-xd"         'dired)
 (global-set-key "\C-xg"         'magit-status)
-(global-set-key "\C-xi"         'eval-print-last-sexp) ; ielm
+(global-set-key "\C-xi"         'insertLastSexp) ; ielm
 (global-set-key "\C-xl"		'list-matching-lines)
 (global-set-key "\C-xp"         'my-transpose-sexps)
 (global-set-key "\C-xt"		'instimestamp)
@@ -1912,6 +1960,19 @@ BEG and END (region to sort)."
                                                           echo '';
                                                           git stash;"))
 
+(add-to-list 'eshell-command-aliases-list (list "doBackup"
+    (setq  (concat /data/data/com.termux/files/home/internalBackup/ (format-time-string \"%Y%m%d-%H%M\" (current-time)) \".lst\"))   
+    find ~/        -name '.#-emacs*' -exec rm -v {} \;
+    find ~/MyDocs/ -name '.#-emacs*' -exec rm -v {} \;    
+    mkdir -p $budir
+    cp -r $frootDir/MyDocs/aNotes   $budir
+    cp -r $frootDir/MyDocs/Personal $budir
+    cp -r $frootDir/MyDocs/projects $budir
+    cp -r $frootDir/dot             $budir
+    tar -czvf - $frootDir/gitio >   $budir/gitio.tgz
+    du -sm $frootDir/internalBackup/*
+))
+
 ;;-------------------------------------------------------------------------------- eshell
 ;(eshell/alias "ff" "find-file $1")
 ;(eshell/alias "fw" "find-file-other-window $1")
@@ -2055,24 +2116,13 @@ add below to your .emacs
  3:       (require 'em-cmpl)
  4:       (require 'em-prompt)
  5:       (require 'em-term)
- 6:       (add-hook 'eshell-mode-hook 
- 7:                 '(lambda () (define-key eshell-mode-map "\C-a" 'eshell-bol)))
+ 6:       (add-hook 'eshell-mode-hook '(lambda () (define-key eshell-mode-map "\C-a" 'eshell-bol)))
  8:       (add-to-list 'eshell-visual-commands "ssh")
  9:       (add-to-list 'eshell-visual-commands "tail")
 10:       (add-to-list 'eshell-visual-commands "top")
-11:       (add-to-list 'eshell-command-completions-alist
-12:                    '("gunzip" "gz\\'"))
-13:       (add-to-list 'eshell-command-completions-alist
-14:                    '("tar" "\\(\\.tar|\\.tgz\\|\\.tar\\.gz\\)\\'"))
+11:       (add-to-list 'eshell-command-completions-alist '("gunzip" "gz\\'"))
+13:       (add-to-list 'eshell-command-completions-alist '("tar" "\\(\\.tar|\\.tgz\\|\\.tar\\.gz\\)\\'"))
 15:       (add-to-list 'eshell-output-filter-functions 'eshell-handle-ansi-color)))
-
-1.2.5 eshell/clear function
-1:  ;;from http://www.khngai.com/emacs/eshell.php
-2:  (defun eshell/clear ()
-3:  "04Dec2001 - sailor, to clear the eshell buffer."
-4:  (interactive)
-5:  (let ((inhibit-read-only t))
-6:  (erase-buffer)))
 
 1.2.6 eshell short and long prompt on request (from emacswiki)
  1:  ;; Returns the short propmpt string for eshell
@@ -2111,34 +2161,13 @@ add below to your .emacs
 34:    (setq eshell-prompt-function
 35:          'eshell-prompt-function-long))
 
-1.2.7 find file when use emacs as one of the command
-1:  (defun eshell/emacs (file)
-2:  "find-file alias"
-3:    (find-file file))
-
-1.2.8 find file when use w3m
-1:  (defun eshell/w3m (file)
-2:  "w3m-find-file alias"
-3:    (w3m-find-file file))
-
-1.2.9 info command
-1:  (defun eshell/info ()
-2:    "info alias"
-3:    (info))
-
-1.2.10 display emacs manual when type einfo
-1:  (defun eshell/einfo ()
-2:    "Display emacs manual"
-3:    (info-emacs-manual))
-
-1.2.11 aliase
-1:  (defun eshell/ll (&rest args)
-2:    "ls -alh alias"
-3:    (eshell/ls "-alh" args))
-4:  
-5:  (defun eshell/la (&rest args)
-6:    "ls -a alias"
-7:    (eshell/ls "-a" args))
+(defun eshell/clear()        "clear the eshell buffer"  (interactive) (let ((inhibit-read-only t))  (erase-buffer)))
+(defun eshell/emacs(file)    "find-file alias"      (find-file file))
+(defun eshell/w3m(file)      "w3m-find-file alias"  (w3m-find-file file))
+(defun eshell/info()         "info alias"           (info))
+(defun eshell/einfo()        "Display emacs manual" (info-emacs-manual))
+(defun eshell/ll(&rest args) "ls -alh alias"        (eshell/ls "-alh" args))
+(defun eshell/la(&rest args) "ls -a alias"          (eshell/ls "-a" args))
 
 1.2.12 convert ansi color faces in eshell
  1:  ;; This will transform ansi color to faces in Emacs shell!
