@@ -1715,6 +1715,7 @@ BEG and END (region to sort)."
 (global-set-key "\C-c<"		'selective-display-level-decr)
 (global-set-key "\C-c>"		'selective-display-level-incr)
 (global-set-key "\C-cb"		'ediff-buffers)
+(global-set-key "\C-c\C-b"	'compare-windows)
 (global-set-key "\C-cd"		'ediff-directories)
 (global-set-key "\C-ch"		'diredHome)
 (global-set-key "\C-ci"		'indent-to-col)
@@ -1769,7 +1770,7 @@ BEG and END (region to sort)."
 
 
 (global-set-key [C-f1]          'mk-new-buffer)
-(global-set-key [C-f3]          '(lambda () (interactive) (switch-to-buffer "*eshell*")))
+(global-set-key [C-f3]          '(lambda () (interactive) (progn (if (eq (get-buffer "*eshell*") nil) (eshell))  (switch-to-buffer "*eshell*"))))
 (global-set-key [C-f4]          'org-transpose-table-at-point)
 (global-set-key [C-f5]          '(lambda () (interactive) (dired "//lon06179/Logs" nil))) ; prod
 (global-set-key [C-f6]          '(lambda () (interactive) (dired "//lon76179/" nil)))     ; dev //lon0302/dfs/DATA/MULTI_ASSET/MAQ?
