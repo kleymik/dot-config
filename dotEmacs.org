@@ -39,9 +39,12 @@ increase/decrease font C-c kepad+ keypad-
 (setq load-path (append load-path '("~/ulib/emacs/dired-hacks"))) ;; for subtree (insert (format "%s" load-path))
 
 (require 'package)
-(add-to-list 'package-archives '("melpa" .        "http://melpa.org/packages/") t)
-(add-to-list 'package-archives '("melpa-stable" . "http://stable.melpa.org/packages/") t)
-(add-to-list 'package-archives '("melpa-milk" .   "http://melpa.milkbox.net/packages/") t)
+
+;(setq package-archives ())
+(add-to-list 'package-archives '("mlpa"    . "https://melpa.org/packages/")         t)
+(add-to-list 'package-archives '("mlpstbl" . "https://stable.melpa.org/packages/")  t)
+(add-to-list 'package-archives '("mlpamlk" . "https://melpa.milkbox.net/packages/") t)
+(add-to-list 'package-archives '("elpaorg" . "https://elpa.gnu.org/packages/")      t)
 
 ;; Added by Package.el.  This must come before configurations of
 ;; installed packages.  Don't delete this line.  If you don't want it,
@@ -52,11 +55,11 @@ increase/decrease font C-c kepad+ keypad-
 (require 'ob)
 (require 'org)
 (require 'cl)              ; for transpose
-(require 'dired-x)
-(require 'wdired)
 (require 'regexp-opt)
 (require 'em-alias)        ; for eshell
 (load-library "vigenere")
+(require 'dired-x)
+(require 'wdired)
 (load-library "dired-subtree")
 ;; (require 'dired-k)
 ;; (require 'diffview)      ; make patch files look like ediff
@@ -79,10 +82,9 @@ increase/decrease font C-c kepad+ keypad-
 (defun indent-to-col()          (interactive) (indent-to-column 110))
 (defun instimestamp()           (interactive) (insert (format-time-string "%Y%m%d_%H:%M:%S")))
 (defun nok900()                 (interactive) (dired "/scpc:root@192.168.0.6:/home/user/MyDocs/aNotes/")) ;; barnes
-(defun see-dotBashRc()          (interactive) (find-file "L:/MyDocs/dot/dotBashrc"))
+(defun see-dotBashRc()          (interactive) (find-file "/home/kleyn/.bashrc"))
 (defun see-dotEmacs()           (interactive) (find-file "/home/kleyn/.emacs.d/dotEmacs.org"))
-(defun see-logbook1()           (interactive) (find-file "L:/MyDocs/history/logbook.org"))
-(defun see-matlab()             (interactive) (find-file "//lon0302/dfs/DATA/MULTI_ASSET/MAQS/dataCollection/FI/LOCAL/USR/MK/vc/rs1/SSI.scratch.wt1/notebooks/matlabScripts.org"))
+(defun see-doAndDone()          (interactive) (find-file "/run/user/1000/a37849ebaffed48d/C0A8-1F0C/Android/data/com.termux/files/MyDocs/aNotes/org/doAndDone.org"))
 (defun see-orglink-dired()      (interactive) (org-open-at-point t)) ; (current-buffer)
 (defun see-shell-output()       (interactive) (switch-to-buffer-other-window "*Shell Command Output*"))
 (defun see-sql()                (interactive) (find-file "C:/MyMAQS/notebooks/sqlScripts.org"))
@@ -90,6 +92,9 @@ increase/decrease font C-c kepad+ keypad-
 (defun slashBwd()               (interactive) (replace-string  "/" "\\" nil (line-beginning-position) (line-end-position)))
 (defun slashFwd()               (interactive) (replace-string "\\"  "/" nil (line-beginning-position) (line-end-position)))
 (defun turing()                 (interactive) (dired "/scpc:kleyn@192.168.1.243:/home/kleyn"))
+;; old
+(defun see-matlab()             (interactive) (find-file "//lon0302/dfs/DATA/MULTI_ASSET/MAQS/dataCollection/FI/LOCAL/USR/MK/vc/rs1/SSI.scratch.wt1/notebooks/matlabScripts.org"))
+
 
 ;; for restricted keyboards
 (defun ds()  (interactive)  (eshell))
@@ -210,7 +215,8 @@ increase/decrease font C-c kepad+ keypad-
 (defun eval-and-insert ()
   "Eval expression and insert value after the expression"
   (interactive)
-  (eval-print-last-sexp 0)
+  (pp-eval-expression (preceding-sexp))
+  ;;(eval-print-last-sexp 0)
 )
 
 (defun insertLastSexp ()
@@ -252,6 +258,30 @@ increase/decrease font C-c kepad+ keypad-
       (insert rhs)
       (re-search-forward "[,]\\s-*" nil t)
       (save-excursion (insert lhs)))))
+
+;; ----------------------------------------------- save/restore window config
+(defvar window-snapshots '())
+
+(defun save-window-snapshot ()
+  "Save the current window configuration into `window-snapshots` alist."
+  (interactive)
+  (let ((key (read-string "Enter a name for the snapshot: ")))
+    (setf (alist-get key window-snapshots) (current-window-configuration))
+    (message "%s window snapshot saved!" key)))
+
+(defun get-window-snapshot (key)
+  "Given a KEY return the saved value in `window-snapshots` alist."
+  (let ((value (assoc key window-snapshots)))
+    (cdr value)))
+
+(defun restore-window-snapshot ()
+  "Restore a window snapshot from the window-snapshots alist."
+  (interactive)
+  (let* ((snapshot-name (completing-read "Choose snapshot: " (mapcar #'car window-snapshots)))
+         (snapshot (get-window-snapshot snapshot-name)))
+    (if snapshot
+        (set-window-configuration snapshot)
+      (message "Snapshot %s not found" snapshot-name))))
 
 ;; ----------------------------------------------- transpose windows [kp-divide]
 (defun toggle-window-split ()
@@ -467,10 +497,6 @@ BEG and END (region to sort)."
 	   ; (read-only-mode ?)
        (toggle-read-only 1))))
 
-;;This isn't nearly as drastic as what you're looking for, but it is possible to customize how Emacs calls ls in dired-mode.
-;;M-x customize-variable RET dired-listing-switches RET
-;; I used it to omit the group ID of files with the -o option, saving some horizontal screen real estate.
-
 (defun ergoemacs-open-in-external-app ()
   "Open the current file or dired marked files in external app."
   (interactive)
@@ -617,9 +643,12 @@ BEG and END (region to sort)."
 
 * Settings
 #+BEGIN_SRC emacs-lisp
-;(desktop-save-mode 1)  ; desktop-revert desktop-change-dir
+(desktop-save-mode 1)  ; desktop-revert desktop-change-dir
 
 (blink-cursor-mode 0)
+(set-cursor-color "#ff0000") 
+(setq cursor-type 'box)
+
 (delete-selection-mode 0) ; don't delete selection with next char
 (fset 'yes-or-no-p 'y-or-n-p)
 (global-hl-line-mode t)
@@ -643,6 +672,7 @@ BEG and END (region to sort)."
 (setq-default frame-title-format "%f")  ;;(setq-default frame-title-format "%b %p %p(%f)")
 (setq-default line-spacing 0.06)
 (setq-default indent-tabs-mode nil)
+(setq ivy-height 10)
 (show-paren-mode 1)
 (tool-bar-mode -1)
 (setq-default frame-title-format "%f")
@@ -679,10 +709,27 @@ BEG and END (region to sort)."
 ;; (setq x-select-enable-primary t)
 ;; (setq select-enable-primary t)
 ;; (setq mouse-drag-copy-region t)
-;; (defun mwheel-scroll-all-scroll-up-all (&optional arg)  (mwheel-scroll-all-function-all 'scroll-up arg))
-;; (defun mwheel-scroll-all-scroll-down-all (&optional arg)  (mwheel-scroll-all-function-all 'scroll-down arg))
-;; (setq mwheel-scroll-up-function 'mwheel-scroll-all-scroll-up-all)
-;; (setq mwheel-scroll-down-function 'mwheel-scroll-all-scroll-down-all)
+
+;;----------------------------------- scroll windows in synch
+;; (defun mwheel-scroll-all-function-all (func &optional arg)
+;;    (if (and scroll-all-mode arg)
+;;        (save-selected-window
+;;          (walk-windows
+;;           (lambda (win)
+;;             (select-window win)
+;;             (condition-case nil
+;;                 (funcall func arg)
+;;               (error nil)))))
+;;      (funcall func arg)))
+;;(defun mwheel-scroll-all-scroll-up-all   (&optional arg)  (interactive) (mwheel-scroll-all-function-all 'scroll-up arg))
+;;(defun mwheel-scroll-all-scroll-down-all (&optional arg)  (interactive) (mwheel-scroll-all-function-all 'scroll-down arg))
+;;(setq mwheel-scroll-up-function   'mwheel-scroll-all-scroll-up-all)
+;;(setq mwheel-scroll-down-function 'mwheel-scroll-all-scroll-down-all)
+(global-set-key (kbd "<S-mouse-4>") 'cycle-buffer)
+(global-set-key (kbd "<S-mouse-5>") 'cycle-buffer-backward)
+
+(global-set-key (kbd "<C-mouse-4>") 'text-scale-increase)
+(global-set-key (kbd "<C-mouse-5>") 'text-scale-decrease)
 
 
 ;; ----------------------------------------------- Shell
@@ -695,14 +742,10 @@ BEG and END (region to sort)."
 (savehist-mode 1)
 ; list-command-history-filter TBD filter out kill-buffer
 ; (list-command-history)
-
-;;(helm-mode 0)
-(counsel-mode 1)
-;;(ivy-mode 1)
-;; swiper
-;; (global-set-key "\C-s" 'swiper)
 (global-set-key "\C-s" 'isearch-forward)  
 ;; (xclip-mode 1) for emacs in terminal , export kill-yank
+
+;; ----------------------------------------------- Colour
 ;; (set-background-color "black")
 ;; (set-background-color "darkgrey")
 ;; (set-background-color "bisque")
@@ -721,8 +764,7 @@ BEG and END (region to sort)."
 ;;    say "yes" to steal from PID?
 ;; (desktop-save-mode 1)  ; desktop-revert desktop-change-dir
 ;; (desktop-change-dir "/home/uri03204/myDocs/config")
-;; (setq desktop-path "/home/kleyn/.emacs.d/desktop")
-;; (desktop-save-mode 1)
+(setq desktop-path '("/home/kleyn/.emacs.d/desktops"))
 ;; (setq desktop-auto-save-timeout 300)
 
 ;; ----------------------------------------------- Backup location
@@ -763,10 +805,36 @@ BEG and END (region to sort)."
 (autoload 'cycle-buffer-backward-permissive "cycle-buffer" "Cycle backward allowing *buffers*." t)
 (autoload 'cycle-buffer-toggle-interesting "cycle-buffer" "Toggle if this buffer will be considered." t)
 
+;;---------------------------------------------- ibuffer
+; (add-to-list 'ibuffer-never-show-regexps "^\\*")
+; Ibuffer can show you the differences between an unsaved buffer and the file on disk with `=’.
+; '(lambda ()	     (ibuffer-switch-to-saved-filter-groups "home")))
+(setq ibuffer-saved-filter-groups
+      '(("home"
+	 ("emacs-config" (or (filename . ".emacs.d") (filename . "emacs-config")))
+	 ("Org"          (or (mode . org-mode) (filename . "OrgMode")))
+         ("dired"        (mode . dired-mode))
+	 ("Magit"        (name . "magit\*"))
+	 ("Help"         (name . "*")))))
+(setq ibuffer-mode-hook ())
+(add-hook 'ibuffer-mode-hook
+	  '(lambda ()
+             (setq ibuffer-expert t)
+	     (ibuffer-auto-mode 1)))
+
+
 ;; --------------------------------------------- Custom Variables go in ~/emacs.d/init.el
 (setq default-truncate-lines t)
 (setq tab-width 4)  ;;(setq tab-width 2)
 (setq-default x-stretch-cursor t)
+
+;; --------------------------------------------- TAGS
+;; !! run find with absolute path
+;; find . -iname '*.el' | etags -
+;; find ~/ulib -iname '*.el' | grep -v old | etags -
+;; rename TAGS file
+;; visit-tags-table
+(setq tags-table-list (list (expand-file-name "~/ulib/tags/emacs_252.tags")))
 
 ;; ;;------------------------------------------------------------------------------ Eval
 ;; ;; Normally, this function truncates long output according to the value
@@ -795,14 +863,11 @@ BEG and END (region to sort)."
    https: https://SCHRODERS.COM\username:password@cfactive.london.schroders.com:8080
 
 * Themes
-
+; tango-dark: good theme in init.el:  '(custom-enabled-themes (quote (tango-dark)))
 ;(add-to-list 'custom-theme-load-path "~/.emacs.d/themes/") 
-
 ;Now copy your theme's '.el' file to your .emacs.d/themes/ directory. A
 ;good place to find custom themes is here: emacsthemes.com
-
 ;Now load your custom theme by typing the following:
-
 ;M-x customize-themes ;;;now press return
 
 * Modes Assoc List
@@ -887,17 +952,7 @@ BEG and END (region to sort)."
 ;;  (if (file-directory-p "c:/cygwin/bin")      (add-to-list 'exec-path "c:/cygwin/bin"))
 ;;------------------------------------------------------------------------------ Diff Stuff
 ;; (diffview-current)
-;; scroll-all-mode < toggles
-;; (defun mwheel-scroll-all-function-all (func &optional arg)
-;;   (if (and scroll-all-mode arg)
-;;       (save-selected-window
-;;         (walk-windows
-;;          (lambda (win)
-;;            (select-window win)
-;;            (condition-case nil
-;;                (funcall func arg)
-;;              (error nil)))))
-;;     (funcall func arg)))
+
 
 ;;------------------------------------------------------------------------------- Switches
 
@@ -974,24 +1029,23 @@ BEG and END (region to sort)."
 ;;--------------------------------------------------------- iedit Mode
 ;; TBD (autoload 'iedit-mode "/home/uri03204/myDocs/ulib/emacs/iedit.elc" "Enter iedit mode" t)
 
-* Ivy mode
+* Ivy/Counsel mode
 #+BEGIN_SRC
+;;(helm-mode 0)
+;; swiper
+;; (global-set-key "\C-s" 'swiper)
 (ivy-mode 1)  ; M-i to insert and modify
 (counsel-mode 1)
-(define-key ivy-minibuffer-map (kbd "<up>") 'previous-line-or-history-element)
+(define-key ivy-minibuffer-map (kbd "<up>")   'previous-line-or-history-element)
 (define-key ivy-minibuffer-map (kbd "<down>") 'next-line-or-history-element)
-(global-set-key (kbd "M-y") 'counsel-yank-pop)
-;;(define-key counsel-find-file-map (kbd "C-x C-f") 'counsel-find-file-fallback-command)
-
-;; previous-line-or-history-element
+(define-key counsel-find-file-map (kbd "C-f") 'counsel-find-file-fallback-command)
 
 (defun counsel-find-file-fallback-command ()
   "Fallback to non-counsel version of current command."
   (interactive)
   (when (bound-and-true-p ivy-mode)
     (ivy-mode -1)
-    (add-hook 'minibuffer-setup-hook
-              'counsel-find-file-fallback-command--enable-ivy))
+    (add-hook 'minibuffer-setup-hook 'counsel-find-file-fallback-command--enable-ivy))
   (ivy-set-action
    (lambda (current-path)
      (let ((old-default-directory default-directory))
@@ -1010,16 +1064,14 @@ BEG and END (region to sort)."
 ;;Ivy-based interface to standard commands
 #+END_SRC
 ;;(global-set-key (kbd "C-s") 'swiper-isearch)
-;;(global-set-key (kbd "M-x") 'counsel-M-x)
-;;(global-set-key (kbd "C-x C-f") 'counsel-find-file)
-;;(global-set-key (kbd "M-y") 'counsel-yank-pop)
-;;(global-set-key (kbd "<f1> f") 'counsel-describe-function)
-;;(global-set-key (kbd "<f1> v") 'counsel-describe-variable)
-;;(global-set-key (kbd "<f1> l") 'counsel-find-library)
-;;(global-set-key (kbd "<f2> i") 'counsel-info-lookup-symbol)
-;;(global-set-key (kbd "<f2> u") 'counsel-unicode-char)
-;;(global-set-key (kbd "<f2> j") 'counsel-set-variable)
-;;(global-set-key (kbd "C-x b") 'ivy-switch-buffer)
+(global-set-key (kbd "M-x") 'counsel-M-x)
+(global-set-key (kbd "M-y") 'counsel-yank-pop)
+(global-set-key (kbd "<f1> f") 'counsel-describe-function)
+(global-set-key (kbd "<f1> v") 'counsel-describe-variable)
+(global-set-key (kbd "<f1> l") 'counsel-find-library)
+(global-set-key (kbd "<f2> i") 'counsel-info-lookup-symbol)
+(global-set-key (kbd "<f2> u") 'counsel-unicode-char)
+(global-set-key (kbd "<f2> j") 'counsel-set-variable)
 ;;(global-set-key (kbd "C-c v") 'ivy-push-view)
 ;;(global-set-key (kbd "C-c V") 'ivy-pop-view)
 
@@ -1074,9 +1126,11 @@ BEG and END (region to sort)."
                        (directory . emacs)
                        (auto-mode . emacs)
                        ))
+(setq org-use-property-inheritance t)
 (org-babel-do-load-languages 'org-babel-load-languages '((matlab . t) 
                                                          (python . t) 
-                                                         (emacs-lisp . t)))
+                                                         (emacs-lisp . t)
+                                                         (latex . t)))
 
 (defun org-collapse()     (interactive) (org-shifttab 0))
 
@@ -1258,6 +1312,21 @@ BEG and END (region to sort)."
 (message "-------------- Done: Org-Mode Section")
 
 #+END_SRC
+* Latex
+;; (setq exec-path (append exec-path '("/usr/texbin"))) ; not needed
+
+;Org Mode can generate Portable Network Graphics (png) bitmaps from L
+;If you plan to edit LaTeX source code blocks separately, with C-c ', or want to control the size of pdf snippets, 
+
+;then it is highly recommended that AucTeX be installed, as well. 
+; AucTeX is an extensible package for writing and formatting TeX
+; files. Assuming that AucTeX is installed properly, the following line
+;in .emacs will ensure that AucTeX is loaded.  
+;(load "auctex.el" nil t t)
+
+;;Also highly recommended is RefTeX, a cross-reference, bibliography, glossary, and index manager initially written by the creator of Org Mode, Carsten Dominik. Add the following line to .emacs:
+;;(add-hook 'LaTeX-mode-hook 'turn-on-reftex) 
+
 * Dired Mode
 
 ;; ----------------------------- Tramp
@@ -1297,6 +1366,12 @@ BEG and END (region to sort)."
 ;;(setq dired-use-ls-dired nil)
 (setq dired-dwim-target t)
 (setq dired-subtree-line-prefix "     ")
+; dired-listing-switches  = "-al"
+(setq dired-listing-switches "-alh --time-style=long-iso")
+;;This isn't nearly as drastic as what you're looking for, but it is possible to customize how Emacs calls ls in dired-mode.
+;;M-x customize-variable RET dired-listing-switches RET
+;; I used it to omit the group ID of files with the -o option, saving some horizontal screen real estate.
+ ;; Dired Listing Switches: Hide Value -ahl --time-style=long-iso
 
 ;; ----------------------------- Tramp
 ;;(setq tramp-default-method "ssh")
@@ -1324,6 +1399,7 @@ BEG and END (region to sort)."
      (setq dired-omit-extensions '(".asv" "~" ".o" ".pyc" ".class"))
      (setq dired-no-confirm '(revert-subdirs)))))
 
+;(setq dired-mode-hook nil)
 (add-hook 'dired-mode-hook
    (lambda ()
     ;; Set dired-x buffer-local variables here.  For example:
@@ -1332,8 +1408,8 @@ BEG and END (region to sort)."
       (setq dired-omit-files-p t)
       (toggle-truncate-lines 1)
       (setq dired-no-confirm '(revert-subdirs))
-      (define-key dired-mode-map [right] 'dired-find-file) 	      ;(define-key dired-mode-map [right] 'dired-go-subdir-kbm)
-      (define-key dired-mode-map [left]  'dired-up-directory)
+      (define-key dired-mode-map [right] 'dired-find-file-drop-prev-dired-buffer) 	      ;(define-key dired-mode-map [right] 'dired-go-subdir-kbm)
+      (define-key dired-mode-map [left]  'dired-up-directory-drop-prev-dired-buffer)
       (define-key dired-mode-map (kbd "t") 'dired-omit-mode)
       (define-key dired-mode-map (kbd "r") 'wdired-change-to-wdired-mode))))
       ;; (defalias 'dired-up (kbd "ESC < C-e C-r / NUL C-a ESC w C-x d C-a C-y C-k C-a ESC \\ C-e RET C-x b RET C-x k RET"))
@@ -1353,6 +1429,36 @@ BEG and END (region to sort)."
    "Move to beginning of buffer (instead of keeping point on the current file)."
    (goto-char (point-min))
    (forward-line 3))
+
+(defun dired-find-file-drop-prev-dired-buffer (&optional arg)
+  (interactive)
+  (dired-find-file)
+  (switch-to-prev-buffer)
+  (setq oldBuff  (buffer-name))  ;; returns current buffer
+  (kill-buffer)
+  (setq newBuff  (buffer-name))  ;; returns current buffer
+  (message (format "dired switched DOWN to %s -> %s" oldBuff newBuff))
+)
+
+(defun dired-up-directory-drop-prev-dired-buffer (&optional arg)
+  (interactive)
+  (dired-up-directory)
+  (switch-to-prev-buffer)
+  (setq oldBuff  (buffer-name))  ;; returns current buffer
+  (kill-buffer)
+  (setq newBuff  (buffer-name))  ;; returns current buffer
+  (message (format "dired switched UP to %s <- %s" newBuff oldBuff))
+)
+
+(defun message-buffer-goto-end-of-buffer (&rest args)
+  (let* ((win (get-buffer-window "*Messages*"))
+         (buf (and win (window-buffer win))))
+    (and win (not (equal (current-buffer) buf))
+         (set-window-point
+          win (with-current-buffer buf (point-max))))))
+
+(advice-add 'message :after 'message-buffer-goto-end-of-buffer)
+
 
 (defun dired-ediff-git (&optional arg)
   (interactive)
@@ -1709,42 +1815,46 @@ BEG and END (region to sort)."
 #+BEGIN_SRC emacs-lisp
 
 
-(global-set-key "\M-."         'hs-toggle-hiding)  ; was xref find defs
-
 ;;  (global-set-key "\C-q"          'quoted-insert)  ; for resetting, already default
-(global-set-key "\C-c<"		'selective-display-level-decr)
-(global-set-key "\C-c>"		'selective-display-level-incr)
-(global-set-key "\C-cb"		'ediff-buffers)
-(global-set-key "\C-c\C-b"	'compare-windows)
-(global-set-key "\C-cd"		'ediff-directories)
-(global-set-key "\C-ch"		'diredHome)
-(global-set-key "\C-ci"		'indent-to-col)
-(global-set-key "\C-cl"		'ed-dup-line)
-(global-set-key "\C-cq"		'lines-to-cslist)           ; 'quick-calc
-(global-set-key "\C-cr"		'auto-revert-tail-mode)
+(global-set-key (kbd "C-c <")	'selective-display-level-decr)
+(global-set-key (kbd "C-c >")	'selective-display-level-incr)
+(global-set-key (kbd "C-c b")	'ediff-buffers)
+(global-set-key (kbd "C-c C-b")	'compare-windows)
+(global-set-key (kbd "C-c d")	'ediff-directories)
+(global-set-key (kbd "C-c h")	'diredHome)
+(global-set-key (kbd "C-c i")	'indent-to-col)
+(global-set-key (kbd "C-c l")	'ed-dup-line)
+(global-set-key (kbd "C-c q")	'lines-to-cslist)           ; 'quick-calc
+(global-set-key (kbd "C-c r")   'auto-revert-tail-mode)
+(global-set-key (kbd "C-c s")	'parallel-swap)
+(global-set-key (kbd "C-c C-t")	'org-table-convert-region)
+(global-set-key (kbd "C-c t")	'toggle-truncate-lines)
+(global-set-key (kbd "C-c w")	'delete-trailing-whitespace)
 
-(global-set-key "\C-cs"		'parallel-swap)
-(global-set-key "\C-c\C-t"	'org-table-convert-region)
-(global-set-key "\C-ct"		'toggle-truncate-lines)
-(global-set-key "\C-cw"		'delete-trailing-whitespace)
-(global-set-key "\C-xc"         'filepath-on-clipboard)
-(global-set-key "\C-xd"         'dired)
-(global-set-key "\C-xg"         'magit-status)
-(global-set-key "\C-xi"         'insertLastSexp) ; ielm
-(global-set-key "\C-xl"		'list-matching-lines)
-(global-set-key "\C-xp"         'my-transpose-sexps)
-(global-set-key "\C-xt"		'instimestamp)
-(global-set-key "\C-x\C-b"      'ibuffer)                   ; (global-set-key (kbd "C-x C-b") 'my-list-buffers)
-(global-set-key "\C-z"		'undo)                      ; replace-string
-(global-set-key "\M-$"		'query-replace-regexp)
+(global-set-key (kbd "C-x b")   'ivy-switch-buffer) ; was switch-to-buffer
+(global-set-key (kbd "C-x c")   'filepath-on-clipboard)
+(global-set-key (kbd "C-x d")   'dired)
+(global-set-key (kbd "C-x f")   'find-function) ; set-fill-column
+(global-set-key (kbd "C-x g")   'magit-status)
+(global-set-key (kbd "C-x i")   'insertLastSexp) ; ielm
+(global-set-key (kbd "C-x l")	'list-matching-lines)
+(global-set-key (kbd "C-x p")   'my-transpose-sexps)
+(global-set-key (kbd "C-x t")	'instimestamp)
+(global-set-key (kbd "C-x C-b") '(lambda () (interactive) (ibuffer "home") (ibuffer-switch-to-saved-filter-groups "home")))  ; (global-set-key (kbd "C-x C-b") 'my-list-buffers)
+
+(global-set-key (kbd "C-z")	'undo)                      ; replace-string
+
+(global-set-key (kbd "M-.")     'hs-toggle-hiding)  ; was xref find defs
+(global-set-key (kbd "M-$")	'query-replace-regexp)
+(global-set-key (kbd "M-y")     'counsel-yank-pop)
 (global-set-key (kbd "C-.")     'repeat)
-(global-set-key (kbd "\C-c;")   'comment-or-uncomment-region)
+(global-set-key (kbd "C-c ;")   'comment-or-uncomment-region)
 (global-set-key [(next)]        'cycle-buffer)
 (global-set-key [C-down]        'cycle-buffer)        ; avoid default binding (global-set-key (kbd "C-c <down>")  'windmove-down)
 (global-set-key [(prior)]       'cycle-buffer-backward)
 (global-set-key [C-up]          'previous-buffer)
 (global-set-key [C-down]        'next-buffer)               ; 'cycle-buffer  avoid default binding (global-set-key (kbd "C-c <down>")  'windmove-down)
-;(global-set-key [M-up]          'kill-this-buffer-volatile) ; kill-buffer
+;(global-set-key [M-up]         'kill-this-buffer-volatile) ; kill-buffer
 (global-set-key [C-insert]      'clipboard-kill-ring-save)
 (global-set-key [C-kp-add]      'text-scale-increase)
 (global-set-key [C-kp-subtract] 'text-scale-decrease) ;; with a C-0 prefix argument.
@@ -1755,8 +1865,7 @@ BEG and END (region to sort)."
 (global-set-key [S-right]       'window-hwiden)
 (global-set-key [S-up]          'scroll-one-line-down)
 
-
-(global-set-key [f1]            'see-logbook1)
+(global-set-key [f1]            'see-doAndDone)
 (global-set-key [f2]            'see-logbook2)
 (global-set-key [f3]            'see-dotEmacs)             ; nok900  'my-openfile  'neotree-show
 (global-set-key [f4]            'desktop-save)
@@ -1769,7 +1878,7 @@ BEG and END (region to sort)."
 (global-set-key [f11]           'kmacro-end-macro)
 
 
-(global-set-key [C-f1]          'mk-new-buffer)
+(global-set-key [C-f1]          'diredHome)              ; mk-new-buffer
 (global-set-key [C-f3]          '(lambda () (interactive) (progn (if (eq (get-buffer "*eshell*") nil) (eshell))  (switch-to-buffer "*eshell*"))))
 (global-set-key [C-f4]          'org-transpose-table-at-point)
 (global-set-key [C-f5]          '(lambda () (interactive) (dired "//lon06179/Logs" nil))) ; prod
@@ -1804,7 +1913,7 @@ BEG and END (region to sort)."
 (global-set-key [kp-divide]     'toggle-window-split)
 
 (global-unset-key "\C-x\C-c")                             ;; Don't quit so easily
-(global-set-key   "\C-x\C-c\C-v"  'save-buffers-kill-emacs) ;; But we establish a longer sequence that is harder to hit by accident:
+(global-set-key (kbd "C-x C-c C-v")  'save-buffers-kill-emacs) ;; But we establish a longer sequence that is harder to hit by accident:
 
 (defun sf8() (interactive) (dired-omit-mode))
 
@@ -1931,26 +2040,27 @@ BEG and END (region to sort)."
 (eshell)
 (setq eshell-save-history-on-exit t)
 (setq eshell-hist-ignoredups t)
-(setq eshell-command-aliases-list ())
-(add-to-list 'eshell-command-aliases-list (list "ll"    "ls -l --time-style=long-iso $*"))
-(add-to-list 'eshell-command-aliases-list (list "al"    "alias"))
-(add-to-list 'eshell-command-aliases-list (list "ag"    "alias | grep $*"))
-(add-to-list 'eshell-command-aliases-list (list "cl"    "cd $*; ll"))
-(add-to-list 'eshell-command-aliases-list (list "gits"  "git status"))
-(add-to-list 'eshell-command-aliases-list (list "gith"  "git help"))
-(add-to-list 'eshell-command-aliases-list (list "gita"  "git add $*"))
-(add-to-list 'eshell-command-aliases-list (list "gitb"  "git branch -av"))
-(add-to-list 'eshell-command-aliases-list (list "gitc"  "git checkout -b $*"))
-(add-to-list 'eshell-command-aliases-list (list "gitca" "git commit -a"))
-(add-to-list 'eshell-command-aliases-list (list "gitcm" "git commit -m"))
-(add-to-list 'eshell-command-aliases-list (list "gr"    "grep"))
-(add-to-list 'eshell-command-aliases-list (list "gi"    "grep -i"))
-(add-to-list 'eshell-command-aliases-list (list "hs"    "(setq es_hstFile (concat \"~/history/eshell/history_\" (format-time-string \"%Y%m%d-%H%M\" (current-time)) \".lst\"));     
-                                                          history > $es_hstFile; 
-                                                          cat $es_hstFile;"))
-(add-to-list 'eshell-command-aliases-list (list "hg"    "history | grep $*")) 
-(add-to-list 'eshell-command-aliases-list (list "hg"    "cat ~/history/eshell/history* | grep -i $*")) 
-(add-to-list 'eshell-command-aliases-list (list "gitl"  "git log -n 20 --pretty=oneline --abbrev-commit --no-merges --decorate --format=format:'%h - (%ar) %s - %an%d'"))
+
+(progn
+ (setq eshell-command-aliases-list ())
+ (add-to-list 'eshell-command-aliases-list (list "ll"    "ls -l --time-style=long-iso $*"))
+ (add-to-list 'eshell-command-aliases-list (list "al"    "alias"))
+ (add-to-list 'eshell-command-aliases-list (list "ag"    "alias | grep $*"))
+ (add-to-list 'eshell-command-aliases-list (list "cl"    "cd $*; ll"))
+ (add-to-list 'eshell-command-aliases-list (list "gits"  "git status"))
+ (add-to-list 'eshell-command-aliases-list (list "gith"  "git help"))
+ (add-to-list 'eshell-command-aliases-list (list "gita"  "git add $*"))
+ (add-to-list 'eshell-command-aliases-list (list "gitb"  "git branch -av"))
+ (add-to-list 'eshell-command-aliases-list (list "gitc"  "git checkout -b $*"))
+ (add-to-list 'eshell-command-aliases-list (list "gitca" "git commit -a"))
+ (add-to-list 'eshell-command-aliases-list (list "gitcm" "git commit -m"))
+ (add-to-list 'eshell-command-aliases-list (list "gr"    "grep"))
+ (add-to-list 'eshell-command-aliases-list (list "gi"    "grep -i"))
+ (add-to-list 'eshell-command-aliases-list (list "hs"    "(setq es_hstFile (concat \"~/history/eshell/history_\" (format-time-string \"%Y%m%d-%H%M\" (current-time)) \".lst\")); history > $es_hstFile; cat $es_hstFile;"))
+ (add-to-list 'eshell-command-aliases-list (list "hg"    "history | grep $*")) 
+ (add-to-list 'eshell-command-aliases-list (list "hgg"   "cat ~/history/eshell/history* | grep -i $*")) 
+ (add-to-list 'eshell-command-aliases-list (list "gitl"  "git log -n 20 --pretty=oneline --abbrev-commit --no-merges --decorate --format=format:'%h - (%ar) %s - %an%d'"))
+)
 #+END_SRC
 
 (add-to-list 'eshell-command-aliases-list (list "gitst"  "git rev-parse --abbrev-ref HEAD;
