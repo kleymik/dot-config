@@ -15,6 +15,26 @@
 if [[ "1" == "1" ]]; then
 
 
+  function dataFilesCheck () {
+   echo "----------------------- //lon0302/dfs/DATA/DTA/MLINDICES"
+   ls -lrt //lon0302/dfs/DATA/DTA/MLINDICES | tail -10
+   echo -n "NumFiles "
+   ls -lrt //lon0302/dfs/DATA/DTA/MLINDICES | wc -l
+   echo "-----------------------  dataCollectionFI/LOCAL/ML/MLINDICES/"
+   ls -lrt /home/kleynmi/dataCollectionFI/LOCAL/ML/MLINDICES/ | tail -10
+   echo -n "NumFiles /MLINDICES/"
+   ls -lrt /home/kleynmi/dataCollectionFI/LOCAL/ML/MLINDICES/ | wc -l
+   echo "----------------------- /home/kleynmi/dataCollectionFI/PROD/"
+   ls -lrt /home/kleynmi/dataCollectionFI/PROD/ | tail -10
+   echo -n "NumFiles /PROD/"
+   ls -lrt /home/kleynmi/dataCollectionFI/PROD/ | wc -l
+   echo "----------------------- du -sh /home/kleynmi/dataCollectionFI/*"
+   du -sm /home/kleynmi/dataCollectionFI/* | sort -n
+   echo "----------------------- du -sh /home/kleynmi/dataCollectionFI/LOCAL"
+   du -sm /home/kleynmi/dataCollectionFI/LOCAL/* | sort -n
+
+  }
+
   # ############################################################################### ALIASES, Small Functions
   alias al='declare -f | grep \(\); alias'
   function ag   () {
@@ -81,6 +101,13 @@ if [[ "1" == "1" ]]; then
   #function tfh () {  tf history . /recursive }
   alias myPath='echo $PATH'
   # ensure cwd path is from a drive mapping
+  alias tfcd='cd /cygdrive/Y/LOCAL/USR/MK/vc; pwd '
+  alias tfdiffd='tf      folderdiff /recursive . | grep -v \$/MAQS |  sed  "/^[[:space:]]*$/d" '
+  alias tfdiff='tf       diff /recursive . '
+  alias tfw='tf          workspaces '
+  alias tfh='tf          history /recursive . | tac'
+  alias tfGetLatest='tf  get /recursive . '
+  alias tfGetPreview='tf get /recursive /preview .'
   # add dot '.' to end of tf alias command
   # ---------------------------------------------------------------------------------------------------- ls
   # Some shortcuts for different directory listings
@@ -89,6 +116,7 @@ if [[ "1" == "1" ]]; then
   # alias ls='ls -hF --color=tty'                 # classify files in colour
   # alias dir='ls --color=auto --format=vertical'
   # alias vdir='ls --color=auto --format=long'
+  alias ll='ls -l --time-style=long-iso'                              # long list
   # alias la='ls -A'                            # all but . and ..
   alias l='ls -CF'                              #
   # alias la='ls -alF'
@@ -162,6 +190,24 @@ if [[ "1" == "1" ]]; then
   #alias rd='rdesktop -a 32 -x 0x80 -g 1920x1080 DIAMRL5319 -r sound:remote'
   function see () { more `which "$@"`; }
 
+  # REMOTE ---------------------------------------------------------------------
+  echo "----- rem commands"
+  alias remTuringX='ssh -Y 192.168.1.243'
+  alias remTuringS='screen /dev/ttyS0 38400'
+  alias remKleyqs501='ssh kleyn@62.233.104.49'
+  alias remKleyqs501root='ssh root@62.233.104.49'
+  alias remMaxwell='ssh kleyn@192.168.1.130'
+  alias remSshd='sshd -D -p 8022'
+  alias remGem='ssh -p 8022 192.168.1.2'
+  alias remSyncToMaxw='rsync -rv  ~/MyDocs/aNotes kleyn@192.168.1.130:/home/kleyn/mySystems/gem'
+  #alias rsyncBckup='rsync -av /storage/C0A8-1F0C/Android/data/com.termux/files/MyDocs/aNotes/org kleyn@192.168.1.130:/home/kleyn/mySystems/gem'
+  alias al='alias | less -S'
+
+  #alias remNok='ssh -X root@192.168.1.187'
+  #alias remkleyqs501='ssh kleymik@kleyqs501.easyvserver.com'
+  #alias linux1xcxX='ssh -X sshtst@192.168.0.10'
+  #alias remKleyqs501='ssh root@kleyqs501.easyvserver.com'
+
   # ---------------------------------------------------------------------------------------------------- eclipse
   #alias kepler='/dls_sw/apps/eclipse/eclipse432_linux64_20140725/eclipse'
   # ---------------------------------------------------------------------------------------------------- networky stuff
@@ -188,22 +234,25 @@ if [[ "1" == "1" ]]; then
 
   # git clone/init
   # git add
-  # git commit 
+  # git commit
   # git push origin master
   # git pull –all
   # git branch
   # git checkout (consider using –b instead of git branch)
   # git merge
-  # git status 
-  
+  # git status
+
   # ---------------------------------------------------------------------------------------------------- git
   # only needed once?
-  # git config --global core.editor "emacs -nw -fg black  -bg white1"
-  # git config --global user.name "Mike Kleyn"
-  # git config --global user.email michael.kleyn@diamond.ac.uk
-  # git config --global color.status auto
-  # git config --global color.branch auto
+function gitcfg () {
+  # only needed once?
+  git config --global core.editor "emacs -nw -fg black -bg white1"
+  git config --global user.name "Mike Kleyn"
+  git config --global user.email michfkl@btinternet.com
+  git config --global color.status auto
+  git config --global color.branch auto
   # git config --global core.excludesfile ~/.gitignore_global
+  }
 
   # include git completions
   #. ~/.git-completion.bash
@@ -254,14 +303,16 @@ if [[ "1" == "1" ]]; then
   alias gitg='git grep'
   alias gitca='git commit -a '
   alias gitc='git checkout'
-  alias gitcl='git clone'
+  alias gitcln='git clone'
   alias gitf='git fetch'
+  alias gitg='git grep'
   alias gith='git help'
   alias gitls='git ls-tree -r HEAD --name-only'
   alias gitmv='git mv'
   alias gitpl='git pull'
   alias gitps='git push'
   alias gitr='git reset -p'
+  alias gitreps='git remote -v'
   alias gitrm='git rm'
   alias gitDrop='git checkout -- '
   # alias gits='pwd; echo $(git rev-parse --abbrev-ref HEAD); git config branch.$(git rev-parse --abbrev-ref HEAD).description;  git branch -av; git status'
@@ -320,7 +371,7 @@ if [[ "1" == "1" ]]; then
   # alias ptree='ps -ef --forest'
 
   # get parent and grandparent of process
-  function pspar() { 
+  function pspar() {
       if [[ "$#" == "0" ]]; then
         myPid=$$
       else
@@ -340,7 +391,7 @@ if [[ "1" == "1" ]]; then
 
 
   }
-  # grep for process 
+  # grep for process
   function psg () { ps -elf  | grep "$@"; }
 
   # ---------------------------------------------------------------------------------------------------- env
@@ -357,9 +408,9 @@ if [[ "1" == "1" ]]; then
       # evaluate $REF twice..
       PATHTMP=$(echo ${!REF} | sed "s/ /_/g")
       #echo "PATHTMP=$PATHTMP"
-      for p in $(echo $PATHTMP | sed "s/:/ /g") 
-      do  
-        echo $p; 
+      for p in $(echo $PATHTMP | sed "s/:/ /g")
+      do
+        echo $p;
       done
   }
   function evapp  () {
@@ -378,31 +429,31 @@ if [[ "1" == "1" ]]; then
 
   # -MA3  media
   #--- enscript
-  function enscPort () { 
-    enscript                       -c          -T 3 -P dh.g.51.col.1  --font=Courier$@ 
+  function enscPort () {
+    enscript                       -c          -T 3 -P dh.g.51.col.1  --font=Courier$@
   }
-  function enscPortBw () { 
-    enscript                       -c          -T 3 -P dh.g.51.bw.1  --font=Courier$@ 
+  function enscPortBw () {
+    enscript                       -c          -T 3 -P dh.g.51.bw.1  --font=Courier$@
   }
-  function enscLand () { 
-   enscript                       -cr          -T 3 -P dh.g.51.col.1  --font=Courier$@ 
+  function enscLand () {
+   enscript                       -cr          -T 3 -P dh.g.51.col.1  --font=Courier$@
   }
-  function enscLandBw () { 
-   enscript                       -cr           -T 3 -P dh.g.51.bw.1  --font=Courier$@ 
+  function enscLandBw () {
+   enscript                       -cr           -T 3 -P dh.g.51.bw.1  --font=Courier$@
   }
-  function enscpy   () { 
-    enscript --pretty-print=python -c  --color=1 -T 3 -P dh.g.51.col.1 --font=Courier$@ 
+  function enscpy   () {
+    enscript --pretty-print=python -c  --color=1 -T 3 -P dh.g.51.col.1 --font=Courier$@
   }
-  function enscpyBw   () { 
-    enscript --pretty-print=python -c  --color=1 -T 3 -P dh.g.51.bw.1 --font=Courier$@ 
+  function enscpyBw   () {
+    enscript --pretty-print=python -c  --color=1 -T 3 -P dh.g.51.bw.1 --font=Courier$@
   }
-  function enscjav  () { 
-    enscript --pretty-print=java   -c  --color=1 -T 3 -P dh.g.51.col.1 --font=Courier$@ 
+  function enscjav  () {
+    enscript --pretty-print=java   -c  --color=1 -T 3 -P dh.g.51.col.1 --font=Courier$@
   }
-  function enscjavBw  () { 
-    enscript --pretty-print=java   -c  --color=1 -T 3 -P dh.g.51.bw.1 --font=Courier$@ 
+  function enscjavBw  () {
+    enscript --pretty-print=java   -c  --color=1 -T 3 -P dh.g.51.bw.1 --font=Courier$@
   }
-  #enscript --pretty-print=python gda.py --language=html --color=1 --output=gda.py.html 
+  #enscript --pretty-print=python gda.py --language=html --color=1 --output=gda.py.html
   #  719  enscript --pretty-print=python gda.py --language=html --color=true --output=gda.py.html
   #  720  enscript --pretty-print=python gda.py --language=html --color=1 --output=gda.py.html
   #  721  enscript --pretty-print=python gda.py --language=html --color=1 --font=Courier8 --output=gda.py.html
@@ -445,7 +496,7 @@ if [[ "1" == "1" ]]; then
   alias gdaFiltClientLog='rep -vF -f ~/ubin/gda_client_filter.txt'
   # alias fd=find
   # find with exclusion
-  function fe() { 
+  function fe() {
        echo "Numargs=$# : $@"
        if [[ "$#" == "0" ]]; then
         echo "fe \$1=exludeDir \$2=searchPat"
@@ -454,7 +505,7 @@ if [[ "1" == "1" ]]; then
          find . -type d -name $1 -prune -or -iname $2
        fi
   }
-  function fd() { 
+  function fd() {
        echo "Numargs=$# : $@"
        if [[ "$#" != "2" ]]; then
         echo "fe \$1=dir \$2=pat"
@@ -464,7 +515,7 @@ if [[ "1" == "1" ]]; then
        fi
   }
 
-  function recent() { 
+  function recent() {
        echo "Numargs=$# : $@"
        if [[ "$#" != "1" ]]; then
         echo "recent \$1=dir"
@@ -473,7 +524,7 @@ if [[ "1" == "1" ]]; then
        fi
   }
 
-  function tstArgs() { 
+  function tstArgs() {
        if [[ "$#" == "0" ]]; then
         echo "No Args"
        else
@@ -485,6 +536,18 @@ if [[ "1" == "1" ]]; then
      explorer.exe 'shell:Appsfolder\Microsoft.MicrosoftEdge_8wekyb3d8bbwe!MicrosoftEdge'
   }
   # ------------------------------------------------------------------------------- pewma
+  # alias pewma-branch='        /dls_sw/dasc/pewma.py -qp git rev-parse --symbolic-full-name --abbrev-ref HEAD'
+  # alias pewma-branch-status=' /dls_sw/dasc/pewma.py -qp git branch-status'
+  # alias pewma-describe='      /dls_sw/dasc/pewma.py -qp git update-index --refresh ; /dls_sw/dasc/pewma.py -qp git describe'
+  # alias pewma-describe-dirty='/dls_sw/dasc/pewma.py -qp git describe-dirty'
+  # alias pewma-fetch='         /dls_sw/dasc/pewma.py -qp git fetch'
+  # alias pewma-fetch-all='     /dls_sw/dasc/pewma.py -qp git fetch --all'
+  # alias pewma-incoming='      /dls_sw/dasc/pewma.py -qp git fetch --dry-run'
+  # alias pewma-incoming-all='  /dls_sw/dasc/pewma.py -qp git fetch --dry-run --all'
+  # alias pewma-pull='          /dls_sw/dasc/pewma.py -qp git pull'
+  # alias pewma-pull-all='      /dls_sw/dasc/pewma.py -qp git pull --all'
+  # alias pewma-status='        /dls_sw/dasc/pewma.py -qp git status -s'
+  # alias pewma='               /dls_sw/dasc/pewma.py'
   # --------------------------------------------------------------------------------- xterm colored
   alias xtm='xterm   -sl 2000 &'
   alias xtmr='xterm  -sl 20000 -bg darkred   -fg white  -cr lightblue     &'
@@ -498,6 +561,13 @@ if [[ "1" == "1" ]]; then
   # # -------------------------------------------------------------------------------- firefox
   alias ff='firefox  -P default -new-instance 2> /dev/null &'
   alias ffn='firefox -P news    -new-instance 2> /dev/null &'
+  # ---------------------------------------------------------------------------------- window title
+  # function my_set_screen_title() {
+  #   echo -ne "\ekHELLO$1\e\\"
+  #   PROMPT_COMMAND='echo -ne "\033]0;"myWindowTitle"\007"'
+  #   currWindow=`xprop -root | grep "_NET_ACTIVE_WINDOW(WINDOW)" | awk '{ print $5}'`
+  #   xdotool set_window --name hello $currWindow
+  # }
 
 
 
@@ -811,7 +881,7 @@ if [[ "1" == "1" ]]; then
      nxtraverse -f $f -r -n 50;
     done;
   }
- 
+
   # ---------------------------------------------------------------------------------------------------- misc/old
   # x windows mutiwindow
   # alias sxw='startxwin'
@@ -916,6 +986,7 @@ if [[ "1" == "1" ]]; then
 
   #export PROMPT_COMMAND='history -a' # not just yet.. no loger use hl?
 fi
+echo "bashrc done"
 
 
 # ############################################################################### OTHER/UNUSED
@@ -1004,7 +1075,7 @@ fi
 #
 # Alias cd=cd_func
 
-#  Prompt Mangling
+# ############################################################################### PROMPT MANGLING
 #PS1="\t:\w:"
 #export PS1="\e[0;31m[\u@\h \W]\$ \e[m "
 #export PS1="==\d\t:\w:\n>>"

@@ -1,4 +1,4 @@
-# MFK bash initialisation for my schroder account 20160204_14:41:36
+ # MFK bash initialisation for my schroder account 20160204_14:41:36
 echo "bashrc start"
 # TBD make idempotent!
 
@@ -29,37 +29,37 @@ if [[ "1" == "1" ]]; then
     rsync.exe -av ~/l_dataCollectionFI/LOCAL/USR/MK/codews ~/l_C/MyData/backups2/
 
     echo "rsync: /LOCAL/USR/MK/vc     --> ~/l_C/MyData/backups2/============================"
-    rsync.exe -av ~/l_dataCollectionFI/LOCAL/USR/MK/vc     ~/l_C/MyData/backups2/  
+    rsync.exe -av ~/l_dataCollectionFI/LOCAL/USR/MK/vc     ~/l_C/MyData/backups2/
 
     echo "rsync: MyDocs/History       --> /C/MyData/backups2 ============================="
-    rsync.exe -av ~/l_MyDocs/history           ~/l_C/MyData/backups2/  
+    rsync.exe -av ~/l_MyDocs/history           ~/l_C/MyData/backups2/
 
     echo "rsync: MyDocs/History       --> /C/MyData/backups2 ============================="
-    rsync.exe -av ~/l_MyDocs/config           ~/l_C/MyData/backups2/  
+    rsync.exe -av ~/l_MyDocs/config           ~/l_C/MyData/backups2/
 
     echo "rsync: MyDocs/dot           --> /C/MyData/backups2 ============================="
     rsync.exe -av ~/l_MyDocs/dot               ~/l_C/MyData/backups2/
 
-    #echo "rsync: C:MyMaqs             --> /C/MyData/backups2 =============================  cron stuff"    
-    #rsync.exe -av ~/l_C/MyMaqs                             ~/l_C/MyData/backups2/    
+    #echo "rsync: C:MyMaqs             --> /C/MyData/backups2 =============================  cron stuff"
+    #rsync.exe -av ~/l_C/MyMaqs                             ~/l_C/MyData/backups2/
 
-    echo "rsync: /C/Users/kleyn*    --> /C/MyData/backups2 =============================  my profiles"    
+    echo "rsync: /C/Users/kleyn*    --> /C/MyData/backups2 =============================  my profiles"
     rsync.exe -av ~/l_C/Users/kleynmi                      ~/l_C/MyData/backups2/profiles
     # rsync.exe -av ~/l_C/Users/kleynmi.SCHRODERSAD          ~/l_C/MyData/backups2/profiles
 
-    #echo "cp: MERRILLS                --> /LOCAL/ML/MLINDICES/ =========================="  
+    #echo "cp: MERRILLS                --> /LOCAL/ML/MLINDICES/ =========================="
     #cp -rnv //lon0302/dfs/DATA/DTA/MLINDICES/* /home/kleynmi/dataCollectionFI/LOCAL/ML/MLINDICES/
 
-    #echo "cp: IDL CITI                --> /LOCAL/CITI/ =================================="    
+    #echo "cp: IDL CITI                --> /LOCAL/CITI/ =================================="
     #cp -nv //lon0673/IDL/PRD/DATA/SOURCE/CITI_INDEX/ARCHIVE/* /home/kleynmi/dataCollectionFI/LOCAL/CITI/ 2>&1 | grep -v 'not specified'
 
-    echo "cp: C/Users/kleynmi/AppData/Roaming/MathWorks/MATLAB/R2015b/MATLABDesktop.xml ===="    
+    echo "cp: C/Users/kleynmi/AppData/Roaming/MathWorks/MATLAB/R2015b/MATLABDesktop.xml ===="
     cp /home/kleynmi/C/Users/kleynmi/AppData/Roaming/MathWorks/MATLAB/R2015b/MATLABDesktop.xml /home/kleynmi/MyDocs/history/matlabDesktop/MATLABDesktop_$(date '+%Y%m%d').xml
 
     echo "...Files Copy Done"
     #cp -rv /home/kleynmi/MyDocs/history /home/kleynmi/dataCollectionFI/LOCAL/USR/MK/
     #rsync.exe -rv /home/kleynmi/MyDocs/history /home/kleynmi/dataCollectionFI/LOCAL/USR/MK/
-    #cd /home/kleynmi/dataCollectionFI/LOCAL/USR/MK/codews/  
+    #cd /home/kleynmi/dataCollectionFI/LOCAL/USR/MK/codews/
     #tar -czvf - . > /home/kleynmi/C/MyData/backups2/usr.mk.codews.tgz
     #tar -cvf /home/kleynmi/dataCollectionFI/LOCAL/USR/MK/codews/maqsTfs.tar . | grep -v '$tf/|/SAM/'
     #tar -cvf - . > /home/kleynmi/dataCollectionFI/LOCAL/USR/MK/maqsTfs.tar    | grep -v '/$tf/'
@@ -73,8 +73,8 @@ if [[ "1" == "1" ]]; then
   function dataFilesCheck () {
    echo "----------------------- //lon0302/dfs/DATA/DTA/MLINDICES"
    ls -lrt //lon0302/dfs/DATA/DTA/MLINDICES | tail -10
-   echo -n "NumFiles " 
-   ls -lrt //lon0302/dfs/DATA/DTA/MLINDICES | wc -l  
+   echo -n "NumFiles "
+   ls -lrt //lon0302/dfs/DATA/DTA/MLINDICES | wc -l
    echo "-----------------------  dataCollectionFI/LOCAL/ML/MLINDICES/"
    ls -lrt /home/kleynmi/dataCollectionFI/LOCAL/ML/MLINDICES/ | tail -10
    echo -n "NumFiles /MLINDICES/"
@@ -90,7 +90,7 @@ if [[ "1" == "1" ]]; then
 
   }
 
-  # ############################################################################### ALIASES
+  # ############################################################################### ALIASES, Small Functions
   alias al='declare -f | grep \(\); alias'
   function ag   () {
     declare -f | grep "$@";
@@ -195,8 +195,10 @@ if [[ "1" == "1" ]]; then
                      echo "3=$3"
                      echo "grep --color=auto -r --include $2 $3 $1;"
                      grep --color=auto -ir --include "$2" "$3" "$1"; }
-  #function rgrep() { ls "$@"} 
-  
+  #function rgrep() { ls "$@"}
+
+  alias excel='/cygdrive/C/Program\ Files\ \(x86\)/Microsoft\ Office/Office16/EXCEL.EXE'
+  alias outlook='/cygdrive/C/Program\ Files\ \(x86\)/Microsoft\ Office/Office16/OUTLOOK.EXE &'
 
   # ---------------------------------------------------------------------------------------------------- kill
   alias kill_hup='kill -1'
@@ -251,22 +253,24 @@ if [[ "1" == "1" ]]; then
   alias h5dumpContents='h5dump -n'
 
   # Schroders GIT
-  git config --global user.name "Mike Kleyn"
-  git config --global user.email "michael.kleyn@schroders.com"
-  git config --global core.editor "emacs-nox"
+  #git config --global user.name "Mike Kleyn"
+  #git config --global user.email "michael.kleyn@schroders.com"
+  #git config --global core.editor "emacs-nox"
+  #git config --global core.excludesfile ~/.gitignore_global
+
   # git clone/init
   # git add
-  # git commit 
+  # git commit
   # git push origin master
   # git pull –all
   # git branch
   # git checkout (consider using –b instead of git branch)
   # git merge
-  # git status 
-  
+  # git status
+
   # ---------------------------------------------------------------------------------------------------- git
   # only needed once?
-function gitcfg () { 
+function gitcfg () {
   # only needed once?
   git config --global core.editor "emacs -nw -fg black -bg white1"
   git config --global user.name "Mike Kleyn"
@@ -275,7 +279,7 @@ function gitcfg () {
   git config --global color.branch auto
   # git config --global core.excludesfile ~/.gitignore_global
   }
-  
+
   # include git completions
   #. ~/.git-completion.bash
 
@@ -296,14 +300,14 @@ function gitcfg () {
   alias gitc='git checkout'
   alias gitcln='git clone'
   alias gitf='git fetch'
-  alias gitg='git grep'  
+  alias gitg='git grep'
   alias gith='git help'
   alias gitls='git ls-tree -r HEAD --name-only'
   alias gitmv='git mv'
   alias gitpl='git pull'
   alias gitps='git push'
   alias gitr='git reset -p'
-  alias gitreps='git remote -v'  
+  alias gitreps='git remote -v'
   alias gitrm='git rm'
   alias gits='echo $(git rev-parse --abbrev-ref HEAD); git config branch.$(git rev-parse --abbrev-ref HEAD).description;  git status; git stash list'
   alias gitcln='git clone'
@@ -324,7 +328,7 @@ function gitcfg () {
   # alias ptree='ps -ef --forest'
 
   # get parent and grandparent of process
-  function pspar() { 
+  function pspar() {
       if [[ "$#" == "0" ]]; then
         myPid=$$
       else
@@ -344,7 +348,7 @@ function gitcfg () {
 
 
   }
-  # grep for process 
+  # grep for process
   function psg () { ps -elf  | grep "$@"; }
 
   # ---------------------------------------------------------------------------------------------------- env
@@ -361,9 +365,9 @@ function gitcfg () {
       # evaluate $REF twice..
       PATHTMP=$(echo ${!REF} | sed "s/ /_/g")
       #echo "PATHTMP=$PATHTMP"
-      for p in $(echo $PATHTMP | sed "s/:/ /g") 
-      do  
-        echo $p; 
+      for p in $(echo $PATHTMP | sed "s/:/ /g")
+      do
+        echo $p;
       done
   }
   function evapp  () {
@@ -382,31 +386,31 @@ function gitcfg () {
 
   # -MA3  media
   #--- enscript
-  function enscPort () { 
-    enscript                       -c          -T 3 -P dh.g.51.col.1  --font=Courier$@ 
+  function enscPort () {
+    enscript                       -c          -T 3 -P dh.g.51.col.1  --font=Courier$@
   }
-  function enscPortBw () { 
-    enscript                       -c          -T 3 -P dh.g.51.bw.1  --font=Courier$@ 
+  function enscPortBw () {
+    enscript                       -c          -T 3 -P dh.g.51.bw.1  --font=Courier$@
   }
-  function enscLand () { 
-   enscript                       -cr          -T 3 -P dh.g.51.col.1  --font=Courier$@ 
+  function enscLand () {
+   enscript                       -cr          -T 3 -P dh.g.51.col.1  --font=Courier$@
   }
-  function enscLandBw () { 
-   enscript                       -cr           -T 3 -P dh.g.51.bw.1  --font=Courier$@ 
+  function enscLandBw () {
+   enscript                       -cr           -T 3 -P dh.g.51.bw.1  --font=Courier$@
   }
-  function enscpy   () { 
-    enscript --pretty-print=python -c  --color=1 -T 3 -P dh.g.51.col.1 --font=Courier$@ 
+  function enscpy   () {
+    enscript --pretty-print=python -c  --color=1 -T 3 -P dh.g.51.col.1 --font=Courier$@
   }
-  function enscpyBw   () { 
-    enscript --pretty-print=python -c  --color=1 -T 3 -P dh.g.51.bw.1 --font=Courier$@ 
+  function enscpyBw   () {
+    enscript --pretty-print=python -c  --color=1 -T 3 -P dh.g.51.bw.1 --font=Courier$@
   }
-  function enscjav  () { 
-    enscript --pretty-print=java   -c  --color=1 -T 3 -P dh.g.51.col.1 --font=Courier$@ 
+  function enscjav  () {
+    enscript --pretty-print=java   -c  --color=1 -T 3 -P dh.g.51.col.1 --font=Courier$@
   }
-  function enscjavBw  () { 
-    enscript --pretty-print=java   -c  --color=1 -T 3 -P dh.g.51.bw.1 --font=Courier$@ 
+  function enscjavBw  () {
+    enscript --pretty-print=java   -c  --color=1 -T 3 -P dh.g.51.bw.1 --font=Courier$@
   }
-  #enscript --pretty-print=python gda.py --language=html --color=1 --output=gda.py.html 
+  #enscript --pretty-print=python gda.py --language=html --color=1 --output=gda.py.html
   #  719  enscript --pretty-print=python gda.py --language=html --color=true --output=gda.py.html
   #  720  enscript --pretty-print=python gda.py --language=html --color=1 --output=gda.py.html
   #  721  enscript --pretty-print=python gda.py --language=html --color=1 --font=Courier8 --output=gda.py.html
@@ -445,7 +449,7 @@ function gitcfg () {
   alias gdaFiltClientLog='rep -vF -f ~/ubin/gda_client_filter.txt'
   # alias fd=find
   # find with exclusion
-  function fe() { 
+  function fe() {
        echo "Numargs=$# : $@"
        if [[ "$#" == "0" ]]; then
         echo "fe \$1=exludeDir \$2=searchPat"
@@ -454,7 +458,7 @@ function gitcfg () {
          find . -type d -name $1 -prune -or -iname $2
        fi
   }
-  function fd() { 
+  function fd() {
        echo "Numargs=$# : $@"
        if [[ "$#" != "2" ]]; then
         echo "fe \$1=dir \$2=pat"
@@ -464,7 +468,7 @@ function gitcfg () {
        fi
   }
 
-  function recent() { 
+  function recent() {
        echo "Numargs=$# : $@"
        if [[ "$#" != "1" ]]; then
         echo "recent \$1=dir"
@@ -473,7 +477,7 @@ function gitcfg () {
        fi
   }
 
-  function tstArgs() { 
+  function tstArgs() {
        if [[ "$#" == "0" ]]; then
         echo "No Args"
        else
@@ -565,7 +569,7 @@ function gitcfg () {
      nxtraverse -f $f -r -n 50;
     done;
   }
- 
+
   # ---------------------------------------------------------------------------------------------------- misc/old
   # x windows mutiwindow
   # alias sxw='startxwin'
@@ -600,7 +604,7 @@ function gitcfg () {
   #alias linux1xcxX='ssh -X sshtst@192.168.0.10'
 
   #alias diamond='ssh uri03204@nx-staff.diamond.ac.uk'
-  #alias diamondNx='ssh -f -N -L 9876:ws141.diamond.ac.uk:4000 uri03204@nx-staff.diamond.ac.uk' 
+  #alias diamondNx='ssh -f -N -L 9876:ws141.diamond.ac.uk:4000 uri03204@nx-staff.diamond.ac.uk'
   #alias diamondFoo='Use localhost:4000 to connect directly'
 
   # ---------------------------------------------------------------------------------------------------- emacs
@@ -630,6 +634,8 @@ function gitcfg () {
 fi
 echo "bashrc done"
 
+
+# ############################################################################### OTHER/UNUSED
 # Umask
 #
 # /etc/profile sets 022, removing write perms to group + others.
@@ -648,15 +654,15 @@ echo "bashrc done"
 # Some example functions:
 #
 # a) function settitle
-# settitle () 
-# { 
+# settitle ()
+# {
 #   echo -ne "\e]2;$@\a\e]1;$@\a";
 #   echo -ne '\e]0;Title\a'
 #   echo -ne "\e]0;PID=$$\a"
 # }
-# 
+#
 # b) function cd_func
-# This function defines a 'cd' replacement function capable of keeping, 
+# This function defines a 'cd' replacement function capable of keeping,
 # displaying and accessing history of visited directories, up to 10 entries.
 # To use it, uncomment it, source this file and try 'cd --'.
 # acd_func 1.0.5, 10-nov-2004
@@ -665,15 +671,15 @@ echo "bashrc done"
 # {
 #   local x2 the_new_dir adir index
 #   local -i cnt
-# 
+#
 #   if [[ $1 ==  "--" ]]; then
 #     dirs -v
 #     return 0
 #   fi
-# 
+#
 #   the_new_dir=$1
 #   [[ -z $1 ]] && the_new_dir=$HOME
-# 
+#
 #   if [[ ${the_new_dir:0:1} == '-' ]]; then
 #     #
 #     # Extract dir N from dirs
@@ -683,21 +689,21 @@ echo "bashrc done"
 #     [[ -z $adir ]] && return 1
 #     the_new_dir=$adir
 #   fi
-# 
+#
 #   #
 #   # '~' has to be substituted by ${HOME}
 #   [[ ${the_new_dir:0:1} == '~' ]] && the_new_dir="${HOME}${the_new_dir:1}"
-# 
+#
 #   #
 #   # Now change to the new dir and add to the top of the stack
 #   pushd "${the_new_dir}" > /dev/null
 #   [[ $? -ne 0 ]] && return 1
 #   the_new_dir=$(pwd)
-# 
+#
 #   #
 #   # Trim down everything beyond 11th entry
 #   popd -n +11 2>/dev/null 1>/dev/null
-# 
+#
 #   #
 #   # Remove any other occurence of this dir, skipping the top of the stack
 #   for ((cnt=1; cnt <= 10; cnt++)); do
@@ -709,10 +715,10 @@ echo "bashrc done"
 #       cnt=cnt-1
 #     fi
 #   done
-# 
+#
 #   return 0
 # }
-# 
+#
 # Alias cd=cd_func
 
 # ############################################################################### PROMPT MANGLING
