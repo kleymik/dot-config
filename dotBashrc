@@ -6,6 +6,27 @@ function hgg() { grep "@" ~/MyDocs/history/*; }
 alias sb='source ~/.bashrc'
 
 
+# HISTORY ----------------------------------------------------------------- history
+export HISTFILE=~/history/bash/history.$$.$(date +%Y%m%d_%H%M)
+alias h='history 30'
+alias hf='history 300'
+alias hs='history | tee ~/history/bash/history_`date +%Y%m%d_%H%M` | tail -30'
+# label history log file with a name
+function hl()    { history | tee ~/history/bash/history_`date +%Y%m%d_%H%M`_$1 | tail -30;  }
+function hg()    { history | grep "$@" | cut -b 8- | sort | uniq; }
+function hhg()   { grep "$@" ~/history/bash/hist`date +%Y%m*`; }
+function hhhg()  { grep "$@" ~/history/bash/hist*            ; }
+function hhhg () { grep "$@" ~/history/bash/history*         ; }
+# log terminal activity
+function termLog () { script ~/history/termLogs/termLog_"$@"_`date +%Y%m%d_%H%M`; }
+
+# KILL -------------------------------------------------------------------- kill
+alias kill_hup='kill -1'
+alias kill_int='kill -2'
+alias kill_term='kill -15'
+alias kill_hard='kill -9'
+alias jobs='jobs -l'
+
 # GIT --------------------------------------------------------------------- git
 # include git completions
 # . ~/.git-completion.bash
@@ -28,7 +49,100 @@ echo "----- git commands"
 
 alias gitsb='git show-branch'
 
+# make a branch foo   = git checkout -b foo
+# git checkout master = switch back to master
+# git diff : git log -p is the only way to get the last commited diff to a given file
+# git delete branch -d <thebranch> or -D to force
+alias gita='git add'
+alias gitb='git branch -av'
+alias gitbd='git branch --edit-description'
+alias gitbm='git branch --merged'
+alias gitbnm='git branch --no-merged'
+alias gitbc='git checkout -b '
+alias gitdd='git diff -w'
+alias gitdi='git diff -w --cached'
+alias gitd='git diff -w --compact-summary'
+alias gitsb='git show-branch'
+alias gitc='git commit'
+alias gitg='git grep'
+alias gitca='git commit -a '
+alias gitc='git checkout'
+alias gitcl='git clone'
+alias gitf='git fetch'
+alias gith='git help'
+alias gitmv='git mv'
+alias gitpl='git pull'
+alias gitps='git push'
+alias gitr='git reset -p'
+alias gitrm='git rm'
+#alias gits='echo $(git rev-parse --abbrev-ref HEAD); git config branch.$(git rev-parse --abbrev-ref HEAD).description;  git status; git stash list'
+alias gitcln='git clone'
+alias gitreps='git remote -v'
+alias gitcln='git clone'
+alias gitreps='git remote -v'
+alias gitl="git    log -n 60  --pretty=oneline --abbrev-commit  --no-merges --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(bold yellow)%d%C(reset)'"
+alias gitll="git   log -n 160 --pretty=oneline --abbrev-commit  --no-merges --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(bold yellow)%d%C(reset)'"
+alias gitlm="git   log -n 60  --pretty=oneline --abbrev-commit              --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(bold yellow)%d%C(reset)'"
+alias gitl2="git   log -n 20  --pretty=short   --abbrev-commit "
+alias gitl3="git   log -n 20  --pretty=medium  --abbrev-commit "
+alias gitlg="git   log -n 30  --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(bold yellow)%d%C(reset)' --no-merges --all"
+alias gitlgm="git  log -n 30  --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(bold yellow)%d%C(reset)' --all"
+alias gitlgg="git  log -n 150 --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold cyan)%ai%C(reset) %C(bold yellow)%d%C(reset)  %C(white)%s%C(reset) %C(dim white)- %an%C(reset)' --all"
+alias gitlggt="git log -n 150 --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold cyan)%aD%C(reset) %C(bold green)(%ar)%C(reset)%C(bold yellow)%d%C(reset)%n''       %C(white)%s%C(reset) %C(dim white)- %an%C(reset)' --all"
+alias gitlf="git log -p --follow"
 
+function gits() { pwd;
+                    echo $(git rev-parse --abbrev-ref HEAD);
+                    git config branch.$(git rev-parse --abbrev-ref HEAD).description;
+                    git branch -v;
+                    git status -uno --ahead-behind;
+                    git log -n 10 --pretty=oneline --abbrev-commit  --no-merges --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(bold yellow)%d%C(reset)';
+                    echo '';
+                  }
+function gitsa() { pwd;
+                    echo $(git rev-parse --abbrev-ref HEAD);
+                    git config branch.$(git rev-parse --abbrev-ref HEAD).description;
+                    git branch -av;
+                    git status -uall --ahead-behind;
+                    git log -n 10 --pretty=oneline --abbrev-commit  --no-merges --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(bold yellow)%d%C(reset)';
+                    git stash list;
+                    echo '';
+                  }
+
+# ENVVAR ------------------------------------------------------------------ environment variables
+alias pe='printenv'
+function pg   () { printenv | grep "$@"; }
+# list out ":"-separated env var vertically, defaults to listing PATH
+function evp  () {
+    if [[ "$#" == "0" ]]; then
+      REF=PATH
+    else
+      REF=$1
+    fi
+    echo "XXX $REF XXX"
+    # evaluate $REF twice..
+    PATHTMP=$(echo ${!REF} | sed "s/ /_/g")
+    #echo "PATHTMP=$PATHTMP"
+    for p in $(echo $PATHTMP | sed "s/:/ /g") 
+    do  
+      echo $p; 
+    done
+}
+function evapp  () {
+    PATH=$PATH:$1
+    echo $PATH
+}
+function evprp  () {
+    PATH=$1:$PATH
+    echo $PATH
+}
+function evrm  () {
+    # use = instead of / to in sed replacement expr
+    PATH=$(echo $PATH | sed s=$1==)
+    echo $PATH
+}
+
+# ALIAS ------------------------------------------------------------------ alias
 function ag () { 
   declare -f | grep "$@"; 
   alias      | grep "$@";  
