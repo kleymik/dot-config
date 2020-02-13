@@ -40,23 +40,11 @@ alias jobs='jobs -l'
 # include git completions
 # . ~/.git-completion.bash
 
-function gitcfg () { 
-  # only needed once?
-  git config --global core.editor "emacs -nw -fg black -bg white1"
-  git config --global user.name "Mike Kleyn"
-  git config --global user.email michfkl@btinternet.com
-  git config --global color.status auto
-  git config --global color.branch auto
-  # git config --global core.excludesfile ~/.gitignore_global
-}
-
 # make a branch foo   = git checkout -b foo
 # git checkout master = switch back to master
 # git diff : git log -p is the only way to get the last commited diff to a given file
 # git delete branch -d <thebranch> or -D to force
 echo "----- git commands"
-
-alias gitsb='git show-branch'
 
 # make a branch foo   = git checkout -b foo
 # git checkout master = switch back to master
@@ -84,6 +72,7 @@ alias gitpl='git pull'
 alias gitps='git push'
 alias gitr='git reset -p'
 alias gitrm='git rm'
+alias gitsb='git show-branch'
 alias gitcln='git clone'
 alias gitreps='git remote -v'
 alias gitcln='git clone'
@@ -118,6 +107,19 @@ function gitsa() { echo $(git rev-parse --abbrev-ref HEAD);
                    echo '';
                  }
 
+function gitcfg () { 
+  # only needed once?
+  git config --global core.editor "emacs -nw -fg black -bg white1"
+  git config --global user.name "Mike Kleyn"
+  git config --global user.email michfkl@btinternet.com
+  git config --global color.status auto
+  git config --global color.branch auto
+  # git config --global core.excludesfile ~/.gitignore_global
+}
+# git config --global core.editor "emacs -nw -fg black  -bg white1"
+# git config --global color.status auto
+# git config --global color.branch auto
+# git config --global core.excludesfile ~/.gitignore_global
 
 # ------------------------------------------------------------------------------- pewma
 #alias pewma-branch='        /dls_sw/dasc/pewma.py -qp git rev-parse --symbolic-full-name --abbrev-ref HEAD'
@@ -265,6 +267,47 @@ bind '"\er": reverse-search-history'
 # module load X or unload X - load or unload a module in the shell, where X is the name of a module
 # module show X - show info on a module, where X is a loaded module (usefully shows the path to the module)
 
+# grep ---------------------------------------------------------------------------------------------------- find/grep
+alias gr=grep
+alias gi='grep -i'
+
+alias rg=~/ubin/fqry/rgrep.py
+
+function rgrep() { echo "1=$1"
+                   echo "2=$2"
+                   echo "3=$3"
+                   echo "grep --color=auto -r --include=$2 $3 $1;"
+                   # echo "grep -e --color=auto -r --include=$2 $3 $1;"  -e is differrent!!!!
+                   grep --color=auto -r --include="$2" "$3" "$1" ;
+		   }
+function rgrepi() { echo "1=$1"
+                   echo "2=$2"
+                   echo "3=$3"
+                   echo "grep --color=auto -r --include=$2 $3 $1;"
+                   # echo "grep -e --color=auto -r --include=$2 $3 $1;"  -e is differrent!!!!
+                   grep --color=auto -ir --include="$2" "$3" "$1" ;
+		   }
+
+# alias fd=find
+# find with exclusion
+function fe() { 
+     echo "Numargs=$# : $@"
+     if [[ "$#" == "0" ]]; then
+      echo "fe \$1=exludeDir \$2=searchPat"
+     else
+       # find . -type d -name $1 -prune -or -print -and -iname $2
+       find . -type d -name $1 -prune -or -iname $2
+     fi
+}
+function fd() { 
+     echo "Numargs=$# : $@"
+     if [[ "$#" != "2" ]]; then
+      echo "fe \$1=dir \$2=pat"
+     else
+       find $1 -iname $2
+       echo "status=$?"
+     fi
+}
 
 # ALIAS ------------------------------------------------------------------ alias
 function ag () { 
