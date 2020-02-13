@@ -7,44 +7,16 @@ echo "bashrc start"
 # If not running interactively, don't do anything
 # [[ "$-" != *i* ]] && return
 
-# ############################################################################### PROMPT MANGLING (see bottom)
+# ------------------------------------------------------------------------------ PROMPT MANGLING (see notes at bottom)
 PROMPT_DIRTRIM=20
 export PS1="\e[0;36m=[\h:\u:\$\$]=:\t:\w:\e[m\n>"
 export HISTTIMEFORMAT='%Y%m%d-%T: '
 
-# edit a given function in situ
-#function efn {
-#       echo       "function $1" > /tmp/edit_bash_fn
-#	declare -f $1            > /tmp/edit_bash_fn
-#	emacsnw                    /tmp/edit_bash_fn
-#	cat                        /tmp/edit_bash_fn
-#	source                     /tmp/edit_bash_fn
-#}
-#
-# Some example alias instructions
-# If these are enabled they will be used instead of any instructions
-# they may mask.  For example, alias rm='rm -i' will mask the rm
-# application.  To override the alias instruction use a \ before, ie
-# \rm will call the real rm not the alias.
-#
-# Interactive operation...
-# alias rm='rm -i'
-# alias cp='cp -i'
-# alias mv='mv -i'
-#
-# Default to human readable figures
-# alias df='df -h'
-# alias du='du -h'
-#
-# Misc :)
-# alias less='less -r'                          # raw control characters
-# alias lesss='less -S'                           # trim to screen
-# alias whence='type -a'                        # where, of a sort
-alias grep='grep --color=auto'                     # show differences in colour
+alias grep='grep --color=auto'                # show differences in colour
 alias egrep='egrep --color=auto'              # show differences in colour
 alias fgrep='fgrep --color=auto'              # show differences in colour
 
-# ALIAS ------------------------------------------------------------------ alias
+# ALIAS ------------------------------------------------------------------------ alias
 function ag () { 
   declare -f | grep "$@"; 
   alias      | grep "$@";  
@@ -55,11 +27,9 @@ function al () {
   alias ;  
 }
 
-
-alias myPath='echo $PATH'
-# ---------------------------------------------------------------------------------------------------- ls
+# ------------------------------------------------------------------------------- ls
 # Some shortcuts for different directory listings
-# or glbally export TIME_STYLE=long-iso
+# or globally export TIME_STYLE=long-iso
 #--time-style=long-iso
 # alias ls='ls -hF --color=tty'                 # classify files in colour
 # alias dir='ls --color=auto --format=vertical'
@@ -71,7 +41,7 @@ alias lal='ls -lF'
 alias ll='ls -lF --color=auto --time-style=long-iso'
 
 
-# HISTORY ---------------------------------------------------------------------------------------------------- history
+# HISTORY ---------------------------------------------------------------------- history
 export HISTFILE=~/history/bash/history.$$.$(date +%Y%m%d_%H%M)
 alias h='history 30'
 alias hh='history | tee ~/history/bash/hist`date +%Y%m%d_%H%M%S`'
@@ -83,7 +53,7 @@ function hhg  () { grep "$@" ~/history/bash/hist`date +%Y%m*`; }
 function hhhg () { grep "$@" ~/history/bash/hist*            ; }
 function hhhg () { grep "$@" ~/history/bash/history*         ; }
 
-# log terminal activity
+# log terminal activity - but messes up the use of this script
 function termLog () { script ~/history/termLogs/termLog_"$@"_`date +%Y%m%d_%H%M`; }
 
 # export PROMPT_COMMAND='history -a' # not just yet.. no loger use hl?
@@ -94,13 +64,13 @@ function termLog () { script ~/history/termLogs/termLog_"$@"_`date +%Y%m%d_%H%M`
 # alias hhg='grep $1 ~/history/bash/hist*`'
 # alias hhhg='grep $1 ~/history/bash/hist*`'
 
-# ---------------------------------------------------------------------------------------------------- kill
+# ------------------------------------------------------------------------------ kill
 alias kill_hup='kill -1'
 alias kill_int='kill -2'
 alias kill_term='kill -15'
 alias kill_hard='kill -9'
 alias jobs='jobs -l'
-# ---------------------------------------------------------------------------------------------------- misc
+# ------------------------------------------------------------------------------ misc
 #alias py-ws2345='python -m SimpleHTTPServer 2345 &' # python2
 alias py-ws2345='python -m http.server 2345'         # python3
 alias py-def-env='source ~kleyn/projects/pyvenvs/envB-py38-all/bin/activate'
@@ -110,16 +80,16 @@ alias jpps='/dls_sw/apps/java/x64/gda842/bin/jps'
 alias rd='rdesktop -a 32 -x 0x80 -g 1920x1080 DIAMRL5319 -r sound:remote'
 function see () { more `which "$@"`; }
 
-# ---------------------------------------------------------------------------------------------------- eclipse
-alias kepler='/dls_sw/apps/eclipse/eclipse432_linux64_20140725/eclipse'
-
-# ---------------------------------------------------------------------------------------------------- networky stuff
+# ------------------------------------------------------------------------------ networky stuff
 alias netsl='netstat -tlnp'
 alias lsofi='lsof -n -i'
 
-# ---------------------------------------------------------------------------------------------------- hdf5/nexus
+# ------------------------------------------------------------------------------ daimond/hdf5/nexus
 alias h5dumpHeaders='h5dump -H'
 alias h5dumpContents='h5dump -n'
+
+# ------------------------------------------------------------------------------ eclipse
+alias kepler='/dls_sw/apps/eclipse/eclipse432_linux64_20140725/eclipse'
 
 function rg_nxs () { # $1 = dir; remember to module load nexus
 # search nexus files
@@ -129,10 +99,16 @@ function rg_nxs () { # $1 = dir; remember to module load nexus
   done;
 }
 
+# ----------------------------- module
+# module avail - list of modules available and their respective directory path
+# module list - show a list of the modules currently available in the shell
+# module load X or unload X - load or unload a module in the shell, where X is the name of a module
+# module show X - show info on a module, where X is a loaded module (usefully shows the path to the module)
+
 #alias gdaFiltServerLog='rep -vF -f ~/ubin/gda_server_filter.txt'
 #alias gdaFiltClientLog='rep -vF -f ~/ubin/gda_client_filter.txt'
 
-# GIT ---------------------------------------------------------------------------------------------------- git
+# GIT -------------------------------------------------------------------------- git
 # include git completions
 # . ~/.git-completion.bash
 
@@ -141,10 +117,6 @@ function rg_nxs () { # $1 = dir; remember to module load nexus
 # git diff : git log -p is the only way to get the last commited diff to a given file
 # git delete branch -d <thebranch> or -D to force
 
-# make a branch foo   = git checkout -b foo
-# git checkout master = switch back to master
-# git diff : git log -p is the only way to get the last commited diff to a given file
-# git delete branch -d <thebranch> or -D to force
 alias gita='git add'
 alias gitb='git branch -av'
 alias gitbd='git branch --edit-description'
@@ -179,8 +151,8 @@ alias gitl2="git   log -n 20  --pretty=short   --abbrev-commit "
 alias gitl3="git   log -n 20  --pretty=medium  --abbrev-commit "
 alias gitlg="git   log -n 30  --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(bold yellow)%d%C(reset)' --no-merges --all"
 alias gitlgm="git  log -n 30  --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(bold yellow)%d%C(reset)' --all"
-alias gitlgg="git  log -n 150 --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold cyan)%ai%C(reset) %C(bold yellow)%d%C(reset)  %C(white)%s%C(reset) %C(dim white)- %an%C(reset)' --all"
-alias gitlggt="git log -n 150 --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold cyan)%aD%C(reset) %C(bold green)(%ar)%C(reset)%C(bold yellow)%d%C(reset)%n''       %C(white)%s%C(reset) %C(dim white)- %an%C(reset)' --all"
+alias gitlgg="git  log -n 150 --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold cyan)%ai%C(reset) %C(bold yellow)%d%C(reset)  %C(white)%s%C(reset) %C(dim white)- %an%C(reset)'  --all"
+alias gitlggt="git log -n 150 --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold cyan)%aD%C(reset) %C(bold green)(%ar)%C(reset)%C(bold yellow)%d%C(reset)%n''  %C(white)%s%C(reset) %C(dim white)- %an%C(reset)' --all"
 alias gitlf="git log -p --follow"
 
 #alias gits='echo $(git rev-parse --abbrev-ref HEAD); git config branch.$(git rev-parse --abbrev-ref HEAD).description;  git status; git stash list'
@@ -211,10 +183,6 @@ function gitcfg () {
   git config --global color.branch auto
   # git config --global core.excludesfile ~/.gitignore_global
 }
-# git config --global core.editor "emacs -nw -fg black  -bg white1"
-# git config --global color.status auto
-# git config --global color.branch auto
-# git config --global core.excludesfile ~/.gitignore_global
 
 # ------------------------------------------------------------------------------- pewma
 #alias pewma-branch='        /dls_sw/dasc/pewma.py -qp git rev-parse --symbolic-full-name --abbrev-ref HEAD'
@@ -230,7 +198,7 @@ function gitcfg () {
 #alias pewma-status='        /dls_sw/dasc/pewma.py -qp git status -s'
 #alias pewma='               /dls_sw/dasc/pewma.py'
 
-# ---------------------------------------------------------------------------------------------------- subversion
+# ------------------------------------------------------------------------------ subversion
 # alias svns='svn status -v'
 # alias svnc='svn commit'
 # alias svnls='svn list -v'
@@ -322,16 +290,18 @@ function evrm  () {
     echo $PATH
 }
 
+alias myPath='echo $PATH'
+
 # printing ---------------------------------------------------------------------------------------------------- printing
 # doesn't work as one-liner def
-#function enscPort   () { enscript                       -c            -T 3 -P dh.g.51.col.1  --font=Courier$@ }
-#function enscPortBw () { enscript                       -c            -T 3 -P dh.g.51.bw.1   --font=Courier$@ }
-#function enscLand   () { enscript                       -cr           -T 3 -P dh.g.51.col.1  --font=Courier$@ }
-#function enscLandBw () { enscript                       -cr           -T 3 -P dh.g.51.bw.1   --font=Courier$@ }
-#function enscpy     () { enscript --pretty-print=python -c  --color=1 -T 3 -P dh.g.51.col.1  --font=Courier$@ }
-#function enscpyBw   () { enscript --pretty-print=python -c  --color=1 -T 3 -P dh.g.51.bw.1   --font=Courier$@ }
-#function enscjav    () { enscript --pretty-print=java   -c  --color=1 -T 3 -P dh.g.51.col.1  --font=Courier$@ }
-#function enscjavBw  () { enscript --pretty-print=java   -c  --color=1 -T 3 -P dh.g.51.bw.1   --font=Courier$@ }
+# function enscPort   () { enscript                       -c            -T 3 -P dh.g.51.col.1  --font=Courier$@ }
+# function enscPortBw () { enscript                       -c            -T 3 -P dh.g.51.bw.1   --font=Courier$@ }
+# function enscLand   () { enscript                       -cr           -T 3 -P dh.g.51.col.1  --font=Courier$@ }
+# function enscLandBw () { enscript                       -cr           -T 3 -P dh.g.51.bw.1   --font=Courier$@ }
+# function enscpy     () { enscript --pretty-print=python -c  --color=1 -T 3 -P dh.g.51.col.1  --font=Courier$@ }
+# function enscpyBw   () { enscript --pretty-print=python -c  --color=1 -T 3 -P dh.g.51.bw.1   --font=Courier$@ }
+# function enscjav    () { enscript --pretty-print=java   -c  --color=1 -T 3 -P dh.g.51.col.1  --font=Courier$@ }
+# function enscjavBw  () { enscript --pretty-print=java   -c  --color=1 -T 3 -P dh.g.51.bw.1   --font=Courier$@ }
 
 # -MA3  media
 #enscript --pretty-print=python gda.py --language=html --color=1 --output=gda.py.html 
@@ -356,44 +326,29 @@ bind '"\er": reverse-search-history'
 # bind '"\ed": kill-word'  <- this is the fix
 # bind -p | grep '\\e' | grep d  | grep -v lower | grep -v digit
 
-# ----------------------------- module
-# module avail - list of modules available and their respective directory path
-# module list - show a list of the modules currently available in the shell
-# module load X or unload X - load or unload a module in the shell, where X is the name of a module
-# module show X - show info on a module, where X is a loaded module (usefully shows the path to the module)
-
 # grep ---------------------------------------------------------------------------------------------------- find/grep
 alias gr=grep
 alias gi='grep -i'
 
 alias rg=~/ubin/fqry/rgrep.py
 
-function rgrep() { echo "1=$1"
-                   echo "2=$2"
-                   echo "3=$3"
-                   echo "grep --color=auto -r --include=$2 $3 $1;"
-                   # echo "grep -e --color=auto -r --include=$2 $3 $1;"  -e is differrent!!!!
-                   grep --color=auto -r --include="$2" "$3" "$1" ;
-		   }
+function rgrep()  { echo "1=$1"
+                    echo "2=$2"
+                    echo "3=$3"
+                    echo "grep --color=auto -r --include=$2 $3 $1;"
+                    # echo "grep -e --color=auto -r --include=$2 $3 $1;"  -e is differrent!!!!
+                    grep --color=auto -r --include="$2" "$3" "$1" ;
+		  }
 function rgrepi() { echo "1=$1"
-                   echo "2=$2"
-                   echo "3=$3"
-                   echo "grep --color=auto -r --include=$2 $3 $1;"
-                   # echo "grep -e --color=auto -r --include=$2 $3 $1;"  -e is differrent!!!!
-                   grep --color=auto -ir --include="$2" "$3" "$1" ;
-		   }
+                    echo "2=$2"
+                    echo "3=$3"
+                    echo "grep --color=auto -r --include=$2 $3 $1;"
+                    # echo "grep -e --color=auto -r --include=$2 $3 $1;"  -e is differrent!!!!
+                    grep --color=auto -ir --include="$2" "$3" "$1" ;
+		  }
 
 # alias fd=find
 # find with exclusion
-function fe() { 
-     echo "Numargs=$# : $@"
-     if [[ "$#" == "0" ]]; then
-      echo "fe \$1=exludeDir \$2=searchPat"
-     else
-       # find . -type d -name $1 -prune -or -print -and -iname $2
-       find . -type d -name $1 -prune -or -iname $2
-     fi
-}
 function fd() { 
      echo "Numargs=$# : $@"
      if [[ "$#" != "2" ]]; then
@@ -401,6 +356,16 @@ function fd() {
      else
        find $1 -iname $2
        echo "status=$?"
+     fi
+}
+
+function fe() { 
+     echo "Numargs=$# : $@"
+     if [[ "$#" == "0" ]]; then
+      echo "fe \$1=exludeDir \$2=searchPat"
+     else
+       # find . -type d -name $1 -prune -or -print -and -iname $2
+       find . -type d -name $1 -prune -or -iname $2
      fi
 }
 
@@ -412,7 +377,6 @@ function recent() {
    	   find $1 -mtime -1
      fi
 }
-
 
 function tstArgs() { 
      if [[ "$#" == "0" ]]; then
@@ -486,9 +450,9 @@ function rp(){
 
 
 
-# rem ---------------------------------------------------------------------------------------- rem
+# rem ---------------------------------------------------------------------------------------- remoting
 alias remGem='ssh -p 8022 192.168.1.93'
-alias remGemWired='ssh -p 8022 192.168.1.51'
+alias remGemWired='ssh -p 8022 192.168.1.161'
 alias remCos='ssh -p 8022 192.168.1.209'
 alias remNok='ssh -Y root@192.168.1.187'
 alias remTuringX='ssh -Y 192.168.1.243'
@@ -507,17 +471,46 @@ alias apt-all='aptitude search ~i'
 #export PATH=$PATH:ubin
 # termLog :( messes up this file
 echo ""
-echo "PATH------------------------------------------"
+echo "PATH-----------------------------------------------------------"
 echo $PATH
 echo ""
-echo "functions & aliases: al---------------------------------------"
+echo "functions & aliases: al ---------------------------------------"
 al
 pwd
 
 
 
-#---------------------------------------------------------------------------------------------- docs/notes
-# Umask
+#-------------------------------------------------------------------------------- docs/notes
+# edit a given function in situ
+#function efn {
+#       echo       "function $1" > /tmp/edit_bash_fn
+#	declare -f $1            > /tmp/edit_bash_fn
+#	emacsnw                    /tmp/edit_bash_fn
+#	cat                        /tmp/edit_bash_fn
+#	source                     /tmp/edit_bash_fn
+#}
+#
+# Some example alias instructions
+# If these are enabled they will be used instead of any instructions
+# they may mask.  For example, alias rm='rm -i' will mask the rm
+# application.  To override the alias instruction use a \ before, ie
+# \rm will call the real rm not the alias.
+#
+# Interactive operation...
+# alias rm='rm -i'
+# alias cp='cp -i'
+# alias mv='mv -i'
+#
+# Default to human readable figures
+# alias df='df -h'
+# alias du='du -h'
+#
+# Misc :)
+# alias less='less -r'                          # raw control characters
+# alias lesss='less -S'                           # trim to screen
+# alias whence='type -a'                        # where, of a sort
+
+# ------------------------------------------------------------------------------ Umask
 #
 # /etc/profile sets 022, removing write perms to group + others.
 # Set a more restrictive umask: i.e. no exec perms for others:
@@ -525,7 +518,7 @@ pwd
 # Paranoid: neither group nor others have any perms:
 # umask 077
 
-# Functions
+# ------------------------------------------------------------------------------ Functions
 #
 # Some people use a different file for functions
 # if [ -f "${HOME}/.bash_functions" ]; then
@@ -600,7 +593,7 @@ pwd
 # 
 # Alias cd=cd_func
 
-# ############################################################################### PROMPT MANGLING
+# ------------------------------------------------------------------------------ PROMPT MANGLING
 #PS1="\t:\w:"
 #export PS1="\e[0;31m[\u@\h \W]\$ \e[m "
 #export PS1="==\d\t:\w:\n>>"
