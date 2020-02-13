@@ -74,6 +74,7 @@ alias jobs='jobs -l'
 #alias py-ws2345='python -m SimpleHTTPServer 2345 &' # python2
 alias py-ws2345='python -m http.server 2345'         # python3
 alias py-def-env='source ~kleyn/projects/pyvenvs/envB-py38-all/bin/activate'
+alias py-jupyter='cd ~/history; jupyter notebook';
 alias showFuns='declare -F'
 alias gdaprocs='netstat -tlnp 2>/dev/null | grep java | sort -k 7'
 alias jpps='/dls_sw/apps/java/x64/gda842/bin/jps'
@@ -119,41 +120,39 @@ function rg_nxs () { # $1 = dir; remember to module load nexus
 
 alias gita='git add'
 alias gitb='git branch -av'
+alias gitbc='git checkout -b '
 alias gitbd='git branch --edit-description'
 alias gitbm='git branch --merged'
 alias gitbnm='git branch --no-merged'
-alias gitbc='git checkout -b '
+alias gitc='git checkout'
+alias gitc='git commit'
+alias gitca='git commit -a '
+alias gitcl='git clone'
+alias gitcln='git clone'
+alias gitcln='git clone'
+alias gitd='git diff -w --compact-summary'
 alias gitdd='git diff -w'
 alias gitdi='git diff -w --cached'
-alias gitd='git diff -w --compact-summary'
-alias gitsb='git show-branch'
-alias gitc='git commit'
-alias gitg='git grep'
-alias gitca='git commit -a '
-alias gitc='git checkout'
-alias gitcl='git clone'
 alias gitf='git fetch'
+alias gitg='git grep'
 alias gith='git help'
+alias gitl2="git   log -n 20  --pretty=short   --abbrev-commit "
+alias gitl3="git   log -n 20  --pretty=medium  --abbrev-commit "
+alias gitl="git    log -n 60  --pretty=oneline --abbrev-commit  --no-merges --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(bold yellow)%d%C(reset)'"
+alias gitlf="git log -p --follow"
+alias gitlg="git   log -n 30  --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(bold yellow)%d%C(reset)' --no-merges --all"
+alias gitlgg="git  log -n 150 --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold cyan)%ai%C(reset) %C(bold yellow)%d%C(reset)  %C(white)%s%C(reset) %C(dim white)- %an%C(reset)'  --all"
+alias gitlggt="git log -n 150 --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold cyan)%aD%C(reset) %C(bold green)(%ar)%C(reset)%C(bold yellow)%d%C(reset)%n''  %C(white)%s%C(reset) %C(dim white)- %an%C(reset)' --all"
+alias gitlgm="git  log -n 30  --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(bold yellow)%d%C(reset)' --all"
+alias gitll="git   log -n 160 --pretty=oneline --abbrev-commit  --no-merges --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(bold yellow)%d%C(reset)'"
+alias gitlm="git   log -n 60  --pretty=oneline --abbrev-commit              --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(bold yellow)%d%C(reset)'"
 alias gitmv='git mv'
 alias gitpl='git pull'
 alias gitps='git push'
 alias gitr='git reset -p'
+alias gitreps='git remote -v'
 alias gitrm='git rm'
 alias gitsb='git show-branch'
-alias gitcln='git clone'
-alias gitreps='git remote -v'
-alias gitcln='git clone'
-alias gitreps='git remote -v'
-alias gitl="git    log -n 60  --pretty=oneline --abbrev-commit  --no-merges --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(bold yellow)%d%C(reset)'"
-alias gitll="git   log -n 160 --pretty=oneline --abbrev-commit  --no-merges --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(bold yellow)%d%C(reset)'"
-alias gitlm="git   log -n 60  --pretty=oneline --abbrev-commit              --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(bold yellow)%d%C(reset)'"
-alias gitl2="git   log -n 20  --pretty=short   --abbrev-commit "
-alias gitl3="git   log -n 20  --pretty=medium  --abbrev-commit "
-alias gitlg="git   log -n 30  --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(bold yellow)%d%C(reset)' --no-merges --all"
-alias gitlgm="git  log -n 30  --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(bold yellow)%d%C(reset)' --all"
-alias gitlgg="git  log -n 150 --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold cyan)%ai%C(reset) %C(bold yellow)%d%C(reset)  %C(white)%s%C(reset) %C(dim white)- %an%C(reset)'  --all"
-alias gitlggt="git log -n 150 --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold cyan)%aD%C(reset) %C(bold green)(%ar)%C(reset)%C(bold yellow)%d%C(reset)%n''  %C(white)%s%C(reset) %C(dim white)- %an%C(reset)' --all"
-alias gitlf="git log -p --follow"
 
 #alias gits='echo $(git rev-parse --abbrev-ref HEAD); git config branch.$(git rev-parse --abbrev-ref HEAD).description;  git status; git stash list'
 function gits()  { pwd;
