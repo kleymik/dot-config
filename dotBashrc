@@ -1,9 +1,65 @@
 echo "bashrc start"
 #alias foo='echo hello'
-function hs()  { history | tee -a ~/MyDocs/history/hist_`date +%Y%m%d`; }
-function hg()  { cat ~/MyDocs/history/* | cut -b 7- | uniq | grep \$*;  }
-function hgg() { grep "@" ~/MyDocs/history/*; }
 alias sb='source ~/.bashrc'
+
+
+# ALIAS ------------------------------------------------------------------ alias
+function ag () { 
+  declare -f | grep "$@"; 
+  alias      | grep "$@";  
+}
+
+function al () { 
+  declare -f | grep "()"; 
+  alias ;  
+}
+
+# edit a given function in situ
+#function efn {
+#       echo       "function $1" > /tmp/edit_bash_fn
+#	declare -f $1            > /tmp/edit_bash_fn
+#	emacsnw                    /tmp/edit_bash_fn
+#	cat                        /tmp/edit_bash_fn
+#	source                     /tmp/edit_bash_fn
+#}
+#
+# Some example alias instructions
+# If these are enabled they will be used instead of any instructions
+# they may mask.  For example, alias rm='rm -i' will mask the rm
+# application.  To override the alias instruction use a \ before, ie
+# \rm will call the real rm not the alias.
+#
+# Interactive operation...
+# alias rm='rm -i'
+# alias cp='cp -i'
+# alias mv='mv -i'
+#
+# Default to human readable figures
+# alias df='df -h'
+# alias du='du -h'
+#
+# Misc :)
+# alias less='less -r'                          # raw control characters
+alias lesss='less -S'                           # trim to screen
+# alias whence='type -a'                        # where, of a sort
+# alias grep='grep --color'                     # show differences in colour
+# alias egrep='egrep --color=auto'              # show differences in colour
+# alias fgrep='fgrep --color=auto'              # show differences in colour
+#
+
+alias myPath='echo $PATH'
+# ---------------------------------------------------------------------------------------------------- ls
+# Some shortcuts for different directory listings
+# or glbally export TIME_STYLE=long-iso
+#--time-style=long-iso
+# alias ls='ls -hF --color=tty'                 # classify files in colour
+# alias dir='ls --color=auto --format=vertical'
+# alias vdir='ls --color=auto --format=long'
+# alias la='ls -A'                            # all but . and ..
+alias l='ls -CF'                              #
+alias la='ls -al --color=auto --time-style=long-iso'
+alias lal='ls -lF'
+alias ll='ls -lF --color=auto --time-style=long-iso'
 
 
 # HISTORY ---------------------------------------------------------------------------------------------------- history
@@ -36,7 +92,7 @@ alias kill_term='kill -15'
 alias kill_hard='kill -9'
 alias jobs='jobs -l'
 
-# GIT --------------------------------------------------------------------- git
+# GIT ---------------------------------------------------------------------------------------------------- git
 # include git completions
 # . ~/.git-completion.bash
 
@@ -307,18 +363,6 @@ function fd() {
        echo "status=$?"
      fi
 }
-
-# ALIAS ------------------------------------------------------------------ alias
-function ag () { 
-  declare -f | grep "$@"; 
-  alias      | grep "$@";  
-}
-
-function al () { 
-  declare -f | grep "()"; 
-  alias ;  
-}
-
 
 # --------------------------------------------------------------------------------- xterm colored
 alias xtm='xterm   -sl 2000 &'
