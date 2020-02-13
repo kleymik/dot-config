@@ -44,7 +44,6 @@ alias jobs='jobs -l'
 # git checkout master = switch back to master
 # git diff : git log -p is the only way to get the last commited diff to a given file
 # git delete branch -d <thebranch> or -D to force
-echo "----- git commands"
 
 # make a branch foo   = git checkout -b foo
 # git checkout master = switch back to master
@@ -320,6 +319,92 @@ function al () {
   alias ;  
 }
 
-alias
-echo "bashrc done"
 
+# --------------------------------------------------------------------------------- xterm colored
+alias xtm='xterm   -sl 2000 &'
+alias xtmr='xterm  -sl 20000 -bg darkred   -fg white  -cr lightblue     &'
+alias xtmg='xterm  -sl 20000 -bg darkgreen -fg yellow -cr lightblue     &'
+alias xtmb='xterm  -sl 20000 -bg darkblue  -fg white  -cr lightblue     &'
+alias xtmbl='xterm -sl 20000 -bg lightblue -fg black  -cr red           &'
+alias xtmy='xterm  -sl 20000 -bg darkgrey  -fg white  -cr lightblue     &'
+alias xtmo='xterm  -sl 20000 -bg orange4   -fg white  -cr lightgreen    &'
+alias xtmv='xterm  -sl 20000 -bg palevioletred -fg black -cr lightgreen &'
+
+# ---------------------------------------------------------------------------------- window title
+# function my_set_screen_title() {
+#   echo -ne "\ekHELLO$1\e\\"
+#   PROMPT_COMMAND='echo -ne "\033]0;"myWindowTitle"\007"'
+#   currWindow=`xprop -root | grep "_NET_ACTIVE_WINDOW(WINDOW)" | awk '{ print $5}'`
+#   xdotool set_window --name hello $currWindow
+# }
+
+# function swtt(){
+#  currWCmd="xprop -root \| grep _NET_ACTIVE_WINDOW\(WINDOW\) \| awk '{print $5}'"
+#  currWindow=`$currWindowCmd`
+#  echo "Curr Window is $currWindow"
+#  xdotool set_window --name "$$:$1" `$currWindow
+# }
+
+# function swtt(){
+#  curWS=`xprop -root \| grep _NET_ACTIVE_WINDOW\(WINDOW\)`
+#  curW= awk '{print $5}'
+#  currWindow=`$currWindowCmd`
+#  echo "Curr Window is $currWindow"
+#  xdotool set_window --name "$$:$1" `$currWindow
+# }
+
+# manipulate symlink
+function rp(){
+    echo "repoint existing link arg1 -> arg2"
+    if [[ "$#" == "2" ]]; then
+	if [[ -h $1 ]]; then
+  	    # echo "rm $1"
+	    rm -v $1
+	    # echo "ln -s $2 $1"
+	    ln -vs $2 $1
+	else
+	    echo "file $1 is not a symlink"
+	fi
+    else
+	echo "Argnum=$# Args: $@"
+    fi
+}
+
+# ------------------------------------------------------------------------------------------ misc/old
+# x windows mutiwindow
+# alias sxw='startxwin'
+
+#alias pyana='setenv PATH $PATH
+#$ echo $PATH
+# drive/c/Program Files/TortoiseSVN/bin:/cygdrive/c/Users/kleyn/myDocs/Apps/Anaconda:/cygdrive/c/Users/kleyn/myDocs/Apps/Anaconda/Scripts:/cygdrive/C/Users/kleyn/myDocs/ubin
+
+# powershell
+#alias pws='powershell.exe - < '
+
+
+
+# rem ---------------------------------------------------------------------------------------- rem
+alias remGem='ssh -p 8022 192.168.1.93'
+alias remGemWired='ssh -p 8022 192.168.1.51'
+alias remCos='ssh -p 8022 192.168.1.209'
+alias remNok='ssh -Y root@192.168.1.187'
+alias remTuringX='ssh -Y 192.168.1.243'
+alias remTuringS='screen /dev/ttyS0 38400'
+#alias remkleyqs501='ssh kleymik@kleyqs501.easyvserver.com'
+alias remKleyqs501='ssh kleyn@62.233.104.49'
+alias linux1xcxX='ssh -X sshtst@192.168.0.10'
+
+alias diamond='ssh uri03204@nx-staff.diamond.ac.uk'
+alias diamondNx='ssh -f -N -L 9876:ws141.diamond.ac.uk:4000 uri03204@nx-staff.diamond.ac.uk' 
+alias diamondFoo='Use localhost:4000 to connect directly'
+
+alias apt-all='aptitude search ~i'
+
+# greeting ------------------------------------------------------------------------------------ greeting
+termLog
+#export PATH=$PATH:ubin
+echo "PATH------------------------------------------"
+echo $PATH
+echo "functions & aliases: al---------------------------------------"
+al
+pwd
