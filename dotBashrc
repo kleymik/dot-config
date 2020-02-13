@@ -1,7 +1,16 @@
+# MFK bash initialisation
+# 20140415_14:13:25 diamond account 
+# TBD make idempotent!
 echo "bashrc start"
-#alias foo='echo hello'
-alias sb='source ~/.bashrc'
+# add this alias to .bashrc: alias sb='source ~/dot/dotBashrc'
 
+# If not running interactively, don't do anything
+# [[ "$-" != *i* ]] && return
+
+# ############################################################################### PROMPT MANGLING (see bottom)
+PROMPT_DIRTRIM=20
+export PS1="\e[0;36m=[\h:\u:\$\$]=:\t:\w:\e[m\n>"
+export HISTTIMEFORMAT='%Y%m%d-%T: '
 
 # ALIAS ------------------------------------------------------------------ alias
 function ag () { 
@@ -91,6 +100,37 @@ alias kill_int='kill -2'
 alias kill_term='kill -15'
 alias kill_hard='kill -9'
 alias jobs='jobs -l'
+# ---------------------------------------------------------------------------------------------------- misc
+#alias py-ws2345='python -m SimpleHTTPServer 2345 &' # python2
+alias py-ws2345='python -m http.server 2345'         # python3
+alias py-def-env='source ~kleyn/projects/pyvenvs/envB-py38-all/bin/activate'
+alias showFuns='declare -F'
+alias gdaprocs='netstat -tlnp 2>/dev/null | grep java | sort -k 7'
+alias jpps='/dls_sw/apps/java/x64/gda842/bin/jps'
+alias rd='rdesktop -a 32 -x 0x80 -g 1920x1080 DIAMRL5319 -r sound:remote'
+function see () { more `which "$@"`; }
+
+# ---------------------------------------------------------------------------------------------------- eclipse
+alias kepler='/dls_sw/apps/eclipse/eclipse432_linux64_20140725/eclipse'
+
+# ---------------------------------------------------------------------------------------------------- networky stuff
+alias netsl='netstat -tlnp'
+alias lsofi='lsof -n -i'
+
+# ---------------------------------------------------------------------------------------------------- hdf5/nexus
+alias h5dumpHeaders='h5dump -H'
+alias h5dumpContents='h5dump -n'
+
+function rg_nxs () { # $1 = dir; remember to module load nexus
+# search nexus files
+  for f in $(find $1 -name '*.nxs'); 
+  do echo "----------------------- $f"; 
+   nxtraverse -f $f -r -n 50; 
+  done;
+}
+
+#alias gdaFiltServerLog='rep -vF -f ~/ubin/gda_server_filter.txt'
+#alias gdaFiltClientLog='rep -vF -f ~/ubin/gda_client_filter.txt'
 
 # GIT ---------------------------------------------------------------------------------------------------- git
 # include git completions
@@ -364,6 +404,25 @@ function fd() {
      fi
 }
 
+function recent() { 
+     echo "Numargs=$# : $@"
+     if [[ "$#" != "1" ]]; then
+      echo "recent \$1=dir"
+     else
+   	   find $1 -mtime -1
+     fi
+}
+
+
+function tstArgs() { 
+     if [[ "$#" == "0" ]]; then
+      echo "No Args"
+     else
+      echo "Argnum=$# Args: $@"
+     fi
+}
+
+
 # --------------------------------------------------------------------------------- xterm colored
 alias xtm='xterm   -sl 2000 &'
 alias xtmr='xterm  -sl 20000 -bg darkred   -fg white  -cr lightblue     &'
@@ -452,3 +511,156 @@ echo $PATH
 echo "functions & aliases: al---------------------------------------"
 al
 pwd
+
+# Umask
+#
+# /etc/profile sets 022, removing write perms to group + others.
+# Set a more restrictive umask: i.e. no exec perms for others:
+# umask 027
+# Paranoid: neither group nor others have any perms:
+# umask 077
+
+# Functions
+#
+# Some people use a different file for functions
+# if [ -f "${HOME}/.bash_functions" ]; then
+#   source "${HOME}/.bash_functions"
+# fi
+#
+# Some example functions:
+#
+# a) function settitle
+# settitle () 
+# { 
+#   echo -ne "\e]2;$@\a\e]1;$@\a"; 
+# }
+# 
+# b) function cd_func
+# This function defines a 'cd' replacement function capable of keeping, 
+# displaying and accessing history of visited directories, up to 10 entries.
+# To use it, uncomment it, source this file and try 'cd --'.
+# acd_func 1.0.5, 10-nov-2004
+# Petar Marinov, http:/geocities.com/h2428, this is public domain
+# cd_func ()
+# {
+#   local x2 the_new_dir adir index
+#   local -i cnt
+# 
+#   if [[ $1 ==  "--" ]]; then
+#     dirs -v
+#     return 0
+#   fi
+# 
+#   the_new_dir=$1
+#   [[ -z $1 ]] && the_new_dir=$HOME
+# 
+#   if [[ ${the_new_dir:0:1} == '-' ]]; then
+#     #
+#     # Extract dir N from dirs
+#     index=${the_new_dir:1}
+#     [[ -z $index ]] && index=1
+#     adir=$(dirs +$index)
+#     [[ -z $adir ]] && return 1
+#     the_new_dir=$adir
+#   fi
+# 
+#   #
+#   # '~' has to be substituted by ${HOME}
+#   [[ ${the_new_dir:0:1} == '~' ]] && the_new_dir="${HOME}${the_new_dir:1}"
+# 
+#   #
+#   # Now change to the new dir and add to the top of the stack
+#   pushd "${the_new_dir}" > /dev/null
+#   [[ $? -ne 0 ]] && return 1
+#   the_new_dir=$(pwd)
+# 
+#   #
+#   # Trim down everything beyond 11th entry
+#   popd -n +11 2>/dev/null 1>/dev/null
+# 
+#   #
+#   # Remove any other occurence of this dir, skipping the top of the stack
+#   for ((cnt=1; cnt <= 10; cnt++)); do
+#     x2=$(dirs +${cnt} 2>/dev/null)
+#     [[ $? -ne 0 ]] && return 0
+#     [[ ${x2:0:1} == '~' ]] && x2="${HOME}${x2:1}"
+#     if [[ "${x2}" == "${the_new_dir}" ]]; then
+#       popd -n +$cnt 2>/dev/null 1>/dev/null
+#       cnt=cnt-1
+#     fi
+#   done
+# 
+#   return 0
+# }
+# 
+# Alias cd=cd_func
+
+# ############################################################################### PROMPT MANGLING
+#PS1="\t:\w:"
+#export PS1="\e[0;31m[\u@\h \W]\$ \e[m "
+#export PS1="==\d\t:\w:\n>>"
+# insert env var [\$FOO]
+#use \! for numbering
+#PROMPT_DIRTRIM=4  # number of trailing directory components
+#export PS1="\e[0;36m==:\t:\w:>\e[m"
+#export PS1="\e[0;36m==:\t:\w:\e[m\n>"
+#CONDA_DEFAULT_ENV
+# colour
+# Color	Code
+# Black	0;30
+# Blue	0;34
+# Green	0;32
+# Cyan	0;36
+# Red	0;31
+# Purple	0;35
+# Brown	0;33
+# Blue	0;34
+# Green	0;32
+# Cyan	0;36
+# Red	0;31
+# Purple	0;35
+# Brown	0;33
+# Note: You need to replace digit 0 with 1 to get light color version.
+#
+#       When  executing  interactively,  bash displays the primary
+#       prompt PS1 when it is ready to read  a  command,  and  the
+#       secondary  prompt PS2 when it needs more input to complete
+#       a command.  Bash allows these prompt strings  to  be  cus­
+#       tomized by inserting a number of backslash-escaped special
+#       characters that are decoded as follows:
+#              \a     an ASCII bell character (07)
+#              \d     the date  in  "Weekday  Month  Date"  format
+#                     (e.g., "Tue May 26")
+#              \e     an ASCII escape character (033)
+#              \h     the hostname up to the first `.'
+#              \H     the hostname
+#              \j     the  number of jobs currently managed by the
+#                     shell
+#              \l     the basename of the shell's terminal  device
+#                     name
+#              \n     newline
+#              \r     carriage return
+#              \s     the  name  of  the shell, the basename of $0
+#                     (the portion following the final slash)
+#              \t     the current time in 24-hour HH:MM:SS format
+#              \T     the current time in 12-hour HH:MM:SS format
+#              \@     the current time in 12-hour am/pm format
+#              \u     the username of the current user
+#              \v     the version of bash (e.g., 2.00)
+#              \V     the release of bash,  version  +  patchlevel
+#                     (e.g., 2.00.0)
+#              \w     the current working directory
+#              \W     the  basename  of the current working direc­
+#                     tory
+#              \!     the history number of this command
+#              \#     the command number of this command
+#              \$     if the effective UID is 0, a #, otherwise  a
+#                     $
+#              \nnn   the  character  corresponding  to  the octal
+#                     number nnn
+#              \\     a backslash
+#              \[     begin a sequence of non-printing characters,
+#                     which could be used to embed a terminal con­
+#                     trol sequence into the prompt
+#              \]     end a sequence of non-printing characters
+#
