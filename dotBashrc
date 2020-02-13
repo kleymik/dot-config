@@ -75,7 +75,6 @@ alias gitpl='git pull'
 alias gitps='git push'
 alias gitr='git reset -p'
 alias gitrm='git rm'
-#alias gits='echo $(git rev-parse --abbrev-ref HEAD); git config branch.$(git rev-parse --abbrev-ref HEAD).description;  git status; git stash list'
 alias gitcln='git clone'
 alias gitreps='git remote -v'
 alias gitcln='git clone'
@@ -91,23 +90,48 @@ alias gitlgg="git  log -n 150 --graph --abbrev-commit --decorate --format=format
 alias gitlggt="git log -n 150 --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold cyan)%aD%C(reset) %C(bold green)(%ar)%C(reset)%C(bold yellow)%d%C(reset)%n''       %C(white)%s%C(reset) %C(dim white)- %an%C(reset)' --all"
 alias gitlf="git log -p --follow"
 
-function gits() { pwd;
-                    echo $(git rev-parse --abbrev-ref HEAD);
-                    git config branch.$(git rev-parse --abbrev-ref HEAD).description;
-                    git branch -v;
-                    git status -uno --ahead-behind;
-                    git log -n 10 --pretty=oneline --abbrev-commit  --no-merges --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(bold yellow)%d%C(reset)';
-                    echo '';
-                  }
-function gitsa() { pwd;
-                    echo $(git rev-parse --abbrev-ref HEAD);
-                    git config branch.$(git rev-parse --abbrev-ref HEAD).description;
-                    git branch -av;
-                    git status -uall --ahead-behind;
-                    git log -n 10 --pretty=oneline --abbrev-commit  --no-merges --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(bold yellow)%d%C(reset)';
-                    git stash list;
-                    echo '';
-                  }
+#alias gits='echo $(git rev-parse --abbrev-ref HEAD); git config branch.$(git rev-parse --abbrev-ref HEAD).description;  git status; git stash list'
+function gits()  { pwd;
+                   echo $(git rev-parse --abbrev-ref HEAD);
+                   git config branch.$(git rev-parse --abbrev-ref HEAD).description;
+                   git branch -v;
+                   git status -uno --ahead-behind;
+                   git log -n 10 --pretty=oneline --abbrev-commit  --no-merges --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(bold yellow)%d%C(reset)';
+                   echo '';
+                 }
+function gitsa() { echo $(git rev-parse --abbrev-ref HEAD);
+                   pwd;
+                   git config branch.$(git rev-parse --abbrev-ref HEAD).description;
+                   git branch -av;
+                   git status -uall --ahead-behind;
+                   git log -n 10 --pretty=oneline --abbrev-commit  --no-merges --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(bold yellow)%d%C(reset)';
+                   git stash list;
+                   echo '';
+                 }
+
+
+# ------------------------------------------------------------------------------- pewma
+#alias pewma-branch='        /dls_sw/dasc/pewma.py -qp git rev-parse --symbolic-full-name --abbrev-ref HEAD'
+#alias pewma-branch-status=' /dls_sw/dasc/pewma.py -qp git branch-status'
+#alias pewma-describe='      /dls_sw/dasc/pewma.py -qp git update-index --refresh ; /dls_sw/dasc/pewma.py -qp git describe'
+#alias pewma-describe-dirty='/dls_sw/dasc/pewma.py -qp git describe-dirty'
+#alias pewma-fetch='         /dls_sw/dasc/pewma.py -qp git fetch'
+#alias pewma-fetch-all='     /dls_sw/dasc/pewma.py -qp git fetch --all'
+#alias pewma-incoming='      /dls_sw/dasc/pewma.py -qp git fetch --dry-run'
+#alias pewma-incoming-all='  /dls_sw/dasc/pewma.py -qp git fetch --dry-run --all'
+#alias pewma-pull='          /dls_sw/dasc/pewma.py -qp git pull'
+#alias pewma-pull-all='      /dls_sw/dasc/pewma.py -qp git pull --all'
+#alias pewma-status='        /dls_sw/dasc/pewma.py -qp git status -s'
+#alias pewma='               /dls_sw/dasc/pewma.py'
+
+# ---------------------------------------------------------------------------------------------------- subversion
+# alias svns='svn status -v'
+# alias svnc='svn commit'
+# alias svnls='svn list -v'
+# alias svnlg='svn log  | less'
+# alias svnu='svn update'
+# alias svna='svn add'
+# alias svng='alias | grep svn'
 
 # ENVVAR ------------------------------------------------------------------ environment variables
 alias pe='printenv'
