@@ -133,7 +133,57 @@ function gitsa() { echo $(git rev-parse --abbrev-ref HEAD);
 # alias svna='svn add'
 # alias svng='alias | grep svn'
 
-# ENVVAR ------------------------------------------------------------------ environment variables
+# ------------------------------------------------------------------------------- apps
+alias tbird='(export LC_TIME=en_DK.UTF-8; /usr/lib/thunderbird/thunderbird )'
+alias ff='firefox  -P default -new-instance 2> /dev/null &'
+alias ffn='firefox -P news    -new-instance 2> /dev/null &'
+# -------------------------------------------------------------- emacs
+alias emnw='emacs -nw -fg black  -bg white1'
+alias ew='emacsclient -n'
+#function emd () { emacsclient -n --eval "(ediff-files \"$1\" \"$2\")" }
+export EDITOR='emacsnw'
+
+#-------------------------------------------------------------------------------- cd stuff
+function cv   () { builtin cd "$@"; ls --color=auto --format=vertical --time-style=long-iso -lr; }
+alias cu='cv ..'
+alias cw='cut -b -$COLUMNS'
+
+# ------------------------------------------------------------------------------- process stuff
+# ps -ejH
+# pstree
+# alias ptree='ps -ef --forest'
+
+# get parent and grandparent of process
+function pspar() { 
+    if [[ "$#" == "0" ]]; then
+      myPid=$$
+    else
+      myPid=$1
+    fi
+    parPid=`ps -ef | awk '$2 ~ /\<'$myPid'\>/ { print $3; }'`
+    echo "PARPID=$parPid"
+    gparPid=`ps -ef | awk '$2 ~ /\<'${parPid}'\>/ { print $3; }'`
+    echo "GPARPID=$gparPid"
+    ggparPid=`ps -ef | awk '$2 ~ /\<'${gparPid}'\>/ { print $3; }'`
+    echo "GGPARPID=$ggparPid"
+    if [[ "$ggparPid" == "0" ]]; then
+       pstree $gparPid
+    else
+       pstree $ggparPid
+    fi
+
+}
+# grep for process 
+function psg () { ps -elf  | grep "$@"; }
+
+function psprint(){
+   echo "Process id = $1"
+   cat /proc/$1/cmdline | sed -e 's/\x0/\n\t/g'
+   echo "\n-------open files:"
+   lsof -p $1 | egrep -v '\.jar|\.so'
+}
+
+# ENV ----------------------------------------------------------------------------- env
 alias pe='printenv'
 function pg   () { printenv | grep "$@"; }
 # list out ":"-separated env var vertically, defaults to listing PATH
