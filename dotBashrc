@@ -9,18 +9,29 @@ alias sb='source ~/.bashrc'
 # HISTORY ----------------------------------------------------------------- history
 export HISTFILE=~/history/bash/history.$$.$(date +%Y%m%d_%H%M)
 alias h='history 30'
+alias hh='history | tee /home/kleyn/history/bash/hist`date +%Y%m%d_%H%M%S`'
 alias hf='history 300'
 alias hs='history | tee ~/history/bash/history_`date +%Y%m%d_%H%M` | tail -30'
-# label history log file with a name
-function hl()    { history | tee ~/history/bash/history_`date +%Y%m%d_%H%M`_$1 | tail -30;  }
-function hg()    { history | grep "$@" | cut -b 8- | sort | uniq; }
-function hhg()   { grep "$@" ~/history/bash/hist`date +%Y%m*`; }
-function hhhg()  { grep "$@" ~/history/bash/hist*            ; }
-function hhhg () { grep "$@" ~/history/bash/history*         ; }
+function hl    () { history | tee ~/history/bash/history_`date +%Y%m%d_%H%M`_$1 | tail -30; }
+function hg    () { history | grep "$@" | cut -b 8- | sort | uniq; }
+function hhg   () { grep "$@" ~/history/bash/hist`date +%Y%m*`; }
+function hhhg  () { grep "$@" ~/history/bash/hist*            ; }
+function hhhg  () { grep "$@" ~/history/bash/history*         ; }
+
+#export PROMPT_COMMAND='history -a' # not just yet.. no loger use hl?
+
 # log terminal activity
 function termLog () { script ~/history/termLogs/termLog_"$@"_`date +%Y%m%d_%H%M`; }
 
-# KILL -------------------------------------------------------------------- kill
+# export PROMPT_COMMAND='history -a' # not just yet.. no loger use hl?
+# cat changed file of the local eclipse workspace
+# function eh   {} { ls -al --time-style=long-iso "$@"/.metadata/.plugins/org.eclipse.core.resources/.history/*/*  | sort -k 6 }
+# label history log file with a name
+# alias hg='history grep $1 /home/kleyn/history/bash/hist`date +%Y%m*`'
+# alias hhg='grep $1 /home/kleyn/history/bash/hist*`'
+# alias hhhg='grep $1 /home/kleyn/history/bash/hist*`'
+
+# ---------------------------------------------------------------------------------------------------- kill
 alias kill_hup='kill -1'
 alias kill_int='kill -2'
 alias kill_term='kill -15'
