@@ -12,17 +12,6 @@ PROMPT_DIRTRIM=20
 export PS1="\e[0;36m=[\h:\u:\$\$]=:\t:\w:\e[m\n>"
 export HISTTIMEFORMAT='%Y%m%d-%T: '
 
-# ALIAS ------------------------------------------------------------------ alias
-function ag () { 
-  declare -f | grep "$@"; 
-  alias      | grep "$@";  
-}
-
-function al () { 
-  declare -f | grep "()"; 
-  alias ;  
-}
-
 # edit a given function in situ
 #function efn {
 #       echo       "function $1" > /tmp/edit_bash_fn
@@ -49,12 +38,23 @@ function al () {
 #
 # Misc :)
 # alias less='less -r'                          # raw control characters
-alias lesss='less -S'                           # trim to screen
+# alias lesss='less -S'                           # trim to screen
 # alias whence='type -a'                        # where, of a sort
-# alias grep='grep --color'                     # show differences in colour
-# alias egrep='egrep --color=auto'              # show differences in colour
-# alias fgrep='fgrep --color=auto'              # show differences in colour
-#
+alias grep='grep --color=auto'                     # show differences in colour
+alias egrep='egrep --color=auto'              # show differences in colour
+alias fgrep='fgrep --color=auto'              # show differences in colour
+
+# ALIAS ------------------------------------------------------------------ alias
+function ag () { 
+  declare -f | grep "$@"; 
+  alias      | grep "$@";  
+}
+
+function al () { 
+  declare -f | grep "()" | egrep -v '^_|COMPREPLY'; 
+  alias ;  
+}
+
 
 alias myPath='echo $PATH'
 # ---------------------------------------------------------------------------------------------------- ls
@@ -504,14 +504,19 @@ alias diamondFoo='Use localhost:4000 to connect directly'
 alias apt-all='aptitude search ~i'
 
 # greeting ------------------------------------------------------------------------------------ greeting
-termLog
 #export PATH=$PATH:ubin
+# termLog :( messes up this file
+echo ""
 echo "PATH------------------------------------------"
 echo $PATH
+echo ""
 echo "functions & aliases: al---------------------------------------"
 al
 pwd
 
+
+
+#---------------------------------------------------------------------------------------------- docs/notes
 # Umask
 #
 # /etc/profile sets 022, removing write perms to group + others.
