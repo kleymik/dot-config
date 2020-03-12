@@ -102,7 +102,7 @@ alias jobs='jobs -l'
 #alias py-ws2345='python -m SimpleHTTPServer 2345 &' # python2
 alias py-ws2345='python -m http.server 2345'         # python3
 alias py-def-env='source ~kleyn/projects/pyvenvs/envB-py38-all/bin/activate'
-alias py-jupyter='cd ~/history; jupyter notebook';
+alias py-jupyter='cd ~; jupyter notebook';           # ensure http server can see all folders
 alias showFuns='declare -F'
 alias gdaprocs='netstat -tlnp 2>/dev/null | grep java | sort -k 7'
 alias jpps='/dls_sw/apps/java/x64/gda842/bin/jps'
@@ -128,14 +128,14 @@ function rg_nxs () { # $1 = dir; remember to module load nexus
   done;
 }
 
-# ----------------------------- module
+# ------------------------------------------------------------------------------ module
 # module avail - list of modules available and their respective directory path
 # module list - show a list of the modules currently available in the shell
 # module load X or unload X - load or unload a module in the shell, where X is the name of a module
 # module show X - show info on a module, where X is a loaded module (usefully shows the path to the module)
 
-#alias gdaFiltServerLog='rep -vF -f ~/ubin/gda_server_filter.txt'
-#alias gdaFiltClientLog='rep -vF -f ~/ubin/gda_client_filter.txt'
+# alias gdaFiltServerLog='rep -vF -f ~/ubin/gda_server_filter.txt'
+# alias gdaFiltClientLog='rep -vF -f ~/ubin/gda_client_filter.txt'
 
 # GIT -------------------------------------------------------------------------- git
 # include git completions
@@ -181,6 +181,7 @@ alias gitr='git reset -p'
 alias gitreps='git remote -v'
 alias gitrm='git rm'
 alias gitsb='git show-branch'
+alias gitsc='git config --list --show-origin'
 
 #alias gits='echo $(git rev-parse --abbrev-ref HEAD); git config branch.$(git rev-parse --abbrev-ref HEAD).description;  git status; git stash list'
 function gits()  { pwd;
@@ -494,9 +495,26 @@ alias diamondFoo='Use localhost:4000 to connect directly'
 
 alias apt-all='aptitude search ~i'
 
+# was remSyncToMaxwell on cosmo side
+function remSyncFromCosmo () {
+  # 1st do important, then all
+  rsync -nlrv --size-only --delete --delete-excluded                                          u0_a102@192.168.160:8022/storage/9874-190B/Android/data/com.termux/files/MyDocs/aNotes/  ~kleyn/mySystems/cosmo/root/storage/sdCard/Android/data/com.termux/files/MyDocs/aNotes
+  #rsync -nlrv --size-only --delete --delete-excluded --exclude=files/home/.emacs.d/elpa/gnupg 192.168.160:8022/data/data/com.termux/                                           ~kleyn/mySystems/cosmo/root/data/data/com.termux
+  #rsync -nlrv --size-only --delete --delete-excluded                                          192.168.160:8022/storage/9874-190B/                                              ~kleyn/mySystems/cosmo/root/storage/sdCard
+  # --progress
+  # --exclude=/storage
+  # rsync -crv --delete --delete-excluded ~/dcim/   kleyn@192.168.1.89:/home/kleyn/mySystems/gem/dcim
+  # rsync -crv --delete --delete-excluded ~/MyDocs/ kleyn@192.168.1.89:/home/kleyn/mySystems/gem/MyDocs
+  # rsync -crv --delete --delete-excluded ~/        kleyn@192.168.1.89:/home/kleyn/mySystems/gem
+ }
+
+
 # greeting ------------------------------------------------------------------------------------ greeting
 #export PATH=$PATH:ubin
 # termLog :( messes up this file
+
+py-def-env
+
 echo ""
 echo "PATH-----------------------------------------------------------"
 echo $PATH
