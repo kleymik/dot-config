@@ -497,12 +497,21 @@ alias apt-all='aptitude search ~i'
 
 # was remSyncToMaxwell on cosmo side
 function remSyncFromCosmo () {
-  # 1st do important, then all
-  rsync -nlrv --size-only --delete --delete-excluded                                          u0_a102@192.168.160:8022/storage/9874-190B/Android/data/com.termux/files/MyDocs/aNotes/  ~kleyn/mySystems/cosmo/root/storage/sdCard/Android/data/com.termux/files/MyDocs/aNotes
-  #rsync -nlrv --size-only --delete --delete-excluded --exclude=files/home/.emacs.d/elpa/gnupg 192.168.160:8022/data/data/com.termux/                                           ~kleyn/mySystems/cosmo/root/data/data/com.termux
-  #rsync -nlrv --size-only --delete --delete-excluded                                          192.168.160:8022/storage/9874-190B/                                              ~kleyn/mySystems/cosmo/root/storage/sdCard
+    # 1st do important, then all
+  rsync -lrv -e "ssh -p 8022" --size-only --delete --delete-excluded  \
+            192.168.1.160:/storage/9874-190B/Android/data/com.termux/files/MyDocs/aNotes/  \
+    ~/mySystems/cosmo/root/storage/sdCard/Android/data/com.termux/files/MyDocs/aNotes    
+
+  rsync -lrv -e "ssh -p 8022" --size-only --delete --delete-excluded --exclude=files/home/.emacs.d/elpa/gnupg \
+       192.168.1.160:/data/data/com.termux/ \
+    ~/mySystems/cosmo/root/data/data/com.termux
+
+  rsync -lrv -e "ssh -p 8022" --size-only --delete --delete-excluded \
+                 192.168.1.160:/storage/9874-190B/ \
+    ~kleyn/mySystems/cosmo/root/storage/sdCard
   # --progress
   # --exclude=/storage
+  # rsync -nlrvvv --size-only --delete --delete-excluded --port=8022                              u0_a102@192.168.1.160:/storage/9874-190B/Android/data/com.termux/files/MyDocs/aNotes/  ~kleyn/mySystems/cosmo/root/storage/sdCard/Android/data/com.termux/files/MyDocs/aNotes
   # rsync -crv --delete --delete-excluded ~/dcim/   kleyn@192.168.1.89:/home/kleyn/mySystems/gem/dcim
   # rsync -crv --delete --delete-excluded ~/MyDocs/ kleyn@192.168.1.89:/home/kleyn/mySystems/gem/MyDocs
   # rsync -crv --delete --delete-excluded ~/        kleyn@192.168.1.89:/home/kleyn/mySystems/gem
