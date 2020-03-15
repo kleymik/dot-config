@@ -497,17 +497,20 @@ alias apt-all='aptitude search ~i'
 
 # was remSyncToMaxwell on cosmo side
 function remSyncFromCosmo () {
-    # 1st do important, then all
+  # 1st do important, then all
+  cosmoIp=192.168.1.160
+  # cosmoIp=192.168.1.209
+  echo "cosmoIp=$cosmoIp"
   rsync -lrv -e "ssh -p 8022" --size-only --delete --delete-excluded  \
-            192.168.1.160:/storage/9874-190B/Android/data/com.termux/files/MyDocs/aNotes/  \
+                  $cosmoIp:/storage/9874-190B/Android/data/com.termux/files/MyDocs/aNotes/  \
     ~/mySystems/cosmo/root/storage/sdCard/Android/data/com.termux/files/MyDocs/aNotes    
 
   rsync -lrv -e "ssh -p 8022" --size-only --delete --delete-excluded --exclude=files/home/.emacs.d/elpa/gnupg \
-       192.168.1.160:/data/data/com.termux/ \
+                  $cosmoIp:/data/data/com.termux/ \
     ~/mySystems/cosmo/root/data/data/com.termux
 
   rsync -lrv -e "ssh -p 8022" --size-only --delete --delete-excluded \
-                 192.168.1.160:/storage/9874-190B/ \
+                       $cosmoIp:/storage/9874-190B/ \
     ~kleyn/mySystems/cosmo/root/storage/sdCard
   # --progress
   # --exclude=/storage
