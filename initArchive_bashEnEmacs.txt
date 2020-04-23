@@ -1,0 +1,70 @@
+
+# TFS
+  alias tfcd='cd /cygdrive/Y/LOCAL/USR/MK/vc; pwd '
+  alias tfdiffd='tf      folderdiff /recursive . | grep -v \$/MAQS |  sed  "/^[[:space:]]*$/d" '
+  alias tfdiff='tf       diff /recursive . '
+  alias tfw='tf          workspaces '
+  alias tfh='tf          history /recursive . | tac'
+  alias tfGetLatest='tf  get /recursive . '
+  alias tfGetPreview='tf get /recursive /preview .'
+
+# OTHER
+  alias ll='ls -l --time-style=long-iso'                              # long list
+
+
+#    alias g="git show"
+#    alias gh="git show HEAD"
+#    alias gs="git status"
+#    alias gl="git log"
+#    alias gco="git checkout"
+#    alias gbl="git branch -v"
+#    alias gbd="git branch -D"
+#    alias gri="git rebase --interactive"
+#    alias grc="git rebase --continue"
+#    alias gra="git rebase --abort"
+#    alias gsta="git stash apply"
+#    alias gx="gco -- \*; git reset HEAD \*"
+#    alias gcp="git cherry-pick"
+#    alias gcpc="git cherry-pick --continue"
+#    alias gcpa="git cherry-pick --abort"
+#* st - status
+#* dp - diff pending
+#* di - diff
+#* aa - add all
+#* cm - commit
+#    alias di='git diff --cached'
+#    alias aa='git add -A'
+#    alias cm='git commit -m'
+#    alias pu='git push'
+#        co = checkout
+#        cm = !git add -A && git commit
+#        br = branch
+#        ci = commit
+#        st = status
+#        unstage = reset HEAD --
+#        recent = for-each-ref --count=10 --sort=-committerdate refs/heads/ --format="%(refname:short)"
+#        overview = log --all --oneline --no-merges
+#        recap = !git log --all --oneline --no-merges --author=${1-$(git config user.email)}
+#        today = !git log --all --since=00:00:00 --oneline --no-merges --author=${1-$(git config user.email)}
+#        changelog = !git log --oneline --no-merges ${1-$(git describe --abbrev=0)}..HEAD
+#        upstream = !git log --oneline --no-merges HEAD..${1-$(git branch -lvv | perl -ne '/^\\*.*\\[(.*?)\\]/ and print "$1\n"')}
+#        local = !git log --oneline --no-merges ${1-$(git branch -lvv | perl -ne '/^\\*.*\\[(.*?)\\]/ and print "$1\n"')}..HEAD
+#        graph = log --oneline --graph --all --decorate --date=iso
+#        save = !git add -A && git commit -m 'SAVEPOINT'
+#        undo = reset HEAD~1 --mixed
+#        backup = !git push origin/backup/$(whoami)/$(git branch)
+#        lint = !git branch --merged | grep -v \"^\\s*master$\" | grep -v \"\\*\" | xargs -n 1 git branch -d
+
+# PEWMA
+  # alias pewma-branch='        /dls_sw/dasc/pewma.py -qp git rev-parse --symbolic-full-name --abbrev-ref HEAD'
+  # alias pewma-branch-status=' /dls_sw/dasc/pewma.py -qp git branch-status'
+  # alias pewma-describe='      /dls_sw/dasc/pewma.py -qp git update-index --refresh ; /dls_sw/dasc/pewma.py -qp git describe'
+  # alias pewma-describe-dirty='/dls_sw/dasc/pewma.py -qp git describe-dirty'
+  # alias pewma-fetch='         /dls_sw/dasc/pewma.py -qp git fetch'
+  # alias pewma-fetch-all='     /dls_sw/dasc/pewma.py -qp git fetch --all'
+  # alias pewma-incoming='      /dls_sw/dasc/pewma.py -qp git fetch --dry-run'
+  # alias pewma-incoming-all='  /dls_sw/dasc/pewma.py -qp git fetch --dry-run --all'
+  # alias pewma-pull='          /dls_sw/dasc/pewma.py -qp git pull'
+  # alias pewma-pull-all='      /dls_sw/dasc/pewma.py -qp git pull --all'
+  # alias pewma-status='        /dls_sw/dasc/pewma.py -qp git status -s'
+  # alias pewma='               /dls_sw/dasc/pewma.py'
