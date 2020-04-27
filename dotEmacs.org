@@ -80,7 +80,7 @@ increase/decrease font C-c kepad+ keypad-
 (defun diredKleyqs501()         (interactive) (dired "/scp:kleyn@62.233.104.49:/home/kleyn"))
 (defun diredTuringIn()          (interactive) (dired "/scp:kleyn@192.168.1.243:/home/kleyn"))
 (defun diredTuringOut()         (interactive) (dired "/scp:kleyn@192.168.1.8:/home/kleyn"))
-(defun indent-to-col()          (interactive) (indent-to-column 110))
+;;(defun indent-to-col()          (interactive) (indent-to-column 110))
 (defun instimestamp()           (interactive) (insert (format-time-string "%Y%m%d_%H:%M:%S")))
 (defun nok900()                 (interactive) (dired "/scpc:root@192.168.0.6:/home/user/MyDocs/aNotes/")) ;; barnes
 (defun see-dotBashRc()          (interactive) (find-file "/home/kleyn/.bashrc"))
@@ -159,6 +159,10 @@ increase/decrease font C-c kepad+ keypad-
 
 
 
+;(defun my-indent-to-column (&optional arg)
+;  "indent to specificied column"
+;  (interactive "p")
+;  (indent-to-column (or arg 100)))
 
 ;; ------------------------------------------------------------------- Open App
 ;;(defun w32-browser (doc) (w32-shell-execute 1 doc))
@@ -623,8 +627,9 @@ BEG and END (region to sort)."
 ;; (replace-string "" "")
 ;; (replace-regexp "0\.999999([0-9]+)[$,]" "" nil (point-min) (point-max))
 ;; (replace-regexp "[ \t]+" " ")    ; REPLACE mutli-space with single-space
-;; (replace-regexp "[ \t]+|" "_" )    % space -> _
-;; (replace-regexp "'[ \t]+'" "|" )   % space between quotes ->
+;; (replace-regexp "[ \t]+|" "_" )    ; space -> _
+;; (replace-regexp "[ \t]+" "|")      ; space -> |
+;; (replace-regexp "'[ \t]+'" "|" )   ; space between quotes ->
 ;; (goto-char (mark-marker))
 ;; (replace-regexp "A" "B" nil (if (and transient-mark-mode mark-active) (region-beginning)) (if (and transient-mark-mode mark-active) (region-end)) nil)
 ;; (replace-regexp "A" "B" nil (mark-marker) (point-max))
@@ -643,6 +648,59 @@ BEG and END (region to sort)."
 ;;[			;; self-insert-command
 ;;3*C-k			;; kill-line
 (fset 'cleanMlLog [?\C-s ?\[ ?\C-q ?\C-h ?\C-a escape ?\C-k ?\C-k ?\C-k])
+
+* regexp replace
+
+#+BEGIN_SRC elisp
+
+(defun replace-thing ()
+ (interactive)
+ (goto-char 1)
+    ;; extricate the #%% phrase from all the other cruft on the pycharm line
+    (while (search-forward-regexp "^# \\+ pycharm=[^#]+#%%\\([^,}]+\\).*$" nil t)
+      (setq cruft (match-string 1))
+      (replace-match (concat "#%% " (substring cruft 0 -3)) t nil)
+      (message (concat "#%%%% " (substring cruft 0 -3) "-XXX"))))
+
+;;)) ; drop # and \n} cruft at end
+
+
+#+END_SRC
+;; (while (search-forward-regexp "^# \\+ pycharm=[^#]+#%% \\([^,}]+\\).*$" nil t)
+;; drop # and \n} cruft at end
+;;(replace-match (substring (match-string 1) 1 -4) t nil)
+;;(concat 'aaa' 'bbb')
+;;(message (concat "XXX" (substring (match-string 1) 0 -2) "XXX"))
+;;(replace-match (concat "XXX" (match-string 1) "XXX") t nil)))
+;;(substring "ABCDEF" 0 -1)
+;;(defun replace-thing ()
+;; (interactive)
+;; (goto-char 1)
+;;    (while (search-forward-regexp "\\([^\\)]+\\)" nil t) 
+;;        (replace-match (upcase (match-string 1)) t nil)))
+;;
+;;
+;;"\\+ pycharm[^#]+\\(#[\w]+\\)"
+;;
+;;(defun replace-thing ()
+;;  (interactive)
+;;  (replace-regexp "\\+ pycharm[^#]+\\(#[\w]+\\)" "XX\\1XX"  nil (point-min) (point-max)))
+;;
+;;(defun replace-thing ()
+;;  (interactive)
+;;  (replace-regexp "\\(pycharm\\)" "X\\1X"  nil (point-min) (point-max)))
+;;
+;;
+;;(defun replace-thing ()
+;;  (interactive)
+;;  (replace-regexp "\(pycharm\)" "XX\1XX"  nil (point-min) (point-max)))
+;;  (if (region-active-p)      ;;(replace-regexp "(pycharm)" "X\1X"  nil (region-beginning) (region-end))
+;(defun replace-thing ()
+;  (interactive)
+;  (if (region-active-p)
+;      (replace-string "# \+ pycharm=[^#]+(#%%.+)}" "[[https://www.lds.org/scriptures/search?lang=eng&query=\1&x=0&y=0][\1]]"  nil (region-beginning) (region-end))
+;   ))
+
 
 * Settings
 #+BEGIN_SRC emacs-lisp
@@ -1884,7 +1942,7 @@ BEG and END (region to sort)."
 (global-set-key (kbd "C-c C-b")	'compare-windows)
 (global-set-key (kbd "C-c d")	'ediff-directories)
 (global-set-key (kbd "C-c h")	'diredHome)
-(global-set-key (kbd "C-c i")	'indent-to-col)
+(global-set-key (kbd "C-c i")	'indent-to-column)
 (global-set-key (kbd "C-c l")	'ed-dup-line)
 (global-set-key (kbd "C-c q")	'lines-to-cslist)           ; 'quick-calc
 (global-set-key (kbd "C-c r")   'auto-revert-tail-mode)
@@ -2115,25 +2173,31 @@ BEG and END (region to sort)."
  (setq eshell-command-aliases-list ())
  (add-to-list 'eshell-command-aliases-list (list "ll"    "ls -lF --time-style=long-iso $*"))
  (add-to-list 'eshell-command-aliases-list (list "la"    "ls -alF --time-style=long-iso $*"))
+ (add-to-list 'eshell-command-aliases-list (list "cl"    "cd $*; ll"))
+
  (add-to-list 'eshell-command-aliases-list (list "al"    "alias"))
  (add-to-list 'eshell-command-aliases-list (list "ag"    "alias | grep $*"))
- (add-to-list 'eshell-command-aliases-list (list "cl"    "cd $*; ll"))
+
  (add-to-list 'eshell-command-aliases-list (list "gits"  "git status"))
  (add-to-list 'eshell-command-aliases-list (list "gith"  "git help"))
  (add-to-list 'eshell-command-aliases-list (list "gita"  "git add $*"))
  (add-to-list 'eshell-command-aliases-list (list "gitb"  "git branch -av"))
  (add-to-list 'eshell-command-aliases-list (list "gitc"  "git checkout -b $*"))
+ (add-to-list 'eshell-command-aliases-list (list "gitl"  "git log -n 20 --pretty=oneline --abbrev-commit --no-merges --decorate --format=format:'%h - (%ar) %s - %an%d'"))
  (add-to-list 'eshell-command-aliases-list (list "gitca" "git commit -a"))
  (add-to-list 'eshell-command-aliases-list (list "gitcm" "git commit -m"))
+
  (add-to-list 'eshell-command-aliases-list (list "gr"    "grep"))
  (add-to-list 'eshell-command-aliases-list (list "gi"    "grep -i"))
  (add-to-list 'eshell-command-aliases-list (list "h"     "history 30")) 
  (add-to-list 'eshell-command-aliases-list (list "netsl" "netstat -tlnp"))
  (add-to-list 'eshell-command-aliases-list (list "lsofi" "lsof -n -i"))
- (add-to-list 'eshell-command-aliases-list (list "hs"    "(setq es_hstFile (concat \"~/history/eshell/history_\" (format-time-string \"%Y%m%d-%H%M\" (current-time)) \".lst\")); history > $es_hstFile; cat $es_hstFile;"))
+ (add-to-list 'eshell-command-aliases-list (list "hs"    "(setq es_hstFile (concat \"~/history/commands/history_eshell_\" (format-time-string \"%Y%m%d-%H%M\" (current-time)) \".lst\")); history > $es_hstFile; cat $es_hstFile;"))
+ (add-to-list 'eshell-command-aliases-list (list "hl"    "history 30")) 
+ (add-to-list 'eshell-command-aliases-list (list "hll"   "ls -lrt ~/history/commands/ | tail -6")) 
  (add-to-list 'eshell-command-aliases-list (list "hg"    "history | grep $*")) 
- (add-to-list 'eshell-command-aliases-list (list "hgg"   "cat ~/history/eshell/history* | grep -i $*")) 
- (add-to-list 'eshell-command-aliases-list (list "gitl"  "git log -n 20 --pretty=oneline --abbrev-commit --no-merges --decorate --format=format:'%h - (%ar) %s - %an%d'"))
+ (add-to-list 'eshell-command-aliases-list (list "hgg"   "cat ~/history/commands/history* | grep -i $*")) 
+
  (add-to-list 'eshell-command-aliases-list (list "pe"    "printenv"))
  (add-to-list 'eshell-command-aliases-list (list "pg"    "printenv | grep -i $*"))
  (add-to-list 'eshell-command-aliases-list (list "psg"   "ps -elf | grep -i $*"))
