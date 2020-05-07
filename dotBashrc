@@ -1,5 +1,6 @@
 # MFK bash initialisation
 # 20140415_14:13:25 diamond account
+
 # TBD make idempotent!
 echo "bashrc start"
 # add this alias to .bashrc: alias sb='source ~/dot/dotBashrc'
@@ -71,16 +72,16 @@ alias ll='ls -lF --color=auto --time-style=long-iso'
 
 
 # HISTORY ---------------------------------------------------------------------- history
-export HISTFILE=~/history/bash/history.$$.$(date +%Y%m%d_%H%M)
+export HISTFILE=~/history/commands/history.$$.$(date +%Y%m%d_%H%M)
 alias h='history 30'
-alias hh='history | tee ~/history/bash/hist`date +%Y%m%d_%H%M%S`'
+alias hh='history | tee ~/history/commands/hist`date +%Y%m%d_%H%M%S`'
 alias hf='history 300'
-alias hs='history | tee ~/history/bash/history_`date +%Y%m%d_%H%M` | tail -30'
-function hl   () { history | tee ~/history/bash/history_`date +%Y%m%d_%H%M`_$1 | tail -30; }
-function hg   () { history | grep "$@" | cut -b 8- | sort | uniq; }
-function hhg  () { grep "$@" ~/history/bash/hist`date +%Y%m*`; }
-function hhhg () { grep "$@" ~/history/bash/hist*            ; }
-function hhhg () { grep "$@" ~/history/bash/history*         ; }
+alias hs='history | tee ~/history/commands/history_`date +%Y%m%d_%H%M` | tail -30'
+function hl   () { history | tail -40 ; }
+function hll  () { ls -lrt ~/history/commands | tail -6 ; }
+function hg   () { history | grep "$@" | cut -b 8- | sort | uniq                              ; }
+function hgg  () { grep "$@" ~/history/commands/hist*`date +%Y%m*`                            ; }
+function hggg () { grep "$@" ~/history/commands/*                                             ; }
 
 # log terminal activity - but messes up the use of this script
 function termLog () { script ~/history/termLogs/termLog_"$@"_`date +%Y%m%d_%H%M`; }
