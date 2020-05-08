@@ -1592,6 +1592,15 @@ M-x clone-indirect-buffer RET
   ;;dired-rename-file (file newname ok-if-already-exists)
 )
 
+(defun dired-cd-eshell (&optional arg)
+  "Move down one line and view the current file in another window."
+  (interactive)
+  (setq ffn (dired-get-filename))
+  (message (concat "ffn" ffn))
+  (switch-to-buffer "*eshell*")
+  (insert (concat "cd " ffn "; ll" ))
+)
+
 ;;------------------------------------dired peek
 (defun dired-view-next ()
   "Move down one line and view the current file in another window."
@@ -1640,9 +1649,9 @@ M-x clone-indirect-buffer RET
 (define-key dired-mode-map (kbd "C-n")       'dired-next-line)
 (define-key dired-mode-map (kbd "C-p")       'dired-previous-line)
 (define-key dired-mode-map (kbd "c")         'dired-ediff-git)
-(define-key dired-mode-map (kbd "e")         'dired-subtree-only-this-file)
-(define-key dired-mode-map [M-down]          'dired-view-next)      ; was dired-previous-line
-(define-key dired-mode-map [M-up]            'dired-view-previous)  ; was dired-next-line
+(define-key dired-mode-map (kbd "e")         'dired-cd-eshell)      ;; was dired-subtree-only-this-file
+(define-key dired-mode-map [M-down]          'dired-view-next)      ;; was dired-previous-line
+(define-key dired-mode-map [M-up]            'dired-view-previous)  ;; was dired-next-line
 (define-key dired-mode-map [left]            'dired-up) ;; dired-up-directory
 ;(define-key dired-mode-map [left]           'dired-up-directory)
 (define-key dired-mode-map [right]           'dired-go-subdir-kbm)
@@ -1891,6 +1900,7 @@ mostly for python
 
 * Key Bindings
 
+ M-0 w                       ;; dired copy path
  C-x C-v                     ;; find alternate file   -> then grab filepath
  /                           ;; self-insert-command
  :                           ;; self-insert-command
@@ -1932,7 +1942,6 @@ mostly for python
  M-s h w                     ;; hi-lock-write-interactive-patterns Inserts a list of Hi-Lock patterns into the buffer
  RET                         ;; newline
  w                           ;; self-insert-command
- M-0 w                       ;; dired copy path
  command C-x z, then z again ;; repear last
  complex command C-x ESC ESC ;; repeat last
 
@@ -2016,10 +2025,6 @@ mostly for python
 (global-set-key [f10]           'kmacro-end-and-call-macro) ;; see-shell-output) ;ergoemacs-open-in-external-app
 (global-set-key [f11]           'kmacro-end-macro)
 
-;(global-set-key [f7]           'my-list-buffers)
-;(global-set-key [f8]           'ztree-dir)
-;(global-set-key [f4]           'desktop-save)
-
 (global-set-key [C-f1]          '(lambda () (interactive) (switch-to-buffer "*shell*")))
 (global-set-key [C-f2]          '(lambda () (interactive) (find-file "/home/kleyn/history/scratch.org")))
 (global-set-key [C-f4]          'org-transpose-table-at-point)
@@ -2046,6 +2051,11 @@ mostly for python
 (defun sf8() (interactive) (dired-omit-mode))
 
 #+END_SRC
+
+(global-set-key [f7]           'my-list-buffers)
+(global-set-key [f8]           'ztree-dir)
+(global-set-key [f4]           'desktop-save)
+
 
 ** KeyPad Keys
 #+BEGIN_SRC emacs-lisp
@@ -2200,53 +2210,73 @@ mostly for python
                                   eshell-last-output-end))
 (add-to-list 'eshell-output-filter-functions 'eshell-handle-ansi-color)
 
+(defun eca()
+ (progn
+  (setq eshell-command-aliases-list ())
+  (add-to-list 'eshell-command-aliases-list (list "ll"    "ls -lF --time-style=long-iso $*"))
+  (add-to-list 'eshell-command-aliases-list (list "la"    "ls -alF --time-style=long-iso $*"))
+  (add-to-list 'eshell-command-aliases-list (list "cl"    "cd $*; ll"))
 
-(progn
- (setq eshell-command-aliases-list ())
- (add-to-list 'eshell-command-aliases-list (list "ll"    "ls -lF --time-style=long-iso $*"))
- (add-to-list 'eshell-command-aliases-list (list "la"    "ls -alF --time-style=long-iso $*"))
- (add-to-list 'eshell-command-aliases-list (list "cl"    "cd $*; ll"))
+  (add-to-list 'eshell-command-aliases-list (list "al"    "alias"))
+  (add-to-list 'eshell-command-aliases-list (list "ag"    "alias | grep $*"))
 
- (add-to-list 'eshell-command-aliases-list (list "al"    "alias"))
- (add-to-list 'eshell-command-aliases-list (list "ag"    "alias | grep $*"))
+  (add-to-list 'eshell-command-aliases-list (list "gits"  "git status"))
+  (add-to-list 'eshell-command-aliases-list (list "gith"  "git help"))
+  (add-to-list 'eshell-command-aliases-list (list "gita"  "git add $*"))
+  (add-to-list 'eshell-command-aliases-list (list "gitb"  "git branch -av"))
+  (add-to-list 'eshell-command-aliases-list (list "gitc"  "git checkout -b $*"))
+  (add-to-list 'eshell-command-aliases-list (list "gitl"  "git log -n 20 --pretty=oneline --abbrev-commit --no-merges --decorate --format=format:'%h - (%ar) %s - %an%d'"))
+  (add-to-list 'eshell-command-aliases-list (list "gitca" "git commit -a"))
+  (add-to-list 'eshell-command-aliases-list (list "gitcm" "git commit -m"))
 
- (add-to-list 'eshell-command-aliases-list (list "gits"  "git status"))
- (add-to-list 'eshell-command-aliases-list (list "gith"  "git help"))
- (add-to-list 'eshell-command-aliases-list (list "gita"  "git add $*"))
- (add-to-list 'eshell-command-aliases-list (list "gitb"  "git branch -av"))
- (add-to-list 'eshell-command-aliases-list (list "gitc"  "git checkout -b $*"))
- (add-to-list 'eshell-command-aliases-list (list "gitl"  "git log -n 20 --pretty=oneline --abbrev-commit --no-merges --decorate --format=format:'%h - (%ar) %s - %an%d'"))
- (add-to-list 'eshell-command-aliases-list (list "gitca" "git commit -a"))
- (add-to-list 'eshell-command-aliases-list (list "gitcm" "git commit -m"))
+  (add-to-list 'eshell-command-aliases-list (list "gr"    "grep $*"))
+  (add-to-list 'eshell-command-aliases-list (list "gi"    "grep -i $*"))
+  (add-to-list 'eshell-command-aliases-list (list "rg"    "~/ubin/fqry/rgrep3.py $*"))
+  (add-to-list 'eshell-command-aliases-list (list "h"     "history 30"))
+  (add-to-list 'eshell-command-aliases-list (list "netsl" "netstat -tlnp"))
+  (add-to-list 'eshell-command-aliases-list (list "lsofi" "lsof -n -i"))
+  (add-to-list 'eshell-command-aliases-list (list "hs"    "(setq es_hstFile (concat \"~/history/commands/history_eshell_\" (format-time-string \"%Y%m%d-%H%M\" (current-time)) \".lst\")); history > $es_hstFile; cat $es_hstFile;"))
+  (add-to-list 'eshell-command-aliases-list (list "hl"    "history 30"))
+  (add-to-list 'eshell-command-aliases-list (list "hll"   "ls -lrt ~/history/commands/ | tail -6"))
+  (add-to-list 'eshell-command-aliases-list (list "hg"    "history | grep $*"))
+  (add-to-list 'eshell-command-aliases-list (list "hgg"   "cat ~/history/commands/history* | grep -i $*"))
+  (add-to-list 'eshell-command-aliases-list (list "es"    "(save-eshell-terminal)"))
 
- (add-to-list 'eshell-command-aliases-list (list "gr"    "grep $*"))
- (add-to-list 'eshell-command-aliases-list (list "gi"    "grep -i $*"))
- (add-to-list 'eshell-command-aliases-list (list "rg"    "~/ubin/fqry/rgrep3.py $*"))
- (add-to-list 'eshell-command-aliases-list (list "h"     "history 30"))
- (add-to-list 'eshell-command-aliases-list (list "netsl" "netstat -tlnp"))
- (add-to-list 'eshell-command-aliases-list (list "lsofi" "lsof -n -i"))
- (add-to-list 'eshell-command-aliases-list (list "hs"    "(setq es_hstFile (concat \"~/history/commands/history_eshell_\" (format-time-string \"%Y%m%d-%H%M\" (current-time)) \".lst\")); history > $es_hstFile; cat $es_hstFile;"))
- (add-to-list 'eshell-command-aliases-list (list "hl"    "history 30"))
- (add-to-list 'eshell-command-aliases-list (list "hll"   "ls -lrt ~/history/commands/ | tail -6"))
- (add-to-list 'eshell-command-aliases-list (list "hg"    "history | grep $*"))
- (add-to-list 'eshell-command-aliases-list (list "hgg"   "cat ~/history/commands/history* | grep -i $*"))
- (add-to-list 'eshell-command-aliases-list (list "es"    "(save-eshell-terminal)"))
+  (add-to-list 'eshell-command-aliases-list (list "pe"    "printenv"))
+  (add-to-list 'eshell-command-aliases-list (list "pg"    "printenv | grep -i $*"))
+  (add-to-list 'eshell-command-aliases-list (list "psg"   "ps -elf | grep -i $*"))
 
- (add-to-list 'eshell-command-aliases-list (list "pe"    "printenv"))
- (add-to-list 'eshell-command-aliases-list (list "pg"    "printenv | grep -i $*"))
- (add-to-list 'eshell-command-aliases-list (list "psg"   "ps -elf | grep -i $*"))
+  (add-to-list 'eshell-command-aliases-list (list "ctrlc"   "xclip -selection c"))
+  (add-to-list 'eshell-command-aliases-list (list "ctrlv"   "xclip -selection c -o; echo '' "))
+  (add-to-list 'eshell-command-aliases-list (list "ctrlvv"  "xclip -selection c -o >> /home/kleyn/history/scratch.org; echo '' >> /home/kleyn/history/scratch.org;"))
+  (add-to-list 'eshell-command-aliases-list (list "apt-all" "aptitude search ~i"))))
+;; aptitude doesn't echo into eshell buffer :(
 
- (add-to-list 'eshell-command-aliases-list (list  "ctrlc"  "xclip -selection c"))
- (add-to-list 'eshell-command-aliases-list (list  "ctrlv"  "xclip -selection c -o; echo '' "))
- (add-to-list 'eshell-command-aliases-list (list  "ctrlvv" "xclip -selection c -o >> /home/kleyn/history/scratch.org; echo '' >> /home/kleyn/history/scratch.org;"))
+;; https://emacs.stackexchange.com/questions/27849/how-can-i-setup-eshell-to-use-ivy-for-tab-completion
+(setq eshell-prompt-function
+       (lambda ()
+         (setq dts (format-time-string "%Y%m%d%H:%M" (current-time)))
+         (concat "::" (substring dts 0 8)
+                 "|" (propertize (substring dts 8) 'face `(:foreground "green"))
+                 "|" (car (last (split-string (getenv "VIRTUAL_ENV") "/")))
+                 "|" (propertize (substring (pwd) 10) 'face `(:foreground "green"))
+                 (if (= (user-uid) 0) " \n:: " " \n:: ")))
+
+    eshell-prompt-regexp "^::.*\n:: "
 )
 
-(setq eshell-prompt-function
-      (lambda ()
-        (concat (format-time-string "%Y%m%d|%H:%M" (current-time))
-                "|" (car (last (split-string (getenv "VIRTUAL_ENV") "/")))
-                "|" (propertize (substring (pwd) 10) 'face `(:foreground "green"))
-                (if (= (user-uid) 0) " \n#:" " \n$:"))))
+(add-hook 'eshell-mode-hook
+  (lambda ()
+    (define-key eshell-mode-map (kbd "C-<tab>")  (lambda () (interactive) (pcomplete-std-complete)))))
+
+#+END_SRC
+
+(emacs-pid)
+(setq eshell-prompt-regexp (concat "^20[0-9][0-9].*\n" (regexp-quote "$") ": "))
+(if (= (user-uid) 0) " \n#::" " \n$::"))))
+(setq eshell-prompt-regexp  "^\$:")
+(setq eshell-cmpl-cycle-completions nil)
+eshell-prompt-regexp (concat "^" (regexp-quote "$")
 
 (defun save-eshell-terminal ()
   "Clone the current buffer writing it into FILENAME and open it"
@@ -2257,11 +2287,8 @@ mostly for python
     (write-region (point-min) (point-max) eshellFname nil nil nil 'confirm))
   (find-file-noselect eshellFname))
 
-
-;; (mapconcat 'identity '("a" "b" "c") ",")
-;; (mapconcat 'identity (reverse (butlast (reverse (list "home ""kleyn" "projects" )) 3)) "/")
-
-#+END_SRC
+(mapconcat 'identity '("a" "b" "c") ",")
+(mapconcat 'identity (reverse (butlast (reverse (list "home ""kleyn" "projects" )) 3)) "/")
 
 
 (add-to-list 'eshell-command-aliases-list (list "gitst"  "git rev-parse --abbrev-ref HEAD;
@@ -2338,39 +2365,6 @@ prompt
               (eshell/pwd) (if (= (user-uid) 0) " # " " $ "))))
 
  (defun ted-eshell-prompt ()
-   "An Eshell prompt that's just like my csh prompt."
-   ;; from ~/.cshrc:
-   ;; set prompt = "\n%n in %B%~%b on %B%m%b's %l at %t\n(h=%h, r=%?)%# "
-   ;; set promptchars = ":#"
-   (let ((user (or (getenv "USER") user-login-name "ted"))
-         (wd (eshell/pwd))
-         (host (car (split-string (or (getenv "HOST")
-                                      system-name
-                                      "unknown")
-                                  "\\.")))
-         (term (concat ted-emacs-name (format "/%d" (emacs-pid))))
-         (time (let ((time-1 (downcase (format-time-string "%l:%M%p"))))
-                 (if (char-equal (aref time-1 0) ?\ )
-                     (substring time-1 1)
-                   time-1)))
-         ;; based on `eshell-exit-success-p'
-         (r (if (save-match-data
-                  (string-match "#<\\(Lisp object\\|function .*\\)>"
-                                (or eshell-last-command-name "")))
-                (format "%s" eshell-last-command-result)
-              (number-to-string eshell-last-command-status)))
-         (h (number-to-string (+ 1 (ring-length eshell-history-ring))))
-         (char (if (= (user-uid) 0) "#" ":")))
-     (concat "\n" user
-             " in " wd
-             " on " host "'s " term
-             " at " time
-             "\n"
-             "(h=" h ", "
-             "r=" r ")"
-             char " ")))
-
-example
 
   (defun eshell/less (&rest args)
     "Invoke `view-file' on a file. \"less +42 foo\" will go to line 42 in
