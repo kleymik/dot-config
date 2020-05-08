@@ -1601,6 +1601,14 @@ M-x clone-indirect-buffer RET
   (insert (concat "cd " ffn "; ll" ))
 )
 
+(defun dired-paste-to-yank-buffer (&optional arg)
+  "Move down one line and view the current file in another window."
+  (interactive)
+  (setq ffn (dired-get-filename))
+  (message ffn)
+  (kill-append (dired-get-filename) nil)
+)
+
 ;;------------------------------------dired peek
 (defun dired-view-next ()
   "Move down one line and view the current file in another window."
@@ -1648,8 +1656,9 @@ M-x clone-indirect-buffer RET
 (define-key dired-mode-map (kbd "<S-up>")    'dired-subtree-previous-sibling)
 (define-key dired-mode-map (kbd "C-n")       'dired-next-line)
 (define-key dired-mode-map (kbd "C-p")       'dired-previous-line)
-(define-key dired-mode-map (kbd "c")         'dired-ediff-git)
+(define-key dired-mode-map (kbd "c")         'dired-ediff-git)      ;; compare to last version with ediff
 (define-key dired-mode-map (kbd "e")         'dired-cd-eshell)      ;; was dired-subtree-only-this-file
+(define-key dired-mode-map (kbd "p")         'dired-paste-to-yank-buffer)
 (define-key dired-mode-map [M-down]          'dired-view-next)      ;; was dired-previous-line
 (define-key dired-mode-map [M-up]            'dired-view-previous)  ;; was dired-next-line
 (define-key dired-mode-map [left]            'dired-up) ;; dired-up-directory
