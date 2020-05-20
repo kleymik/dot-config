@@ -43,7 +43,7 @@ convenient prefix key map, for example `C-,`
 (add-to-list 'package-archives '("mlpstbl" . "https://stable.melpa.org/packages/")  t)
 (add-to-list 'package-archives '("mlpamlk" . "https://melpa.milkbox.net/packages/") t)
 (add-to-list 'package-archives '("elpaorg" . "https://elpa.gnu.org/packages/")      t)
-
+(add-to-list 'package-archives '("org" . "https://orgmode.org/elpa/")               t)
 ;; Added by Package.el.  This must come before configurations of
 ;; installed packages.  Don't delete this line.  If you don't want it,
 ;; just comment it out by adding a semicolon to the start of the line.
@@ -59,6 +59,8 @@ convenient prefix key map, for example `C-,`
 (require 'dired-x)
 (require 'wdired)
 (load-library "dired-subtree")
+;(require 'ox-gfm) - failed
+; (defun org-export-get-reference (a b) nil)
 ;(require 'dired-lis)
 ;; (require 'dired-k)
 ;; (require 'diffview)      ; make patch files look like ediff
@@ -733,6 +735,7 @@ N.B. TBD drop last ","
 (setq default-truncate-lines t)
 (setq display-time-day-and-date t) (display-time)
 (setq font-lock-maximum-decoration t) ;; 3
+(setq fill-column 100)
 (setq header-line-format mode-line-format)
 (setq inhibit-splash-screen t)
 (setq kill-ring-max 12)
@@ -2240,7 +2243,7 @@ mostly for python
 
   (add-to-list 'eshell-command-aliases-list (list "gr"    "grep $*"))
   (add-to-list 'eshell-command-aliases-list (list "gi"    "grep -i $*"))
-  (add-to-list 'eshell-command-aliases-list (list "rg"    "~/ubin/fqry/rgrep3.py $*"))
+  (add-to-list 'eshell-command-aliases-list (list "rg"    "~/ubin/fqry/rgrep.py $*"))
   (add-to-list 'eshell-command-aliases-list (list "h"     "history 30"))
   (add-to-list 'eshell-command-aliases-list (list "netsl" "netstat -tlnp"))
   (add-to-list 'eshell-command-aliases-list (list "lsofi" "lsof -n -i"))
@@ -2251,7 +2254,7 @@ mostly for python
   (add-to-list 'eshell-command-aliases-list (list "hgg"   "cat ~/history/commands/history* | grep -i $*"))
   (add-to-list 'eshell-command-aliases-list (list "es"    "(save-eshell-terminal)"))
 
-  (add-to-list 'eshell-command-aliases-list (list "pe"    "printenv"))
+  (add-to-list 'eshell-command-aliases-list (list "pe"    "printenv | sort"))
   (add-to-list 'eshell-command-aliases-list (list "pg"    "printenv | grep -i $*"))
   (add-to-list 'eshell-command-aliases-list (list "psg"   "ps -elf | grep -i $*"))
 
