@@ -59,13 +59,35 @@ convenient prefix key map, for example `C-,`
 (require 'dired-x)
 (require 'wdired)
 (load-library "dired-subtree")
-;(require 'ox-gfm) - failed
+(require 'ox-gfm)
+(require 'origami)
+
 ; (defun org-export-get-reference (a b) nil)
 ;(require 'dired-lis)
 ;; (require 'dired-k)
 ;; (require 'diffview)      ; make patch files look like ediff
 (message "-------------- Done: Packages")
 #+END_SRC
+origami-open-node                 Open a fold node.
+origami-open-node-recursively     Open a fold node and all of its children.
+origami-show-node                 Like origami-open-node but also opens parent fold nodes recursively so as to ensure the position where point is is visible.
+origami-close-node                Close a fold node.
+origami-close-node-recursively    Close a fold node and all of its children.
+origami-toggle-node               Toggle open or closed a fold node.
+origami-forward-toggle-node       Search forward on this line for a node and toggle it open or closed. This makes toggling nodes much more convenient.
+origami-recursively-toggle-node   Acts like org-mode header collapsing. Cycle a fold between open, recursively open, closed.
+origami-open-all-nodes            Open every fold in the buffer.
+origami-close-all-nodes           Close every fold in the buffer.
+origami-toggle-all-nodes          Toggle open/closed every fold node in the buffer.
+origami-show-only-node            Close everything but the folds necessary to see the point. Very useful for concentrating on an area of code.
+origami-previous-fold             Move to the previous fold.
+origami-next-fold                 Move to the end of the next fold.
+origami-forward-fold              Move to the start of the next fold.
+origami-forward-fold-same-level   Move to the start of the next fold that is a sibling of the current fold.
+origami-backward-fold-same-level  Move to the start of the previous fold that is a sibling of the current fold.
+origami-undo                      Undo the last folding operation.
+origami-redo                      Redo the last undone folding operation.
+origami-reset                     Remove all folds from the buffer and reset all origami state. Useful if origami messes up!
 
 * Function Definitions
 
@@ -91,16 +113,64 @@ convenient prefix key map, for example `C-,`
 (defun slashFwd()               (interactive) (replace-string "\\"  "/" nil (line-beginning-position) (line-end-position)))
 (defun turing()                 (interactive) (dired "/scpc:kleyn@192.168.1.243:/home/kleyn"))
 
-;; for small keyboards
+;; for small keyboards without function keys
 (defun ds()  (interactive)  (eshell))
 (defun cf3() (interactive)  (eshell))
 (defun da()  (interactive)  (find-file "/data/data/com.termux/files/home/org/access.org"))
 (defun sf3() (interactive)  (find-file "/data/data/com.termux/files/home/dot/dotBashrc"))
+(defun sf8() (interactive)  (dired-omit-mode))
 (defun db()  (interactive)  (find-file "/data/data/com.termux/files/home/dot/dotBashrc"))
 (defun dd()  (interactive)  (find-file "/data/data/com.termux/files/home/MyDocs/aNotes/org/doAndDone.org"))
 (defun de()  (interactive)  (find-file "/data/data/com.termux/files/home/.emacs.d/dotEmacs.org"))
 (defun f3()  (interactive)  (find-file "/data/data/com.termux/files/home/.emacs.d/dotEmacs.org"))
 (defun dz()  (interactive)  (progn (ztree-dir "/data/data/com.termux/files/home/MyDocs/projects") (split-window-right 40)))
+
+;;--------------------new
+
+(defun bool-flip-do-flip ()
+  (interactive)
+  (let ((currWord (thing-at-point 'word))
+        (bnds (bounds-of-thing-at-point 'word)))
+    (setq flippedWord (cond ((equal word "1")     "0")
+                            ((equal word "0")     "1")
+                            ((equal word "Yes")   "No")
+                            ((equal word "No")    "Yes")
+                            ((equal word "False") "True")
+                            ((equal word "True")  "False")))
+    (save-excursion
+      (delete-region (car bnds) (cdr bnds))
+      (insert flippedWord))))
+
+(defun set-region-writeable ()
+  "Removes the read-only text property from the marked region.
+
+  Use `set-region-read-only' to set this property."
+  ;; See https://stackoverflow.com/questions/7410125
+  (interactive)
+  (with-silent-modifications
+    (remove-text-properties (point-min) (point-max) '(read-only t))))
+
+(defun remove-region-read-only ()
+  (interactive)
+  (let ((inhibit-read-only t))
+    (remove-text-properties  (point-min) (point-max) '(read-only t))
+    ;; (eshell-quit-process)
+  )
+)
+
+(defun rfix ()
+  (interactive)
+  (let ((inhibit-read-only t))
+    (remove-text-properties  (point-min) (point-max) '(read-only t))
+    ;; (eshell-quit-process)
+  )
+)
+
+(defun eshell/clear ()
+  "Clear the eshell buffer."
+  (interactive)
+  (let ((inhibit-read-only t))
+    (erase-buffer)))
 
 ;;-------------------------------------------------------------------- Other
 (defun filepath-on-clipboard ()
@@ -558,8 +628,8 @@ BEG and END (region to sort)."
 /adb::/path/to/file.
 C-x C-f /:adb::/storage/emulated/0
 C-x C-f /adb::/storage/emulated/0
-(defun diredGemA()        (interactive) (dired "/adb::/data/data/com.termux/files/home/MyDocs"))  ;; /storage/emulated/0 ‘/ssh:daniel@melancholia#42:.emacs’  /ssh:foo@192.168.1.93#8022:
-(defun diredGemA()        (interactive) (dired "/adb::/storage"))  ;; /storage/emulated/0 ‘/ssh:daniel@melancholia#42:.emacs’  /ssh:foo@192.168.1.93#8022:
+(defun diredGemA()            (interactive) (dired "/adb::/data/data/com.termux/files/home/MyDocs"))  ;; /storage/emulated/0 ‘/ssh:daniel@melancholia#42:.emacs’  /ssh:foo@192.168.1.93#8022:
+(defun diredGemA()            (interactive) (dired "/adb::/storage"))                                 ;; /storage/emulated/0 ‘/ssh:daniel@melancholia#42:.emacs’  /ssh:foo@192.168.1.93#8022:
 (defun see-nok900-doAndDone() (interactive) (find-file "/scp:root@192.168.1.187:/home/user/MyDocs/aNotes/doAndDone.org"))
 (defun diredHome()            (interactive) (dired "L:/MyDocs/" nil))
 (defun nok900()               (interactive) (dired "/scpc:root@192.168.1.187:/home/user/MyDocs/aNotes/"))
@@ -738,6 +808,7 @@ N.B. TBD drop last ","
 (setq fill-column 100)
 (setq header-line-format mode-line-format)
 (setq inhibit-splash-screen t)
+(setq ispell-personal-dictionary "~/.emacs.d/aspell.EN.pws")
 (setq kill-ring-max 12)
 (setq line-number-mode t)
 (setq max-lisp-eval-depth 1200) ; 800
@@ -1899,15 +1970,13 @@ M-x clone-indirect-buffer RET
 
 
 * hooks
-mostly for python
+mostly for python -made named function so remove-hook can be used
 #+BEGIN_SRC emacs-lisp
-(add-hook 'write-file-hooks
-         (lambda () (if (not indent-tabs-mode)
-                         (untabify (point-min) (point-max)))
-                      nil ))
-(add-hook 'write-file-hooks
-          (lambda ()  (delete-trailing-whitespace (point-min) (point-max))
-                      nil ))
+(defun py-clean-file()
+  (if (not indent-tabs-mode)
+      (untabify (point-min) (point-max))
+      (delete-trailing-whitespace (point-min) (point-max))))
+(add-hook 'write-file-hooks 'py-clean-file)
 #+END_SRC
 
 * Key Bindings
@@ -2015,55 +2084,70 @@ mostly for python
 #+END_SRC
 
 ** Function Keys
-|-------+----------+-----------+------------+-----------+---+----------+-----------+--------------+------------+---+-------------+----------+-----------+-----------+-------|
-| mod   | F1       | F2        | F3         | F4        |   | F5       | F6        | F7           | F8         |   | F9          | F10      | F11       | F12       |       |
-|-------+----------+-----------+------------+-----------+---+----------+-----------+--------------+------------+---+-------------+----------+-----------+-----------+-------|
-|       | *eshell* | doAnDone  | dired(~/)  | dotEmacs  |   | app-open |           |              | dired-omit |   | macro-start | macro-go | macro-end |           |       |
-| CTRL  | *bash*   | scratch   |            | transpose |   | app-open |           |              |            |   |             |          |           |           | CTRL  |
-| SHIFT |          | bookmarks |            |           |   |          | bool-flip | command-hist |            |   |             |          | hs-toggle |           | SHIFT |
-| ALT   |          |           | hist dired |           |   |          |           |              |            |   |             |          | debug-on  | debug-off | ALT   |
-| SUPER |          |           |            |           |   |          |           |              |            |   |             |          |           |           | SUPER |
-|-------+----------+-----------+------------+-----------+---+----------+-----------+--------------+------------+---+-------------+----------+-----------+-----------+-------|
+|-------+----------+------------+--------------+-----------+---+----------+-----------+----+----+---+-------------+----------+------------+-----+-------|
+| mod   | F1       | F2         | F3           | F4        |   | F5       | F6        | F7 | F8 |   | F9          | F10      | F11        | F12 |       |
+|-------+----------+------------+--------------+-----------+---+----------+-----------+----+----+---+-------------+----------+------------+-----+-------|
+|       | *eshell* | doAnDone   | dired ~/     | dotEmacs  |   | app-open | transpose |    |    |   | macro-start | origami  | debug-on   |     |       |
+| CTRL  | *bash*   | bookmarks  | dired-omit   | transpose |   | fapp     | bool-flip |    |    |   | macro-go    | tog node | degbug-off |     | CTRL  |
+| SHIFT | *python* | scratch    | dired repos/ |           |   |          |           |    |    |   | macro-end   | tog all  |            |     | SHIFT |
+| ALT   | *ielm*   | mySystems? | dired hist/  |           |   |          |           |    |    |   |             | open all |            |     | ALT   |
+| SUPER |          | access?    |              |           |   |          |           |    |    |   |             |          |            |     | SUPER |
+|-------+----------+------------+--------------+-----------+---+----------+-----------+----+----+---+-------------+----------+------------+-----+-------|
 #+BEGIN_SRC emacs-lisp
 
-(global-set-key [f1]            '(lambda () (interactive) (progn (if (eq (get-buffer "*eshell*") nil) (eshell))  (switch-to-buffer "*eshell*"))))
+
+(global-set-key [f1]            '(lambda () (interactive) (progn (if (eq (get-buffer "*eshell*") nil) (eshell))     (switch-to-buffer "*eshell*"))))
+(global-set-key [C-f1]          '(lambda () (interactive) (progn (if (eq (get-buffer "*shell*")  nil) (shell))      (switch-to-buffer "*shell*"))))
+(global-set-key [S-f1]          '(lambda () (interactive) (progn (if (eq (get-buffer "*Python*") nil) (run-python)) (switch-to-buffer "*Python*"))))
+(global-set-key [M-f1]          'ielm) ;; open file under cursor ;;(global-set-key [M-f9] 'insertLastSexp) ;; insert result
+
 (global-set-key [f2]            '(lambda () (interactive) (find-file "/home/kleyn/aNotes/doAndDone.org")))
-(global-set-key [f3]            'diredHome)                 ;; mk-new-buffer
-(global-set-key [f4]            '(lambda () (interactive) (find-file "/home/kleyn/.emacs.d/dotEmacs.org")))              ;; nok900  'my-openfile  'neotree-show
-(global-set-key [f5]            'ffap)                      ;; bookmark-menu-list
-(global-set-key [f6]            'ergoemacs-open-in-external-app)
-(global-set-key [f8]            'dired-omit-mode)
-(global-set-key [f9]            'kmacro-start-macro)        ;; 'ielm)  ;; open file under cursor
-(global-set-key [f10]           'kmacro-end-and-call-macro) ;; see-shell-output) ;ergoemacs-open-in-external-app
-(global-set-key [f11]           'kmacro-end-macro)
-
-(global-set-key [C-f1]          '(lambda () (interactive) (switch-to-buffer "*shell*")))
 (global-set-key [C-f2]          '(lambda () (interactive) (find-file "/home/kleyn/history/scratch.org")))
-(global-set-key [C-f4]          'org-transpose-table-at-point)
-
 (global-set-key [S-f2]          '(lambda () (interactive) (find-file "/home/kleyn/aNotes/bookmarks.org")))
-(global-set-key [S-f4]          'org-save-code-block)
-(global-set-key [S-f6]          'bool-flip-do-flip)
-(global-set-key [S-f7]          'show-hist)             ;; (global-set-key [S-f7] 'buffer-menu-sort-by-filename)
-(global-set-key [S-f9]          'insertLastSexp)        ;; (lambda () (interactive) (dired "C:/[pm][rya][qoadmp][parsd]*" nil)))
-(global-set-key [S-f10]         'hs-show-block)
-(global-set-key [S-f11]         'hs-toggle-hiding)
-(global-set-key [S-f12]         'hs-hide-block)
+(global-set-key [M-f2]          '(lambda () (interactive) (find-file "/home/kleyn/aNotes/mySystems.org")))
 
-(global-set-key [M-f2]          'buffer-menu-sort-by-filename)
-(global-set-key [M-f3]          '(lambda () (interactive) (dired "L:/MyDocs/history/commands/history_2020*" nil)))
-(global-set-key [M-f9]          'ielm)                  ;; open file under cursor ;;(global-set-key [M-f9] 'insertLastSexp) ;; insert result
+(global-set-key [f3]            'diredHome)
+(global-set-key [C-f3]          'dired-omit-mode)
+(global-set-key [S-f3]          '(lambda () (interactive) (dired "~/projects/repos" nil)))
+(global-set-key [M-f3]          '(lambda () (interactive) (dired "~/history/commands/*2020*" nil)))
+
+(global-set-key [f4]            '(lambda () (interactive) (find-file "/home/kleyn/.emacs.d/dotEmacs.org") (search-forward "** Function Keys") (org-show-subtree)))             ;; nok900  'my-openfile  'neotree-show
+(global-set-key [C-f4]          'insertLastSexp)        ;; (lambda () (interactive) (dired "C:/[pm][rya][qoadmp][parsd]*" nil)))
+(global-set-key [S-f4]          'org-save-code-block)
+
+(global-set-key [f5]            'ergoemacs-open-in-external-app)                      ;; bookmark-menu-list
+(global-set-key [C-f5]          'ffap)
+
+(global-set-key [f6]            'org-transpose-table-at-point)
+(global-set-key [C-f6]          'bool-flip-do-flip)
+
+(global-set-key [S-f7]          'show-hist)             ;; (global-set-key [S-f7] 'buffer-menu-sort-by-filename)
+
+
+(global-set-key [f9]            'kmacro-start-macro)        ;; 'ielm)  ;; open file under cursor
+(global-set-key [C-f9]          'kmacro-end-and-call-macro) ;; see-shell-output) ;ergoemacs-open-in-external-app
+(global-set-key [S-f9]          'kmacro-end-macro)
+
+(global-set-key [f10]           'origami-mode)
+(define-key origami-mode-map (kbd "C-<tab>")  'origami-toggle-node)
+(global-set-key [C-f10]         'origami-toggle-node)
+(global-set-key [S-f10]         'origami-toggle-all-nodes)
+(global-set-key [M-f10]         'origami-open-all-nodes) ;  hs-hide-block
+
+; (global-set-key [M-f2]        'buffer-menu-sort-by-filename)
 (global-set-key [M-f10]         'see-shell-output)      ;; ergoemacs-open-in-external-app
-(global-set-key [M-f11]         'set-debug-on)
-(global-set-key [M-f12]         'set-debug-off)
+
+(global-set-key [f11]           'set-debug-on)
+(global-set-key [C-f11]         'set-debug-off)
 
 (global-unset-key "\C-x\C-c")                            ;; Don't quit so easily
 (global-set-key (kbd "C-x C-c C-v")  'save-buffers-kill-emacs) ;; But we establish a longer sequence that is harder to hit by accident:
 
-(defun sf8() (interactive) (dired-omit-mode))
+
 
 #+END_SRC
 
+(global-set-key [f6]           'ergoemacs-open-in-external-app)
 (global-set-key [f7]           'my-list-buffers)
 (global-set-key [f8]           'ztree-dir)
 (global-set-key [f4]           'desktop-save)
@@ -2232,13 +2316,14 @@ mostly for python
   (add-to-list 'eshell-command-aliases-list (list "al"    "alias"))
   (add-to-list 'eshell-command-aliases-list (list "ag"    "alias | grep $*"))
 
+  (add-to-list 'eshell-command-aliases-list (list "fnd"    "find $*")) ;; plain old find
+
   (add-to-list 'eshell-command-aliases-list (list "gits"  "git status"))
   (add-to-list 'eshell-command-aliases-list (list "gith"  "git help"))
   (add-to-list 'eshell-command-aliases-list (list "gita"  "git add $*"))
   (add-to-list 'eshell-command-aliases-list (list "gitb"  "git branch -av"))
-  (add-to-list 'eshell-command-aliases-list (list "gitc"  "git checkout -b $*"))
+  (add-to-list 'eshell-command-aliases-list (list "gitcb" "git checkout -b $*"))
   (add-to-list 'eshell-command-aliases-list (list "gitl"  "git log -n 20 --pretty=oneline --abbrev-commit --no-merges --decorate --format=format:'%h - (%ar) %s - %an%d'"))
-  (add-to-list 'eshell-command-aliases-list (list "gitca" "git commit -a"))
   (add-to-list 'eshell-command-aliases-list (list "gitcm" "git commit -m"))
 
   (add-to-list 'eshell-command-aliases-list (list "gr"    "grep $*"))
@@ -2247,24 +2332,49 @@ mostly for python
   (add-to-list 'eshell-command-aliases-list (list "h"     "history 30"))
   (add-to-list 'eshell-command-aliases-list (list "netsl" "netstat -tlnp"))
   (add-to-list 'eshell-command-aliases-list (list "lsofi" "lsof -n -i"))
-  (add-to-list 'eshell-command-aliases-list (list "hs"    "(setq es_hstFile (concat \"~/history/commands/history_eshell_\" (format-time-string \"%Y%m%d-%H%M\" (current-time)) \".lst\")); history > $es_hstFile; cat $es_hstFile;"))
-  (add-to-list 'eshell-command-aliases-list (list "hl"    "history 30"))
+
+
+  (add-to-list 'eshell-command-aliases-list (list "hs"    "(setq es_hstFile (save-eshell-history)); cat $es_hstFile; echo $es_hstFile"))
+  (add-to-list 'eshell-command-aliases-list (list "hs2"   "~/.emacs.d/save-history.eshell"))
+  (add-to-list 'eshell-command-aliases-list (list "hl"    "history 60"))
   (add-to-list 'eshell-command-aliases-list (list "hll"   "ls -lrt ~/history/commands/ | tail -6"))
-  (add-to-list 'eshell-command-aliases-list (list "hg"    "history | grep $*"))
-  (add-to-list 'eshell-command-aliases-list (list "hgg"   "cat ~/history/commands/history* | grep -i $*"))
+  (add-to-list 'eshell-command-aliases-list (list "hg"    "cat $eshell-history-file-name | grep -i $*"))
+  (add-to-list 'eshell-command-aliases-list (list "hgg"   "find ~/history/commands/ -mtime -20  -type f | xargs grep -i $*"))
+  (add-to-list 'eshell-command-aliases-list (list "hggg"  "find ~/history/commands/ -mtime -365 -type f | xargs grep -i $*"))
+  (add-to-list 'eshell-command-aliases-list (list "hgggg" "find ~/history/commands/ -type f | xargs grep -i $*"))
+
   (add-to-list 'eshell-command-aliases-list (list "es"    "(save-eshell-terminal)"))
 
   (add-to-list 'eshell-command-aliases-list (list "pe"    "printenv | sort"))
   (add-to-list 'eshell-command-aliases-list (list "pg"    "printenv | grep -i $*"))
-  (add-to-list 'eshell-command-aliases-list (list "psg"   "ps -elf | grep -i $*"))
+  (add-to-list 'eshell-command-aliases-list (list "ctrlc" "xclip -selection c"))
 
-  (add-to-list 'eshell-command-aliases-list (list "ctrlc"   "xclip -selection c"))
+  (add-to-list 'eshell-command-aliases-list (list "psg"     "ps -elf | grep -i $*"))
   (add-to-list 'eshell-command-aliases-list (list "ctrlv"   "xclip -selection c -o; echo '' "))
   (add-to-list 'eshell-command-aliases-list (list "ctrlvv"  "xclip -selection c -o >> /home/kleyn/history/scratch.org; echo '' >> /home/kleyn/history/scratch.org;"))
   (add-to-list 'eshell-command-aliases-list (list "apt-all" "aptitude search ~i"))))
 ;; aptitude doesn't echo into eshell buffer :(
 
+;; (add-to-list 'eshell-command-aliases-list (list "hgg"   "cat ~/history/commands/history* | grep -i $*"))
+;; (add-to-list 'eshell-command-aliases-list (list "hs"    "(setq es_hstFile (concat \"/home/kleyn/history/commands/history_eshell_\" (format-time-string \"%Y%m%d-%H%M\" (current-time)) \".lst\")); echo $eshell-history-file-name; (eshell-write-history); cp $eshell-history-file-name $es_hstFile; cat $es_hstFile"))
+;; (add-to-list 'eshell-command-aliases-list (list "hs"    "(setq es_hstFile (concat \"/home/kleyn/history/commands/history_eshell_\" (format-time-string \"%Y%m%d-%H%M\" (current-time)) \".lst\")); echo $es_hstFile; (eshell-write-history es_hstFile); cat $es_hstFile"))
+;; (add-to-list 'eshell-command-aliases-list (list "hs"    "(setq es_hstFile (concat \"/home/kleyn/history/commands/history_eshell_\" (format-time-string \"%Y%m%d-%H%M\" (current-time)) \".lst\")); echo $eshell-history-file-name; cp $eshell-history-file-name $es_hstFile; cat $es_hstFile"))
+;; (add-to-list 'eshell-command-aliases-list (list "hs"    "(setq es_hstFile (concat \"/home/kleyn/history/commands/history_eshell_\" (format-time-string \"%Y%m%d-%H%M\" (current-time)) \".lst\")); history > $es_hstFile; cat $es_hstFile;"))
+;; (add-to-list 'eshell-command-aliases-list (list "hs"    (concat "(setq es_hstFile " "/home/kleyn/history/commands/history_eshell_" (format-time-string "%Y%m%d-%H%M" (current-time)) ".lst)" "; history > $es_hstFile; cat $es_hstFile;")))
+;; (add-to-list 'eshell-command-aliases-list (list "hs"    "(setq es_hstFile (concat \"/home/kleyn/history/commands/history_eshell_\" (format-time-string \"%Y%m%d-%H%M\" (current-time)) \".lst\")); history > $es_hstFile; cat $es_hstFile;"))
+;; (add-to-list 'eshell-command-aliases-list (list "hs"    "(setq es_hstFile (concat \"~/history/commands/history_eshell_\" (format-time-string \"%Y%m%d-%H%M\" (current-time)) \".lst\")); history > $es_hstFile; cat $es_hstFile;"))
 ;; https://emacs.stackexchange.com/questions/27849/how-can-i-setup-eshell-to-use-ivy-for-tab-completion
+
+(defun save-eshell-history ()
+;  (interactive)
+   (setq es_hstFile (concat "/home/kleyn/history/commands/history_eshell_" (format-time-string "%Y%m%d-%H%M" (current-time)) ".lst"))
+   (eshell-write-history)
+   (eshell-write-history)
+   (eshell-write-history)
+   (eshell-write-history)
+   (copy-file "/home/kleyn/.emacs.d/eshell/history" es_hstFile)
+   es_hstFile)
+
 (setq eshell-prompt-function
        (lambda ()
          (setq dts (format-time-string "%Y%m%d%H:%M" (current-time)))
@@ -2272,14 +2382,34 @@ mostly for python
                  "|" (propertize (substring dts 8) 'face `(:foreground "green"))
                  "|" (car (last (split-string (getenv "VIRTUAL_ENV") "/")))
                  "|" (propertize (substring (pwd) 10) 'face `(:foreground "green"))
-                 (if (= (user-uid) 0) " \n:: " " \n:: ")))
+                 "\n:: "))
 
-    eshell-prompt-regexp "^::.*\n:: "
+    eshell-prompt-regexp "^:: "
 )
 
-(add-hook 'eshell-mode-hook
-  (lambda ()
-    (define-key eshell-mode-map (kbd "C-<tab>")  (lambda () (interactive) (pcomplete-std-complete)))))
+;; eshell-prompt-regexp "^[^:]*:: "
+;; (if (= (user-uid) 0) " :: " " :: ")
+;; (if (= (user-uid) 0) " \n:: " " \n:: ")))
+;;eshell-prompt-regexp "^::.*\n:: "
+
+(add-hook 'eshell-mode-hook '(lambda () (define-key eshell-mode-map (kbd "C-<tab>")  'pcomplete-std-complete)))
+(add-hook 'eshell-mode-hook '(lambda () (define-key eshell-mode-map (kbd "C-a")      'eshell-prompt-bol)))
+
+(defun eshell-prompt-bol ()
+  (interactive)
+  (beginning-of-line)
+  (forward-char (length ":: ")))
+
+;; (add-hook 'eshell-mode-hook '(lambda () (define-key eshell-mode-map (kbd "C-<tab>")  (lambda () (interactive) (pcomplete-std-complete)))))
+
+(defun save-eshell-terminal ()
+  "Clone the current buffer writing it into FILENAME and open it"
+  (interactive "FClone to file: ")
+  (setq eshellFname (concat "/home/kleyn/history/eshell_term/eshell_buffer_" (format-time-string "%Y%m%d-%H:%M" (current-time)) ".log"))
+  (save-restriction
+    (widen)
+    (write-region (point-min) (point-max) eshellFname nil nil nil 'confirm))
+  (find-file-noselect eshellFname))
 
 #+END_SRC
 
@@ -2290,14 +2420,6 @@ mostly for python
 (setq eshell-cmpl-cycle-completions nil)
 eshell-prompt-regexp (concat "^" (regexp-quote "$")
 
-(defun save-eshell-terminal ()
-  "Clone the current buffer writing it into FILENAME and open it"
-  (interactive "FClone to file: ")
-  (setq eshellFname (concat "/home/kleyn/history/eshell_term/eshell_buffer_" (format-time-string "%Y%m%d-%H:%M" (current-time)) ".log"))
-  (save-restriction
-    (widen)
-    (write-region (point-min) (point-max) eshellFname nil nil nil 'confirm))
-  (find-file-noselect eshellFname))
 
 (mapconcat 'identity '("a" "b" "c") ",")
 (mapconcat 'identity (reverse (butlast (reverse (list "home ""kleyn" "projects" )) 3)) "/")
