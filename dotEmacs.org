@@ -60,7 +60,8 @@ convenient prefix key map, for example `C-,`
 (require 'wdired)
 (load-library "dired-subtree")
 (require 'ox-gfm)
-(require 'origami)
+(require 'yafolding)  ; (require 'origami)
+
 
 ; (defun org-export-get-reference (a b) nil)
 ;(require 'dired-lis)
@@ -68,26 +69,6 @@ convenient prefix key map, for example `C-,`
 ;; (require 'diffview)      ; make patch files look like ediff
 (message "-------------- Done: Packages")
 #+END_SRC
-origami-open-node                 Open a fold node.
-origami-open-node-recursively     Open a fold node and all of its children.
-origami-show-node                 Like origami-open-node but also opens parent fold nodes recursively so as to ensure the position where point is is visible.
-origami-close-node                Close a fold node.
-origami-close-node-recursively    Close a fold node and all of its children.
-origami-toggle-node               Toggle open or closed a fold node.
-origami-forward-toggle-node       Search forward on this line for a node and toggle it open or closed. This makes toggling nodes much more convenient.
-origami-recursively-toggle-node   Acts like org-mode header collapsing. Cycle a fold between open, recursively open, closed.
-origami-open-all-nodes            Open every fold in the buffer.
-origami-close-all-nodes           Close every fold in the buffer.
-origami-toggle-all-nodes          Toggle open/closed every fold node in the buffer.
-origami-show-only-node            Close everything but the folds necessary to see the point. Very useful for concentrating on an area of code.
-origami-previous-fold             Move to the previous fold.
-origami-next-fold                 Move to the end of the next fold.
-origami-forward-fold              Move to the start of the next fold.
-origami-forward-fold-same-level   Move to the start of the next fold that is a sibling of the current fold.
-origami-backward-fold-same-level  Move to the start of the previous fold that is a sibling of the current fold.
-origami-undo                      Undo the last folding operation.
-origami-redo                      Redo the last undone folding operation.
-origami-reset                     Remove all folds from the buffer and reset all origami state. Useful if origami messes up!
 
 * Function Definitions
 
@@ -158,7 +139,7 @@ origami-reset                     Remove all folds from the buffer and reset all
   )
 )
 
-(defun rfix ()
+(defun fixReadOnly ()
   (interactive)
   (let ((inhibit-read-only t))
     (remove-text-properties  (point-min) (point-max) '(read-only t))
@@ -193,16 +174,30 @@ origami-reset                     Remove all folds from the buffer and reset all
 
 (defun insertcodePyCodeSnippet ()
   (interactive)
-  (move-beginning-of-line nil)
-  ;;(newline-and-indent)
-  ;; (end-of-line)
-  ;; (open-line)
-  (indent-according-to-mode)
-  (insert "from util import dbg_toolbag as t; t.brk()")
-  ; (insert "from see import see; import ipdb; ipdb.set_trace(context=15) # breakpoint()")
-  (newline)
-  (indent-according-to-mode)
-  )
+  (move-end-of-line nil)
+  (if (= (line-beginning-position) (line-end-position))
+      (progn (move-beginning-of-line nil)
+             (indent-according-to-mode)
+             (insert "breakpoint()")
+             (newline)
+             (indent-according-to-mode)
+             (previous-line))
+      (progn (backward-word)
+             (let ((currWord (thing-at-point 'word)))
+             (if (equal currWord "breakpoint")
+               (delete-region (line-beginning-position) (+ (line-end-position)1))
+               (progn (move-beginning-of-line nil)
+                      (indent-according-to-mode)
+                      (insert "breakpoint()")
+                      (newline)
+                      (indent-according-to-mode)
+                      (previous-line)))))))
+
+;; (insert "from util import dbg_toolbag as t; t.brk()")
+;; (insert "from see import see; import ipdb; ipdb.set_trace(context=15) # breakpoint()")
+;; (newline-and-indent)
+;; (end-of-line)
+;; (open-line)
 
 ;; ------------------------------------------------------------------- Scroll One Line At a time
 (defun scroll-one-line-up (&optional arg)
@@ -526,6 +521,17 @@ BEG and END (region to sort)."
   (align-regexp (region-beginning) (region-end) (concat "\\(\\s-*\\)" pat) 1 1 nil)
   ;;(align-regexp beg end (concat "\\(\\s-*\\)" pat) 1 1 nil)
   )
+
+;;-------------------------------------------------------------------- align
+(defun align-repeat (start end regexp)
+  "Repeat alignment with respect to the given regular expression. Provide arg [[:space:]]+"
+  (interactive "r\nsAlign regexp: ")
+  ;; 1 First, the regular expression to align with. This expression begins with \(\s-*\), which stands for “an arbitrary number of spacing characters”.
+  ;; 2 Then the parenthesis group to modify, 1 by default. This will align the expression by modifying the matching whitespaces in front of the regular expression, if any.
+  ;;   The modification amounts to adding some number of whitespaces to that part of the regular expression.
+  ;; 3 Additional number of whitespaces to add, the default 1 is fine. Set to 0 if no additional whitespace is needed.
+  ;; 4 Finally, answer n/y, depending whether the alignment must be done once or repeated.
+  (align-regexp start end (concat "\\(\\s-*\\)" regexp) 1 1 t))
 
 ;;-------------------------------------------------------------------- Open With
 (add-hook 'find-file-hook  ;; ensure file in production can't be modified via emacs
@@ -1017,7 +1023,7 @@ M-x clone-indirect-buffer RET
 ;;--------------------------------------------------------- Language Modes
 ;;(insert (format "%s" auto-mode-alist))((\.m\' . matlab-mode) (\.py$ . python-mode) (\.te?xt\' . text-mode) (\.c\' . c-mode) (\.h\' . c-mode) (\.tex\' . tex-mode) (\.ltx\' . latex-mode) (\.el\' . emacs-lisp-mode) (\.scm\' . scheme-mode) (\.l\' . lisp-mode) (\.lisp\' . lisp-mode) (\.f\' . fortran-mode) (\.F\' . fortran-mode) (\.for\' . fortran-mode) (\.p\' . pascal-mode) (\.pas\' . pascal-mode) (\.ad[abs]\' . ada-mode) (\.\([pP]\([Llm]\|erl\)\|al\)\' . perl-mode) (\.s?html?\' . html-mode) (\.cc\' . c++-mode) (\.hh\' . c++-mode) (\.hpp\' . c++-mode) (\.C\' . c++-mode) (\.H\' . c++-mode) (\.cpp\' . c++-mode) (\.cxx\' . c++-mode) (\.hxx\' . c++-mode) (\.c\+\+\' . c++-mode) (\.h\+\+\' . c++-mode) (\.m\' . objc-mode) (\.java\' . java-mode) (\.mk\' . makefile-mode) (\(M\|m\|GNUm\)akefile\(\.in\)?\' . makefile-mode) (\.am\' . makefile-mode) (\.texinfo\' . texinfo-mode) (\.te?xi\' . texinfo-mode) (\.s\' . asm-mode) (\.S\' . asm-mode) (\.asm\' . asm-mode) (ChangeLog\' . change-log-mode) (change\.log\' . change-log-mode) (changelo\' . change-log-mode) (ChangeLog\.[0-9]+\' . change-log-mode) (changelog\' . change-log-mode) (changelog\.[0-9]+\' . change-log-mode) (\$CHANGE_LOG\$\.TXT . change-log-mode) (\.scm\.[0-9]*\' . scheme-mode) (\.[ck]?sh\'\|\.shar\'\|/\.z?profile\' . sh-mode) (\(/\|\`\)\.\(bash_profile\|z?login\|bash_login\|z?logout\)\' . sh-mode) (\(/\|\`\)\.\(bash_logout\|shrc\|[kz]shrc\|bashrc\|t?cshrc\|esrc\)\' . sh-mode) (\(/\|\`\)\.\([kz]shenv\|xinitrc\|startxrc\|xsession\)\' . sh-mode) (\.m?spec\' . sh-mode) (\.mm\' . nroff-mode) (\.me\' . nroff-mode) (\.ms\' . nroff-mode) (\.man\' . nroff-mode) (\.\(u?lpc\|pike\|pmod\)\' . pike-mode) (\.TeX\' . tex-mode) (\.sty\' . latex-mode) (\.cls\' . latex-mode) (\.clo\' . latex-mode) (\.bbl\' . latex-mode) (\.bib\' . bibtex-mode) (\.sql\' . sql-mode) (\.m4\' . m4-mode) (\.mc\' . m4-mode) (\.mf\' . metafont-mode) (\.mp\' . metapost-mode) (\.vhdl?\' . vhdl-mode) (\.article\' . text-mode) (\.letter\' . text-mode) (\.tcl\' . tcl-mode) (\.exp\' . tcl-mode) (\.itcl\' . tcl-mode) (\.itk\' . tcl-mode) (\.icn\' . icon-mode) (\.sim\' . simula-mode) (\.mss\' . scribe-mode) (\.f90\' . f90-mode) (\.indent\.pro\' . fundamental-mode) (\.pro\' . idlwave-mode) (\.lsp\' . lisp-mode) (\.awk\' . awk-mode) (\.prolog\' . prolog-mode) (\.tar\' . tar-mode) (\.\(arc\|zip\|lzh\|zoo\|jar\)\' . archive-mode) (\.\(ARC\|ZIP\|LZH\|ZOO\|JAR\)\' . archive-mode) (\`/tmp/Re . text-mode) (/Message[0-9]*\' . text-mode) (/drafts/[0-9]+\' . mh-letter-mode) (\.zone\' . zone-mode) (\`/tmp/fol/ . text-mode) (\.y\' . c-mode) (\.lex\' . c-mode) (\.oak\' . scheme-mode) (\.sgml?\' . sgml-mode) (\.xml\' . sgml-mode) (\.dtd\' . sgml-mode) (\.ds\(ss\)?l\' . dsssl-mode) (\.idl\' . idl-mode) ([]>:/\]\..*emacs\' . emacs-lisp-mode) (\`\..*emacs\' . emacs-lisp-mode) ([:/]_emacs\' . emacs-lisp-mode) (/crontab\.X*[0-9]+\' . shell-script-mode) (\.ml\' . lisp-mode) (\.\(asn\|mib\|smi\)\' . snmp-mode) (\.\(as\|mi\|sm\)2\' . snmpv2-mode) (\.\(diffs?\|patch\|rej\)\' . diff-mode) (\.\(dif\|pat\)\' . diff-mode) (\.[eE]?[pP][sS]\' . ps-mode) (configure\.\(ac\|in\)\' . autoconf-mode) (BROWSE\' . ebrowse-tree-mode) (\.ebrowse\' . ebrowse-tree-mode) (#\*mail\* . mail-mode) (\.~?[0-9]+\.[0-9][-.0-9]*~?\' ignore t) (\.[1-9]\' . nroff-mode) (\.g\' . antlr-mode))
 (add-to-list 'auto-mode-alist '("\\.sas\\'"   . sas-mode)     )
-(add-to-list 'auto-mode-alist '("\\.m\\'"     . matlab-mode)  )
+(add-to-list 'auto-mode-alist '("\\.m\\'"     . octave-mode)  )
 
 (add-to-list 'auto-mode-alist '("\\.cp\\'"    . c++-mode)     )
 
@@ -1306,7 +1312,7 @@ M-x clone-indirect-buffer RET
 (define-key org-mode-map (kbd "C-c d")    'org-demote-subtree)
 (define-key org-mode-map (kbd "C-c p")    'org-promote-subtree)
 (define-key org-mode-map (kbd "C-c u")    'outline-up-heading)
-
+(define-key org-mode-map (kbd "C-c C-t")    'org-transpose-table-at-point)
 ;; needs ox.el = org-exporter.el
 ;;(require 'ox-confluence)
 
@@ -1388,9 +1394,6 @@ M-x clone-indirect-buffer RET
             (let ((filename (buffer-file-name (current-buffer))))
               (when (and filename (string= "trello" (file-name-extension filename)))
               (org-trello-mode)))))
-
-;(hiyv wvv-xwjtpd-gtsaybiw-pmc "ug03ii5kh067337sgg8i40k124i43p15"
-;      swl-bvtpqt-igrixx-bszis "h321n58405iqikk317i262gqfk52k99k89fte2hh322nju040j1h19gne0q0i3j2")
 
 ; (org-trello-install-key-and-token)
 ;(org-trello-install-board-metadata)
@@ -1540,7 +1543,7 @@ M-x clone-indirect-buffer RET
 ;; Dired Listing Switches: Hide Value -ahl --time-style=long-iso
 ;; Dired Listing Switches: Hide Value -ahl --time-style=long-iso
 ;;  State: SET for current session only.
-(setq dired-listing-switches "-alh --time-style=long-iso")
+(setq dired-listing-switches "-alht --time-style=long-iso") ;; list most recent first
 
 ;; (setq dired-omit-files "^\\..*$")
 
@@ -1672,7 +1675,8 @@ M-x clone-indirect-buffer RET
   (setq ffn (dired-get-filename))
   (message (concat "ffn" ffn))
   (switch-to-buffer "*eshell*")
-  (insert (concat "cd " ffn "; ll" ))
+  (goto-char (point-max))
+  (insert (concat "cd " (file-name-directory ffn) "; ll" ))
 )
 
 (defun dired-paste-to-yank-buffer (&optional arg)
@@ -1972,13 +1976,13 @@ M-x clone-indirect-buffer RET
 * hooks
 mostly for python -made named function so remove-hook can be used
 #+BEGIN_SRC emacs-lisp
+
 (defun py-clean-file()
   (if (not indent-tabs-mode)
-      (untabify (point-min) (point-max))
       (delete-trailing-whitespace (point-min) (point-max))))
+;       (untabify (point-min) (point-max)))
 (add-hook 'write-file-hooks 'py-clean-file)
 #+END_SRC
-
 * Key Bindings
 
  M-0 w                       ;; dired copy path
@@ -2084,15 +2088,15 @@ mostly for python -made named function so remove-hook can be used
 #+END_SRC
 
 ** Function Keys
-|-------+----------+------------+--------------+-----------+---+----------+-----------+----+----+---+-------------+----------+------------+-----+-------|
-| mod   | F1       | F2         | F3           | F4        |   | F5       | F6        | F7 | F8 |   | F9          | F10      | F11        | F12 |       |
-|-------+----------+------------+--------------+-----------+---+----------+-----------+----+----+---+-------------+----------+------------+-----+-------|
-|       | *eshell* | doAnDone   | dired ~/     | dotEmacs  |   | app-open | transpose |    |    |   | macro-start | origami  | debug-on   |     |       |
-| CTRL  | *bash*   | bookmarks  | dired-omit   | transpose |   | fapp     | bool-flip |    |    |   | macro-go    | tog node | degbug-off |     | CTRL  |
-| SHIFT | *python* | scratch    | dired repos/ |           |   |          |           |    |    |   | macro-end   | tog all  |            |     | SHIFT |
-| ALT   | *ielm*   | mySystems? | dired hist/  |           |   |          |           |    |    |   |             | open all |            |     | ALT   |
-| SUPER |          | access?    |              |           |   |          |           |    |    |   |             |          |            |     | SUPER |
-|-------+----------+------------+--------------+-----------+---+----------+-----------+----+----+---+-------------+----------+------------+-----+-------|
+|-------+----------+------------+--------------+-----------+---+----------+-----------+----+----+---+-------------+-----------+--------------+-----+-------|
+| mod   | F1       | F2         | F3           | F4        |   | F5       | F6        | F7 | F8 |   | F9          | F10       | F11          | F12 |       |
+|-------+----------+------------+--------------+-----------+---+----------+-----------+----+----+---+-------------+-----------+--------------+-----+-------|
+|       | *eshell* | doAnDone   | dired ~/     | dotEmacs  |   | app-open | transpose |    |    |   | macro-start | tog node  | tog py break |     |       |
+| CTRL  | *bash*   | bookmarks  | dired-omit   | transpose |   | fapp     | bool-flip |    |    |   | macro-go    | tog all   | debug-off    |     | CTRL  |
+| SHIFT | *python* | scratch    | dired repos/ |           |   |          |           |    |    |   | macro-end   | open all  | debug-on     |     | SHIFT |
+| ALT   | *ielm*   | mySystems? | dired hist/  |           |   |          |           |    |    |   |             | yafolding |              |     | ALT   |
+| SUPER | *ansi*?  | access?    |              |           |   |          |           |    |    |   |             |           |              |     | SUPER |
+|-------+----------+------------+--------------+-----------+---+----------+-----------+----+----+---+-------------+-----------+--------------+-----+-------|
 #+BEGIN_SRC emacs-lisp
 
 
@@ -2105,6 +2109,7 @@ mostly for python -made named function so remove-hook can be used
 (global-set-key [C-f2]          '(lambda () (interactive) (find-file "/home/kleyn/history/scratch.org")))
 (global-set-key [S-f2]          '(lambda () (interactive) (find-file "/home/kleyn/aNotes/bookmarks.org")))
 (global-set-key [M-f2]          '(lambda () (interactive) (find-file "/home/kleyn/aNotes/mySystems.org")))
+(global-set-key [s-f2]          '(lambda () (interactive) (find-file "/home/kleyn/aNotes/access.org")))
 
 (global-set-key [f3]            'diredHome)
 (global-set-key [C-f3]          'dired-omit-mode)
@@ -2121,28 +2126,29 @@ mostly for python -made named function so remove-hook can be used
 (global-set-key [f6]            'org-transpose-table-at-point)
 (global-set-key [C-f6]          'bool-flip-do-flip)
 
+(global-set-key [f7]            '(lambda () (interactive) (ibuffer "home") (ibuffer-switch-to-saved-filter-groups "home")))
 (global-set-key [S-f7]          'show-hist)             ;; (global-set-key [S-f7] 'buffer-menu-sort-by-filename)
-
 
 (global-set-key [f9]            'kmacro-start-macro)        ;; 'ielm)  ;; open file under cursor
 (global-set-key [C-f9]          'kmacro-end-and-call-macro) ;; see-shell-output) ;ergoemacs-open-in-external-app
 (global-set-key [S-f9]          'kmacro-end-macro)
 
-(global-set-key [f10]           'origami-mode)
-(define-key origami-mode-map (kbd "C-<tab>")  'origami-toggle-node)
-(global-set-key [C-f10]         'origami-toggle-node)
-(global-set-key [S-f10]         'origami-toggle-all-nodes)
-(global-set-key [M-f10]         'origami-open-all-nodes) ;  hs-hide-block
+(global-set-key [f10]           'yafolding-toggle-element)
+(global-set-key [C-f10]         'yafolding-toggle-all)
+(global-set-key [S-f10]         'yafolding-show-all)
+(global-set-key [M-f10]         'yafolding-mode)
+(global-set-key [s-f10]         'yafolding-discover)
+
 
 ; (global-set-key [M-f2]        'buffer-menu-sort-by-filename)
 (global-set-key [M-f10]         'see-shell-output)      ;; ergoemacs-open-in-external-app
 
-(global-set-key [f11]           'set-debug-on)
-(global-set-key [C-f11]         'set-debug-off)
+(global-set-key [f11]           'insertcodePyCodeSnippet)
+(global-set-key [C-f11]         'set-debug-on)
+(global-set-key [S-f11]         'set-debug-off)
 
 (global-unset-key "\C-x\C-c")                            ;; Don't quit so easily
 (global-set-key (kbd "C-x C-c C-v")  'save-buffers-kill-emacs) ;; But we establish a longer sequence that is harder to hit by accident:
-
 
 
 #+END_SRC
@@ -2297,7 +2303,7 @@ mostly for python -made named function so remove-hook can be used
 * ESHELL
 #+BEGIN_SRC emacs-lisp
 (eshell)
-(setq eshell-save-history-on-exit t)
+(setq eshell-save-history-on-exit nil)
 (setq eshell-hist-ignoredups t)
 
 (require 'ansi-color)
@@ -2366,7 +2372,7 @@ mostly for python -made named function so remove-hook can be used
 ;; https://emacs.stackexchange.com/questions/27849/how-can-i-setup-eshell-to-use-ivy-for-tab-completion
 
 (defun save-eshell-history ()
-;  (interactive)
+  (interactive)
    (setq es_hstFile (concat "/home/kleyn/history/commands/history_eshell_" (format-time-string "%Y%m%d-%H%M" (current-time)) ".lst"))
    (eshell-write-history)
    (eshell-write-history)
@@ -2375,10 +2381,14 @@ mostly for python -made named function so remove-hook can be used
    (copy-file "/home/kleyn/.emacs.d/eshell/history" es_hstFile)
    es_hstFile)
 
+(setq eshell-prompt-function (lambda () (concat ":: "))
+      eshell-prompt-regexp "^:: "
+)
+
 (setq eshell-prompt-function
        (lambda ()
          (setq dts (format-time-string "%Y%m%d%H:%M" (current-time)))
-         (concat "::" (substring dts 0 8)
+         (concat (substring dts 0 8)
                  "|" (propertize (substring dts 8) 'face `(:foreground "green"))
                  "|" (car (last (split-string (getenv "VIRTUAL_ENV") "/")))
                  "|" (propertize (substring (pwd) 10) 'face `(:foreground "green"))
@@ -2386,6 +2396,7 @@ mostly for python -made named function so remove-hook can be used
 
     eshell-prompt-regexp "^:: "
 )
+
 
 ;; eshell-prompt-regexp "^[^:]*:: "
 ;; (if (= (user-uid) 0) " :: " " :: ")
