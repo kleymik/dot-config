@@ -25,7 +25,7 @@ promptFunc() {
   # right before prompting for the
   # next command, save the previous
   # command in a file. $(hostname)
-  echo "$(date +%Y-%m-%d--%H-%M-%S) : $$ : $PWD: $(history 1)" >> ~/history/bash/history_$(date +%Y-%V)
+  echo "$(date +%Y-%m-%d--%H-%M-%S) : $$ : $PWD: $(history 1)" >> ~/history/commands/history_$(date +%Y-%V)
 }
 
 export HISTTIMEFORMAT='%Y%m%d-%T: '
@@ -40,10 +40,12 @@ PROMPT_DIRTRIM=20
 #export PS1="\e[0;36m=[\$(parse_git_branch) \$(parse_pyvenv)]=:\t:\w:\e[m\n>"
 export PS1="\e[0;36m[ \h:\u:\$\$ ]:[ \$(parse_pyvenv) ]:[ \t ]:[ \w ]:\e[m\n>"
 
-# Colors ----------------------------------------------------------------------- colors
+# Colors ----------------------------------------------------------------------- Colors
 alias grep='grep --color=auto'                # show differences in colour
 alias egrep='egrep --color=auto'              # show differences in colour
 alias fgrep='fgrep --color=auto'              # show differences in colour
+
+alias sleepMaxwell='sync && sleep 20 && systemctl suspend'
 
 # ALIAS ------------------------------------------------------------------------ alias
 function ag () {
@@ -77,11 +79,11 @@ alias h='history 30'
 alias hh='history | tee ~/history/commands/hist`date +%Y%m%d_%H%M%S`'
 alias hf='history 300'
 alias hs='history | tee ~/history/commands/history_`date +%Y%m%d_%H%M` | tail -30'
-function hl   () { history | tail -40                              ; }
-function hll  () { ls -lrt ~/history/commands | tail -6            ; }
-function hg   () { history | grep "$@" | cut -b 8- | sort | uniq   ; }
-function hgg  () { grep "$@" ~/history/commands/hist*`date +%Y%m*` ; }
-function hggg () { grep "$@" ~/history/commands/*                  ; }
+function hl   () { history | tail -40 ; }
+function hll  () { ls -lrt ~/history/commands | tail -6 ; }
+function hg   () { history | grep "$@" | cut -b 8- | sort | uniq                              ; }
+#function hgg  () { grep "$@" ~/history/commands/hist*`date +%Y%m*`                            ; }
+function hgg () { grep "$@" ~/history/commands/*                                             ; }
 
 # log terminal activity - but messes up the use of this script
 function termLog () { script ~/history/termLogs/termLog_"$@"_`date +%Y%m%d_%H%M`; }
@@ -108,7 +110,6 @@ alias py-jupyter='cd ~; jupyter notebook';           # ensure http server can se
 alias gdaprocs='netstat -tlnp 2>/dev/null | grep java | sort -k 7'
 alias jpps='/dls_sw/apps/java/x64/gda842/bin/jps'
 alias rd='rdesktop -a 32 -x 0x80 -g 1920x1080 DIAMRL5319 -r sound:remote'
-
 function see () { more `which "$@"`; }
 
 # ------------------------------------------------------------------------------ networky stuff
@@ -150,13 +151,12 @@ function rg_nxs () { # $1 = dir; remember to module load nexus
 
 alias gita='git add'
 alias gitb='git branch -av'
-alias gitbc='git checkout -b '
 alias gitbd='git branch --edit-description'
 alias gitbm='git branch --merged'
 alias gitbnm='git branch --no-merged'
 alias gitc='git checkout'
-alias gitc='git commit'
-alias gitca='git commit -a '
+alias gitcb='git checkout -b '
+alias gitcm='git commit -m'
 alias gitcl='git clone'
 alias gitcln='git clone'
 alias gitcln='git clone'
@@ -166,14 +166,14 @@ alias gitdi='git diff -w --cached'
 alias gitf='git fetch'
 alias gitg='git grep'
 alias gith='git help'
-alias gitlf="git log -p --follow"
 alias gitl2="git   log -n 20  --pretty=short   --abbrev-commit "
 alias gitl3="git   log -n 20  --pretty=medium  --abbrev-commit "
 alias gitl="git    log -n 60  --pretty=oneline --abbrev-commit  --no-merges --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(bold yellow)%d%C(reset)'"
-alias gitlg="git   log -n 30  --graph --abbrev-commit                       --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(bold yellow)%d%C(reset)' --no-merges --all"
-alias gitlgg="git  log -n 150 --graph --abbrev-commit                       --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold cyan)%ai%C(reset)    %C(bold yellow)%d%C(reset)  %C(white)%s%C(reset) %C(dim white)- %an%C(reset)'  --all"
-alias gitlggt="git log -n 150 --graph --abbrev-commit                       --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold cyan)%aD%C(reset)    %C(bold green)(%ar)%C(reset)%C(bold yellow)%d%C(reset)%n''  %C(white)%s%C(reset) %C(dim white)- %an%C(reset)' --all"
-alias gitlgm="git  log -n 30  --graph --abbrev-commit                       --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(bold yellow)%d%C(reset)' --all"
+alias gitlf="git log -p --follow"
+alias gitlg="git   log -n 30  --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(bold yellow)%d%C(reset)' --no-merges --all"
+alias gitlgg="git  log -n 150 --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold cyan)%ai%C(reset) %C(bold yellow)%d%C(reset)  %C(white)%s%C(reset) %C(dim white)- %an%C(reset)'  --all"
+alias gitlggt="git log -n 150 --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold cyan)%aD%C(reset) %C(bold green)(%ar)%C(reset)%C(bold yellow)%d%C(reset)%n''  %C(white)%s%C(reset) %C(dim white)- %an%C(reset)' --all"
+alias gitlgm="git  log -n 30  --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(bold yellow)%d%C(reset)' --all"
 alias gitll="git   log -n 160 --pretty=oneline --abbrev-commit  --no-merges --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(bold yellow)%d%C(reset)'"
 alias gitlm="git   log -n 60  --pretty=oneline --abbrev-commit              --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(bold yellow)%d%C(reset)'"
 alias gitmv='git mv'
@@ -206,7 +206,7 @@ function gitsa() { echo $(git rev-parse --abbrev-ref HEAD);
 
 function gitcfg () {
   # only needed once?
-  git config --global core.editor "emacs -nw -fg black -bg white1"
+  git config --global core.editor "emacs26 -nw -fg black -bg white1"
   git config --global user.name "Mike Kleyn"
   git config --global user.email michfkl@btinternet.com
   git config --global color.status auto
@@ -219,10 +219,11 @@ alias tbird='(export LC_TIME=en_DK.UTF-8; /usr/lib/thunderbird/thunderbird )'
 alias ff='firefox  -P default -new-instance 2> /dev/null &'
 alias ffn='firefox -P news    -new-instance 2> /dev/null &'
 # -------------------------------------------------------------- emacs
-alias emnw='emacs -nw -fg black  -bg white1'
+alias emnw='emacs26 -nw -fg black  -bg white1'
 alias ew='emacsclient -n'
-export EDITOR='emacsnw'
 #function emd () { emacsclient -n --eval "(ediff-files \"$1\" \"$2\")" }
+export EDITOR='emacs26 -nw'
+alias emacs='emacs26'
 
 #-------------------------------------------------------------------------------- cd stuff
 function cv   () { builtin cd "$@"; ls --color=auto --format=vertical --time-style=long-iso -lr; }
@@ -264,7 +265,7 @@ function psprint(){
    lsof -p $1 | egrep -v '\.jar|\.so'
 }
 
-# ENV ----------------------------------------------------------------------------------------------------- env
+# ENV ----------------------------------------------------------------------------- env
 alias pe='printenv'
 function pg   () { printenv | grep "$@"; }
 # list out ":"-separated env var vertically, defaults to listing PATH
@@ -300,7 +301,6 @@ function evrm  () {
 alias myPath='echo $PATH'
 
 # printing ---------------------------------------------------------------------------------------------------- printing
-# good old enscript
 # doesn't work as one-liner def
 # function enscPort   () { enscript                       -c            -T 3 -P dh.g.51.col.1  --font=Courier$@ }
 # function enscPortBw () { enscript                       -c            -T 3 -P dh.g.51.bw.1   --font=Courier$@ }
@@ -318,7 +318,7 @@ alias myPath='echo $PATH'
 #  721  enscript --pretty-print=python gda.py --language=html --color=1 --font=Courier8 --output=gda.py.html
 #  722  enscript --pretty-print=python gda.py --language=html --color=1 --font=Courier8 -P dh.g.51.col.1
 
-# readline -------------------------------------------------------------------------- readline bind keyboard shortcuts
+# readline ---------------------------------------------------------------- readline bind keyboard shortcuts
 # bind: 1) insert pwd; 2) expand line 3) e-x-ecute date command
 bind '"\ep": "${PWD}"'
 bind '"\ee": "\e\C-e"'
@@ -338,7 +338,7 @@ bind '"\er": reverse-search-history'
 alias gr=grep
 alias gi='grep -i'
 
-alias rg=~/ubin/fqry/rgrep.py
+alias rg=~/ubin/,rgrep.py
 
 function rgrep()  { echo "1=$1"
                     echo "2=$2"
@@ -360,7 +360,7 @@ function rgrepi() { echo "1=$1"
 function fd() {
      echo "Numargs=$# : $@"
      if [[ "$#" != "2" ]]; then
-      echo "fe \$1=dir \$2=pat"
+      echo "fd \$1=dir \$2=pat"
      else
        find $1 -iname $2
        echo "status=$?"
@@ -445,27 +445,47 @@ function rp(){
     fi
 }
 
-# --------------------------------------------------------------------------------------------- misc/old
-# x windows multiwindow
+# ------------------------------------------------------------------------------------------ misc/old
+# x windows mutiwindow
 # alias sxw='startxwin'
 
 # alias pyana='setenv PATH $PATH
 # $echo $PATH
 # drive/c/Program Files/TortoiseSVN/bin:/cygdrive/c/Users/kleyn/myDocs/Apps/Anaconda:/cygdrive/c/Users/kleyn/myDocs/Apps/Anaconda/Scripts:/cygdrive/C/Users/kleyn/myDocs/ubin
+# subversion
+alias svns='svn status -v'
+alias svnc='svn commit'
+alias svnls='svn list -v'
+alias svnlg='svn log'
+alias svnu='svn update'
+alias svna='svn add'
+alias svnds='svn diff --summarize'
+alias svnd='svn  --diff-cmd "diff" --extensions "-ywbB --width=220 --color" diff'
+alias svndd='svn --diff-cmd "diff" --extensions "-ywbB --suppress-common-lines --width=220 --color" diff'
 
 # powershell
 # alias pws='powershell.exe - < '
 
 # rem ---------------------------------------------------------------------------------------- remoting
-alias remCos='ssh -p 8022 192.168.1.160'
 alias remGem='ssh -p 8022 192.168.1.93'
 alias remGemWired='ssh -p 8022 192.168.1.161'
+alias remCos='ssh -p 8022 192.168.1.209'
 alias remNok='ssh -Y root@192.168.1.187'
-alias remTuringX='ssh -Y 192.168.1.243'
+alias remTuringX='ssh -Y 192.168.1.8'
 alias remTuringS='screen /dev/ttyS0 38400'
-
+alias remNfsEuler='sudo mount.cifs -o username=kleyn,uid=1000,gid=1000 //192.168.1.177/Users/kleyn ~/Euler'
 alias apt-all='aptitude search ~i'
 
+# misc
+alias utilCpu='lscpu | egrep "Model name|Socket|Thread|NUMA|CPU\(s\)"'
+alias utilGpu='glxinfo |grep -i -o "device|memory\|[0-9]\{1,12\} MB" |head -n 1'
+alias utilNet='ip a | grep inet'
+
+# audio of new device
+#dmesg -tW -l notice | gawk '{ if ($4 == "Attached") { system("echo New device attached | espeak") } }
+
+# $(id -u) = 1000
+# $(id -g) = 1000
 # was remSyncToMaxwell on cosmo side
 function remSyncFromCosmo () {
   # 1st do important, then all
@@ -485,23 +505,24 @@ function remSyncFromCosmo () {
     ~kleyn/mySystems/cosmo/root/storage/sdCard
   # --progress
   # --exclude=/storage
-  # rsync -nlrvvv --size-only --delete --delete-excluded --port=8022
-  #            u0_a102@192.168.1.160:/storage/9874-190B/Android/data/com.termux/files/MyDocs/aNotes/
-  #            ~kleyn/mySystems/cosmo/root/storage/sdCard/Android/data/com.termux/files/MyDocs/aNotes
+  # rsync -nlrvvv --size-only --delete --delete-excluded --port=8022                              u0_a102@192.168.1.160:/storage/9874-190B/Android/data/com.termux/files/MyDocs/aNotes/  ~kleyn/mySystems/cosmo/root/storage/sdCard/Android/data/com.termux/files/MyDocs/aNotes
   # rsync -crv --delete --delete-excluded ~/dcim/   kleyn@192.168.1.89:/home/kleyn/mySystems/gem/dcim
   # rsync -crv --delete --delete-excluded ~/MyDocs/ kleyn@192.168.1.89:/home/kleyn/mySystems/gem/MyDocs
   # rsync -crv --delete --delete-excluded ~/        kleyn@192.168.1.89:/home/kleyn/mySystems/gem
  }
 
+# M$ Windows
+export DOTNET_CLI_TELEMETRY_OPTOUT=0
 
 # greeting ------------------------------------------------------------------------------------ greeting
-# export PATH=$PATH:ubin
 # termLog :( messes up this file
 
 py-def-env
+export PYTHONPATH=.:/home/kleyn/ulib/python:$PYTHONPATH
 
 echo ""
 echo "PATH-----------------------------------------------------------"
+export PATH=$PATH:/home/kleyn/ubin
 echo $PATH
 echo ""
 echo "functions & aliases: al ---------------------------------------"
