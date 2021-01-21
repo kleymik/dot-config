@@ -67,23 +67,23 @@ alias showFuns='declare -F'
 # alias dir='ls --color=auto --format=vertical'
 # alias vdir='ls --color=auto --format=long'
 # alias la='ls -A'                            # all but . and ..
-alias l='ls -CF'                              #
+#alias l='ls -CF'                              #
 alias la='ls -al --color=auto --time-style=long-iso'
 alias lal='ls -lF'
 alias ll='ls -lF --color=auto --time-style=long-iso'
-
+alias l='stat --printf="%y\t%6s\t%-16n\n" * | cut -b -16,36-'
 
 # HISTORY ---------------------------------------------------------------------- history
 export HISTFILE=~/history/commands/history.$$.$(date +%Y%m%d_%H%M)
 alias h='history 30'
-alias hh='history | tee ~/history/commands/hist`date +%Y%m%d_%H%M%S`'
-alias hf='history 300'
+alias hh='history 300'
 alias hs='history | tee ~/history/commands/history_`date +%Y%m%d_%H%M` | tail -30'
 function hl   () { history | tail -40 ; }
 function hll  () { ls -lrt ~/history/commands | tail -6 ; }
-function hg   () { history | grep "$@" | cut -b 8- | sort | uniq                              ; }
-#function hgg  () { grep "$@" ~/history/commands/hist*`date +%Y%m*`                            ; }
-function hgg () { grep "$@" ~/history/commands/*                                             ; }
+function hg   () { history | grep "$@" | cut -b 8- | sort | uniq                             ; }
+#function hgg () { grep "$@" ~/history/commands/hist*`date +%Y%m*`                           ; }
+function hgg  () { find  ~/history/commands/ -mtime -100 | xargs grep "$@" | cut -b 46-      ; }
+function hggg () { grep "$@" ~/history/commands/*                                            ; }
 
 # log terminal activity - but messes up the use of this script
 function termLog () { script ~/history/termLogs/termLog_"$@"_`date +%Y%m%d_%H%M`; }
@@ -229,6 +229,7 @@ alias emacs='emacs26'
 function cv   () { builtin cd "$@"; ls --color=auto --format=vertical --time-style=long-iso -lr; }
 alias cu='cv ..'
 alias cw='cut -b -$COLUMNS'
+alias app_open='xdg-open'
 
 # ------------------------------------------------------------------------------- process stuff
 # ps -ejH
@@ -264,6 +265,7 @@ function psprint(){
    echo "\n-------open files:"
    lsof -p $1 | egrep -v '\.jar|\.so'
 }
+
 
 # ENV ----------------------------------------------------------------------------- env
 alias pe='printenv'
@@ -471,7 +473,7 @@ alias remGem='ssh -p 8022 192.168.1.93'
 alias remGemWired='ssh -p 8022 192.168.1.161'
 alias remCos='ssh -p 8022 192.168.1.209'
 alias remNok='ssh -Y root@192.168.1.187'
-alias remTuringX='ssh -Y 192.168.1.8'
+alias remTuringX='ssh -Y 192.168.1.180'
 alias remTuringS='screen /dev/ttyS0 38400'
 alias remNfsEuler='sudo mount.cifs -o username=kleyn,uid=1000,gid=1000 //192.168.1.177/Users/kleyn ~/Euler'
 alias apt-all='aptitude search ~i'

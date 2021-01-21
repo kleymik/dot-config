@@ -1656,6 +1656,7 @@ M-x clone-indirect-buffer RET
 ;;                           (get-text-property (point) 'dired-filename)))))
 
 ;; when sorting in dired mode, move cursor back to top
+
 (defadvice dired-sort-toggle-or-edit (after dired-sort-to-top activate)
    "Move to beginning of buffer (instead of keeping point on the current file)."
    (goto-char (point-min))
@@ -2213,6 +2214,48 @@ mostly for python -made named function so remove-hook can be used
 (global-set-key [f8]           'ztree-dir)
 (global-set-key [f4]           'desktop-save)
 
+** KeyPad Keys
+|-------+----------------+----------------+----------------+-------+-------|
+| mod   | NumLock        |              / | *              | -     |       |
+|-------+----------------+----------------+----------------+-------+-------|
+|       |                |                |                |       |       |
+| CTRL  |                |                |                | zoom- | CTRL  |
+| SHIFT |                |                |                |       | SHIFT |
+| ALT   |                |                |                |       | ALT   |
+| SUPER |                |                |                |       | SUPER |
+|-------+----------------+----------------+----------------+-------+-------|
+| mod   | 7 Home         |             8^ | 9 PgUp         | +     | +     |
+|-------+----------------+----------------+----------------+-------+-------|
+|       |                |                |                |       |       |
+| CTRL  |                |                |                | zoom+ | CTRL  |
+| SHIFT |                |                |                |       | SHIFT |
+| ALT   |                |                |                |       | ALT   |
+| SUPER |                |                |                |       | SUPER |
+|-------+----------------+----------------+----------------+-------+-------|
+| mod   | 4 <            |              5 | 6 >            | +     |       |
+|-------+----------------+----------------+----------------+-------+-------|
+|       |                |                |                |       |       |
+| CTRL  |                |                |                |       | CTRL  |
+| SHIFT | selective decr | selective zero | selective incr |       | SHIFT |
+| ALT   |                |                |                |       | ALT   |
+| SUPER |                |                |                |       | SUPER |
+|-------+----------------+----------------+----------------+-------+-------|
+| mod   | 1              |             2v | 3PgUp          | +     |       |
+|-------+----------------+----------------+----------------+-------+-------|
+|       |                |                |                |       |       |
+| CTRL  |                |                |                |       | CTRL  |
+| SHIFT |                |                |                |       | SHIFT |
+| ALT   |                |                |                |       | ALT   |
+| SUPER |                |                |                |       | SUPER |
+|-------+----------------+----------------+----------------+-------+-------|
+| mod   | 0              |              0 | .              | Enter |       |
+|-------+----------------+----------------+----------------+-------+-------|
+|       |                |                |                |       |       |
+| CTRL  |                |                |                |       | CTRL  |
+| SHIFT |                |                |                |       | SHIFT |
+| ALT   |                |                |                |       | ALT   |
+| SUPER |                |                |                |       | SUPER |
+|-------+----------------+----------------+----------------+-------+-------|
 
 ** KeyPad Keys
 #+BEGIN_SRC emacs-lisp
@@ -2231,9 +2274,10 @@ mostly for python -made named function so remove-hook can be used
 (global-set-key [S-right]       'window-hwiden)
 (global-set-key [S-up]          'scroll-one-line-down)
 
-(global-set-key [S-kp-4]        'selective-display-level-decr)
-(global-set-key [S-kp-5]        'selective-display-level-zero)
-(global-set-key [S-kp-6]        'selective-display-level-incr)
+(global-set-key [C-kp-4]        'selective-display-level-decr)
+(global-set-key [C-kp-5]        'selective-display-level-zero)
+(global-set-key [C-kp-6]        'selective-display-level-incr)
+
 (global-set-key [kp-subtract]   'kill-this-buffer-volatile)
 (global-set-key [kp-divide]     'toggle-window-split)
 
@@ -2313,6 +2357,7 @@ mostly for python -made named function so remove-hook can be used
 ;; (global-set-key  "\C-xv+" 'tfs/add)
 ;; (global-set-key  "\C-xv-" 'tfs/delete)
 ;; (global-set-key  "\C-xvc" 'tfs/changeset)
+
 
 * Debugging
 ;;-------------------------------------------------------------------- DEBUG
@@ -2417,7 +2462,8 @@ mostly for python -made named function so remove-hook can be used
 
   (defalias 'ff  'find-file)
   (defalias 'ffo 'find-file-other-window)
-  (print "aliases done"))
+  (print "aliases done")
+ )
 )
 
 
