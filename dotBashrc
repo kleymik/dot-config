@@ -45,6 +45,20 @@ alias grep='grep --color=auto'                # show differences in colour
 alias egrep='egrep --color=auto'              # show differences in colour
 alias fgrep='fgrep --color=auto'              # show differences in colour
 
+function sgf () {
+  #show greps
+  echo "-------------------------------------------greps"
+  alias | grep grep
+  echo 'grep -ir --include \"*.m\" --exclude \"*foo*\" <word> <folder>'
+  echo "-------------------------------------------finds"
+  alias | grep find
+  echo 'for a in $(find . -maxdepth 1 -mindepth 1 -type d); do echo $a; done'
+  echo "find -maxdepth 1 -printf '%t %s %p\n'"
+  echo "find . -iname '*.pst'  -printf \"%TY-%Tm-%Td %TH:%TM %p %m\n\""
+  echo "-------------------------------------------"
+}
+
+
 alias sleepMaxwell='sync && sleep 20 && systemctl suspend'
 
 # ALIAS ------------------------------------------------------------------------ alias
@@ -68,9 +82,9 @@ alias showFuns='declare -F'
 # alias vdir='ls --color=auto --format=long'
 # alias la='ls -A'                            # all but . and ..
 #alias l='ls -CF'                              #
-alias la='ls -al --color=auto --time-style=long-iso'
-alias lal='ls -lF'
-alias ll='ls -lF --color=auto --time-style=long-iso'
+alias la='ls -al --color=auto --time-style=long-iso --group-directories-first'
+alias lal='ls -lF --group-directories-first'
+alias ll='ls -lF --color=auto --time-style=long-iso --group-directories-first'
 alias l='stat --printf="%y\t%6s\t%-16n\n" * | cut -b -16,36-'
 
 # HISTORY ---------------------------------------------------------------------- history
@@ -80,10 +94,10 @@ alias hh='history 300'
 alias hs='history | tee ~/history/commands/history_`date +%Y%m%d_%H%M` | tail -30'
 function hl   () { history | tail -40 ; }
 function hll  () { ls -lrt ~/history/commands | tail -6 ; }
-function hg   () { history | grep "$@" | cut -b 8- | sort | uniq                             ; }
-#function hgg () { grep "$@" ~/history/commands/hist*`date +%Y%m*`                           ; }
-function hgg  () { find  ~/history/commands/ -mtime -100 | xargs grep "$@" | cut -b 46-      ; }
-function hggg () { grep "$@" ~/history/commands/*                                            ; }
+function hg   () { history | grep "$@" | cut -b 8- | sort | uniq                                ; }
+#function hgg () { grep "$@" ~/history/commands/hist*`date +%Y%m*`                              ; }
+function hgg  () { find  ~/history/commands/ -mtime -100 -type f | sort | xargs grep -i "$@" | cut -b 46- ; }
+function hggg () { grep "$@" ~/history/commands/*                                               ; }
 
 # log terminal activity - but messes up the use of this script
 function termLog () { script ~/history/termLogs/termLog_"$@"_`date +%Y%m%d_%H%M`; }
