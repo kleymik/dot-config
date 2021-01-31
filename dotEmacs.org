@@ -5,6 +5,8 @@ invoked by ~/.emacs.d/init.el
 
 * New Stuff/Notes
 
+default-directory
+
 good fonts "Ubuntu Mono"
 
 Print message listing key sequences that invoke the command DEFINITION.
@@ -31,13 +33,10 @@ convenient prefix key map, for example `C-,`
 
 * Packages
 #+BEGIN_SRC emacs-lisp
-(defun ke()           (interactive) (kill-emacs))
-
 (setq load-path (append load-path '("~/ulib/emacs/")))
 (setq load-path (append load-path '("~/ulib/emacs/dired-hacks"))) ;; for subtree (insert (format "%s" load-path))
 
 (require 'package)
-
 ;(setq package-archives ())
 (add-to-list 'package-archives '("melpa"   . "https://melpa.org/packages/")         t)
 (add-to-list 'package-archives '("mlpstbl" . "https://stable.melpa.org/packages/")  t)
@@ -52,9 +51,9 @@ convenient prefix key map, for example `C-,`
 
 (require 'uniquify)
 (require 'ob)
-(require 'cl)              ; for transpose
+(require 'cl)                 ; for transpose
 (require 'regexp-opt)
-(require 'em-alias)        ; for eshell
+(require 'em-alias)           ; for eshell
 
 
 (require 'dired-x)
@@ -62,22 +61,31 @@ convenient prefix key map, for example `C-,`
 (load-library "dired-subtree")
 ;; (require 'dired-lis)
 ;; (require 'dired-k)
-;; (require 'diffview)      ; make patch files look like ediff
+;; (require 'diffview)        ; make patch files look like ediff
 
 (load-library "vigenere")
-(require 'yafolding)  ; (require 'origami)
+(require 'yafolding)          ; (require 'origami)
 
 ;; org mode and babel
 (require 'org)
-(require 'ox)         ; org export
+(require 'ox)                 ; org export
 (require 'ox-gfm)
+(require 'ox-reveal)
+(setq Org-Reveal-root "file:///home/kleyn/ulib/reveal.js-master/js/reveal.js")
+(setq Org-Reveal-title-slide nil)
+
 (require 'org-eww)
-;;  -- jupyter / ipython / emacs
+
+(require 'orgtbl-join)
+;(load-file "orgtbl-join.el")
+;(load-file "org-insert-dblock.el") ;; optional, extends C-c C-c i
+
+;  -- jupyter / ipython / emacs
 (require 'jupyter)
 (setq org-confirm-babel-evaluate nil)    ;; no-confirm
 (with-eval-after-load 'org (add-hook 'org-babel-after-execute-hook 'org-redisplay-inline-images))
 ; (defun org-export-get-reference (a b) nil)
-;; org<->python deprecated 
+; org<->python deprecated 
 ;(add-hook 'org-babel-after-execute-hook 'org-display-inline-images 'append)
 ;ein - better to use emacs-ipython-notebook?
 ;(require 's)
@@ -95,20 +103,22 @@ convenient prefix key map, for example `C-,`
 * Function Definitions
 
 #+BEGIN_SRC emacs-lisp
-;;----------------------------------------------------- One liners
+(defun ke()           (interactive) (kill-emacs))
+
+;;----------------------------------------------------- one-liners
 (defun describe-last-function() (interactive) (describe-function last-command))
 (defun diamond()                (interactive) (dired "/scpc:uri03204@nx-staff.diamond.ac.uk:/home/uri03204/dot"))
 (defun diredFaraday()           (interactive) (dired "/scp:kleyn@192.168.1.89:/home/kleyn"))
-(defun diredGem()               (interactive) (dired "/scp:u0_a94@192.168.1.93#8022:/data/data/com.termux/files/home/MyDocs"))  ;; ‘/ssh:daniel@melancholia#42:.emacs’  /ssh:foo@192.168.1.93#8022:
-(defun diredGem2()              (interactive) (dired "/ssh:u0_a94@192.168.1.93#8022:/data/data/com.termux/files/home/MyDocs"))  ;; ‘/ssh:daniel@melancholia#42:.emacs’  /ssh:foo@192.168.1.93#8022:
+(defun diredGem()               (interactive) (dired "/scp:u0_a94@192.168.1.93#8022:/data/data/com.termux/files/home/MyDocs"))    ;; ‘/ssh:daniel@melancholia#42:.emacs’  /ssh:foo@192.168.1.93#8022:
+(defun diredGem2()              (interactive) (dired "/ssh:u0_a94@192.168.1.93#8022:/data/data/com.termux/files/home/MyDocs"))    ;; ‘/ssh:daniel@melancholia#42:.emacs’  /ssh:foo@192.168.1.93#8022:
 (defun diredHome ()             (interactive) (dired "/home/kleyn/" nil))
 (defun diredKleyqs501()         (interactive) (dired "/scp:kleyn@62.233.104.49:/home/kleyn"))
 (defun diredTuringIn()          (interactive) (dired "/scp:kleyn@192.168.1.243:/home/kleyn"))
 (defun diredTuringOut()         (interactive) (dired "/scp:kleyn@192.168.1.8:/home/kleyn"))
 (defun instimestamp()           (interactive) (insert (format-time-string "%Y%m%d_%H:%M:%S")))
-(defun nok900()                 (interactive) (dired "/scpc:root@192.168.0.6:/home/user/MyDocs/aNotes/")) ;; barnes
+(defun nok900()                 (interactive) (dired "/scpc:root@192.168.0.6:/home/user/MyDocs/aNotes/"))                         ;; barnes
 (defun see-dotBashRc()          (interactive) (find-file "/home/kleyn/config/dot/.bashrc"))
-(defun see-orglink-dired()      (interactive) (org-open-at-point t)) ; (current-buffer)
+(defun see-orglink-dired()      (interactive) (org-open-at-point t))                                                              ;; (current-buffer)
 (defun see-shell-output()       (interactive) (switch-to-buffer-other-window "*Shell Command Output*"))
 (defun see-sql()                (interactive) (find-file "C:/MyMAQS/notebooks/sqlScripts.org"))
 (defun show-hist()              (interactive) (list-command-history))
@@ -116,7 +126,13 @@ convenient prefix key map, for example `C-,`
 (defun slashFwd()               (interactive) (replace-string "\\"  "/" nil (line-beginning-position) (line-end-position)))
 (defun turing()                 (interactive) (dired "/scpc:kleyn@192.168.1.243:/home/kleyn"))
 
-;; for small keyboards without function keys
+;;(defun diredGemA()            (interactive) (dired "/adb::/data/data/com.termux/files/home/MyDocs"))                            ;; /storage/emulated/0 ‘/ssh:daniel@melancholia#42:.emacs’  /ssh:foo@192.168.1.93#8022:
+;;(defun diredGemA()            (interactive) (dired "/adb::/storage"))                                                           ;; /storage/emulated/0 ‘/ssh:daniel@melancholia#42:.emacs’  /ssh:foo@192.168.1.93#8022:
+;;(defun see-nok900-doAndDone() (interactive) (find-file "/scp:root@192.168.1.187:/home/user/MyDocs/aNotes/doAndDone.org"))
+;;(defun diredHome()            (interactive) (dired "L:/MyDocs/" nil))
+;;(defun nok900()               (interactive) (dired "/scpc:root@192.168.1.187:/home/user/MyDocs/aNotes/"))
+
+;;----------------------------------------------------- for small keyboards without function keys
 (defun ds()  (interactive)  (eshell))
 (defun cf3() (interactive)  (eshell))
 (defun da()  (interactive)  (find-file "/data/data/com.termux/files/home/org/access.org"))
@@ -128,8 +144,7 @@ convenient prefix key map, for example `C-,`
 (defun f3()  (interactive)  (find-file "/data/data/com.termux/files/home/.emacs.d/dotEmacs.org"))
 (defun dz()  (interactive)  (progn (ztree-dir "/data/data/com.termux/files/home/MyDocs/projects") (split-window-right 40)))
 
-;;--------------------new
-
+;;----------------------------------------------------- new
 (defun bool-flip-do-flip ()
   (interactive)
   (let ((currWord (thing-at-point 'word))
@@ -158,16 +173,14 @@ convenient prefix key map, for example `C-,`
   (let ((inhibit-read-only t))
     (remove-text-properties  (point-min) (point-max) '(read-only t))
     ;; (eshell-quit-process)
-  )
-)
+  ))
 
 (defun fixReadOnly ()
   (interactive)
   (let ((inhibit-read-only t))
     (remove-text-properties  (point-min) (point-max) '(read-only t))
     ;; (eshell-quit-process)
-  )
-)
+  ))
 
 (defun eshell/clear ()
   "Clear the eshell buffer."
@@ -338,7 +351,7 @@ convenient prefix key map, for example `C-,`
         (set-window-configuration snapshot)
       (message "Snapshot %s not found" snapshot-name))))
 
-;; ------------------------------------------------------------------- transpose windows [kp-divide]
+;; ------------------------------------------------------------------- transpose windows 
 (defun toggle-window-split ()
   (interactive)
   (if (= (count-windows) 2)
@@ -396,8 +409,8 @@ convenient prefix key map, for example `C-,`
   "Toggle line spacing between no extra space to extra half line height."
   (interactive)
   (if (eq line-spacing nil)
-      (setq-default line-spacing 0.05)  ; add 0.5 height between lines
-    (setq-default line-spacing nil)))   ; no extra heigh between lines
+      (setq-default line-spacing 0.05)  ; add 0.5  height between lines
+    (setq-default line-spacing nil)))   ; no extra height between lines
 
 ;;-------------------------------------------------------------------- unjustify
 (defun unjustify-paragraph ()
@@ -464,8 +477,8 @@ convenient prefix key map, for example `C-,`
 
 (defun uniq-lines (beg end)
   "Unique lines in region.
-Called from a program, there are two arguments:
-BEG and END (region to sort)."
+   Called from a program, there are two arguments:
+   BEG and END (region to sort)."
   (interactive "r")
   (save-excursion
     (save-restriction
@@ -556,13 +569,6 @@ BEG and END (region to sort)."
   (align-regexp start end (concat "\\(\\s-*\\)" regexp) 1 1 t))
 
 ;;-------------------------------------------------------------------- Open With
-(add-hook 'find-file-hook  ;; ensure file in production can't be modified via emacs
-  '(lambda ()
-     (when (string= (substring (buffer-file-name) 0 4) "/dls")
-       (message "Toggle to read-only for existing file")
-           ; (read-only-mode ?)
-       (toggle-read-only 1))))
-
 (defun ergoemacs-open-in-external-app ()
   "Open the current file or dired marked files in external app."
   (interactive)
@@ -610,6 +616,14 @@ BEG and END (region to sort)."
 (message "-------------- Done: Handy Funs Section")
 #+END_SRC
 
+*** faded
+(add-hook 'find-file-hook  ;; ensure file in production can't be modified via emacs
+  '(lambda ()
+     (when (string= (substring (buffer-file-name) 0 4) "/dls")
+       (message "Toggle to read-only for existing file")
+           ; (read-only-mode ?)
+       (toggle-read-only 1))))
+
 ----------------------------------- scroll windows in synch
  (defun mwheel-scroll-all-function-all (func &optional arg)
     (if (and scroll-all-mode arg)
@@ -649,20 +663,15 @@ BEG and END (region to sort)."
                   (interactive)
                   (w32-browser (dired-replace-in-string "/" "\\" (dired-replace-in-string "/cygdrive/C/" "C:\\" (dired-get-filename)))))))
 
-(defun indent-to-col()        (interactive) (indent-to-column 110))
-(defun see-doAndDone()        (interactive) (find-file "/run/user/1000/a37849ebaffed48d/C0A8-1F0C/Android/data/com.termux/files/MyDocs/aNotes/doAndDone.org"))
-(defun see-matlab()             (interactive) (find-file "//lon0302/dfs/DATA/MULTI_ASSET/MAQS/dataCollection/FI/LOCAL/USR/MK/vc/rs1/SSI.scratch.wt1/notebooks/matlabScripts.org"))
+(defun indent-to-col()     (interactive) (indent-to-column 110))
+(defun see-doAndDone()     (interactive) (find-file "/run/user/1000/a37849ebaffed48d/C0A8-1F0C/Android/data/com.termux/files/MyDocs/aNotes/doAndDone.org"))
+(defun see-matlab()        (interactive) (find-file "//lon0302/dfs/DATA/MULTI_ASSET/MAQS/dataCollection/FI/LOCAL/USR/MK/vc/rs1/SSI.scratch.wt1/notebooks/matlabScripts.org"))
 
 /adb::/path/to/file.
 C-x C-f /:adb::/storage/emulated/0
 C-x C-f /adb::/storage/emulated/0
-(defun diredGemA()            (interactive) (dired "/adb::/data/data/com.termux/files/home/MyDocs"))  ;; /storage/emulated/0 ‘/ssh:daniel@melancholia#42:.emacs’  /ssh:foo@192.168.1.93#8022:
-(defun diredGemA()            (interactive) (dired "/adb::/storage"))                                 ;; /storage/emulated/0 ‘/ssh:daniel@melancholia#42:.emacs’  /ssh:foo@192.168.1.93#8022:
-(defun see-nok900-doAndDone() (interactive) (find-file "/scp:root@192.168.1.187:/home/user/MyDocs/aNotes/doAndDone.org"))
-(defun diredHome()            (interactive) (dired "L:/MyDocs/" nil))
-(defun nok900()               (interactive) (dired "/scpc:root@192.168.1.187:/home/user/MyDocs/aNotes/"))
 
--------------------------------------------------- parallel cursor editing
+-------------------------------------------------------------------- parallel cursor editing
 (defun parallel-replace-read-plist (input)
   (loop with limit = (length input)
         for (item . index) = (read-from-string input 0)
@@ -930,19 +939,25 @@ N.B. TBD drop last ","
 ; '(lambda ()        (ibuffer-switch-to-saved-filter-groups "home")))
 
 (setq ibuffer-saved-filter-groups
-      '(("home"
-         ("emacs-config" (or (filename . ".emacs.d") (filename . "emacs-config")))
-         ("Org"          (or (mode . org-mode) (filename . "OrgMode")))
-         ("Image"        (mode . Image) )
-         ("Magit"        (name . "magit\*"))
-         ("jupyter"      (name . "jupyter"))
-         ("Help"         (name . "*")))))
-;;          ("dired"        (mode . dired-mode))
-(setq ibuffer-mode-hook ())
-(add-hook 'ibuffer-mode-hook
-          '(lambda ()
-             (setq ibuffer-expert t)
-             (ibuffer-auto-mode 1)))
+  '(("home"
+     ("emacs-config" (or (filename . ".emacs.d") (filename . "emacs-config")))
+     ("Org"          (or (mode . org-mode) (filename . "OrgMode")))
+     ("*Org"         (name . "*Org")    )
+     ("Image"        (mode . Image)     )
+     ("Magit"        (name . "magit\*") )
+     ("jupyter"      (name . "jupyter") )
+     ("Help"         (name . "*")       ))))
+
+;;       ("dired"        (mode . dired-mode))
+;;(setq ibuffer-mode-hook ())
+(defun my-ibuffer-hooks ()
+   (setq ibuffer-expert t)
+   (ibuffer-auto-mode 1)
+   (define-key ibuffer-mode-map (kbd "t")     'ibuffer-toggle-filter-group)
+   (define-key ibuffer-mode-map (kbd "C-TAB") 'ibuffer-toggle-filter-group)
+   (message "in ibuffer"))
+
+(add-hook 'ibuffer-mode-hook 'my-ibuffer-hooks)   ; (lambda ()                        ;; no need to quote the lambda, but try to avoid using them as hooks
 
 (setq ibuffer-formats
       '((mark modified read-only locked " "
@@ -956,6 +971,7 @@ N.B. TBD drop last ","
               (mark " " (name 16 -1) " " filename)
          )
 )
+
 
 (defun my-dired-mode-buffer-p (buf)
    "Non-nil if buffer BUF is in `dired-mode'."
@@ -1162,11 +1178,26 @@ M-x clone-indirect-buffer RET
 ;                       (setq-default indent-tabs-mode t)
 ;                       (setq-default tab-width 4)
 ;                       (setq-default python-indent 4)))
-(add-hook 'python-mode-hook
-                  (lambda ()
-                        (setq indent-tabs-mode nil)
-                        (setq tab-width 4)
-                        (setq python-indent 4)))
+(defun my-python-hook ()
+   (setq indent-tabs-mode nil)
+   (setq tab-width 4)
+   (setq python-indent 4)
+   (setq default-truncate-lines t)
+   (define-key python-mode-map [kp-9] 'python-nav-backward-block)
+   (define-key python-mode-map [kp-6] 'yafolding-toggle-element)
+   (define-key python-mode-map [kp-3] 'python-nav-forward-block))
+
+(add-hook 'python-mode-hook 'my-python-hook)
+
+ ; python-mode treepad navigation
+ ; (define-key org-mode-map [kp-6]    'org-cycle)
+ ; <remap> <backward-sentence>     python-nav-backward-block
+ ; <remap> <backward-up-list>      python-nav-backward-up-list
+ ; <remap> <forward-sentence>      python-nav-forward-block  python-nav-beginning-block 
+
+ ; yafolding-go-parent-element
+
+ ; TDB (global-set-key [kp-6]          'yafolding-toggle-element)
 
 (message "-------------- Done: Modes Section")
 #+END_SRC
@@ -1288,14 +1319,14 @@ M-x clone-indirect-buffer RET
 ;;(global-set-key [S-right] 'forward-word)
 ;;(global-set-key [remap eval-expression] 'pp-eval-expression)
 
-* Org Mode
+* Org-Mode
 ;; ------------------------------------------------------ Org-Mode
 ;; ;(define-key global-map "\C-cl" 'org-store-link)
 ;; ;(define-key global-map "\C-ca" 'org-agenda)
 ;; (defalias 'make-org-tbl  (kbd "ESC x org-mode RET ESC < C-SPC ESC > C-c |"))
 ;; (setq org-default-notes-file "~/myDocs/logbook/notes.org")
 ;; (setq org-cycle-include-plain-lists t);; (setq org-startup-folded nil)
-;; ;;(defalias 'see-logbooks  (kbd "C-x C-f ~/myDocs/logbook RET"))
+;; (defalias 'see-logbooks  (kbd "C-x C-f ~/myDocs/logbook RET"))
 ;; (defun org-collapse()     (interactive) (org-shifttab 0))
 ;;
 
@@ -1313,16 +1344,6 @@ M-x clone-indirect-buffer RET
                        (auto-mode . emacs)
                        ))
 (setq org-use-property-inheritance t)
-(org-babel-do-load-languages 'org-babel-load-languages '((shell . t)
-                                                         (matlab . t)
-                                                         (python . t)
-                                                         (emacs-lisp . t)
-                                                         (latex . t)
-                                                         (jupyter . t)
-                                                         (dot . t)))
-;;                                                       (ipython . t)
-;;                                                        (ein . t)
-
 (defun org-collapse()     (interactive) (org-shifttab 0))
 
 (defun org-transpose-table-at-point ()
@@ -1340,23 +1361,46 @@ M-x clone-indirect-buffer RET
     (org-table-align)
     )
   )
-;; --------- org-mode
-;(org-babel-do-load-languages
-; 'org-babel-load-languages
-; '((python . t)))
-
+;; --------- org-mode key bindings
 ;(define-key global-map "\C-cl" 'org-store-link)
 ;(define-key global-map "\C-ca" 'org-agenda)
-(define-key org-mode-map (kbd "C-c C->")  'org-demote-subtree)
-(define-key org-mode-map (kbd "C-c C-<")  'org-promote-subtree)
-(define-key org-mode-map (kbd "<S-up>")   'scroll-one-line-down)
-(define-key org-mode-map (kbd "<S-down>") 'scroll-one-line-up)
-(define-key org-mode-map (kbd "<C-up>")   'outline-up-heading)
-(define-key org-mode-map (kbd "C-c d")    'org-demote-subtree)
-(define-key org-mode-map (kbd "C-c p")    'org-promote-subtree)
-(define-key org-mode-map (kbd "C-c n")    'my-org-babel-execute-and-next)
-(define-key org-mode-map (kbd "C-c u")    'outline-up-heading)
-(define-key org-mode-map (kbd "C-c C-t")    'org-transpose-table-at-point)
+(progn
+ (define-key org-mode-map (kbd "C-c C->")  'org-demote-subtree)
+ (define-key org-mode-map (kbd "C-c d")    'org-demote-subtree)
+
+ (define-key org-mode-map (kbd "C-c C-<")  'org-promote-subtree)
+ (define-key org-mode-map (kbd "C-c p")    'org-promote-subtree)
+
+ (define-key org-mode-map (kbd "<S-up>")   'scroll-one-line-down)
+ (define-key org-mode-map (kbd "<S-down>") 'scroll-one-line-up)
+ ;(define-key org-mode-map (kbd "<C-up>")   'outline-up-heading)
+ ;(define-key org-mode-map (kbd "<C-home>") 'my-org-babel-prev)
+ ;(define-key org-mode-map (kbd "<C-end>")  'my-org-babel-next)
+ ;(define-key org-mode-map (kbd "C-c u")    'outline-up-heading)
+
+ (define-key org-mode-map (kbd "C-c n")    'my-org-babel-execute-and-next)
+ (define-key org-mode-map (kbd "C-c C-t")  'org-transpose-table-at-point)
+
+ ; org-mode treepad navigation
+ (define-key org-mode-map [kp-4]           '(lambda () (interactive)  (outline-up-heading 2)))
+
+ (define-key org-mode-map [kp-8]           'my-org-babel-prev)
+ (define-key org-mode-map [kp-5]           'outline-up-heading)
+ (define-key org-mode-map [kp-2]           'my-org-babel-next)
+
+ (define-key org-mode-map [kp-multiply]    '(lambda () (interactive)  (org-backward-heading-same-level 6)))
+ (define-key org-mode-map [kp-9]           'org-backward-heading-same-level)
+ (define-key org-mode-map [kp-3]           'org-forward-heading-same-level)
+ (define-key org-mode-map [kp-6]           'org-cycle)
+ (define-key org-mode-map [kp-decimal]     '(lambda () (interactive)  (org-forward-heading-same-level 6)))
+
+ (define-key org-mode-map [kp-add]         '(lambda () (interactive)  (org-show-children) (next-line)))  ; tbd show contents of leaf
+ (define-key org-mode-map [M-home]         'org-collapse)
+
+ ;(define-key org-mode-map [kp-subtract]  'kill-this-buffer-volatile)
+ ;(define-key org-mode-map [kp-divide]    'toggle-window-split)
+)
+
 ;; needs ox.el = org-exporter.el
 ;;(require 'ox-confluence)
 
@@ -1417,11 +1461,6 @@ M-x clone-indirect-buffer RET
 )
 
 ;;------------------------------------- org-mode crypt
-(defun my-org-babel-execute-and-next ()
-   (interactive)
-   (org-babel-execute-src-block)
-   (org-babel-next-src-block))
-;;------------------------------------- org-mode crypt
 (defun rot-region(p1 p2)
   (interactive "r")
    (org-mark-subtree)
@@ -1431,6 +1470,31 @@ M-x clone-indirect-buffer RET
   (interactive "r")
   (save-restriction (narrow-to-region p1 p2) (rot13-region (point-min) (point-max))))
 
+;; --------------------------------------------------------------------- org-confluence
+
+;; needs ox.el = org-exporter.el
+;;(require 'ox-confluence)
+;(require 'org-exp)
+;(require 'org-export)
+;(require 'org-confluence)
+
+;; --------------------------------------------------------------------- org-mode
+(defun org-save-code-block(p1 p2)
+  (interactive "r")
+  ;; for use with es.m
+  ;; and put in top matlab IDE buffer
+  (let
+      ((info (org-babel-get-src-block-info 'light)))
+   (when (equal (nth 0 info) "matlab") (write-region (cadr info) nil "//lon0302/dfs/DATA/MULTI_ASSET/MAQS/dataCollection/FI/LOCAL/USR/MK/vc/maqsMk/init/aaa_org_cmd.m"))
+   (when (equal (nth 0 info) "sql")    (write-region (cadr info) nil "//lon0302/dfs/DATA/MULTI_ASSET/MAQS/dataCollection/FI/LOCAL/USR/MK/vc/rs1/SSI.scratch/notebooks/SQL_QUERY_CMD.sql")))
+)
+
+;; org-mode hooks
+(add-hook 'org-mode-hook  'hide-ctrl-M)
+
+#+END_SRC
+
+*** faded
 ;----------------------------------------------------------------------------------- org-trello
 ;; NO: (add-to-list 'load-path "L:/MyDocs/ulib/emacs/org-trello-master/")
 ;;its here: /home/kleynmi/l_C/cygwin64/home/kleynmi/.emacs.d/elpa/org-trello-0.8.1/org-trello.el:
@@ -1475,7 +1539,7 @@ M-x clone-indirect-buffer RET
 ;; (orgtrello-controller-do-sync-buffer-from-trello)
 ;; org-trello-install-key-and-token
 ;; (org-trello-update-board-metadata)
-;; (org-trello-sync-buffer t)
+;; (Org-trello-sync-buffer t)
 
 ;;(org-trello-current-prefix-keybinding "C-c o" nil (org-trello))
 ;; (progn
@@ -1485,51 +1549,78 @@ M-x clone-indirect-buffer RET
 ;;   (require 'org-trello-hash)
 ;;   (require 'dash)
 ;;   (require 'org-trello))
-;; --------------------------------------------------------------------- org-confluence
 
-;; needs ox.el = org-exporter.el
-;;(require 'ox-confluence)
-;(require 'org-exp)
-;(require 'org-export)
-;(require 'org-confluence)
+** Org-Babel
 
-;; --------------------------------------------------------------------- org-mode
-(defun org-save-code-block(p1 p2)
-  (interactive "r")
-  ;; for use with es.m
-  ;; and put in top matlab IDE buffer
-  (let
-      ((info (org-babel-get-src-block-info 'light)))
-   (when (equal (nth 0 info) "matlab") (write-region (cadr info) nil "//lon0302/dfs/DATA/MULTI_ASSET/MAQS/dataCollection/FI/LOCAL/USR/MK/vc/maqsMk/init/aaa_org_cmd.m"))
-   (when (equal (nth 0 info) "sql")    (write-region (cadr info) nil "//lon0302/dfs/DATA/MULTI_ASSET/MAQS/dataCollection/FI/LOCAL/USR/MK/vc/rs1/SSI.scratch/notebooks/SQL_QUERY_CMD.sql")))
-)
+ #+BEGIN_SRC emacs-lisp
+ ;(org-babel-do-load-languages
+ ; 'org-babel-load-languages
+ ; '((python . t)))
 
-(message "-------------- Done: Org-Mode Section")
+ (org-babel-do-load-languages 'org-babel-load-languages '((shell . t)
+                                                          (matlab . t)
+                                                          (python . t)
+                                                          (emacs-lisp . t)
+                                                          (latex . t)
+                                                          (jupyter . t)
+                                                          (dot . t)))
+ ;; (ipython . t)
+ ;; (ein . t)
 
-#+END_SRC
 
-;;(require 'org-crypt)
-;;(org-crypt-use-before-save-magic)
-;;(setq org-tags-exclude-from-inheritance (quote ("crypt")))
-;;(setq org-crypt-key nil)
-;;
-;;(defun crypt-region (p1 p2)
-;;  "replace region with crypted"
-;;  (interactive "r")
-;;  (save-restriction
-;;    (narrow-to-region p1 p2)
-;;    (goto-char (point-min))
-;;    (while (re-search-forward REGEXP nil t)
-;;      (replace-match TO-STRING nil nil))
-;;    )
-;;  )
+ (defun my-org-babel-execute-and-next ()
+    (interactive)
+    (org-babel-execute-src-block)
+    (org-babel-next-src-block)
+    (recenter-top-bottom 50)
+ )
 
-;; active Babel languages
-;(org-babel-do-load-languages
-; 'org-babel-load-languages
-; '((R . t)
-;   (emacs-lisp . nil)
-;   ))
+ (defun my-org-babel-next ()
+    (interactive)
+    (setq case-fold-search t)
+    (beginning-of-line)
+    (forward-char 3)
+    (re-search-forward "^#.begin_src\\|^#.results:" nil t nil)
+    (beginning-of-line)
+    (recenter '(t))
+ )
+
+ (defun my-org-babel-prev ()
+    (interactive)
+    (setq case-fold-search t)
+    (beginning-of-line)
+    (backward-char 1)
+    (re-search-backward "^#.begin_src\\|^#.results:" nil t nil)
+    (beginning-of-line)
+    (recenter-top-bottom 50)
+ )
+
+
+ (message "-------------- Done: Org-Mode Section")
+ #+END_SRC
+
+ ;;(require 'org-crypt)
+ ;;(org-crypt-use-before-save-magic)
+ ;;(setq org-tags-exclude-from-inheritance (quote ("crypt")))
+ ;;(setq org-crypt-key nil)
+ ;;
+ ;;(defun crypt-region (p1 p2)
+ ;;  "replace region with crypted"
+ ;;  (interactive "r")
+ ;;  (save-restriction
+ ;;    (narrow-to-region p1 p2)
+ ;;    (goto-char (point-min))
+ ;;    (while (re-search-forward REGEXP nil t)
+ ;;      (replace-match TO-STRING nil nil))
+ ;;    )
+ ;;  )
+
+ ;; active Babel languages
+ ;(org-babel-do-load-languages
+ ; 'org-babel-load-languages
+ ; '((R . t)
+ ;   (emacs-lisp . nil)
+ ;   ))
 
 * Latex Mode
 ;; (setq exec-path (append exec-path '("/usr/texbin"))) ; not needed
@@ -1547,40 +1638,6 @@ M-x clone-indirect-buffer RET
 ;;(add-hook 'LaTeX-mode-hook 'turn-on-reftex)
 
 * Dired Mode
-
-;; ----------------------------- Tramp
-(require 'tramp)
-;;(setq tramp-default-method "ssh")
-(setq tramp-verbose 20)
-(setq tramp-remote-path '("/data/data/com.termux/files/usr/bin" "/data/data/com.termux/files/usr/bin/applets"))
-(add-to-list 'tramp-connection-properties (list (regexp-quote "192.168.1.161") "remote-shell" "sh"))
-;(add-to-list 'tramp-remote-path 'tramp-own-remote-path)
-(add-to-list 'tramp-remote-path "/system/xbin")
-(add-to-list 'tramp-remote-process-environment "TMPDIR=$HOME")
-(add-to-list 'tramp-connection-properties (list (regexp-quote "android") "remote-shell" "sh"))
-
-;; 5.17 Android shell setup hints
-;; Tramp uses the adb method to access Android devices. Android devices provide a restricted shell access through an USB connection. The local host must have the adb program installed.
-;; Usually, it is sufficient to open the file /adb::/. Then you can navigate in the filesystem via dired.
-;; Alternatively, applications such as Termux or SSHDroid that run sshd process on the Android device can accept any ssh-based methods provided these settings are adjusted:
-;;     sh must be specified for remote shell since Android devices do not provide /bin/sh. sh will then invoke whatever shell is installed on the device with this setting:
-;;        (add-to-list 'tramp-connection-properties (list (regexp-quote "192.168.0.26") "remote-shell" "sh"))
-;;     where ‘192.168.0.26’ is the Android device's IP address. (see Predefined connection information).
-;;     Tramp requires preserving PATH environment variable from user settings. Android devices prefer /system/xbin path over /system/bin. Both of these are set as follows:
-;;        (add-to-list 'tramp-remote-path 'tramp-own-remote-path)
-;;        (add-to-list 'tramp-remote-path "/system/xbin")
-;;     When the Android device is not ‘rooted’, specify a writable directory for temporary files:
-;;        (add-to-list 'tramp-remote-process-environment "TMPDIR=$HOME")
-;;     Open a remote connection with the command C-x C-f /ssh:192.168.0.26#2222: <RET>, where sshd is listening on port ‘2222’.
-;;     To add a corresponding entry to the ~/.ssh/config file (recommended), use this:
-;;               Host android
-;;                    HostName 192.168.0.26
-;;                    User root
-;;                    Port 2222
-;;     To use the host name ‘android’ instead of the IP address shown in the previous example, fix the connection properties as follows:
-;;     (add-to-list 'tramp-connection-properties (list (regexp-quote "android") "remote-shell" "sh"))
-;; Open a remote connection with a more concise command C-x C-f /ssh:android: <RET>.
-
 #+BEGIN_SRC emacs-lisp
 
 ;;(setq dired-use-ls-dired nil)
@@ -1592,8 +1649,7 @@ M-x clone-indirect-buffer RET
 ;; Dired Listing Switches: Hide Value -ahl --time-style=long-iso
 ;; Dired Listing Switches: Hide Value -ahl --time-style=long-iso
 ;;  State: SET for current session only.
-(setq dired-listing-switches "-alht --time-style=long-iso") ;; list most recent first
-
+(setq dired-listing-switches "-aoht --time-style=long-iso --group-directories-first") ;; list most recent first (setq dired-listing-switches "-aBhl  ")
 ;; (setq dired-omit-files "^\\..*$")
 
 ;;(use-package dired-x :config
@@ -1608,40 +1664,32 @@ M-x clone-indirect-buffer RET
 ;; This isn't nearly as drastic as what you're looking for, but it is possible to customize how Emacs calls ls in dired-mode.
 ;; I used it to omit the group ID of files with the -o option, saving some horizontal screen real estate.
 
-(add-hook 'dired-load-hook
-   (lambda ()                   ;(load "dired-x")
-     (progn
-       (autoload 'wdired-change-to-wdired-mode "wdired")
-       ;; Set dired-x global variables here.  For example:
-       ;; (setq dired-guess-shell-gnutar "gtar")
-       ;; (setq dired-x-hands-off-my-keys nil)
-       ;; (setq dired-omit-files "^\\.?#\\|^\\.$\\|^\\.\\.$") ; <- from inside emacs?
-       ;; (setq dired-omit-files "^#\\|^\\.$|\\.\\.$")
-       ;; (setq dired-omit-files "^\\|^\\..*$")
-       ;(setq dired-omit-files "^\\..*$")
-       ;(setq dired-omit-extensions '(".asv" "~" ".o" ".pyc" ".class"))
-       (setq dired-no-confirm '(revert-subdirs)))))
+(defun my-dired-load-hook ()
+    (autoload 'wdired-change-to-wdired-mode "wdired")
+    (setq dired-no-confirm '(revert-subdirs)))
+    ;; Set dired-x global variables here.  For example:
+    ;; (setq dired-guess-shell-gnutar "gtar")
+    ;; (setq dired-x-hands-off-my-keys nil)
+    ;; (setq dired-omit-files "^\\.?#\\|^\\.$\\|^\\.\\.$") ; <- from inside emacs?
+    ;; (setq dired-omit-files "^#\\|^\\.$|\\.\\.$")
+    ;; (setq dired-omit-files "^\\|^\\..*$")
+    ;; (setq dired-omit-files "^\\..*$")
+    ; ;(setq dired-omit-extensions '(".asv" "~" ".o" ".pyc" ".class"))
+(add-hook 'dired-load-hook 'my-dired-load-hook)
 
-;(setq dired-mode-hook nil)
-(add-hook 'dired-mode-hook
-   (lambda ()
+(defun my-dired-mode-hook ()
     ;; Set dired-x buffer-local variables here.  For example:
-    (progn
-      (dired-omit-mode 1)
-      (setq dired-omit-verbose nil)
-      (setq dired-omit-files-p t)
-      (setq dired-omit-files "^\\..*$")
-      (setq dired-omit-extensions '(".asv" "~" ".o" ".pyc" ".class"))
+    (dired-omit-mode 1)
+    (setq dired-omit-verbose nil)
+    (setq dired-omit-files-p t)
+    (setq dired-omit-files "^\\..*$")
+    (setq dired-omit-extensions '(".asv" "~" ".o" ".pyc" ".class"))
+    (toggle-truncate-lines 1)
+    (setq dired-no-confirm '(revert-subdirs)))
+(add-hook 'dired-mode-hook 'my-dired-mode-hook)             ;(setq dired-mode-hook nil)
 
-      (toggle-truncate-lines 1)
-      (setq dired-no-confirm '(revert-subdirs))
-      (define-key dired-mode-map [right] 'dired-find-file-drop-prev-dired-buffer)
-      (define-key dired-mode-map [left]  'dired-up-directory-drop-prev-dired-buffer)
-      (define-key dired-mode-map (kbd "t") 'dired-omit-mode)
-      (define-key dired-mode-map (kbd "r") 'wdired-change-to-wdired-mode))))
-
-;; (defalias 'dired-up (kbd "ESC < C-e C-r / NUL C-a ESC w C-x d C-a C-y C-k C-a ESC \\ C-e RET C-x b RET C-x k RET"))
-;; (defalias 'dired-go-subdir-kbm (kbd "f C-x b RET C-x k RET")))
+;;(defalias 'dired-up (kbd "ESC < C-e C-r / NUL C-a ESC w C-x d C-a C-y C-k C-a ESC \\ C-e RET C-x b RET C-x k RET"))
+;;(defalias 'dired-go-subdir-kbm (kbd "f C-x b RET C-x k RET"))
 ;; (define-key dired-mode-map [right] 'dired-go-subdir-kbm)
 
 ;;(defun w32-browser (doc) (w32-shell-execute 1 doc))
@@ -1773,6 +1821,14 @@ M-x clone-indirect-buffer RET
         (view-file file))                               ; ... view it
       (other-window -1))))                              ; give the attention back to the dired buffer
 
+(define-key dired-mode-map [right] 'dired-find-file-drop-prev-dired-buffer)
+(define-key dired-mode-map [left]  'dired-up-directory-drop-prev-dired-buffer)
+;(define-key dired-mode-map [left]            'dired-up) ;; dired-up-directory
+;(define-key dired-mode-map [left]           'dired-up-directory)
+;(define-key dired-mode-map [right]           'dired-go-subdir-kbm)
+
+(define-key dired-mode-map (kbd "t") 'dired-omit-mode)
+(define-key dired-mode-map (kbd "r") 'wdired-change-to-wdired-mode)
 
 (define-key dired-mode-map "J"               'dired-move-to-old) ; junk
 (define-key dired-mode-map "O"               'ergoemacs-open-in-external-app)  ;; '(lambda () (interactive) (w32-browser (dired-replace-in-string "/" "\\" (dired-get-filename)))))
@@ -1782,16 +1838,27 @@ M-x clone-indirect-buffer RET
 (define-key dired-mode-map (kbd "<S-left>")  'dired-subtree-remove)
 (define-key dired-mode-map (kbd "<S-right>") 'dired-subtree-insert)
 (define-key dired-mode-map (kbd "<S-up>")    'dired-subtree-previous-sibling)
-(define-key dired-mode-map (kbd "C-n")       'dired-next-line)
-(define-key dired-mode-map (kbd "C-p")       'dired-previous-line)
 (define-key dired-mode-map (kbd "c")         'dired-ediff-git)      ;; compare to last version with ediff
 (define-key dired-mode-map (kbd "e")         'dired-cd-eshell)      ;; was dired-subtree-only-this-file
 (define-key dired-mode-map (kbd "p")         'dired-paste-to-yank-buffer)
 (define-key dired-mode-map [M-down]          'dired-view-next)      ;; was dired-previous-line
 (define-key dired-mode-map [M-up]            'dired-view-previous)  ;; was dired-next-line
-(define-key dired-mode-map [left]            'dired-up) ;; dired-up-directory
-;(define-key dired-mode-map [left]           'dired-up-directory)
-(define-key dired-mode-map [right]           'dired-go-subdir-kbm)
+
+
+;; TBD tree-pad keys for dired
+;; dired treepad navigation
+;; (define-key dired-mode-map [kp-4]          '(lambda () (interactive)  (outline-up-heading 2)))
+(define-key dired-mode-map [kp-5]          'dired-subtree-remove)    ;; tbd if not a subdir (ie.e in rootdir), then jump  'dired-up-directory-drop-prev-dired-buffer
+
+;; (define-key dired-mode-map [kp-multiply]   '(lambda () (interactive)  (org-backward-heading-same-level 6)))
+(define-key dired-mode-map [kp-9]             'dired-subtree-previous-sibling)
+;; (define-key dired-mode-map [kp-6]          'dired-subtree-insert)  ; tbd toggle with 'dired-subtree-remove ;; toggle open children
+(define-key dired-mode-map [kp-3]             'dired-subtree-next-sibling)
+;; (define-key dired-mode-map [kp-decimal]    '(lambda () (interactive)  (org-forward-heading-same-level 6)))              ;; moveto nth sibling, and open
+
+(define-key dired-mode-map [kp-add]           'dired-subtree-insert)                 ;; open and moveto first child, 
+;; (define-key dired-mode-map [M-home]        'org-collapse)
+
 ;; dired-view-current)     ; was dired-display-file
 ;; (define-key dired-mode-map "r" 'wdired-change-to-wdired-mode)
 ;; (define-key dired-mode-map (kbd "K") 'dired-k)
@@ -1825,6 +1892,43 @@ M-x clone-indirect-buffer RET
 (message "-------------- Done: Dired Section")
 
 #+END_SRC
+** Tramp Notes
+;; ----------------------------- Tramp
+(require 'tramp)
+;;(setq tramp-default-method "ssh")
+(setq tramp-verbose 20)
+(setq tramp-remote-path '("/data/data/com.termux/files/usr/bin" "/data/data/com.termux/files/usr/bin/applets"))
+(add-to-list 'tramp-connection-properties (list (regexp-quote "192.168.1.161") "remote-shell" "sh"))
+;(add-to-list 'tramp-remote-path 'tramp-own-remote-path)
+(add-to-list 'tramp-remote-path "/system/xbin")
+(add-to-list 'tramp-remote-process-environment "TMPDIR=$HOME")
+(add-to-list 'tramp-connection-properties (list (regexp-quote "android") "remote-shell" "sh"))
+
+;; 5.17 Android shell setup hints
+;; Tramp uses the adb method to access Android devices. Android devices provide a restricted shell access through an USB connection. The local host must have the adb program installed.
+;; Usually, it is sufficient to open the file /adb::/. Then you can navigate in the filesystem via dired.
+;; Alternatively, applications such as Termux or SSHDroid that run sshd process on the Android device can accept any ssh-based methods provided these settings are adjusted:
+;;     sh must be specified for remote shell since Android devices do not provide /bin/sh. sh will then invoke whatever shell is installed on the device with this setting:
+;;        (add-to-list 'tramp-connection-properties (list (regexp-quote "192.168.0.26") "remote-shell" "sh"))
+;;     where ‘192.168.0.26’ is the Android device's IP address. (see Predefined connection information).
+;;     Tramp requires preserving PATH environment variable from user settings. Android devices prefer /system/xbin path over /system/bin. Both of these are set as follows:
+;;        (add-to-list 'tramp-remote-path 'tramp-own-remote-path)
+;;        (add-to-list 'tramp-remote-path "/system/xbin")
+;;     When the Android device is not ‘rooted’, specify a writable directory for temporary files:
+;;        (add-to-list 'tramp-remote-process-environment "TMPDIR=$HOME")
+;;     Open a remote connection with the command C-x C-f /ssh:192.168.0.26#2222: <RET>, where sshd is listening on port ‘2222’.
+;;     To add a corresponding entry to the ~/.ssh/config file (recommended), use this:
+;;               Host android
+;;                    HostName 192.168.0.26
+;;                    User root
+;;                    Port 2222
+;;     To use the host name ‘android’ instead of the IP address shown in the previous example, fix the connection properties as follows:
+;;     (add-to-list 'tramp-connection-properties (list (regexp-quote "android") "remote-shell" "sh"))
+;; Open a remote connection with a more concise command C-x C-f /ssh:android: <RET>.
+
+** faded
+(define-key dired-mode-map (kbd "C-n")       'dired-next-line)
+(define-key dired-mode-map (kbd "C-p")       'dired-previous-line)
 
 * Markup Languages Modes
 #+BEGIN_SRC emacs-lisp
@@ -1858,48 +1962,6 @@ M-x clone-indirect-buffer RET
 ;;    ))
 
 ;;}}}
-;;---------------------------------------------------------------------- SGML XML
-;C-c C-v        sgml-validate
-;C-M-h          sgml-mark-current-element
-;C-c C-u C-a    sgml-unfold-all
-;C-c C-u C-e    sgml-unfold-element
-;C-c C-f C-e    sgml-fold-element
-;(require 'psgml)
-;(add-to-list 'auto-mode-alist '("\\.xml$"     . psgml-mode)   )
-;(setq load-path (append load-path '("/home/uri03204/ulib/emacs/psgml-1.3.2"))) ;; (insert (format "%s" load-path))
-;(load-library "psgml")
-(setq sgml-basic-offset 2)
-(autoload 'xml-mode "psgml" "Major mode to edit XML files." t)
-(add-hook 'xml-mode-hook                ; XML-specific settings
-  (function (lambda()
-              (make-face 'sgml-comment-face) ; faces creation
-              (make-face 'sgml-start-tag-face)
-              (make-face 'sgml-end-tag-face)
-              (make-face 'sgml-doctype-face)
-              (set-face-foreground 'sgml-comment-face "SeaGreen") ; faces definitions
-              (set-face-foreground 'sgml-start-tag-face "DarkBlue")
-                                ;(set-face-foreground 'sgml-end-tag-face "OrangeRed")
-                                ;(set-face-foreground 'sgml-doctype-face "MintCream") ; markup to face mappings
-                                ; (see http://www.lysator.liu.se/~lenst/about_psgml/psgml.html#Highlight for details)
-              (setq sgml-markup-faces
-                    '((comment   . sgml-comment-face)
-                      (start-tag . sgml-start-tag-face)
-                      (end-tag   . sgml-end-tag-face)
-                      (doctype   . sgml-doctype-face) ) )
-              (local-set-key [S-left]  'sgml-fold-element)
-              (local-set-key [S-right] 'sgml-unfold-element)
-              ; sgml-fold-element  sgml-unfold-element
-              ; sgml-fold-region
-              ; sgml-fold-subelement
-              ; sgml-unfold-all
-              ; sgml-unfold-line
-              (setq sgml-set-face t) ; turn faces on
-              (setq sgml-indent-data t))))
-; 3 bottom keys of keypad, upper 6 are work 6 virtual screens
-;; (global-set-key [S-M-kp-down] 'sgml-fold-subelement)
-;; (global-set-key [S-M-kp-end]  'sgml-fold-element)   ;  fold everything below current element
-;; (global-set-key [S-M-kp-next] 'sgml-unfold-element)
-
 ;;--------------------------------------------------------------------------------nXML mode
 ;(add-to-list 'hs-special-modes-alist
 ;             '(sgml-mode
@@ -2026,7 +2088,6 @@ M-x clone-indirect-buffer RET
 * hooks
 mostly for python -made named function so remove-hook can be used
 #+BEGIN_SRC emacs-lisp
-
 (defun py-clean-file()
   (if (and (equal major-mode 'python-mode) (not indent-tabs-mode))
       (delete-trailing-whitespace (point-min) (point-max))))
@@ -2035,6 +2096,7 @@ mostly for python -made named function so remove-hook can be used
 #+END_SRC
 * Key Bindings
 
+** notes: maybe useful
  M-0 w                       ;; dired copy path
  C-x C-v                     ;; find alternate file   -> then grab filepath
  /                           ;; self-insert-command
@@ -2091,6 +2153,7 @@ mostly for python -made named function so remove-hook can be used
 
 (global-set-key (kbd "<M-mouse-4>") 'selective-display-level-incr)
 (global-set-key (kbd "<M-mouse-5>") 'selective-display-level-decr)
+(message "-------------- Done: Mousing")
 #+END_SRC
 
 ** Global Keys
@@ -2132,89 +2195,158 @@ mostly for python -made named function so remove-hook can be used
 (global-set-key (kbd "C-.")     'repeat)
 (global-set-key (kbd "C-c ;")   'comment-or-uncomment-region)
 
-(global-set-key (kbd "M-.")     'hs-toggle-hiding)          ;; was xref find defs
+
+;(global-set-key (kbd "M-.")    'hs-toggle-hiding)         ;; was xref find defs
 (global-set-key (kbd "M-$")     'query-replace-regexp)
 (global-set-key (kbd "M-y")     'counsel-yank-pop)
 
+(message "-------------- Done: Global Keys")
 #+END_SRC
 
+** org-babel keys notes
+C-down / C-up = next section / previous section in org-babel
+org-goto 
+
+  C-c C-o     results in separate buffer
+  C-c C-o     open link
+  C-c C-x C-l (org-latex-preview)
+  C-c C-x C-l show latex
+  C-c C-v h   list keybings
+  C-c C-v s   execute subtree
+  C-c C-v C-b execute all
+  C-c C-v z   show REPL
+  C-c C-c     execute block
+  C-c n       execute and next block
+  C-c C-,     insert block
+  C-up        up heading
+  C-c C-f     forward heading
+  C-c C-p     backward heading
+  M-i         for function description
+  C-M-i       babel completion-at-point
+  M-Tab       org complete word at point
+  C- '        edit block
+
+ completion
+   M-/
+   M-TAB - orgmode
+   M-i babel> complete-symbol
 
 ** Function Keys
-|-------+----------+------------+--------------+-----------+---+----------+--------------+---------+----+---+-------------+-----------+--------------+-----+-------|
-| mod   | F1       | F2         | F3           | F4        |   | F5       | F6           | F7      | F8 |   | F9          | F10       | F11          | F12 |       |
-|-------+----------+------------+--------------+-----------+---+----------+--------------+---------+----+---+-------------+-----------+--------------+-----+-------|
-|       | *eshell* | doAnDone   | dired ~/     | dotEmacs  |   | app-open | transpose    | buffers |    |   | macro-start | tog node  | tog py break |     |       |
-| CTRL  | *bash*   | mySystems  | dired-omit   | dotBashrc |   | fapp     | bool-flip    |         |    |   | macro-go    | tog all   | debug-off    |     | CTRL  |
-| SHIFT | *python* | scratch    | dired repos/ | buffers   |   |          | toggle-trunc |         |    |   | macro-end   | open all  | debug-on     |     | SHIFT |
-| ALT   | *ielm*   |            | dired hist/  |           |   |          |              |         |    |   |             | yafolding |              |     | ALT   |
-| SUPER | *ansi*?  | access     | filepath     |           |   |          |              |         |    |   |             |           |              |     | SUPER |
-|-------+----------+------------+--------------+-----------+---+----------+--------------+---------+----+---+-------------+-----------+--------------+-----+-------|
+|--------------+-----------+--------------+--------------+------+------------------+--------------+-----------+-----------------+------+-------------+-----------+-------+--------------|
+| F1           | F2        | F3           | F4           | ***  | F5               | F6           | F7        | F8              | ***  | F9          | F10       | F11   | F12          |
+|--------------+-----------+--------------+--------------+------+------------------+--------------+-----------+-----------------+------+-------------+-----------+-------+--------------|
+| *eshell*     | doAndDone | ibuffers     | dired ~/     |      | app-open    file | transpose    | print var | tog-window-splt |      | macro-start | tog node  | selv0 | edebug fun   |
+|--------------+-----------+--------------+--------------+------+------------------+--------------+-----------+-----------------+------+-------------+-----------+-------+--------------|
+| *bash*       | mySystems | dotEmacs     | dired repos/ | CTRL | open @point file | bool-flip    |           |                 | CTRL | macro-go    | tog all   | selv+ | debug-off    |
+| *python*     | scratch   | dotBashrc    | dired hist/  | SHFT | clip @point file | toggle-trunc |           |                 | SHFT | macro-end   | open all  | selv- | debug-on     |
+|--------------+-----------+--------------+--------------+------+------------------+--------------+-----------+-----------------+------+-------------+-----------+-------+--------------|
+| *babel sess* | jupyClips | recenter top |              | ALT  | clip currnt file |              |           |                 | ALT  |             | yafolding |       | tog py break |
+| *ansi*?      | access    | recenter mid |              | SUPR | clip dired  file |              |           |                 | SUPR |             |           |       |              |
+|--------------+-----------+--------------+--------------+------+------------------+--------------+-----------+-----------------+------+-------------+-----------+-------+--------------|
+
 #+BEGIN_SRC emacs-lisp
+(global-set-key [f1]       '(lambda () (interactive) (progn (if (eq (get-buffer "*eshell*") nil) (eshell))     (switch-to-buffer "*eshell*"))))
+(global-set-key [C-f1]     '(lambda () (interactive) (progn (if (eq (get-buffer "*shell*")  nil) (shell))      (switch-to-buffer "*shell*"))))
+(global-set-key [S-f1]     '(lambda () (interactive) (progn (if (eq (get-buffer "*Python*") nil) (run-python)) (switch-to-buffer "*Python*"))))
+(global-set-key [M-f1]     '(lambda () (interactive) (org-babel-switch-to-session)))
+(global-set-key [s-f1]     '(lambda () (interactive) (org-babel-execute-subtree)))
+;;'ielm) ;; open file under cursor ;;(global-set-key [M-f9] 'insertLastSexp) ;; insert result
 
+(global-set-key [f2]       '(lambda () (interactive) (find-file "/home/kleyn/aNotes/doAndDone.org")))
+(global-set-key [C-f2]     '(lambda () (interactive) (find-file "/home/kleyn/aNotes/mySystems.org")))
+(global-set-key [S-f2]     '(lambda () (interactive) (find-file "/home/kleyn/history/scratch.org")))
+(global-set-key [M-f2]     '(lambda () (interactive) (find-file "/home/kleyn/projects/repos/mkmain/landing/jupyClips.org")))
+(global-set-key [s-f2]     '(lambda () (interactive) (find-file "/home/kleyn/aNotes/access.org")))
 
-(global-set-key [f1]            '(lambda () (interactive) (progn (if (eq (get-buffer "*eshell*") nil) (eshell))     (switch-to-buffer "*eshell*"))))
-(global-set-key [C-f1]          '(lambda () (interactive) (progn (if (eq (get-buffer "*shell*")  nil) (shell))      (switch-to-buffer "*shell*"))))
-(global-set-key [S-f1]          '(lambda () (interactive) (progn (if (eq (get-buffer "*Python*") nil) (run-python)) (switch-to-buffer "*Python*"))))
-(global-set-key [M-f1]          'ielm) ;; open file under cursor ;;(global-set-key [M-f9] 'insertLastSexp) ;; insert result
+(global-set-key [f3]       '(lambda () (interactive) (ibuffer "home" nil) (ibuffer-switch-to-saved-filter-groups "home")))
+(global-set-key [C-f3]     '(lambda () (interactive) (find-file "/home/kleyn/.emacs.d/dotEmacs.org") (search-forward "** Function Keys") (org-show-subtree)))  ;; nok900  'my-openfile  'neotree-show
+(global-set-key [S-f3]     '(lambda () (interactive) (find-file "/home/kleyn/config/dot/dotBashrc") ))                                                            
+(global-set-key [M-f3]     '(lambda () (interactive) (recenter-top-bottom  0)))
+(global-set-key [s-f3]     '(lambda () (interactive) (recenter-top-bottom 50)))
+;;(global-set-key [C-f3]   'insertLastSexp)                                                                                                                    ;; (lambda () (interactive) (dired "C:/[pm][rya][qoadmp][parsd]*" nil)))
+;;(global-set-key [S-f3]   'org-save-code-block)
 
-(global-set-key [f2]            '(lambda () (interactive) (find-file "/home/kleyn/aNotes/doAndDone.org")))
-(global-set-key [C-f2]          '(lambda () (interactive) (find-file "/home/kleyn/history/scratch.org")))
-(global-set-key [S-f2]          '(lambda () (interactive) (find-file "/home/kleyn/aNotes/mySystems.org")))
-(global-set-key [M-f2]          '(lambda () (interactive) (find-file "/home/kleyn/aNotes/bookmarks.org")))
-(global-set-key [s-f2]          '(lambda () (interactive) (find-file "/home/kleyn/aNotes/access.org")))
+(global-set-key [f4]       'diredHome)
+(global-set-key [C-f4]     '(lambda () (interactive) (dired "~/projects/repos" nil)))
+(global-set-key [S-f4]     '(lambda () (interactive) (dired "~/history/commands/*2020*" nil)))
 
-(global-set-key [f3]            'diredHome)
-(global-set-key [C-f3]          'dired-omit-mode)
-(global-set-key [S-f3]          '(lambda () (interactive) (dired "~/projects/repos" nil)))
-(global-set-key [M-f3]          '(lambda () (interactive) (dired "~/history/commands/*2020*" nil)))
-(global-set-key [s-f3]          '(lambda () (interactive) (filepath-on-clipboard)))
+;;(global-set-key [C-f4]   'dired-omit-mode)
 
-(global-set-key [f4]            '(lambda () (interactive) (ibuffer "home") (ibuffer-switch-to-saved-filter-groups "home")))
-(global-set-key [C-f4]          '(lambda () (interactive) (find-file "/home/kleyn/.emacs.d/dotEmacs.org") (search-forward "** Function Keys") (org-show-subtree)))     ;; nok900  'my-openfile  'neotree-show
-(global-set-key [S-f4]          '(lambda () (interactive) (find-file "/home/kleyn/config/dot/dotBashrc") ))                                                            ;; nok900  'my-openfile  'neotree-show
-(global-set-key [C-f4]          'insertLastSexp)                                                                                                                       ;; (lambda () (interactive) (dired "C:/[pm][rya][qoadmp][parsd]*" nil)))
-;(global-set-key [S-f4]          'org-save-code-block)
+(global-set-key [f5]       'ergoemacs-open-in-external-app)      ;; bookmark-menu-list',
+(global-set-key [C-f5]     'ffap)
+(global-set-key [S-f5]     '(lambda () (interactive)  (let ((fpth (thing-at-point 'filename t))) 
+                                                                (kill-new fpth)
+                                                                (message fpth))))
+(global-set-key [M-f5]     'filepath-on-clipboard)
+(global-set-key [s-f5]     'dired-paste-to-yank-buffer)
 
-(global-set-key [f5]            'ergoemacs-open-in-external-app)                      ;; bookmark-menu-list
-(global-set-key [C-f5]          'ffap)
+(global-set-key [f6]       'org-transpose-table-at-point)
+(global-set-key [C-f6]     'bool-flip-do-flip)
+(global-set-key [S-f6]     'toggle-truncate-lines)
 
-(global-set-key [f6]            'org-transpose-table-at-point)
-(global-set-key [C-f6]          'bool-flip-do-flip)
-(global-set-key [S-f6]          'toggle-truncate-lines)
+(global-set-key [f7]       '(lambda () (interactive)  (let* ((currWord (thing-at-point 'symbol t))
+                                                                  (currWordVal (symbol-value (intern currWord))))
+                                                                (switch-to-buffer "*scratch*")
+                                                                (goto-char (point-min))                                              ;; (print currWordVal  (get-buffer "*scratch*"))
+                                                                (cl-prettyprint currWordVal))))
+(global-set-key [S-f7]     'show-hist)                           ;; (global-set-key [S-f7] 'buffer-menu-sort-by-filename)
 
-(global-set-key [f7]            '(lambda () (interactive) (ibuffer "home") (ibuffer-switch-to-saved-filter-groups "home")))
-(global-set-key [S-f7]          'show-hist)             ;; (global-set-key [S-f7] 'buffer-menu-sort-by-filename)
+(global-set-key [f8]       'toggle-window-split)
 
-(global-set-key [f9]            'kmacro-start-macro)        ;; 'ielm)  ;; open file under cursor
-(global-set-key [C-f9]          'kmacro-end-and-call-macro) ;; see-shell-output) ;ergoemacs-open-in-external-app
-(global-set-key [S-f9]          'kmacro-end-macro)
+(global-set-key [f9]       'kmacro-start-macro)                  ;; 'ielm)  ;; open file under cursor
+(global-set-key [C-f9]     'kmacro-end-and-call-macro)           ;; see-shell-output) ;ergoemacs-open-in-external-app
+(global-set-key [S-f9]     'kmacro-end-macro)
 
-(global-set-key [f10]           'yafolding-toggle-element)
-(global-set-key [C-f10]         'yafolding-toggle-all)
-(global-set-key [S-f10]         'yafolding-show-all)
-(global-set-key [M-f10]         'yafolding-mode)
-(global-set-key [s-f10]         'yafolding-discover)
+(global-set-key [f10]      'yafolding-toggle-element)
+(global-set-key [C-f10]    'yafolding-toggle-all)
+(global-set-key [S-f10]    'yafolding-show-all)
+(global-set-key [M-f10]    'yafolding-mode)
+(global-set-key [s-f10]    'yafolding-discover)
 
+; (global-set-key [M-f2]   'buffer-menu-sort-by-filename)
+(global-set-key [M-f10]    'see-shell-output)                    ;; ergoemacs-open-in-external-app
 
-; (global-set-key [M-f2]        'buffer-menu-sort-by-filename)
-(global-set-key [M-f10]         'see-shell-output)      ;; ergoemacs-open-in-external-app
+(global-set-key [f11]      'selective-display-level-zero)
+(global-set-key [C-f11]    'selective-display-level-incr)
+(global-set-key [S-f11]    'selective-display-level-decr)
 
-(global-set-key [f11]           'insertcodePyCodeSnippet)
-(global-set-key [C-f11]         'set-debug-on)
-(global-set-key [S-f11]         'set-debug-off)
+(global-set-key [f12]      'edebug-defun)                        ;; put break in defun/ form whatever - REMOVE bey re-evaluating the definition
+(global-set-key [S-f12]    'set-debug-on)
+(global-set-key [M-f12]    'set-debug-off)
+(global-set-key [s-f12]    'insertcodePyCodeSnippet)
 
-(global-unset-key "\C-x\C-c")                            ;; Don't quit so easily
-(global-set-key (kbd "C-x C-c C-v")  'save-buffers-kill-emacs) ;; But we establish a longer sequence that is harder to hit by accident:
+(global-unset-key    "\C-x\C-c")                                      ;; Don't quit so easily
+(global-set-key (kbd "C-x C-c C-v")  'save-buffers-kill-emacs)        ;; But we establish a longer sequence that is harder to hit by accident:
 
-
+(message "-------------- Done: Function Keys")
 #+END_SRC
 
-(global-set-key [f6]           'ergoemacs-open-in-external-app)
-(global-set-key [f7]           'my-list-buffers)
-(global-set-key [f8]           'ztree-dir)
-(global-set-key [f4]           'desktop-save)
 
 ** KeyPad Keys
+
+#+BEGIN_SRC emacs-lisp
+(global-set-key [(next)]        'cycle-buffer)
+(global-set-key [C-down]        'cycle-buffer)              ;; avoid default binding (global-set-key (kbd "C-c <down>")  'windmove-down)
+(global-set-key [(prior)]       'cycle-buffer-backward)
+(global-set-key [C-up]          'previous-buffer)
+(global-set-key [C-down]        'next-buffer)               ;; 'cycle-buffer  avoid default binding (global-set-key (kbd "C-c <down>")  'windmove-down)
+
+(global-set-key [S-down]        'scroll-one-line-up)
+(global-set-key [S-up]          'scroll-one-line-down)
+
+(global-set-key [C-insert]      'clipboard-kill-ring-save)
+(global-set-key [S-insert]      'clipboard-yank)
+
+(global-set-key [S-left]        'window-hshrink)
+(global-set-key [S-right]       'window-hwiden)
+
+(global-set-key [M-insert]      'toggle-window-split)
+(global-set-key [M-delete]      'kill-this-buffer-volatile)
+
+
+(message "-------------- Done: Keybindings Section")
+#+END_SRC
+
 |-------+----------------+----------------+----------------+-------+-------|
 | mod   | NumLock        |              / | *              | -     |       |
 |-------+----------------+----------------+----------------+-------+-------|
@@ -2234,7 +2366,7 @@ mostly for python -made named function so remove-hook can be used
 |-------+----------------+----------------+----------------+-------+-------|
 | mod   | 4 <            |              5 | 6 >            | +     |       |
 |-------+----------------+----------------+----------------+-------+-------|
-|       |                |                |                |       |       |
+|       |                |                | org-cycle      |       |       |
 | CTRL  |                |                |                |       | CTRL  |
 | SHIFT | selective decr | selective zero | selective incr |       | SHIFT |
 | ALT   |                |                |                |       | ALT   |
@@ -2257,32 +2389,6 @@ mostly for python -made named function so remove-hook can be used
 | SUPER |                |                |                |       | SUPER |
 |-------+----------------+----------------+----------------+-------+-------|
 
-** KeyPad Keys
-#+BEGIN_SRC emacs-lisp
-(global-set-key [(next)]        'cycle-buffer)
-(global-set-key [C-down]        'cycle-buffer)              ;; avoid default binding (global-set-key (kbd "C-c <down>")  'windmove-down)
-(global-set-key [(prior)]       'cycle-buffer-backward)
-(global-set-key [C-up]          'previous-buffer)
-(global-set-key [C-down]        'next-buffer)               ;; 'cycle-buffer  avoid default binding (global-set-key (kbd "C-c <down>")  'windmove-down)
-(global-set-key [C-insert]      'clipboard-kill-ring-save)
-(global-set-key [C-kp-add]      'text-scale-increase)
-(global-set-key [C-kp-subtract] 'text-scale-decrease)       ;; with a C-0 prefix argument.
-(global-set-key [M-home]        'org-collapse)
-(global-set-key [S-down]        'scroll-one-line-up)
-(global-set-key [S-insert]      'clipboard-yank)
-(global-set-key [S-left]        'window-hshrink)
-(global-set-key [S-right]       'window-hwiden)
-(global-set-key [S-up]          'scroll-one-line-down)
-
-(global-set-key [C-kp-4]        'selective-display-level-decr)
-(global-set-key [C-kp-5]        'selective-display-level-zero)
-(global-set-key [C-kp-6]        'selective-display-level-incr)
-
-(global-set-key [kp-subtract]   'kill-this-buffer-volatile)
-(global-set-key [kp-divide]     'toggle-window-split)
-
-(message "-------------- Done: Keybindings Section")
-#+END_SRC
 
 (global-set-key [M-up]         'kill-this-buffer-volatile) ;; kill-buffer
 (global-set-key [(next)]        'cycle-buffer)
@@ -2310,7 +2416,6 @@ mostly for python -made named function so remove-hook can be used
 ;; (global-set-key [S-M-kp-down]   'sgml-fold-subelement)   ; M-kp ... conflicts with workspace navigation:
 ;; (global-set-key [S-M-kp-end]    'sgml-fold-element)      ; fold everything below current element
 ;; (global-set-key [S-M-kp-next]   'sgml-unfold-element)
-;; (global-set-key [S-f11]         'debug-function-on-entry)
 ;; (global-set-key [S-f7]          'buffer-menu-sort-by-filename)
 ;; (global-set-key [S-f8]          'dired-omit-mode)
 ;; (global-set-key [S-insert]      'clipboard-yank)
@@ -2377,6 +2482,8 @@ mostly for python -made named function so remove-hook can be used
 ;;(setq debug-on-error t)
 ;;(setq debug-on-error nil)
 
+;; (global-set-key [S-f11]         'debug-function-on-entry)
+
 ;; S     Stop: don't execute any more of the program, but wait for more Edebug commands (edebug-stop).
 ;; <SPC> Step: stop at the next stop point encountered (edebug-step-mode).
 ;; d     display stack
@@ -2400,7 +2507,25 @@ mostly for python -made named function so remove-hook can be used
 ;; This function inserts text in the trace buffer. It computes the text with (apply 'format format-string format-args). It also appends a newline to separate entries.
 ;; edebug-tracing and edebug-trace insert lines in the trace buffer whenever they are called, even if Edebug is not active. Adding text to the trace buffer also scrolls its window to show the last lines inserted.
 
+
+    (defmacro stop-here (fn)
+       "Call edebug here. FN is assumed to be a symbol of the function you are in."
+       `(if (consp (get ,fn 'edebug))
+           (edebug)))
+    
+    (defun clear-edebug (fn-sym)
+      "Remove 'edebug property from FN-SYM, a function symbol."
+      (put fn-sym 'edebug nil))
+    ;; An example of use:
+    (defun fact (n)
+      (cond ((= n 0) )
+        ((= n 1) 1)
+        ((>  n 1) (progn (stop-here 'fact) (* n (fact (1- n)))))
+        (t nil)))
+
+
 * ESHELL
+;; (add-to-list 'eshell-command-aliases-list (list "l"     "stat --printf=%y\t%6s\t%-16n\n * | cut -b -16,36-"))
 #+BEGIN_SRC emacs-lisp
 (eshell)
 (setq eshell-save-history-on-exit nil)
@@ -2412,17 +2537,18 @@ mostly for python -made named function so remove-hook can be used
                                   eshell-last-output-end))
 (add-to-list 'eshell-output-filter-functions 'eshell-handle-ansi-color)
 
+
 (defun sb ()
  (progn
   (setq eshell-command-aliases-list ())
-  (add-to-list 'eshell-command-aliases-list (list "ll"    "ls -lF --time-style=long-iso $*"))
+  (add-to-list 'eshell-command-aliases-list (list "ll"    "ls -lF  --time-style=long-iso $*"))
   (add-to-list 'eshell-command-aliases-list (list "la"    "ls -alF --time-style=long-iso $*"))
   (add-to-list 'eshell-command-aliases-list (list "cl"    "cd $*; ll"))
 
   (add-to-list 'eshell-command-aliases-list (list "al"    "alias"))
   (add-to-list 'eshell-command-aliases-list (list "ag"    "alias | grep $*"))
 
-  (add-to-list 'eshell-command-aliases-list (list "fnd"    "find $*")) ;; plain old find
+  (add-to-list 'eshell-command-aliases-list (list "fnd"   "find $*")) ;; plain old find
 
   (add-to-list 'eshell-command-aliases-list (list "gits"  "git status ."))
   (add-to-list 'eshell-command-aliases-list (list "gith"  "git help"))
@@ -2449,8 +2575,10 @@ mostly for python -made named function so remove-hook can be used
   (add-to-list 'eshell-command-aliases-list (list "hggg"  "find ~/history/commands/ -mtime -365 -type f | xargs grep -i $*"))
   (add-to-list 'eshell-command-aliases-list (list "hgggg" "find ~/history/commands/ -type f | xargs grep -i $*"))
 
-  (add-to-list 'eshell-command-aliases-list (list "es"    "(save-eshell-terminal)"))
 
+  (add-to-list 'eshell-command-aliases-list (list "remNfsEuler"  "sudo mount.cifs -o username=kleyn,uid=1000,gid=1000 //192.168.1.177/Users/kleyn ~/Euler"))
+
+  (add-to-list 'eshell-command-aliases-list (list "es"    "(save-eshell-terminal)"))
   (add-to-list 'eshell-command-aliases-list (list "pe"    "printenv | sort"))
   (add-to-list 'eshell-command-aliases-list (list "pg"    "printenv | grep -i $*"))
   (add-to-list 'eshell-command-aliases-list (list "ctrlc" "xclip -selection c"))
@@ -2462,7 +2590,10 @@ mostly for python -made named function so remove-hook can be used
 
   (defalias 'ff  'find-file)
   (defalias 'ffo 'find-file-other-window)
-  (print "aliases done")
+  (eshell-printn "------- eshell-command-aliases-list")
+  (eshell-printn eshell-command-aliases-list)
+  (eshell-printn "------- eshell-mode-map")
+  (eshell-printn eshell-mode-map)
  )
 )
 
@@ -2750,7 +2881,54 @@ eshell-parse-command 'ls -l'
 
 
 
-* END BIT
+* Faded
+(global-set-key [C-kp-add]      'text-scale-increase)
+(global-set-key [C-kp-subtract] 'text-scale-decrease)       ;; with a C-0 prefix argument.
+
+;;---------------------------------------------------------------------- SGML XML
+;C-c C-v        sgml-validate
+;C-M-h          sgml-mark-current-element
+;C-c C-u C-a    sgml-unfold-all
+;C-c C-u C-e    sgml-unfold-element
+;C-c C-f C-e    sgml-fold-element
+;(require 'psgml)
+;(add-to-list 'auto-mode-alist '("\\.xml$"     . psgml-mode)   )
+;(setq load-path (append load-path '("/home/uri03204/ulib/emacs/psgml-1.3.2"))) ;; (insert (format "%s" load-path))
+;(load-library "psgml")
+(setq sgml-basic-offset 2)
+(autoload 'xml-mode "psgml" "Major mode to edit XML files." t)
+(add-hook 'xml-mode-hook                ; XML-specific settings
+  (function (lambda()
+              (make-face 'sgml-comment-face) ; faces creation
+              (make-face 'sgml-start-tag-face)
+              (make-face 'sgml-end-tag-face)
+              (make-face 'sgml-doctype-face)
+              (set-face-foreground 'sgml-comment-face "SeaGreen") ; faces definitions
+              (set-face-foreground 'sgml-start-tag-face "DarkBlue")
+                                ;(set-face-foreground 'sgml-end-tag-face "OrangeRed")
+                                ;(set-face-foreground 'sgml-doctype-face "MintCream") ; markup to face mappings
+                                ; (see http://www.lysator.liu.se/~lenst/about_psgml/psgml.html#Highlight for details)
+              (setq sgml-markup-faces
+                    '((comment   . sgml-comment-face)
+                      (start-tag . sgml-start-tag-face)
+                      (end-tag   . sgml-end-tag-face)
+                      (doctype   . sgml-doctype-face) ) )
+              (local-set-key [S-left]  'sgml-fold-element)
+              (local-set-key [S-right] 'sgml-unfold-element)
+              ; sgml-fold-element  sgml-unfold-element
+              ; sgml-fold-region
+              ; sgml-fold-subelement
+              ; sgml-unfold-all
+              ; sgml-unfold-line
+              (setq sgml-set-face t) ; turn faces on
+              (setq sgml-indent-data t))))
+; 3 bottom keys of keypad, upper 6 are work 6 virtual screens
+;; (global-set-key [S-M-kp-down] 'sgml-fold-subelement)
+;; (global-set-key [S-M-kp-end]  'sgml-fold-element)   ;  fold everything below current element
+;; (global-set-key [S-M-kp-next] 'sgml-unfold-element)
+
+
+* end bit
 ;(desktop-change-dir "/home/uri03204/myDocs/config")
 
 #+BEGIN_SRC emacs-lisp
