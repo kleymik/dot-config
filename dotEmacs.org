@@ -828,6 +828,7 @@ N.B. TBD drop last ","
 
 * Settings
 #+BEGIN_SRC emacs-lisp
+(global-hl-line-mode t) 
 (desktop-save-mode 1)  ; desktop-revert desktop-change-dir
 
 (blink-cursor-mode 0)
@@ -914,7 +915,7 @@ N.B. TBD drop last ","
        (setq backup-directory-alist          `((".*" . , "/home/kleyn/history/emacsBackups")))
        (setq auto-save-file-name-transforms  `((".*" ,   "/home/kleyn/history/emacsBackups" t)))))
 
-(message (format "%s" backup-directory-alist))
+(message (concat "-------------- Done:backup-directory-alist" (format "%s" backup-directory-alist)))
 
 (global-subword-mode 1)
 ;; from 'better-defaults.el'
@@ -944,6 +945,7 @@ N.B. TBD drop last ","
      ("Org"          (or (mode . org-mode) (filename . "OrgMode")))
      ("*Org"         (name . "*Org")    )
      ("Image"        (mode . Image)     )
+     ("Dired"        (mode . dired)     )
      ("Magit"        (name . "magit\*") )
      ("jupyter"      (name . "jupyter") )
      ("Help"         (name . "*")       ))))
@@ -973,13 +975,13 @@ N.B. TBD drop last ","
 )
 
 
-(defun my-dired-mode-buffer-p (buf)
-   "Non-nil if buffer BUF is in `dired-mode'."
-   (with-current-buffer buf
-     (derived-mode-p 'dired-mode)))
+;(defun my-dired-mode-buffer-p (buf)
+;   "Non-nil if buffer BUF is in `dired-mode'."
+;   (with-current-buffer buf
+;     (derived-mode-p 'dired-mode)))
 
-(defvar ibuffer-never-show-predicates '())
-(with-eval-after-load "ibuffer" (add-to-list 'ibuffer-never-show-predicates #'my-dired-mode-buffer-p))
+;(defvar ibuffer-never-show-predicates '())
+;(with-eval-after-load "ibuffer" (add-to-list 'ibuffer-never-show-predicates #'my-dired-mode-buffer-p))
 
 
 ;; --------------------------------------------- Custom Variables go in ~/emacs.d/init.el
@@ -1075,7 +1077,6 @@ M-x clone-indirect-buffer RET
 
 
 ;;--------------------------------------------------------- Language Modes
-;;(insert (format "%s" auto-mode-alist))((\.m\' . matlab-mode) (\.py$ . python-mode) (\.te?xt\' . text-mode) (\.c\' . c-mode) (\.h\' . c-mode) (\.tex\' . tex-mode) (\.ltx\' . latex-mode) (\.el\' . emacs-lisp-mode) (\.scm\' . scheme-mode) (\.l\' . lisp-mode) (\.lisp\' . lisp-mode) (\.f\' . fortran-mode) (\.F\' . fortran-mode) (\.for\' . fortran-mode) (\.p\' . pascal-mode) (\.pas\' . pascal-mode) (\.ad[abs]\' . ada-mode) (\.\([pP]\([Llm]\|erl\)\|al\)\' . perl-mode) (\.s?html?\' . html-mode) (\.cc\' . c++-mode) (\.hh\' . c++-mode) (\.hpp\' . c++-mode) (\.C\' . c++-mode) (\.H\' . c++-mode) (\.cpp\' . c++-mode) (\.cxx\' . c++-mode) (\.hxx\' . c++-mode) (\.c\+\+\' . c++-mode) (\.h\+\+\' . c++-mode) (\.m\' . objc-mode) (\.java\' . java-mode) (\.mk\' . makefile-mode) (\(M\|m\|GNUm\)akefile\(\.in\)?\' . makefile-mode) (\.am\' . makefile-mode) (\.texinfo\' . texinfo-mode) (\.te?xi\' . texinfo-mode) (\.s\' . asm-mode) (\.S\' . asm-mode) (\.asm\' . asm-mode) (ChangeLog\' . change-log-mode) (change\.log\' . change-log-mode) (changelo\' . change-log-mode) (ChangeLog\.[0-9]+\' . change-log-mode) (changelog\' . change-log-mode) (changelog\.[0-9]+\' . change-log-mode) (\$CHANGE_LOG\$\.TXT . change-log-mode) (\.scm\.[0-9]*\' . scheme-mode) (\.[ck]?sh\'\|\.shar\'\|/\.z?profile\' . sh-mode) (\(/\|\`\)\.\(bash_profile\|z?login\|bash_login\|z?logout\)\' . sh-mode) (\(/\|\`\)\.\(bash_logout\|shrc\|[kz]shrc\|bashrc\|t?cshrc\|esrc\)\' . sh-mode) (\(/\|\`\)\.\([kz]shenv\|xinitrc\|startxrc\|xsession\)\' . sh-mode) (\.m?spec\' . sh-mode) (\.mm\' . nroff-mode) (\.me\' . nroff-mode) (\.ms\' . nroff-mode) (\.man\' . nroff-mode) (\.\(u?lpc\|pike\|pmod\)\' . pike-mode) (\.TeX\' . tex-mode) (\.sty\' . latex-mode) (\.cls\' . latex-mode) (\.clo\' . latex-mode) (\.bbl\' . latex-mode) (\.bib\' . bibtex-mode) (\.sql\' . sql-mode) (\.m4\' . m4-mode) (\.mc\' . m4-mode) (\.mf\' . metafont-mode) (\.mp\' . metapost-mode) (\.vhdl?\' . vhdl-mode) (\.article\' . text-mode) (\.letter\' . text-mode) (\.tcl\' . tcl-mode) (\.exp\' . tcl-mode) (\.itcl\' . tcl-mode) (\.itk\' . tcl-mode) (\.icn\' . icon-mode) (\.sim\' . simula-mode) (\.mss\' . scribe-mode) (\.f90\' . f90-mode) (\.indent\.pro\' . fundamental-mode) (\.pro\' . idlwave-mode) (\.lsp\' . lisp-mode) (\.awk\' . awk-mode) (\.prolog\' . prolog-mode) (\.tar\' . tar-mode) (\.\(arc\|zip\|lzh\|zoo\|jar\)\' . archive-mode) (\.\(ARC\|ZIP\|LZH\|ZOO\|JAR\)\' . archive-mode) (\`/tmp/Re . text-mode) (/Message[0-9]*\' . text-mode) (/drafts/[0-9]+\' . mh-letter-mode) (\.zone\' . zone-mode) (\`/tmp/fol/ . text-mode) (\.y\' . c-mode) (\.lex\' . c-mode) (\.oak\' . scheme-mode) (\.sgml?\' . sgml-mode) (\.xml\' . sgml-mode) (\.dtd\' . sgml-mode) (\.ds\(ss\)?l\' . dsssl-mode) (\.idl\' . idl-mode) ([]>:/\]\..*emacs\' . emacs-lisp-mode) (\`\..*emacs\' . emacs-lisp-mode) ([:/]_emacs\' . emacs-lisp-mode) (/crontab\.X*[0-9]+\' . shell-script-mode) (\.ml\' . lisp-mode) (\.\(asn\|mib\|smi\)\' . snmp-mode) (\.\(as\|mi\|sm\)2\' . snmpv2-mode) (\.\(diffs?\|patch\|rej\)\' . diff-mode) (\.\(dif\|pat\)\' . diff-mode) (\.[eE]?[pP][sS]\' . ps-mode) (configure\.\(ac\|in\)\' . autoconf-mode) (BROWSE\' . ebrowse-tree-mode) (\.ebrowse\' . ebrowse-tree-mode) (#\*mail\* . mail-mode) (\.~?[0-9]+\.[0-9][-.0-9]*~?\' ignore t) (\.[1-9]\' . nroff-mode) (\.g\' . antlr-mode))
 (add-to-list 'auto-mode-alist '("\\.sas\\'"   . sas-mode)     )
 (add-to-list 'auto-mode-alist '("\\.m\\'"     . octave-mode)  )
 
@@ -1101,65 +1102,160 @@ M-x clone-indirect-buffer RET
 
 ;;(add-to-list 'auto-mode-alist '("\\.cs$"      . csharp-mode)  )
 ;;(setq auto-mode-alist   (append '(("\\.cs$" . csharp-mode)) auto-mode-alist))
-;;(insert (format "%s" auto-mode-alist))((\.m\' . matlab-mode) (\.py$ . python-mode) (\.te?xt\' . text-mode) (\.c\' . c-mode) (\.h\' . c-mode) (\.tex\' . tex-mode) (\.ltx\' . latex-mode) (\.el\' . emacs-lisp-mode) (\.scm\' . scheme-mode) (\.l\' . lisp-mode) (\.lisp\' . lisp-mode) (\.f\' . fortran-mode) (\.F\' . fortran-mode) (\.for\' . fortran-mode) (\.p\' . pascal-mode) (\.pas\' . pascal-mode) (\.ad[abs]\' . ada-mode) (\.\([pP]\([Llm]\|erl\)\|al\)\' . perl-mode) (\.s?html?\' . html-mode) (\.cc\' . c++-mode) (\.hh\' . c++-mode) (\.hpp\' . c++-mode) (\.C\' . c++-mode) (\.H\' . c++-mode) (\.cpp\' . c++-mode) (\.cxx\' . c++-mode) (\.hxx\' . c++-mode) (\.c\+\+\' . c++-mode) (\.h\+\+\' . c++-mode) (\.m\' . objc-mode) (\.java\' . java-mode) (\.mk\' . makefile-mode) (\(M\|m\|GNUm\)akefile\(\.in\)?\' . makefile-mode) (\.am\' . makefile-mode) (\.texinfo\' . texinfo-mode) (\.te?xi\' . texinfo-mode) (\.s\' . asm-mode) (\.S\' . asm-mode) (\.asm\' . asm-mode) (ChangeLog\' . change-log-mode) (change\.log\' . change-log-mode) (changelo\' . change-log-mode) (ChangeLog\.[0-9]+\' . change-log-mode) (changelog\' . change-log-mode) (changelog\.[0-9]+\' . change-log-mode) (\$CHANGE_LOG\$\.TXT . change-log-mode) (\.scm\.[0-9]*\' . scheme-mode) (\.[ck]?sh\'\|\.shar\'\|/\.z?profile\' . sh-mode) (\(/\|\`\)\.\(bash_profile\|z?login\|bash_login\|z?logout\)\' . sh-mode) (\(/\|\`\)\.\(bash_logout\|shrc\|[kz]shrc\|bashrc\|t?cshrc\|esrc\)\' . sh-mode) (\(/\|\`\)\.\([kz]shenv\|xinitrc\|startxrc\|xsession\)\' . sh-mode) (\.m?spec\' . sh-mode) (\.mm\' . nroff-mode) (\.me\' . nroff-mode) (\.ms\' . nroff-mode) (\.man\' . nroff-mode) (\.\(u?lpc\|pike\|pmod\)\' . pike-mode) (\.TeX\' . tex-mode) (\.sty\' . latex-mode) (\.cls\' . latex-mode) (\.clo\' . latex-mode) (\.bbl\' . latex-mode) (\.bib\' . bibtex-mode) (\.sql\' . sql-mode) (\.m4\' . m4-mode) (\.mc\' . m4-mode) (\.mf\' . metafont-mode) (\.mp\' . metapost-mode) (\.vhdl?\' . vhdl-mode) (\.article\' . text-mode) (\.letter\' . text-mode) (\.tcl\' . tcl-mode) (\.exp\' . tcl-mode) (\.itcl\' . tcl-mode) (\.itk\' . tcl-mode) (\.icn\' . icon-mode) (\.sim\' . simula-mode) (\.mss\' . scribe-mode) (\.f90\' . f90-mode) (\.indent\.pro\' . fundamental-mode) (\.pro\' . idlwave-mode) (\.lsp\' . lisp-mode) (\.awk\' . awk-mode) (\.prolog\' . prolog-mode) (\.tar\' . tar-mode) (\.\(arc\|zip\|lzh\|zoo\|jar\)\' . archive-mode) (\.\(ARC\|ZIP\|LZH\|ZOO\|JAR\)\' . archive-mode) (\`/tmp/Re . text-mode) (/Message[0-9]*\' . text-mode) (/drafts/[0-9]+\' . mh-letter-mode) (\.zone\' . zone-mode) (\`/tmp/fol/ . text-mode) (\.y\' . c-mode) (\.lex\' . c-mode) (\.oak\' . scheme-mode) (\.sgml?\' . sgml-mode) (\.xml\' . sgml-mode) (\.dtd\' . sgml-mode) (\.ds\(ss\)?l\' . dsssl-mode) (\.idl\' . idl-mode) ([]>:/\]\..*emacs\' . emacs-lisp-mode) (\`\..*emacs\' . emacs-lisp-mode) ([:/]_emacs\' . emacs-lisp-mode) (/crontab\.X*[0-9]+\' . shell-script-mode) (\.ml\' . lisp-mode) (\.\(asn\|mib\|smi\)\' . snmp-mode) (\.\(as\|mi\|sm\)2\' . snmpv2-mode) (\.\(diffs?\|patch\|rej\)\' . diff-mode) (\.\(dif\|pat\)\' . diff-mode) (\.[eE]?[pP][sS]\' . ps-mode) (configure\.\(ac\|in\)\' . autoconf-mode) (BROWSE\' . ebrowse-tree-mode) (\.ebrowse\' . ebrowse-tree-mode) (#\*mail\* . mail-mode) (\.~?[0-9]+\.[0-9][-.0-9]*~?\' ignore t) (\.[1-9]\' . nroff-mode) (\.g\' . antlr-mode))
-;(add-to-list 'auto-mode-alist '("\\.m\\'"     . octave-mode)  )
+;;(insert (format "%s" auto-mode-alist)) ( (\.m\' . matlab-mode) ("\\.m\\'" . octave-mode))
+;;                                         (\.py$ . python-mode)
+;;                                         (\.te?xt\' . text-mode)
+;;                                         (\.c\' . c-mode) (\.h\' . c-mode)
+;;                                         (\.scm\' . scheme-mode) (\.lsp\' . lisp-mode) (\.ml\' . lisp-mode)
+;;                                         (\.f\' . fortran-mode) (\.F\' . fortran-mode) (\.for\' . fortran-mode)
+;;                                         (\.p\' . pascal-mode) (\.pas\' . pascal-mode)
+;;                                         (\.ad[abs]\' . ada-mode)
+;;                                         (\.\([pP]\([Llm]\|erl\)\|al\)\' . perl-mode)
+;;                                         (\.s?html?\' . html-mode)
+;;                                         (\.cc\' . c++-mode) (\.hh\' . c++-mode) (\.hpp\' . c++-mode) (\.C\' . c++-mode) (\.H\' . c++-mode) (\.cpp\' . c++-mode) (\.cxx\' . c++-mode) (\.hxx\' . c++-mode) (\.c\+\+\' . c++-mode) (\.h\+\+\' . c++-mode)
+;;                                         (\.m\' . objc-mode)
+;;                                         (\.java\' . java-mode)
+;;                                         (\.mk\' . makefile-mode) (\(M\|m\|GNUm\)akefile\(\.in\)?\' . makefile-mode) (\.am\' . makefile-mode)
+;;                                         (\.texinfo\' . texinfo-mode) (\.te?xi\' . texinfo-mode)
+;;                                         (\.s\' . asm-mode) (\.S\' . asm-mode) (\.asm\' . asm-mode)
+;;                                         (ChangeLog\' . change-log-mode) (change\.log\' . change-log-mode) (changelo\' . change-log-mode) (ChangeLog\.[0-9]+\' . change-log-mode) (changelog\' . change-log-mode) (changelog\.[0-9]+\' . change-log-mode)
+;;                                         (\$CHANGE_LOG\$\.TXT . change-log-mode)
+;;                                         (\.scm\.[0-9]*\' . scheme-mode)
+;;                                         (\.[ck]?sh\'\|\.shar\'\|/\.z?profile\' . sh-mode) (\(/\|\`\)\.\(bash_profile\|z?login\|bash_login\|z?logout\)\' . sh-mode) (\(/\|\`\)\.\(bash_logout\|shrc\|[kz]shrc\|bashrc\|t?cshrc\|esrc\)\' . sh-mode) (\(/\|\`\)\.\([kz]shenv\|xinitrc\|startxrc\|xsession\)\' . sh-mode) (\.m?spec\' . sh-mode)
+;;                                         (\.mm\' . nroff-mode) (\.me\' . nroff-mode) (\.ms\' . nroff-mode) (\.man\' . nroff-mode)
+;;                                         (\.\(u?lpc\|pike\|pmod\)\' . pike-mode)
+;;                                         (\.TeX\' . tex-mode) (\.tex\' . tex-mode)
+;;                                         (\.ltx\' . latex-mode) (\.sty\' . latex-mode) (\.cls\' . latex-mode) (\.clo\' . latex-mode) (\.bbl\' . latex-mode) (\.bib\' . bibtex-mode)
+;;                                         (\.sql\' . sql-mode)
+;;                                         (\.m4\' . m4-mode) (\.mc\' . m4-mode)
+;;                                         (\.mf\' . metafont-mode) (\.mp\' . metapost-mode)
+;;                                         (\.vhdl?\' . vhdl-mode)
+;;                                         (\.article\' . text-mode) (\.letter\' . text-mode) (\`/tmp/Re . text-mode) (/Message[0-9]*\' . text-mode) (\`/tmp/fol/ . text-mode)
+;;                                         (\.tcl\' . tcl-mode) (\.exp\' . tcl-mode) (\.itcl\' . tcl-mode) (\.itk\' . tcl-mode)
+;;                                         (\.icn\' . icon-mode)
+;;                                         (\.sim\' . simula-mode) (\.mss\' . scribe-mode)
+;;                                         (\.f90\' . f90-mode)
+;;                                         (\.indent\.pro\' . fundamental-mode)
+;;                                         (\.pro\' . idlwave-mode)
+;;                                         (\.awk\' . awk-mode)
+;;                                         (\.prolog\' . prolog-mode)
+;;                                         (\.tar\' . tar-mode)
+;;                                         (\.\(arc\|zip\|lzh\|zoo\|jar\)\' . archive-mode) (\.\(ARC\|ZIP\|LZH\|ZOO\|JAR\)\' . archive-mode)
+;;                                         (/drafts/[0-9]+\' . mh-letter-mode)
+;;                                         (\.zone\' . zone-mode)
+;;                                         (\.y\' . c-mode) (\.lex\' . c-mode)
+;;                                         (\.oak\' . scheme-mode)
+;;                                         (\.sgml?\' . sgml-mode) (\.xml\' . sgml-mode) (\.dtd\' . sgml-mode)
+;;                                         (\.ds\(ss\)?l\' . dsssl-mode)
+;;                                         (\.idl\' . idl-mode)
+;;                                         ([]>:/\]\..*emacs\' . emacs-lisp-mode) (\`\..*emacs\' . emacs-lisp-mode) ([:/]_emacs\' . emacs-lisp-mode) (\.el\' . emacs-lisp-mode)
+;;                                         (/crontab\.X*[0-9]+\' . shell-script-mode)
+;;                                         (\.\(asn\|mib\|smi\)\' . snmp-mode)
+;;                                         (\.\(as\|mi\|sm\)2\' . snmpv2-mode)
+;;                                         (\.\(diffs?\|patch\|rej\)\' . diff-mode) (\.\(dif\|pat\)\' . diff-mode)
+;;                                         (\.[eE]?[pP][sS]\' . ps-mode)
+;;                                         (configure\.\(ac\|in\)\' . autoconf-mode)
+;;                                         (BROWSE\' . ebrowse-tree-mode) (\.ebrowse\' . ebrowse-tree-mode)
+;;                                         (#\*mail\* . mail-mode)
+;;                                         (\.~?[0-9]+\.[0-9][-.0-9]*~?\' ignore t)
+;;                                         (\.[1-9]\' . nroff-mode) (\.g\' . antlr-mode))
 
 (message "-------------- Done: Modes Assoc List")
 #+END_SRC
 
 * Modes Section
-;; ;; -------------------------- new stuff
-;; ;; ;; Save point position between sessions.
-;; ;; (use-package saveplace)
-;; ;; (setq-default save-place t)
-;; ;; (setq save-place-file (expand-file-name "places" user-emacs-directory))
-;;
-;; ;; ;; Fix empty pasteboard error.
-;; ;; (setq save-interprogram-paste-before-kill nil)
-;;
-;; ;; ;; Auto refresh buffers when edits occur outside emacs
-;; ;; (global-auto-revert-mode 1)
-;;
-;; ;; ;; Also auto refresh dired, but be quiet about it
-;; ;; (setq global-auto-revert-non-file-buffers t)
-;; ;; (setq auto-revert-verbose nil)
-;;
-;; ;; ;; Show keystrokes in progress
-;; ;; (setq echo-keystrokes 0.5)
-;; (global-subword-mode 1)
-;; ;; from 'better-defaults.el'
-;; ;; Allow clipboard from outside emacs
-;; ;; (setq x-select-enable-clipboard t
-;; ;;       x-select-enable-primary t
-;; ;;       save-interprogram-paste-before-kill t
-;; ;;       apropos-do-all t
-;; ;;       mouse-yank-at-point t)
+;; -------------------------- new stuff
+;; ;; Save point position between sessions.
+;; (use-package saveplace)
+;; (setq-default save-place t)
+;; (setq save-place-file (expand-file-name "places" user-emacs-directory))
 
-;; ;;------------------------------------------------------------------------------- ido Mode
-;; ;; TBD
-;; ;;(load-library "ido")
-;; ;;(setq ido-enable-flex-matching t)
-;; ;;(setq ido-everywhere t)
-;; ;;(ido-mode 1)
-;; ;;(ido-mode t)
-;; ;;(windmove-default-keybindings 'shift)
+;; ;; Fix empty pasteboard error.
+;; (setq save-interprogram-paste-before-kill nil)
+
+;; ;; Auto refresh buffers when edits occur outside emacs
+;; (global-auto-revert-mode 1)
+
+;; ;; Also auto refresh dired, but be quiet about it
+;; (setq global-auto-revert-non-file-buffers t)
+;; (setq auto-revert-verbose nil)
+
+;; ;; Show keystrokes in progress
+;; (setq echo-keystrokes 0.5)
+(global-subword-mode 1)
+;; from 'better-defaults.el'
+;; Allow clipboard from outside emacs
+;; (setq x-select-enable-clipboard t
+;;       x-select-enable-primary t
+;;       save-interprogram-paste-before-kill t
+;;       apropos-do-all t
+;;       mouse-yank-at-point t)
+
+;;------------------------------------------------------------------------------- ido Mode
+;; TBD
+;;(load-library "ido")
+;;(setq ido-enable-flex-matching t)
+;;(setq ido-everywhere t)
+;;(ido-mode 1)
+;;(ido-mode t)
+;;(windmove-default-keybindings 'shift)
+
+** Unused
+;; ------------------------------------------------------------------- CSHARP Mode
+;(autload 'csharp-mode "/home/uri03204/myDocs/ulib/emacs/csharp-mode-0.8.5.elc" t)
+(autoload 'csharp-mode "csharp-mode" "Major mode for editing C# code." t)
+(defun csharp-mode-untabify ()
+  (if (string= (substring mode-name 0 2) "C#")
+     (save-excursion
+     (delete-trailing-whitespace)
+     (untabify (point-min) (point-max)))))
+(defun my-csharp-mode-fn ()
+  "function that runs when csharp-mode is initialized for a buffer."
+  (turn-on-auto-revert-mode)
+  (setq indent-tabs-mode nil)
+  (require 'flymake)
+  (setq flymake-mode nil)
+  ;;(add-hook 'write-contents-hooks 'csharp-mode-untabify nil t)
+  )
+  ;;      (require 'yasnippet)
+  ;;      (yas/minor-mode-on)
+  ;;      (require 'rfringe)
+(add-hook  'csharp-mode-hook 'my-csharp-mode-fn t)
+;;(add-hook 'csharp-mode-hook '(lambda () (add-hook 'write-contents-hooks 'csharp-mode-untabify nil t)))
+
+;;-------------------------------------------------------------------- Matlab Mode
+(require 'matlab)
+(setq matlab-indent-function t)
+(setq matlab-shell-command "matlab")
+;;(autoload 'matlab-mode "/home/kleyn/myDocs/ulib/emacs/matlab.elc" "Enter Matlab mode." t)
+;; User Level customizations:
+;;   (setq matlab-verify-on-save-flag nil) ; turn off auto-verify on save
+(defun my-matlab-mode-hook ()
+  (matlab-mode-hilit)                        ; Turn highlight on
+  (setq fill-column 276)             ; where auto-fill should wrap
+  (setq matlab-indent-function t)    ; if you want function bodies indented
+  (setq matlab-indent-level  2)         ; set matlab indentation
+  (set matlab-fill-code nil)
+  (setq indent-tabs-mode nil))
+(add-hook 'matlab-mode-hook 'my-matlab-mode-hook)
+
+;;-------------------------------------------------------------------- iedit Mode
+ TBD (autoload 'iedit-mode "/home/uri03204/myDocs/ulib/emacs/iedit.elc" "Enter iedit mode" t)
 
 
-#+BEGIN_SRC emacs-lisp
-
-;;------------------------------------------------------------- ediff
+;;-------------------------------------------------------------------- ediff
 ;; (setq ediff-shell "C:/cygwin/bin/mintty.exe")
 ;;  (if (file-directory-p "c:/cygwin/bin")      (add-to-list 'exec-path "c:/cygwin/bin"))
-;;------------------------------------------------------------------------------ Diff Stuff
+;;--------------------------------------------------------------------- Diff Stuff
 ;; (diffview-current)
 
 
-;;------------------------------------------------------------------------------- Switches
+;;-------------------------------------------------------------------- Switches
 
-;;------------------------------------------------------------- Magit
+;;-------------------------------------------------------------------- Magit
 ;; (add-to-list 'magit-section-initial-visibility-alist '(stashes . hide))
 
-;; ;; ----------------------------------------------------------- DOS Mode
+;; ;; ---------------------------------------------------------------- DOS Mode
 ;; (autoload 'dos-mode "/home/uri03204/myDocs/ulib/emacs/dos.elc" "Enter DOS CMD mode." t)
 
 ;; ------------------------------------------------------------------- Java
@@ -1168,6 +1264,31 @@ M-x clone-indirect-buffer RET
 ;; ;(defun my-java-mode-hook ()
 ;; ;  (hs-minor-mode)
 ;; ;  (setq indent-tabs-mode nil))
+
+* Elisp Mode
+
+#+BEGIN_SRC emacs-lisp
+(progn 
+   (define-key emacs-lisp-mode-map [kp-5]           'backward-up-list)          ; Move to parent. move to the beginning of outer paren pair ; outline-up-heading
+   (define-key emacs-lisp-mode-map [kp-9]           'backward-sexp)             ; Move to previous sibling. move to the beginning of previous sexp unit ; org-backward-heading-same-level
+   (define-key emacs-lisp-mode-map [kp-6]           'yafolding-toggle-element)
+   (define-key emacs-lisp-mode-map [kp-3]           'forward-sexp)              ; Move to next sibling.     move to the end of next sexp unit  ; org-forward-heading-same-level
+   (define-key emacs-lisp-mode-map [kp-add]         'down-list)                 ; Move to first child.      move into the beginning of first inner paren pair ; my-org-dft; tbd show contents of leaf
+)
+#+END_SRC
+   ;; (define-key emacs-lisp-mode-map [kp-4]        '(lambda () (interactive)  (outline-up-heading 2)))
+   ;; (define-key emacs-lisp-mode-map [kp-8]        'my-org-babel-prev)
+   ;; (define-key emacs-lisp-mode-map [kp-2]        'my-org-babel-next)
+   ;; (define-key emacs-lisp-mode-map [kp-multiply] '(lambda () (interactive)  (org-backward-heading-same-level 6)))
+   ;; (define-key emacs-lisp-mode-map [kp-6]        'org-cycle)
+   ;; (define-key emacs-lisp-mode-map [kp-decimal]  '(lambda () (interactive)  (org-forward-heading-same-level 6)))
+   ;; (define-key emacs-lisp-mode-map [M-home]      'org-collapse)
+   ;; (define-key emacs-lisp-mode-map [kp-subtract] 'kill-this-buffer-volatile)
+   ;; (define-key emacs-lisp-mode-map [kp-divide]   'toggle-window-split)
+
+
+* Python Mode
+#+BEGIN_SRC emacs-lisp
 
 ;; ------------------------------------------- Python Mode
 ;(add-hook 'python-mode-hook
@@ -1183,9 +1304,11 @@ M-x clone-indirect-buffer RET
    (setq tab-width 4)
    (setq python-indent 4)
    (setq default-truncate-lines t)
-   (define-key python-mode-map [kp-9] 'python-nav-backward-block)
-   (define-key python-mode-map [kp-6] 'yafolding-toggle-element)
-   (define-key python-mode-map [kp-3] 'python-nav-forward-block))
+   (progn
+     (define-key python-mode-map [kp-9] 'python-nav-backward-block)
+     (define-key python-mode-map [kp-6] 'yafolding-toggle-element)
+     (define-key python-mode-map [kp-3] 'python-nav-forward-block))
+)
 
 (add-hook 'python-mode-hook 'my-python-hook)
 
@@ -1201,48 +1324,6 @@ M-x clone-indirect-buffer RET
 
 (message "-------------- Done: Modes Section")
 #+END_SRC
-
-** Unused
-;; ;; ----------------------------------------------------------- CSHARP Mode
-;; ;(autload 'csharp-mode "/home/uri03204/myDocs/ulib/emacs/csharp-mode-0.8.5.elc" t)
-;; (autoload 'csharp-mode "csharp-mode" "Major mode for editing C# code." t)
-;; (defun csharp-mode-untabify ()
-;;   (if (string= (substring mode-name 0 2) "C#")
-;;      (save-excursion
-;;      (delete-trailing-whitespace)
-;;      (untabify (point-min) (point-max)))))
-;; (defun my-csharp-mode-fn ()
-;;   "function that runs when csharp-mode is initialized for a buffer."
-;;   (turn-on-auto-revert-mode)
-;;   (setq indent-tabs-mode nil)
-;;   (require 'flymake)
-;;   (setq flymake-mode nil)
-;;   ;;(add-hook 'write-contents-hooks 'csharp-mode-untabify nil t)
-;;   )
-;;   ;;      (require 'yasnippet)
-;;   ;;      (yas/minor-mode-on)
-;;   ;;      (require 'rfringe)
-;; (add-hook  'csharp-mode-hook 'my-csharp-mode-fn t)
-;; ;;(add-hook 'csharp-mode-hook '(lambda () (add-hook 'write-contents-hooks 'csharp-mode-untabify nil t)))
-
-;; ;;------------------------------------------------------------- Matlab Mode
-;; (require 'matlab)
-;; (setq matlab-indent-function t)
-;; (setq matlab-shell-command "matlab")
-;; ;;(autoload 'matlab-mode "/home/kleyn/myDocs/ulib/emacs/matlab.elc" "Enter Matlab mode." t)
-;; ;; User Level customizations:
-;; ;;   (setq matlab-verify-on-save-flag nil) ; turn off auto-verify on save
-;; (defun my-matlab-mode-hook ()
-;;   (matlab-mode-hilit)                        ; Turn highlight on
-;;   (setq fill-column 276)             ; where auto-fill should wrap
-;;   (setq matlab-indent-function t)    ; if you want function bodies indented
-;;   (setq matlab-indent-level  2)         ; set matlab indentation
-;;   (set matlab-fill-code nil)
-;;   (setq indent-tabs-mode nil))
-;; (add-hook 'matlab-mode-hook 'my-matlab-mode-hook)
-
-;;--------------------------------------------------------- iedit Mode
-;; TBD (autoload 'iedit-mode "/home/uri03204/myDocs/ulib/emacs/iedit.elc" "Enter iedit mode" t)
 
 * Ivy/Counsel Mode
 #+BEGIN_SRC emacs-lisp
@@ -1280,8 +1361,9 @@ M-x clone-indirect-buffer RET
 ;;Ivy-based interface to standard commands
 (global-set-key (kbd "M-x") 'counsel-M-x)
 (global-set-key (kbd "M-y") 'counsel-yank-pop)
-
+(message "-------------- Done: Ivy/Counsel Done")
 #+END_SRC
+
 ;;(global-set-key (kbd "C-s") 'swiper-isearch)
 ;(global-set-key (kbd "<f1> f") 'counsel-describe-function)
 ;(global-set-key (kbd "<f1> v") 'counsel-describe-variable)
@@ -1319,17 +1401,7 @@ M-x clone-indirect-buffer RET
 ;;(global-set-key [S-right] 'forward-word)
 ;;(global-set-key [remap eval-expression] 'pp-eval-expression)
 
-* Org-Mode
-;; ------------------------------------------------------ Org-Mode
-;; ;(define-key global-map "\C-cl" 'org-store-link)
-;; ;(define-key global-map "\C-ca" 'org-agenda)
-;; (defalias 'make-org-tbl  (kbd "ESC x org-mode RET ESC < C-SPC ESC > C-c |"))
-;; (setq org-default-notes-file "~/myDocs/logbook/notes.org")
-;; (setq org-cycle-include-plain-lists t);; (setq org-startup-folded nil)
-;; (defalias 'see-logbooks  (kbd "C-x C-f ~/myDocs/logbook RET"))
-;; (defun org-collapse()     (interactive) (org-shifttab 0))
-;;
-
+* Org Mode
 #+BEGIN_SRC emacs-lisp
 (setq org-default-notes-file "~/myDocs/logbook/notes.org")
 (setq org-cycle-include-plain-lists t)
@@ -1346,21 +1418,20 @@ M-x clone-indirect-buffer RET
 (setq org-use-property-inheritance t)
 (defun org-collapse()     (interactive) (org-shifttab 0))
 
+
 (defun org-transpose-table-at-point ()
   "Transpose orgmode table at point, eliminate hlines."
   (interactive)
-  (let ((contents (apply #'mapcar* #'list ;; <== LOB magic imported here
-                         (remove-if-not 'listp ;; remove 'hline from list
-                                        (org-table-to-lisp)))) ;; signals error if not table
-        )
+  (let ((contents (apply #'mapcar* #'list                       ;; <== LOB magic imported here
+                         (remove-if-not 'listp (org-table-to-lisp)))))  ;; remove 'hline from listsignals error if not table
     (delete-region (org-table-begin) (org-table-end))
     (insert (mapconcat (lambda(x) (concat "| " (mapconcat 'identity x " | " ) "
   |\n" ))
                        contents
                        ""))
-    (org-table-align)
-    )
+    (org-table-align))
   )
+
 ;; --------- org-mode key bindings
 ;(define-key global-map "\C-cl" 'org-store-link)
 ;(define-key global-map "\C-ca" 'org-agenda)
@@ -1380,8 +1451,60 @@ M-x clone-indirect-buffer RET
 
  (define-key org-mode-map (kbd "C-c n")    'my-org-babel-execute-and-next)
  (define-key org-mode-map (kbd "C-c C-t")  'org-transpose-table-at-point)
+)
+; ------------------------------------------------------------------ TreeNavPad keys for org-mode
+
+(defun my-org-babel-next ()
+    (interactive)
+    (setq case-fold-search t)
+    (beginning-of-line)
+    (forward-char 3)
+    (re-search-forward "^#.begin_src\\|^#.results:" nil t nil)
+    (beginning-of-line)
+    (recenter '(t))
+    )
+
+(defun my-org-babel-prev ()
+    (interactive)
+    (setq case-fold-search t)
+    (beginning-of-line)
+    (backward-char 1)
+    (re-search-backward "^#.begin_src\\|^#.results:" nil t nil)
+    (beginning-of-line)
+    (recenter-top-bottom 50)
+    )
+
+(defun my-org-dft ()
+  "depth-first traversal for org/babel mode"
+  (interactive)
+  (message "--------------Enter")
+  (setq oeap (org-element-at-point))                      ; (setq oeap-lv (org-element-property :level oeap))
+  (setq oec (org-element-context))                        ; (setq oec-lv  (org-element-property :level oec))
+  (message (concat "my-org-dft:BEFORE:" (prin1-to-string (org-element-type oeap)) "  " (prin1-to-string (org-element-type oec))))
+  (cond ((eq (org-element-type oeap) 'headline)
+        (progn (org-show-entry)
+               (org-show-children)
+               (next-line)))
+        ((eq (org-element-type oeap) 'src-block)
+         (progn (org-hide-block-toggle 'off)          ;; i.e. show block
+                (next-line)))
+        ((eq (org-element-type oeap) 'example-block)
+         (progn (org-babel-hide-result-toggle 'off)   ;; i.e. show block
+                (next-line)))
+        ((and (eq (org-element-type oeap) 'fixed-width) (looking-at "^#\\+RESULTS:"))
+         (progn (org-babel-hide-result-toggle 'off)   ;; i.e. show block
+                (next-line)))
+        ((memq (org-element-type oeap) '(paragraph fixed-width)) ; otherwise: move down a line
+         (progn (next-line)))
+        (t
+         (progn (message "my-org-dft:got here")
+                (next-line))))
+                
+  (message (concat "my-org-dft:AFTER:" (prin1-to-string (org-element-type oeap)) "  " (prin1-to-string (org-element-type oec))))
+  )
 
  ; org-mode treepad navigation
+(progn 
  (define-key org-mode-map [kp-4]           '(lambda () (interactive)  (outline-up-heading 2)))
 
  (define-key org-mode-map [kp-8]           'my-org-babel-prev)
@@ -1390,17 +1513,17 @@ M-x clone-indirect-buffer RET
 
  (define-key org-mode-map [kp-multiply]    '(lambda () (interactive)  (org-backward-heading-same-level 6)))
  (define-key org-mode-map [kp-9]           'org-backward-heading-same-level)
- (define-key org-mode-map [kp-3]           'org-forward-heading-same-level)
  (define-key org-mode-map [kp-6]           'org-cycle)
+ (define-key org-mode-map [kp-3]           'org-forward-heading-same-level)
  (define-key org-mode-map [kp-decimal]     '(lambda () (interactive)  (org-forward-heading-same-level 6)))
 
- (define-key org-mode-map [kp-add]         '(lambda () (interactive)  (org-show-children) (next-line)))  ; tbd show contents of leaf
+ (define-key org-mode-map [kp-add]         'my-org-dft)  ; tbd show contents of leaf
  (define-key org-mode-map [M-home]         'org-collapse)
 
  ;(define-key org-mode-map [kp-subtract]  'kill-this-buffer-volatile)
  ;(define-key org-mode-map [kp-divide]    'toggle-window-split)
 )
-
+; ------------------------------------------------------------------ TreeNavPad keys for org-mode
 ;; needs ox.el = org-exporter.el
 ;;(require 'ox-confluence)
 
@@ -1420,24 +1543,6 @@ M-x clone-indirect-buffer RET
 ;; with a C-0 prefix argument.
 ;;
 
-;---------------------------------------- expand and collapse
-(defun org-advance ()
-  (interactive)
-  (when (buffer-narrowed-p)
-  (beginning-of-buffer)
-  (widen)
-  (org-forward-heading-same-level 1))
-    (org-narrow-to-subtree))
-
-(defun org-retreat ()
-  (interactive)
-  (when (buffer-narrowed-p)
-    (beginning-of-buffer)
-    (widen)
-   (org-backward-heading-same-level 1))
-  (org-narrow-to-subtree))
-
-
 (defun org-table-to-sql ()
   (interactive)
   (goto-char (point-min))
@@ -1445,7 +1550,7 @@ M-x clone-indirect-buffer RET
   (beginning-of-line)
   (push-mark)
   (goto-char (mark-marker)) (replace-regexp "^|"           "("      ) ;; replace leading  | with (
-  (goto-char (mark-marker)) (replace-regexp "|$"         t     ) ;; replace trailing |/LOCAL/USR/MK with ),
+  (goto-char (mark-marker)) (replace-regexp "|$"         t     )      ;; replace trailing |/LOCAL/USR/MK with ),
   (goto-char (mark-marker)) (replace-regexp "|$"           "),"     ) ;; replace trailing | with ),
   (goto-char (mark-marker)) (replace-regexp "\|"           ","      ) ;; replace          | with ,
   (goto-char (mark-marker)) (replace-regexp "[0-9a-z._-]+" "'\\&'"  ) ;; wrap single quotes around words
@@ -1455,28 +1560,25 @@ M-x clone-indirect-buffer RET
   (goto-char (point-max)) (search-backward ",") (delete-char 1)       ;; delete comma after list end
   (goto-char (point-min))
   (forward-line 2)
-  (insert "INSERT INTO [EQTYBASKETS_R].dbo.returnSeriesRecord")  (newline)
-  (insert "(rsStrategyName, rsOrigin, rsCurrency, rsType, Description, rsAsOfDate, rsShortCode)") (newline)
-  (insert "VALUES") (newline)
-)
+  (insert "INSERT INTO [EQTYBASKETS_R].dbo.returnSeriesRecord")  
+  (newline)
+  (insert "(rsStrategyName, rsOrigin, rsCurrency, rsType, Description, rsAsOfDate, rsShortCode)") 
+  (newline)
+  (insert "VALUES")
+  (newline)
+  )
 
 ;;------------------------------------- org-mode crypt
 (defun rot-region(p1 p2)
   (interactive "r")
    (org-mark-subtree)
-  (save-restriction (org-mark-subtree) (rot13-region (point) (mark))))
+  (save-restriction (org-mark-subtree) (rot13-region (point) (mark)))
+)
 
 (defun rot-region_orig(p1 p2)
   (interactive "r")
-  (save-restriction (narrow-to-region p1 p2) (rot13-region (point-min) (point-max))))
-
-;; --------------------------------------------------------------------- org-confluence
-
-;; needs ox.el = org-exporter.el
-;;(require 'ox-confluence)
-;(require 'org-exp)
-;(require 'org-export)
-;(require 'org-confluence)
+  (save-restriction (narrow-to-region p1 p2) (rot13-region (point-min) (point-max)))
+)
 
 ;; --------------------------------------------------------------------- org-mode
 (defun org-save-code-block(p1 p2)
@@ -1491,10 +1593,46 @@ M-x clone-indirect-buffer RET
 
 ;; org-mode hooks
 (add-hook 'org-mode-hook  'hide-ctrl-M)
-
+(message "-------------- Done: Org Mode")
 #+END_SRC
+** notes
+;; ------------------------------------------------------ Org-Mode
+;; ;(define-key global-map "\C-cl" 'org-store-link)
+;; ;(define-key global-map "\C-ca" 'org-agenda)
+;; (defalias 'make-org-tbl  (kbd "ESC x org-mode RET ESC < C-SPC ESC > C-c |"))
+;; (setq org-default-notes-file "~/myDocs/logbook/notes.org")
+;; (setq org-cycle-include-plain-lists t);; (setq org-startup-folded nil)
+;; (defalias 'see-logbooks  (kbd "C-x C-f ~/myDocs/logbook RET"))
+;; (defun org-collapse()     (interactive) (org-shifttab 0))
+;;
 
-*** faded
+** faded
+;---------------------------------------- expand and collapse
+(defun org-advance ()
+  (interactive)
+  (when (buffer-narrowed-p)
+  (beginning-of-buffer)
+  (widen)
+  (org-forward-heading-same-level 1))
+  (org-narrow-to-subtree)
+  )
+
+(defun org-retreat ()
+  (interactive)
+  (when (buffer-narrowed-p)
+    (beginning-of-buffer)
+    (widen)
+    (org-backward-heading-same-level 1))
+    (org-narrow-to-subtree)
+    )
+
+--------------;--------------------------------------------------------------------- org-confluence
+; needs ox.el = org-exporter.el
+(require 'ox-confluence)
+(require 'org-exp)
+(require 'org-export)
+(require 'org-confluence)
+
 ;----------------------------------------------------------------------------------- org-trello
 ;; NO: (add-to-list 'load-path "L:/MyDocs/ulib/emacs/org-trello-master/")
 ;;its here: /home/kleynmi/l_C/cygwin64/home/kleynmi/.emacs.d/elpa/org-trello-0.8.1/org-trello.el:
@@ -1508,12 +1646,12 @@ M-x clone-indirect-buffer RET
               (when (and filename (string= "trello" (file-name-extension filename)))
               (org-trello-mode)))))
 
-; (org-trello-install-key-and-token)
-;(org-trello-install-board-metadata)
-;(org-trello-update-board-metadata)
-;(org-trello-sync-buffer t) ; sync of the entire buffer FROM trello.
+(org-trello-install-key-and-token)
+(org-trello-install-board-metadata)
+(org-trello-update-board-metadata)
+(org-trello-sync-buffer t) ; sync of the entire buffer FROM trello.
 
-;; (setq board-name (read-from-minibuffer "Trello Board: ")
+(setq board-name (read-from-minibuffer "Trello Board: ")
 
 (defun mk-init-keys-trello ()         ; read keys an register them via org-trello function
    (load "~/.emacs.d/trello-key.el")
@@ -1552,7 +1690,7 @@ M-x clone-indirect-buffer RET
 
 ** Org-Babel
 
- #+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp
  ;(org-babel-do-load-languages
  ; 'org-babel-load-languages
  ; '((python . t)))
@@ -1567,7 +1705,6 @@ M-x clone-indirect-buffer RET
  ;; (ipython . t)
  ;; (ein . t)
 
-
  (defun my-org-babel-execute-and-next ()
     (interactive)
     (org-babel-execute-src-block)
@@ -1575,29 +1712,11 @@ M-x clone-indirect-buffer RET
     (recenter-top-bottom 50)
  )
 
- (defun my-org-babel-next ()
-    (interactive)
-    (setq case-fold-search t)
-    (beginning-of-line)
-    (forward-char 3)
-    (re-search-forward "^#.begin_src\\|^#.results:" nil t nil)
-    (beginning-of-line)
-    (recenter '(t))
- )
-
- (defun my-org-babel-prev ()
-    (interactive)
-    (setq case-fold-search t)
-    (beginning-of-line)
-    (backward-char 1)
-    (re-search-backward "^#.begin_src\\|^#.results:" nil t nil)
-    (beginning-of-line)
-    (recenter-top-bottom 50)
- )
-
-
  (message "-------------- Done: Org-Mode Section")
- #+END_SRC
+#+END_SRC
+
+#+RESULTS:
+: -------------- Done: Org-Mode Section
 
  ;;(require 'org-crypt)
  ;;(org-crypt-use-before-save-magic)
@@ -1647,7 +1766,6 @@ M-x clone-indirect-buffer RET
 ;; dired-listing-switches  = "-al"
 ;; M-x customize-variable RET dired-listing-switches RET
 ;; Dired Listing Switches: Hide Value -ahl --time-style=long-iso
-;; Dired Listing Switches: Hide Value -ahl --time-style=long-iso
 ;;  State: SET for current session only.
 (setq dired-listing-switches "-aoht --time-style=long-iso --group-directories-first") ;; list most recent first (setq dired-listing-switches "-aBhl  ")
 ;; (setq dired-omit-files "^\\..*$")
@@ -1688,23 +1806,6 @@ M-x clone-indirect-buffer RET
     (setq dired-no-confirm '(revert-subdirs)))
 (add-hook 'dired-mode-hook 'my-dired-mode-hook)             ;(setq dired-mode-hook nil)
 
-;;(defalias 'dired-up (kbd "ESC < C-e C-r / NUL C-a ESC w C-x d C-a C-y C-k C-a ESC \\ C-e RET C-x b RET C-x k RET"))
-;;(defalias 'dired-go-subdir-kbm (kbd "f C-x b RET C-x k RET"))
-;; (define-key dired-mode-map [right] 'dired-go-subdir-kbm)
-
-;;(defun w32-browser (doc) (w32-shell-execute 1 doc))
-;;(eval-after-load "dired" '(define-key dired-mode-map [f3] (lambda ()
-;;                                                             (interactive)
-;;                                                             (w32-browser (dired-replace-in-string "/" "\\" (dired-replace-in-string "/cygdrive/C/" "C:\\" (dired-get-filename)))))))
-
-;; (add-hook 'dired-mode-hook
-;;           (lambda ()
-;;             (setq-local ace-jump-search-filter
-;;                         (lambda ()
-;;                           (get-text-property (point) 'dired-filename)))))
-
-;; when sorting in dired mode, move cursor back to top
-
 (defadvice dired-sort-toggle-or-edit (after dired-sort-to-top activate)
    "Move to beginning of buffer (instead of keeping point on the current file)."
    (goto-char (point-min))
@@ -1716,7 +1817,7 @@ M-x clone-indirect-buffer RET
   (switch-to-prev-buffer)
   (setq oldBuff  (buffer-name))  ;; returns current buffer
   (kill-buffer)
-  (setq newBuff  (buffer-name))  ;; returns current buffer
+  (setq newBuff (buffer-name))  ;; returns current buffer
   (message (format "dired switched DOWN to %s -> %s" oldBuff newBuff))
 )
 
@@ -1730,16 +1831,6 @@ M-x clone-indirect-buffer RET
   (message (format "dired switched UP to %s <- %s" newBuff oldBuff))
 )
 
-(defun message-buffer-goto-end-of-buffer (&rest args)
-  (let* ((win (get-buffer-window "*Messages*"))
-         (buf (and win (window-buffer win))))
-    (and win (not (equal (current-buffer) buf))
-         (set-window-point
-          win (with-current-buffer buf (point-max))))))
-
-(advice-add 'message :after 'message-buffer-goto-end-of-buffer)
-
-
 (defun dired-ediff-git (&optional arg)
   (interactive)
   (setq ffn (dired-get-filename))
@@ -1747,7 +1838,7 @@ M-x clone-indirect-buffer RET
   (setq-default fill-column     200)
   (ediff-revision fn)
   ;;(dired-rename-file ffn (concat "//lon0302/dfs/DATA/MULTI_ASSET/MAQS/dataCollection/FI/LOCAL/ARCHIVE/OLD/" fn))
-  ;;dired-rename-file (file newname ok-if-already-exists)
+  ;; dired-rename-file (file newname ok-if-already-exists)
   )
 
 (defun dired-move-to-old (&optional arg)
@@ -1765,7 +1856,7 @@ M-x clone-indirect-buffer RET
   (revert-buffer)
   ;;(dired-rename-file ffn (concat "//lon0302/dfs/DATA/MULTI_ASSET/MAQS/dataCollection/FI/LOCAL/ARCHIVE/OLD/" fn))
   ;;dired-rename-file (file newname ok-if-already-exists)
-)
+  )
 
 (defun dired-cd-eshell (&optional arg)
   "Move down one line and view the current file in another window."
@@ -1775,7 +1866,7 @@ M-x clone-indirect-buffer RET
   (switch-to-buffer "*eshell*")
   (goto-char (point-max))
   (insert (concat "cd " (file-name-directory ffn) "; ll" ))
-)
+  )
 
 (defun dired-paste-to-yank-buffer (&optional arg)
   "Move down one line and view the current file in another window."
@@ -1783,9 +1874,9 @@ M-x clone-indirect-buffer RET
   (setq ffn (dired-get-filename))
   (message ffn)
   (kill-append (dired-get-filename) nil)
-)
+  )
 
-;;------------------------------------dired peek
+;;------------------------------------ dired peek at file contents
 (defun dired-view-next ()
   "Move down one line and view the current file in another window."
   (interactive)
@@ -1819,79 +1910,159 @@ M-x clone-indirect-buffer RET
       (if filebuffer                                    ; does a buffer already look at the file
           (switch-to-buffer filebuffer)                 ; simply switch
         (view-file file))                               ; ... view it
-      (other-window -1))))                              ; give the attention back to the dired buffer
+      (other-window -1)
+      (get-file-buffer file)))                         ; give the attention back to the dired buffer
+   )
 
-(define-key dired-mode-map [right] 'dired-find-file-drop-prev-dired-buffer)
-(define-key dired-mode-map [left]  'dired-up-directory-drop-prev-dired-buffer)
-;(define-key dired-mode-map [left]            'dired-up) ;; dired-up-directory
-;(define-key dired-mode-map [left]           'dired-up-directory)
-;(define-key dired-mode-map [right]           'dired-go-subdir-kbm)
+;; ensure "." and ".." are skipped
+(defvar subdired-listing-switches "-oht --time-style=long-iso --group-directories-first"  "omit -a relative to dired-listing-switches")
+; redefine dired-subtree--readin with subdired-listing-switches
+(defun dired-subtree--readin (dir-name)
+  "Read in the directory.
+   Return a string suitable for insertion in `dired' buffer."
+  (with-temp-buffer
+    (insert-directory dir-name subdired-listing-switches nil t)
+    (delete-char -1)
+    (goto-char (point-min))
+    (kill-line 1)
+    (insert "  ")
+    (while (= (forward-line) 0)
+      (insert "  "))
+    (delete-char -2)
+    (buffer-string))
+  )
 
-(define-key dired-mode-map (kbd "t") 'dired-omit-mode)
-(define-key dired-mode-map (kbd "r") 'wdired-change-to-wdired-mode)
+(progn
+  (define-key dired-mode-map "J"               'dired-move-to-old) ; junk
+  (define-key dired-mode-map "O"               'ergoemacs-open-in-external-app)  ;; '(lambda () (interactive) (w32-browser (dired-replace-in-string "/" "\\" (dired-get-filename)))))
+  (define-key dired-mode-map (kbd "r")         'wdired-change-to-wdired-mode)
+  (define-key dired-mode-map (kbd "t")         'dired-omit-mode)
+  (define-key dired-mode-map (kbd "c")         'dired-ediff-git)      ;; compare to last version with ediff
+  (define-key dired-mode-map (kbd "e")         'dired-cd-eshell)      ;; was dired-subtree-only-this-file
+  (define-key dired-mode-map (kbd "p")         'dired-paste-to-yank-buffer)
+  (define-key dired-mode-map [M-down]          'dired-view-next)      ;; was dired-previous-line
+  (define-key dired-mode-map [M-up]            'dired-view-previous)  ;; was dired-next-line
+)
 
-(define-key dired-mode-map "J"               'dired-move-to-old) ; junk
-(define-key dired-mode-map "O"               'ergoemacs-open-in-external-app)  ;; '(lambda () (interactive) (w32-browser (dired-replace-in-string "/" "\\" (dired-get-filename)))))
-(define-key dired-mode-map (kbd "r")         'wdired-change-to-wdired-mode)
-(define-key dired-mode-map (kbd "t")         'dired-omit-mode)
-(define-key dired-mode-map (kbd "<S-down>")  'dired-subtree-next-sibling)
-(define-key dired-mode-map (kbd "<S-left>")  'dired-subtree-remove)
-(define-key dired-mode-map (kbd "<S-right>") 'dired-subtree-insert)
-(define-key dired-mode-map (kbd "<S-up>")    'dired-subtree-previous-sibling)
-(define-key dired-mode-map (kbd "c")         'dired-ediff-git)      ;; compare to last version with ediff
-(define-key dired-mode-map (kbd "e")         'dired-cd-eshell)      ;; was dired-subtree-only-this-file
-(define-key dired-mode-map (kbd "p")         'dired-paste-to-yank-buffer)
-(define-key dired-mode-map [M-down]          'dired-view-next)      ;; was dired-previous-line
-(define-key dired-mode-map [M-up]            'dired-view-previous)  ;; was dired-next-line
+(defvar dired-subtree-last-previewed-buffer nil  "record which previous preview buffer to delete")
+(make-variable-buffer-local 'dired-subtree-last-previewed-buffer)
 
 
-;; TBD tree-pad keys for dired
-;; dired treepad navigation
-;; (define-key dired-mode-map [kp-4]          '(lambda () (interactive)  (outline-up-heading 2)))
-(define-key dired-mode-map [kp-5]          'dired-subtree-remove)    ;; tbd if not a subdir (ie.e in rootdir), then jump  'dired-up-directory-drop-prev-dired-buffer
+; ------------------------------------------------------------------ TreeNavPad keys for dired
+(defun my-subdired-dft ()
+  "depth-first traversal for dired-subtree"
+  (interactive) 
+  (let ((sDpth (dired-subtree--get-depth (dired-subtree--get-ov))))
+    (if (dired-utils-is-dir-p)
+        (if (dired-subtree--is-expanded-p)
+            (dired-subtree-remove)
+            (dired-subtree-insert))
+        (progn
+          (if  dired-subtree-last-previewed-buffer (kill-buffer dired-subtree-last-previewed-buffer))   ;; delete previous preview buffer, if any
+          (setq dired-subtree-last-previewed-buffer (dired-view-current))           ;; record previewed buffer
+          (dired-next-line 1)
+          (setq cDpth (dired-subtree--get-depth (dired-subtree--get-ov)))
+          (message (concat "cDpth=" (number-to-string cDpth) "--" "sDpth" (number-to-string sDpth)))
+          (if (< cDpth sDpth)                                                      ;; have we gone up a level, if so remove the subtree we were just in
+              (progn
+                (dired-previous-line 1)
+                (dired-subtree-remove)
+                (dired-next-line 1))))))
+   )
 
-;; (define-key dired-mode-map [kp-multiply]   '(lambda () (interactive)  (org-backward-heading-same-level 6)))
-(define-key dired-mode-map [kp-9]             'dired-subtree-previous-sibling)
-;; (define-key dired-mode-map [kp-6]          'dired-subtree-insert)  ; tbd toggle with 'dired-subtree-remove ;; toggle open children
-(define-key dired-mode-map [kp-3]             'dired-subtree-next-sibling)
-;; (define-key dired-mode-map [kp-decimal]    '(lambda () (interactive)  (org-forward-heading-same-level 6)))              ;; moveto nth sibling, and open
+(defun my-dired-up-to-parent ()                                                 ;; tbd if not a subdir (i.e. in rootdir), then jump  'dired-up-directory-drop-prev-dired-buffer
+  (interactive) 
+  (let ((sDpth (dired-subtree--get-depth (dired-subtree--get-ov))))
+       (if (eq sDpth 0)
+           (dired-up-directory-drop-prev-dired-buffer)
+           (dired-subtree-remove)))
+   )
 
-(define-key dired-mode-map [kp-add]           'dired-subtree-insert)                 ;; open and moveto first child, 
-;; (define-key dired-mode-map [M-home]        'org-collapse)
+(defun my-dired-subtree-toggle () 
+  (interactive) 
+  (if (dired-subtree--is-expanded-p)
+      (progn (dired-next-line 1) (dired-subtree-remove))
+      (progn (dired-subtree-insert) (dired-previous-line 1)))  
+   )
 
-;; dired-view-current)     ; was dired-display-file
-;; (define-key dired-mode-map "r" 'wdired-change-to-wdired-mode)
-;; (define-key dired-mode-map (kbd "K") 'dired-k)
-;; (define-key dired-mode-map (kbd "p")  'dired-subtree-only-this-file)
-;;       tbd: pick-off the path of the given file into clipboard
-;;       of emacs.  It is adviced to place bindings for these into a
-;;       convenient prefix key map, for example `C-,`
+(defun my-dired-subtree-next-sibling-n (n)
+  (interactive)
+  (dotimes (i n) (dired-subtree-next-sibling))
+  )
 
-;; * `dired-subtree-remove`
-;; * `dired-subtree-revert`
-;; * `dired-subtree-narrow`
-;; * `dired-subtree-up`
-;; * `dired-subtree-down`
-;; * `dired-subtree-previous-sibling`
-;; * `dired-subtree-beginning`
-;; * `dired-subtree-end`
-;; * `dired-subtree-mark-subtree`
-;; * `dired-subtree-unmark-subtree`
-;; * `dired-subtree-only-this-file`
-;; * `dired-subtree-only-this-directory`
+(defun my-dired-subtree-prev-sibling-n (n)
+  (interactive)
+  (dotimes (i n) (dired-subtree-prev-sibling))
+  )
 
-;(add-hook 'ediff-mode-hook (lambda () (setq ediff-shell "C:/cygwin/bin/mintty.exe")))
-;(add-hook 'ediff-load-hook (lambda () (setq ediff-shell "C:/cygwin/bin/mintty.exe")))
+(progn ;; dired treepad navigation
+  (define-key dired-mode-map [kp-4]             '(lambda () (interactive)  (my-dired-up-to-parent) (my-dired-up-to-parent)))
+  (define-key dired-mode-map [kp-5]                                        'my-dired-up-to-parent)                   ;; move #6=u1 
+  (define-key dired-mode-map [kp-multiply]      '(lambda () (interactive)  (my-dired-subtree-prev-sibling-n 7)))     ;; moveto nth sibling, and open(org-backward-heading-same-level 6)))
+  (define-key dired-mode-map [kp-9]                                        'dired-subtree-previous-sibling)          ;; move #2=ps 
+  (define-key dired-mode-map [kp-6]                                        'my-dired-subtree-toggle)                 ;; tbd toggle with 'dired-subtree-remove ;; toggle open children
+  (define-key dired-mode-map [kp-3]                                        'dired-subtree-next-sibling)              ;; move #8=ns 
+  (define-key dired-mode-map [kp-decimal]       '(lambda () (interactive)  (my-dired-subtree-next-sibling-n 7)))     ;; moveto nth sibling, and open
+  (define-key dired-mode-map [kp-add]           'my-subdired-dft)                                                    ;; dired-subtree-insert move #8=ns     ;; open and moveto first child, 
+  (define-key dired-mode-map [C-kp-add]         'dired-find-file)
+)
+; ------------------------------------------------------------------ TreeNavPad keys for dired
 
-;; ----------------------------- Tramp
+
+;;--------------------------------- ----------------------------- Tramp
 ;;(setq tramp-default-method "ssh")
 (setq tramp-verbose 10)
 ;; /adb::/path/to/file.
 
-
 (message "-------------- Done: Dired Section")
-
 #+END_SRC
+
+** Dired/subtree funs
+
+(dired-utils-is-dir-p)
+(dired-utils-is-file-p)
+(dired-view-current)     ; was dired-display-file
+(define-key dired-mode-map "r" 'wdired-change-to-wdired-mode)
+(define-key dired-mode-map (kbd "K") 'dired-k)
+(define-key dired-mode-map (kbd "p")  'dired-subtree-only-this-file)
+      tbd: pick-off the path of the given file into clipboard
+      of emacs.  It is adviced to place bindings for these into a
+      convenient prefix key map, for example `C-,`
+
+ dired-subtree-remove
+ dired-subtree-revert
+ dired-subtree-narrow
+ dired-subtree-up
+ dired-subtree-down
+ dired-subtree-previous-sibling
+ dired-subtree-beginning
+ dired-subtree-end
+ dired-subtree-mark-subtree
+ dired-subtree-unmark-subtree
+ dired-subtree-only-this-file
+ dired-subtree-only-this-directory
+
+;(add-hook 'ediff-mode-hook (lambda () (setq ediff-shell "C:/cygwin/bin/mintty.exe")))
+;(add-hook 'ediff-load-hook (lambda () (setq ediff-shell "C:/cygwin/bin/mintty.exe")))
+
+** Dired Notes
+;;(defalias 'dired-up (kbd "ESC < C-e C-r / NUL C-a ESC w C-x d C-a C-y C-k C-a ESC \\ C-e RET C-x b RET C-x k RET"))
+;;(defalias 'dired-go-subdir-kbm (kbd "f C-x b RET C-x k RET"))
+;; (define-key dired-mode-map [right] 'dired-go-subdir-kbm)
+
+;;(defun w32-browser (doc) (w32-shell-execute 1 doc))
+;;(eval-after-load "dired" '(define-key dired-mode-map [f3] (lambda ()
+;;                                                             (interactive)
+;;                                                             (w32-browser (dired-replace-in-string "/" "\\" (dired-replace-in-string "/cygdrive/C/" "C:\\" (dired-get-filename)))))))
+
+;; (add-hook 'dired-mode-hook
+;;           (lambda ()
+;;             (setq-local ace-jump-search-filter
+;;                         (lambda ()
+;;                           (get-text-property (point) 'dired-filename)))))
+
+;; when sorting in dired mode, move cursor back to top
+
 ** Tramp Notes
 ;; ----------------------------- Tramp
 (require 'tramp)
@@ -1927,6 +2098,36 @@ M-x clone-indirect-buffer RET
 ;; Open a remote connection with a more concise command C-x C-f /ssh:android: <RET>.
 
 ** faded
+;; if it's a folder=>insert subdir  & move to first; elseif it's a file = >preview-in-other window and move to next, if it's previewed,....
+(defun my-subdired-dfs ()
+  (interactive) 
+  (dired-subtree--is-expanded-p)
+  (dired-utils-is-dir-p)
+  (dired-utils-is-file-p)
+  (let ((sDpth (dired-subtree--get-depth (dired-subtree--get-ov))))
+    (if (eq sDpth 0)
+        (if (dired-utils-is-dir-p)
+            (dired-subtree-insert))
+        (dired-subtree-remove))))
+
+(defun my-subdired-dfs ()
+  (interactive) 
+  (dired-utils-is-dir-p)
+  (dired-utils-is-file-p)
+  (let ((sDpth (dired-subtree--get-depth (dired-subtree--get-ov))))
+        (if (dired-utils-is-dir-p)
+            (if (dired-subtree--is-expanded-p)
+                (dired-subtree-remove)
+                (dired-subtree-insert)))))
+(define-key dired-mode-map [left]            'dired-up) ;; dired-up-directory
+(define-key dired-mode-map [left]            'dired-up-directory)
+(define-key dired-mode-map [right]           'dired-go-subdir-kbm)
+(define-key dired-mode-map (kbd "<S-down>")  'dired-subtree-next-sibling)
+(define-key dired-mode-map (kbd "<S-left>")  'dired-subtree-remove)
+(define-key dired-mode-map (kbd "<S-right>") 'dired-subtree-insert)
+(define-key dired-mode-map (kbd "<S-up>")    'dired-subtree-previous-sibling)
+(define-key dired-mode-map [right]           'dired-find-file-drop-prev-dired-buffer)
+(define-key dired-mode-map [left]            'dired-up-directory-drop-prev-dired-buffer)
 (define-key dired-mode-map (kbd "C-n")       'dired-next-line)
 (define-key dired-mode-map (kbd "C-p")       'dired-previous-line)
 
@@ -2085,14 +2286,26 @@ M-x clone-indirect-buffer RET
 (require 'ztree-dir)
 
 
-* hooks
-mostly for python -made named function so remove-hook can be used
+* Hooks
+for python -made named function so remove-hook can be used
+for flushing messages to *Message* buffer
 #+BEGIN_SRC emacs-lisp
+
+(defun message-buffer-goto-end-of-buffer (&rest args)
+  (let* ((win (get-buffer-window "*Messages*"))
+         (buf (and win (window-buffer win))))
+    (and win (not (equal (current-buffer) buf))
+         (set-window-point
+          win (with-current-buffer buf (point-max))))))
+
+(advice-add 'message :after 'message-buffer-goto-end-of-buffer)
+
 (defun py-clean-file()
   (if (and (equal major-mode 'python-mode) (not indent-tabs-mode))
       (delete-trailing-whitespace (point-min) (point-max))))
 ;       (untabify (point-min) (point-max)))
 (add-hook 'write-file-hooks 'py-clean-file)
+
 #+END_SRC
 * Key Bindings
 
@@ -2310,7 +2523,7 @@ org-goto
 (global-set-key [C-f11]    'selective-display-level-incr)
 (global-set-key [S-f11]    'selective-display-level-decr)
 
-(global-set-key [f12]      'edebug-defun)                        ;; put break in defun/ form whatever - REMOVE bey re-evaluating the definition
+(global-set-key [f12]      'edebug-defun)                        ;; put break in defun/ form whatever - REMOVE by re-evaluating the definition
 (global-set-key [S-f12]    'set-debug-on)
 (global-set-key [M-f12]    'set-debug-off)
 (global-set-key [s-f12]    'insertcodePyCodeSnippet)
@@ -2320,7 +2533,6 @@ org-goto
 
 (message "-------------- Done: Function Keys")
 #+END_SRC
-
 
 ** KeyPad Keys
 
@@ -2435,6 +2647,7 @@ org-goto
 ;; (global-set-key [f9]            'ielm)  ;; open file under cursor
 
 ;; (global-unset-key (kbd "C-q"))
+
 
 ** not used
 ;;------------------------------------------------------------------------------ TFS Version Control
@@ -2628,7 +2841,7 @@ org-goto
          (setq dts (format-time-string "%Y%m%d%H:%M" (current-time)))
          (concat (substring dts 0 8)
                  "|" (propertize (substring dts 8) 'face `(:foreground "green"))
-                 "|" (car (last (split-string (getenv "VIRTUAL_ENV") "/")))
+;;                 "|" (car (last (split-string (getenv "VIRTUAL_ENV") "/")))
                  "|" (propertize (substring (pwd) 10) 'face `(:foreground "green"))
                  "\n:: "))
 
@@ -2660,6 +2873,7 @@ org-goto
     (write-region (point-min) (point-max) eshellFname nil nil nil 'confirm))
   (find-file-noselect eshellFname))
 
+(message "-------------- Done: Eshell Section")
 #+END_SRC
 
 (emacs-pid)
