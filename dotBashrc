@@ -229,9 +229,10 @@ function gitcfg () {
 }
 
 # ------------------------------------------------------------------------------- apps
-alias tbird='(export LC_TIME=en_DK.UTF-8; /usr/lib/thunderbird/thunderbird )'
-alias ff='firefox  -P default -new-instance 2> /dev/null &'
-alias ffn='firefox -P news    -new-instance 2> /dev/null &'
+#alias tbird='(export LC_TIME=en_DK.UTF-8; /usr/lib/thunderbird/thunderbird )'
+#alias ff='firefox  -P default -new-instance 2> /dev/null &'
+#alias ffn='firefox -P news    -new-instance 2> /dev/null &'
+alias firefox='flatpak run org.mozilla.firefox'
 # -------------------------------------------------------------- emacs
 alias emnw='emacs26 -nw -fg black  -bg white1'
 alias ew='emacsclient -n'
@@ -268,8 +269,8 @@ function pspar() {
     else
        pstree $ggparPid
     fi
-
 }
+
 # grep for process
 function psg () { ps -elf  | grep "$@"; }
 
