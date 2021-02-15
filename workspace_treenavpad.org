@@ -1,0 +1,675 @@
+* Emacs Treepad - to navigate tree-structured buffers
+SHIFT => don't collapse
+|----+----------+-------------------------------------+-------+-------+-----------------------------------------+-------------------------------------+----------------------------------------------+----------------------------+----------------|
+|  # | KEY      | DESCRIPTION                         | ABBRV | SoFar | org-mode with babel                     | dired                               | python                                       | elisp                      | xml/yafoldable |
+|----+----------+-------------------------------------+-------+-------+-----------------------------------------+-------------------------------------+----------------------------------------------+----------------------------+----------------|
+|  5 | kp- 4    | opto grandparent; collapse children | up2   | JJXJX | J outline-up-heading X 2 : tbd collapse | J dired-up-to-parent X 2            |                                              | J backward-up-list X 2     |                |
+|  6 | kp- 5    | upto parent;      collapse children | up1   | JJXJX | J outline-up-heading     : tbd collapse | J dired-up-to-parent                | python-nav-backward-up-list/-beginning-block | J backward-up-list         |                |
+|----+----------+-------------------------------------+-------+-------+-----------------------------------------+-------------------------------------+----------------------------------------------+----------------------------+----------------|
+|  3 | kp- *    | move to previous sibling X7         | ps6   | JJXJX | J org-backward-heading-same-level x7    | J my-dired-subtree-prev-sibling  x7 |                                              | J backward-sexp x 6        |                |
+|  2 | kp- 9    | move to previous sibling            | ps    | JJXJX | J org-backward-heading-same-level       | J dired-subtree-previous-sibling    | python-nav-backward-[block/list/..]          | J backward-sexp            |                |
+|    | kp- 6    | toggle  children                    | tc    | JJJJX | J org-cycle                             | J my-dired-subtree-toggle           | J yafolding-toggle-element                   | J yafolding-toggle-element |                |
+|  8 | kp- 3    | move to next     sibling            | ns    | JJXJX | J org-forward-heading-same-level        | J dired-subtree-next-sibling        | python-nav-forward-[block/list/..]           | J forward-sexp             |                |
+|  9 | kp- .    | move to next     sibling X7         | ns6   | JJXJX | J org-forward-heading-same-level  x7    | J my-dired-subtree-next-sibling  x7 |                                              | J forward-sexp X 6         |                |
+|----+----------+-------------------------------------+-------+-------+-----------------------------------------+-------------------------------------+----------------------------------------------+----------------------------+----------------|
+|  1 | kp- +    | show children; go to first child    | fc    | JJXXX | J my-org-dft                            | J my-dired-dft                      |                                              | J down-list                |                |
+| 10 | kp- ENTR | show children; go to last child     | lc    | XXXXX | (org-show-children) (next-line)         |                                     |                                              |                            |                |
+|----+----------+-------------------------------------+-------+-------+-----------------------------------------+-------------------------------------+----------------------------------------------+----------------------------+----------------|
+|  4 | kp- 8    | goto first uncle                    | fu    |       |                                         |                                     |                                              |                            |                |
+|  7 | kp- 2    | goto last uncle                     | lu    |       |                                         |                                     |                                              |                            |                |
+|----+----------+-------------------------------------+-------+-------+-----------------------------------------+-------------------------------------+----------------------------------------------+----------------------------+----------------|
+|    | kp- -    | search breadth first                |       |       |                                         |                                     |                                              |                            |                |
+|----+----------+-------------------------------------+-------+-------+-----------------------------------------+-------------------------------------+----------------------------------------------+----------------------------+----------------|
+
++  json, xml,  treacl
+
+* elisp - movement functions
+emacs-lisp-mode-map
+backward-sexp    【Ctrl+Alt+←】 → Move to previous sibling. (move to the (beginning of) previous sexp unit)
+forward-sexp     【Ctrl+Alt+→】 → Move to next sibling.     (move to the (end of) next sexp unit)
+backward-sexp    【Ctrl+Alt+←】 → Move to previous sibling. (move to the (beginning of) previous sexp unit)
+forward-sexp     【Ctrl+Alt+→】 → Move to next sibling.     (move to the (end of) next sexp unit)
+backward-up-list 【Ctrl+Alt+↑】 → Move to parent.           (move to the (beginning of) outer paren pair)
+down-list        【Ctrl+Alt+↓】 → Move to first child.      (move into the (beginning of) first inner paren pair)
+
+
+#+BEGIN_SRC elisp   :REM emacs-lisp-mode-map
+(current-local-map) =
+
+(keymap (menu-bar keymap (emacs-lisp "Emacs-Lisp" keymap (indent-line menu-item "Indent Line" lisp-indent-line)
+                                     (indent-region menu-item "Indent Region" indent-region                                          :help "Indent each nonblank line in the region"      :enable mark-active)
+                                     (comment-region menu-item "Comment Out Region" comment-region                                   :help "Comment or uncomment each line in the region" :enable mark-active)
+                                     (separator-format "--")
+                                     (eval-sexp menu-item "Evaluate Last S-expression" eval-last-sexp                                :help "Evaluate sexp before point; print value in echo area")
+                                     (eval-region menu-item "Evaluate Region" eval-region                                            :help "Execute the region as Lisp code" :enable mark-active)
+                                     (eval-buffer menu-item "Evaluate Buffer" eval-buffer                                            :help "Execute the current buffer as Lisp code")
+                                     (ielm menu-item "Interactive Expression Evaluation" ielm                                        :help "Interactively evaluate Emacs Lisp expressions")
+                                     (separator-eval "--")
+                                     (byte-compile menu-item "Byte-compile This File" emacs-lisp-byte-compile                        :help "Byte compile the file containing the current buffer")
+                                     (emacs-byte-compile-and-load menu-item "Byte-compile and Load" emacs-lisp-byte-compile-and-load :help "Byte-compile the current file (if it has changed), then load compiled code")
+                                     (byte-recompile menu-item "Byte-recompile Directory..." byte-recompile-directory                :help "Recompile every `.el' file in DIRECTORY that needs recompilation")
+                                     (disas menu-item "Disassemble Byte Compiled Object..." disassemble                              :help "Print disassembled code for OBJECT in a buffer")
+                                     (separator-byte "--")
+                                     (edebug-defun menu-item "Instrument Function for Debugging" edebug-defun                        :help "Evaluate the top level form point is in, stepping through with Edebug" :keys "C-u C-M-x")
+                                     (lint "Linting" keymap (lint-d menu-item "Lint Defun" elint-defun                               :help "Lint the function at point")
+                                           (lint-b menu-item "Lint Buffer" elint-current-buffer   :help "Lint the current buffer")
+                                           (lint-f menu-item "Lint File..." elint-file            :help "Lint a file")
+                                           (lint-di menu-item "Lint Directory..." elint-directory :help "Lint a directory")
+                                           )
+                                     (profiling "Profiling" keymap
+                                                (prof-natprof-start menu-item "Start Native Profiler..." profiler-start                :help "Start recording profiling information")
+                                                (prof-natprof-report menu-item "Show Profiler Report" profiler-report                  :help "Show the current profiler report"     :enable (and (featurep (quote profiler)) (profiler-running-p)))
+                                                (prof-natprof-stop menu-item "Stop Native Profiler" profiler-stop                      :help "Stop recording profiling information" :enable (and (featurep (quote profiler)) (profiler-running-p)))
+                                                (sep-natprof "--")
+                                                (prof-func menu-item "Instrument Function..." elp-instrument-function                  :help "Instrument a function for profiling")
+                                                (prof-pack menu-item "Instrument Package..." elp-instrument-package                    :help "Instrument for profiling all function that start with a prefix")
+                                                (prof-res menu-item "Show Profiling Results" elp-results                               :help "Display current profiling results")
+                                                (prof-resfunc menu-item "Reset Counters for Function..." elp-reset-function            :help "Reset the profiling information for a function")
+                                                (prof-resall menu-item "Reset Counters for All Functions" elp-reset-all                :help "Reset the profiling information for all functions being profiled")
+                                                (sep-rem "--")
+                                                (prof-restfunc menu-item "Remove Instrumentation for Function..." elp-restore-function :help "Restore an instrumented function to its original definition")
+                                                (prof-restall menu-item "Remove Instrumentation for All Functions" elp-restore-all     :help "Restore the original definitions of all functions being profiled")
+                                                )
+                                     (tracing "Tracing" keymap
+                                              (tr-f menu-item "Trace Function..." trace-function                    :help "Trace the function given as an argument")
+                                              (tr-q menu-item "Trace Function Quietly..." trace-function-background :help "Trace the function with trace output going quietly to a buffer")
+                                              (tr-sep "--")
+                                              (tr-uf menu-item "Untrace Function..." untrace-function               :help "Untrace function, and possibly activate all remaining advice")
+                                              (tr-a menu-item "Untrace All" untrace-all                             :help "Untrace all currently traced functions")
+                                              )
+                                     (re-builder menu-item "Construct Regexp" re-builder :help "Construct a regexp interactively")
+                                     (checkdoc menu-item "Check Documentation Strings" checkdoc :help "Check documentation strings for style requirements")
+                                     (eldoc menu-item "Auto-Display Documentation Strings" eldoc-mode :button (:toggle bound-and-true-p eldoc-mode) :help "Display the documentation string for the item under cursor")
+                                     "Emacs-Lisp"))
+        (27 keymap (17 . indent-pp-sexp) (24 . eval-defun) (9 . completion-at-point)) "Emacs-Lisp" keymap (127 . backward-delete-char-untabify) (27 keymap (17 . indent-sexp)) keymap (27 keymap (17 . prog-indent-sexp)))
+
+#+END_SRC
+
+* org api stuff
+-#+STARTUP: indent
+-#+STARTUP: noindent
+
+(org-on-heading-p)
+(org-up-heading-safe)
+(org-map-entries LEVEL=1
+(org-map-entries FUNC &optional MATCH SCOPE &rest SKIP)
+(org-babel-hide-result-toggle-maybe org-babel-header-arg-expand)
+(org-element-property :parent paragraph)))
+(org-element-contents parent)
+(org-babel-result-end)
+(org-babel-previous-src-block)
+(org-forward-heading-same-level (arg &optional invisible-ok)
+(org-backward-heading-same-level (arg &optional invisible-ok)
+(org-end-of-subtree t)
+(org-element-at-point)
+(org-element-context)
+org-cycle-hook  STATES: ‘folded’, ‘children’, or ‘subtree’.
+
+org-in-src-block-p
+org-beginning-of-line
+org-babel-expand-src-block C-c C-v v
+org-babel-goto-src-block-head C-c C-v C-u
+org-babel-hide-result
+org-babel-hide-result-toggle
+org-babel-open-src-block-results C-c C-v o
+org-babel-open-src-block-result-toggle
+org-block-hide-maybe
+org-cycle-internal-local
+org-hide-block-all
+org-hide-block-toggle
+org-previous bloc C-c M-b
+org-show-block-all
+
+Wrote /home/kleyn/projects/repos/mkmain/landing/jupyClips.org
+--------------Enter
+BEFORE:headline
+--------------Enter
+BEFORE:src-block
+--------------Enter
+BEFORE:src-block
+--------------Enter
+BEFORE:example-block
+Mark set [2 times]
+
+ ; (define-key org-mode-map [M-home]         'org-collapse)
+ ; (define-key dired-mode-map [M-home]        'org-collapse)
+
+Result:  1 (#o1, #x1, ?\C-a)
+Result: "1"
+Result: "org outline-level=1"
+Result: "org outline-level=1" [2 times]
+Result: nil [2 times]
+Result: nil [3 times]
+
+No library edebug.el in search path
+
+** org syntax
+(src-block         (:language "jupyter-python" 
+                    :switches nil 
+                    :parameters nil 
+                    :begin 77 :end 122 
+                    :number-lines nil 
+                    :preserve-indent nil 
+                    :retain-labels t 
+                    :use-labels t 
+                    :label-fmt nil :value "history" 
+                    :post-blank 0 
+                    :post-affiliated 77 
+                    :parent nil))
+
+(paragraph        (:begin 196   :end 225 
+                   :contents-begin 196 :contents-end 224 
+                   :post-blank 1 
+                   :post-affiliated 196 
+                   :parent nil))
+
+Result: (headline (:raw-value #1="Jobs" 
+                   :begin 413041  :end 413832 
+                   :pre-blank 0 
+                   :contents-begin 413048 :contents-end 413831 
+                   :level 1 
+                   :priority nil 
+                   :tags nil 
+                   :todo-keyword nil 
+                   :todo-type nil 
+                   :post-blank 1 
+                   :footnote-section-p nil 
+                   :archivedp nil 
+                   :commentedp nil 
+                   :post-affiliated 413041 
+                   :title #1#))
+
+*** Headline
+Greater element.
+In addition to the following list, any property specified in a property drawer attached to the headline will be accessible as an attribute (with an uppercase name, e.g., :CUSTOM_ID).
+  :archivedp    Non-nil if the headline has an archive tag (boolean).
+  :closed    Headline's CLOSED reference, if any (timestamp object or nil)
+  :commentedp    Non-nil if the headline has a comment keyword (boolean).
+  :deadline    Headline's DEADLINE reference, if any (timestamp object or nil).
+  :footnote-section-p    Non-nil if the headline is a footnote section (boolean).
+  :level    Reduced level of the headline (integer).
+  :pre-blank    Number of blank lines between the headline and the first non-blank line of its contents (integer).
+  :priority    Headline's priority, as a character (integer).
+  :quotedp    Non-nil if the headline contains a quote keyword (boolean).
+  :raw-value    Raw headline's text, without the stars and the tags (string).
+  :scheduled    Headline's SCHEDULED reference, if any (timestamp object or nil).
+  :tags    Headline's tags, if any, without the archive tag. (list of strings).
+  :titl    Parsed headline's text, without the stars and the tags (secondary string).
+  :todo-keyword    Headline's TODO keyword without quote and comment strings, if any (string or nil).
+  :todo-type    Type of headline's TODO keyword, if any (symbol: done, todo).
+
+*** Src Block
+Element.
+  :label-fmt    Format string used to write labels in current block, if different from org-coderef-label-format (string or nil).
+  :language    Language of the code in the block, if specified (string or nil).
+  :number-lines    Non-nil if code lines should be numbered. A new value starts numbering from 1 wheareas continued resume numbering from previous numbered block (symbol: new, continued or nil).
+  :parameters    Optional header arguments (string or nil).
+  :preserve-indent    Non-nil when indentation within the block mustn't be modified upon export (boolean).
+  :retain-labels    Non-nil if labels should be kept visible upon export (boolean).
+  :switches    Optional switches for code block export (string or nil).
+  :use-labels    Non-nil if links to labels contained in the block should display the label instead of the line number (boolean).
+  :value    Source code (string).
+
+
+
+* map over src blocks to hide
+
+Indeed, some code blocks are too long and take up too much space.
+By default, you want to display all the code blocks, only hidden when you set a block of code to hide.
+Suppose there is a block of code in an org file that needs to be hidden, like:
+
+#+BEGIN_SRC emacs-lisp :hidden
+(defun individual-visibility-source-blocks ()
+  "Fold some blocks in the current buffer."
+  (interactive)
+  (org-show-block-all)
+  (org-block-map
+   (lambda ()
+     (let ((case-fold-search t))
+       (when (and
+              (save-excursion
+                (beginning-of-line 1)
+                (looking-at org-block-regexp))
+              (cl-assoc
+               ':hidden
+               (cl-third
+                (org-babel-get-src-block-info))))
+         (org-hide-block-toggle))))))
+
+(add-hook 'org-mode-hook (function individual-visibility-source-blocks))
+#+END_SRC
+When the command "individual-visibility-source-blocks" is used, all code blocks are displayed except for the code block.
+
+
+* org-mode babel 
+execute code block at point C-c C-c
+open results of code block at point C-c C-o
+insert a header argument with completion C-c C-v j
+view expanded body of code block at point C-c C-v v
+view information about code block at point C-c C-v I
+go to the head of the current code block C-c C-v u
+go to the next code block C-c C-v n
+go to the previous code block C-c C-v p
+execute all code blocks in current buffer C-c C-v b
+execute all code blocks in current subtree C-c C-v s
+switch to the session of the current code block C-c C-v z
+load the current code block into a session C-c C-v l
+
+
+* close previous when moving node
+
+Show next/prev heading tidily
+
+    Dan Davison These close the current heading and open the next/previous heading.
+
+(defun ded/org-show-next-heading-tidily ()
+  "Show next entry, keeping other entries closed."
+  (if (save-excursion (end-of-line) (outline-invisible-p))
+      (progn (org-show-entry) (show-children))
+    (outline-next-heading)
+    (unless (and (bolp) (org-on-heading-p))
+      (org-up-heading-safe)
+      (hide-subtree)
+      (error "Boundary reached"))
+    (org-overview)
+    (org-reveal t)
+    (org-show-entry)
+    (show-children)))
+
+(defun ded/org-show-previous-heading-tidily ()
+  "Show previous entry, keeping other entries closed."
+  (let ((pos (point)))
+    (outline-previous-heading)
+    (unless (and (< (point) pos) (bolp) (org-on-heading-p))
+      (goto-char pos)
+      (hide-subtree)
+      (error "Boundary reached"))
+    (org-overview)
+    (org-reveal t)
+    (org-show-entry)
+    (show-children)))
+
+(setq org-use-speed-commands t)
+(add-to-list 'org-speed-commands-user  '("n" ded/org-show-next-heading-tidily))
+(add-to-list 'org-speed-commands-user  '("p" ded/org-show-previous-heading-tidily))
+
+
+* org-back-to-top-level-heading
+(defun org-back-to-top-level-heading ()
+  "Go back to the current top level heading."
+  (interactive)
+  (or (re-search-backward "^\* " nil t)
+      (goto-char (point-min))))
+
+* list overlays
+    (defun list-overlays-at (&optional pos)
+      "Describe overlays at POS or point."
+      (interactive)
+      (setq pos (or pos (point)))
+      (let ((overlays (overlays-at pos))
+            (obuf (current-buffer))
+            (buf (get-buffer-create "*Overlays*"))
+            (props '(priority window category face mouse-face display
+                     help-echo modification-hooks insert-in-front-hooks
+                     insert-behind-hooks invisible intangible
+                     isearch-open-invisible isearch-open-invisible-temporary
+                     before-string after-string evaporate local-map keymap
+                     field))
+            start end text)
+        (if (not overlays)
+            (message "None.")
+          (set-buffer buf)
+          (erase-buffer)
+          (dolist (o overlays)
+            (setq start (overlay-start o)
+                  end (overlay-end o)
+                  text (with-current-buffer obuf
+                         (buffer-substring start end)))
+            (when (> (- end start) 13)
+              (setq text (concat (substring text 1 10) "...")))
+            (insert (format "From %d to %d: \"%s\":\n" start end text))
+            (dolist (p props)
+              (when (overlay-get o p)
+                (insert (format " %15S: %S\n" p (overlay-get o p))))))
+          (pop-to-buffer buf))))
+
+* overlay records
+          (#<overlay from 5338   to 5426   in pdpNotebook.org>
+           #<overlay from 14063  to 14170  in pdpNotebook.org>
+           #<overlay from 5980   to 7247   in pdpNotebook.org>
+           #<overlay from 11611  to 11735  in pdpNotebook.org>
+           #<overlay from 10874  to 10942  in pdpNotebook.org>
+           #<overlay from 7940   to 9867   in pdpNotebook.org>
+           #<overlay from 5428   to 5428   in pdpNotebook.org>
+           #<overlay from 5428   to 5428   in pdpNotebook.org>
+           #<overlay from 5428   to 5428   in pdpNotebook.org>
+           #<overlay from 5970   to 5970   in pdpNotebook.org>)
+
+
+* cycle code block visibility
+
+
+
+#+begin_src emacs-lisp
+
+ (defun org-babel-hide-result-toggle (&optional force)
+   "Toggle the visibility of the current result."
+   (interactive)
+   (save-excursion
+     (beginning-of-line)
+     (if (re-search-forward org-babel-result-regexp nil t)
+         (let ((start (progn (beginning-of-line 2) (- (point) 1)))
+	       (end (progn
+		      (while (looking-at org-babel-multi-line-header-regexp)
+		        (forward-line 1))
+		      (goto-char (- (org-babel-result-end) 1)) (point)))
+	       ov)
+           (if (memq t (mapcar (lambda (overlay)
+                                 (eq (overlay-get overlay 'invisible)
+				     'org-babel-hide-result))
+                               (overlays-at start)))
+               (when (or (not force) (eq force 'off))
+		 (mapc (lambda (ov)
+			 (when (member ov org-babel-hide-result-overlays)
+			   (setq org-babel-hide-result-overlays
+				 (delq ov org-babel-hide-result-overlays)))
+			 (when (eq (overlay-get ov 'invisible)
+				   'org-babel-hide-result)
+			   (delete-overlay ov)))
+		       (overlays-at start)))
+             (setq ov (make-overlay start end))
+             (overlay-put ov 'invisible 'org-babel-hide-result)
+             ;; make the block accessible to isearch
+             (overlay-put
+              ov 'isearch-open-invisible
+              (lambda (ov)
+                (when (member ov org-babel-hide-result-overlays)
+                  (setq org-babel-hide-result-overlays
+                        (delq ov org-babel-hide-result-overlays)))
+                (when (eq (overlay-get ov 'invisible)
+                          'org-babel-hide-result)
+                  (delete-overlay ov))))
+             (push ov org-babel-hide-result-overlays)))
+       (error "Not looking at a result line"))))
+
+(defun individual-visibility-source-blocks ()
+   “Fold some blocks in the current buffer.”
+    (interactive)
+    (org-show-block-all)
+    (org-block-map
+       (lambda () (let ((context (org-element-context)))
+                   (let ((property (cl-case (org-element-type context)
+                       (src-block :parameters)
+                       (example-block :switches))))
+                       (when (and property (cl-assoc :hidden (org-babel-parse-header-arguments (org-element-property property context))))
+                          (org-hide-block-toggle)))))))
+
+
+#+end_src
+
+#+begin_src emacs-lisp
+(require 'org)
+
+(defalias 'org-cycle-hide-drawers 'lawlist-block-org-cycle-hide-drawers)
+
+(defun lawlist-block-org-cycle-hide-drawers (state)
+  "Re-hide all drawers, footnotes or html blocks after a visibility state change."
+  (when
+    (and
+      (derived-mode-p 'org-mode)
+      (not (memq state '(overview folded contents))))
+    (save-excursion
+      (let* (
+          (globalp (memq state '(contents all)))
+          (beg (if globalp (point-min) (point)))
+          (end
+            (cond
+              (globalp
+                (point-max))
+              ((eq state 'children)
+                (save-excursion (outline-next-heading) (point)))
+              (t (org-end-of-subtree t)) )))
+        (goto-char beg)
+        (while
+          (re-search-forward ".*\\[fn\\|^\\#\\+BEGIN_SRC.*$\\|^[ \t]*:PROPERTIES:[ \t]*$" end t)
+          (lawlist-org-flag t))))))
+
+(defalias 'org-cycle-internal-local 'lawlist-block-org-cycle-internal-local)
+
+(defun lawlist-block-org-cycle-internal-local ()
+  "Do the local cycling action."
+  (let ((goal-column 0) eoh eol eos has-children children-skipped struct)
+    (save-excursion
+      (if (org-at-item-p)
+        (progn
+          (beginning-of-line)
+          (setq struct (org-list-struct))
+          (setq eoh (point-at-eol))
+          (setq eos (org-list-get-item-end-before-blank (point) struct))
+          (setq has-children (org-list-has-child-p (point) struct)))
+        (org-back-to-heading)
+        (setq eoh (save-excursion (outline-end-of-heading) (point)))
+        (setq eos (save-excursion (1- (org-end-of-subtree t t))))
+        (setq has-children
+          (or
+            (save-excursion
+              (let ((level (funcall outline-level)))
+                (outline-next-heading)
+                (and
+                  (org-at-heading-p t)
+                  (> (funcall outline-level) level))))
+            (save-excursion
+              (org-list-search-forward (org-item-beginning-re) eos t)))))
+      (beginning-of-line 2)
+      (if (featurep 'xemacs)
+        (while
+            (and
+              (not (eobp))
+              (get-char-property (1- (point)) 'invisible))
+          (beginning-of-line 2))
+        (while
+            (and
+              (not (eobp))
+              (get-char-property (1- (point)) 'invisible))
+          (goto-char (next-single-char-property-change (point) 'invisible))
+          (and
+            (eolp)
+            (beginning-of-line 2))))
+      (setq eol (point)))
+    (cond
+      ((= eos eoh)
+        (unless (org-before-first-heading-p)
+          (run-hook-with-args 'org-pre-cycle-hook 'empty))
+        (org-unlogged-message "EMPTY ENTRY")
+        (setq org-cycle-subtree-status nil)
+        (save-excursion
+          (goto-char eos)
+          (outline-next-heading)
+          (if (outline-invisible-p)
+            (org-flag-heading nil))))
+      ((and
+          (or
+            (>= eol eos)
+            (not (string-match "\\S-" (buffer-substring eol eos))))
+          (or
+            has-children
+            (not (setq children-skipped
+              org-cycle-skip-children-state-if-no-children))))
+        (unless (org-before-first-heading-p)
+          (run-hook-with-args 'org-pre-cycle-hook 'children))
+        (if (org-at-item-p)
+          ;; then
+          (org-list-set-item-visibility (point-at-bol) struct 'children)
+          ;; else
+          (org-show-entry)
+          (org-with-limited-levels (show-children))
+          (when (eq org-cycle-include-plain-lists 'integrate)
+            (save-excursion
+              (org-back-to-heading)
+              (while (org-list-search-forward (org-item-beginning-re) eos t)
+                (beginning-of-line 1)
+                (let* (
+                    (struct (org-list-struct))
+                    (prevs (org-list-prevs-alist struct))
+                    (end (org-list-get-bottom-point struct)))
+                  (mapc (lambda (e) (org-list-set-item-visibility e struct 'folded))
+                    (org-list-get-all-items (point) struct prevs))
+                  (goto-char (if (< end eos) end eos)))))))
+        (org-unlogged-message "CHILDREN")
+        (save-excursion
+          (goto-char eos)
+          (outline-next-heading)
+          (if (outline-invisible-p)
+            (org-flag-heading nil)))
+        (setq org-cycle-subtree-status 'children)
+        (unless (org-before-first-heading-p)
+          (run-hook-with-args 'org-cycle-hook 'children)))
+      ((or
+          children-skipped
+          (and
+            (eq last-command this-command)
+            (eq org-cycle-subtree-status 'children)))
+        (unless (org-before-first-heading-p)
+          (run-hook-with-args 'org-pre-cycle-hook 'subtree))
+        (outline-flag-region eoh eos nil)
+        (org-unlogged-message
+        (if children-skipped
+          "SUBTREE (NO CHILDREN)"
+          "SUBTREE"))
+        (setq org-cycle-subtree-status 'subtree)
+        (unless (org-before-first-heading-p)
+          (run-hook-with-args 'org-cycle-hook 'subtree)))
+      ((eq org-cycle-subtree-status 'subtree)
+        (org-show-subtree)
+        (message "ALL")
+        (setq org-cycle-subtree-status 'all))
+      (t
+        (run-hook-with-args 'org-pre-cycle-hook 'folded)
+        (outline-flag-region eoh eos t)
+        (org-unlogged-message "FOLDED")
+        (setq org-cycle-subtree-status 'folded)
+        (unless (org-before-first-heading-p)
+        (run-hook-with-args 'org-cycle-hook 'folded))))))
+
+(defun lawlist-org-flag (flag)
+  "When FLAG is non-nil, hide any of the following:  html code block;
+  footnote; or, the properties drawer.  Otherwise make it visible."
+  (save-excursion
+    (beginning-of-line 1)
+    (cond
+      ((looking-at ".*\\[fn")
+        (let* (
+          (begin (match-end 0))
+          end-footnote)
+          (if (re-search-forward "\\]"
+                (save-excursion (outline-next-heading) (point)) t)
+            (progn
+              (setq end-footnote (point))
+              (outline-flag-region begin end-footnote flag))
+            (user-error "Error beginning at point %s." begin))))
+      ((looking-at "^\\#\\+BEGIN_SRC.*$\\|^[ \t]*:PROPERTIES:[ \t]*$")
+        (let* ((begin (match-end 0)))
+          (if (re-search-forward "^\\#\\+END_SRC.*$\\|^[ \t]*:END:"
+                (save-excursion (outline-next-heading) (point)) t)
+            (outline-flag-region begin (point-at-eol) flag)
+            (user-error "Error beginning at point %s." begin)))))))
+
+(defun lawlist-toggle-block-visibility ()
+ "For this function to work, the cursor must be on the same line as the regexp."
+ (interactive)
+  (if
+      (save-excursion
+        (beginning-of-line 1)
+          (looking-at
+            ".*\\[fn\\|^\\#\\+BEGIN_SRC.*$\\|^[ \t]*:PROPERTIES:[ \t]*$"))
+    (lawlist-org-flag (not (get-char-property (match-end 0) 'invisible)))
+    (message "Sorry, you are not on a line containing the beginning regexp.")))
+
+#+end_src
+
+
+* python mode map
+  
+#+begin_src emacs-lisp
+(defvar python-mode-map nil)
+(setq python-mode-map
+      (let ((map (make-sparse-keymap)))
+        ;; electric keys
+        (define-key map [(:)]                                'py-electric-colon)
+        (define-key map [(\#)]                               'py-electric-comment)
+        (define-key map [(delete)]                           'py-electric-delete)
+        (define-key map [(backspace)]                        'py-electric-backspace)
+        (define-key map [(control backspace)]                'py-hungry-delete-backwards)
+        (define-key map [(control c) (delete)]               'py-hungry-delete-forward)
+        ;; (define-key map [(control y)]                     'py-electric-yank)
+        ;; moving point
+        
+        (define-key map [(control c) (control p)]            'py-backward-statement)
+        (define-key map [(control c) (control n)]            'py-forward-statement)
+        (define-key map [(control c) (control u)]            'py-backward-block)
+        (define-key map [(control c) (control q)]            'py-forward-block)
+        (define-key map [(control meta a)]                   'py-backward-def-or-class)
+        (define-key map [(control meta e)]                   'py-forward-def-or-class)
+        
+        ;; (define-key map [(meta i)]                        'py-indent-forward-line)
+        ;; (define-key map [(control j)]                     'py-newline-and-indent)
+	(define-key map (kbd "C-j")                          'newline)
+        ;; Most Pythoneers expect RET `py-newline-and-indent '
+	;; which is default of var py-return-key’
+        (define-key map (kbd "RET") py-return-key)
+        ;; (define-key map (kbd "RET")                       'newline)
+        ;; (define-key map (kbd "RET")                       'py-newline-and-dedent)
+        (define-key map [(super backspace)]                  'py-dedent)
+        ;; (define-key map [(control return)]                'py-newline-and-dedent)
+        ;; indentation level modifiers
+        (define-key map [(control c) (control l)]            'py-shift-left)
+        (define-key map [(control c) (control r)]            'py-shift-right)
+        (define-key map [(control c) (<)]                    'py-shift-left)
+        (define-key map [(control c) (>)]                    'py-shift-right)
+        ;; (define-key map [(control c) (tab)]               'py-indent-region)
+	(define-key map (kbd "C-c TAB")                      'py-indent-region)
+        (define-key map [(control c) (:)]                    'py-guess-indent-offset)
+        ;; subprocess commands
+        (define-key map [(control c) (control c)]            'py-execute-buffer)
+        (define-key map [(control c) (control m)]            'py-execute-import-or-reload)
+        (define-key map [(control c) (control s)]            'py-execute-string)
+        (define-key map [(control c) (|)]                    'py-execute-region)
+        (define-key map [(control meta x)]                   'py-execute-def-or-class)
+        (define-key map [(control c) (!)]                    'py-shell)
+        (define-key map [(control c) (control t)]            'py-toggle-shell)
+        (define-key map [(control meta h)]                   'py-mark-def-or-class)
+        (define-key map [(control c) (control k)]            'py-mark-block-or-clause)
+        (define-key map [(control c) (.)]                    'py-expression)
+        ;; Miscellaneous
+        ;; (define-key map [(super q)]                       'py-copy-statement)
+        (define-key map [(control c) (control d)]            'py-pdbtrack-toggle-stack-tracking)
+        (define-key map [(control c) (control f)]            'py-sort-imports)
+        (define-key map [(control c) (\#)]                   'py-comment-region)
+        (define-key map [(control c) (\?)]                   'py-describe-mode)
+        (define-key map [(control c) (control e)]            'py-help-at-point)
+        (define-key map [(control c) (-)]                    'py-up-exception)
+        (define-key map [(control c) (=)]                    'py-down-exception)
+        (define-key map [(control x) (n) (d)]                'py-narrow-to-def-or-class)
+        ;; information
+        (define-key map [(control c) (control b)]            'py-submit-bug-report)
+        (define-key map [(control c) (control v)]            'py-version)
+        (define-key map [(control c) (control w)]            'py-pychecker-run)
+        ;; (define-key map (kbd "TAB") 'py-indent-line)
+        (define-key map (kbd "TAB") 'py-indent-or-complete)
+	;; (if py-complete-function
+        ;;     (progn
+        ;;       (define-key map [(meta tab)] py-complete-function)
+        ;;       (define-key map [(esc) (tab)] py-complete-function))
+        ;;   (define-key map [(meta tab)] 'py-shell-complete)
+        ;;   (define-key map [(esc) (tab)] 'py-shell-complete))
+        (substitute-key-definition 'complete-symbol 'completion-at-point
+                                   map global-map)
+        (substitute-key-definition 'backward-up-list 'py-up
+                                   map global-map)
+        (substitute-key-definition 'down-list 'py-down
+                                   map global-map)
+	(when py-use-menu-p
+	  (setq map (py-define-menu map)))
+        map))
+
+#+end_src
