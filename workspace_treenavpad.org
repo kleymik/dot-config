@@ -1,26 +1,26 @@
+
 * Emacs Treepad - to navigate tree-structured buffers
 SHIFT => don't collapse
-|----+----------+-------------------------------------+-------+-------+-----------------------------------------+-------------------------------------+----------------------------------------------+----------------------------+----------------|
-|  # | KEY      | DESCRIPTION                         | ABBRV | SoFar | org-mode with babel                     | dired                               | python                                       | elisp                      | xml/yafoldable |
-|----+----------+-------------------------------------+-------+-------+-----------------------------------------+-------------------------------------+----------------------------------------------+----------------------------+----------------|
-|  5 | kp- 4    | opto grandparent; collapse children | up2   | JJXJX | J outline-up-heading X 2 : tbd collapse | J dired-up-to-parent X 2            |                                              | J backward-up-list X 2     |                |
-|  6 | kp- 5    | upto parent;      collapse children | up1   | JJXJX | J outline-up-heading     : tbd collapse | J dired-up-to-parent                | python-nav-backward-up-list/-beginning-block | J backward-up-list         |                |
-|----+----------+-------------------------------------+-------+-------+-----------------------------------------+-------------------------------------+----------------------------------------------+----------------------------+----------------|
-|  3 | kp- *    | move to previous sibling X7         | ps6   | JJXJX | J org-backward-heading-same-level x7    | J my-dired-subtree-prev-sibling  x7 |                                              | J backward-sexp x 6        |                |
-|  2 | kp- 9    | move to previous sibling            | ps    | JJXJX | J org-backward-heading-same-level       | J dired-subtree-previous-sibling    | python-nav-backward-[block/list/..]          | J backward-sexp            |                |
-|    | kp- 6    | toggle  children                    | tc    | JJJJX | J org-cycle                             | J my-dired-subtree-toggle           | J yafolding-toggle-element                   | J yafolding-toggle-element |                |
-|  8 | kp- 3    | move to next     sibling            | ns    | JJXJX | J org-forward-heading-same-level        | J dired-subtree-next-sibling        | python-nav-forward-[block/list/..]           | J forward-sexp             |                |
-|  9 | kp- .    | move to next     sibling X7         | ns6   | JJXJX | J org-forward-heading-same-level  x7    | J my-dired-subtree-next-sibling  x7 |                                              | J forward-sexp X 6         |                |
-|----+----------+-------------------------------------+-------+-------+-----------------------------------------+-------------------------------------+----------------------------------------------+----------------------------+----------------|
-|  1 | kp- +    | show children; go to first child    | fc    | JJXXX | J my-org-dft                            | J my-dired-dft                      |                                              | J down-list                |                |
-| 10 | kp- ENTR | show children; go to last child     | lc    | XXXXX | (org-show-children) (next-line)         |                                     |                                              |                            |                |
-|----+----------+-------------------------------------+-------+-------+-----------------------------------------+-------------------------------------+----------------------------------------------+----------------------------+----------------|
-|  4 | kp- 8    | goto first uncle                    | fu    |       |                                         |                                     |                                              |                            |                |
-|  7 | kp- 2    | goto last uncle                     | lu    |       |                                         |                                     |                                              |                            |                |
-|----+----------+-------------------------------------+-------+-------+-----------------------------------------+-------------------------------------+----------------------------------------------+----------------------------+----------------|
-|    | kp- -    | search breadth first                |       |       |                                         |                                     |                                              |                            |                |
-|----+----------+-------------------------------------+-------+-------+-----------------------------------------+-------------------------------------+----------------------------------------------+----------------------------+----------------|
-
+|----+----------+-------------------------------------+-------+-------+-----------------------------------------+-------------------------------------+----------------------------------------------+----------------------------+----------------+------------------------+-------|
+|  # | KEY      | DESCRIPTION                         | ABBRV | SoFar | org-mode with babel                     | dired                               | python                                       | elisp                      | xml/yafoldable | ibuffer                | table |
+|----+----------+-------------------------------------+-------+-------+-----------------------------------------+-------------------------------------+----------------------------------------------+----------------------------+----------------+------------------------+-------|
+|  5 | kp- 4    | opto grandparent; collapse children | up2   | JJXJX | J outline-up-heading X 2 : tbd collapse | J dired-up-to-parent X 2            |                                              | J backward-up-list X 2     |                |                        | home  |
+|  6 | kp- 5    | upto parent;      collapse children | up1   | JJXJX | j outline-up-heading     : tbd collapse | J dired-up-to-parent                | python-nav-backward-up-list/-beginning-block | J backward-up-list         |                |                        | left  |
+|----+----------+-------------------------------------+-------+-------+-----------------------------------------+-------------------------------------+----------------------------------------------+----------------------------+----------------+------------------------+-------|
+|  3 | kp- *    | move to previous sibling X7         | ps6   | JJXJX | J org-backward-heading-same-level x7    | J my-dired-subtree-prev-sibling  x7 |                                              | J backward-sexp x 6        |                |                        |       |
+|  2 | kp- 9    | move to previous sibling            | ps    | JJXJX | J org-backward-heading-same-level       | J dired-subtree-previous-sibling    | python-nav-backward-[block/list/..]          | J backward-sexp            |                | J                      | up    |
+|    | kp- 6    | toggle children                     | tc    | JJJJX | J org-cycle                             | J my-dired-subtree-toggle           | J yafolding-toggle-element                   | J yafolding-toggle-element |                | J toggle ibuffer group | right |
+|  8 | kp- 3    | move to next     sibling            | ns    | JJXJX | J org-forward-heading-same-level        | J dired-subtree-next-sibling        | python-nav-forward-[block/list/..]           | J forward-sexp             |                | J                      | down  |
+|  9 | kp- .    | move to next     sibling X7         | ns6   | JJXJX | J org-forward-heading-same-level  x7    | J my-dired-subtree-next-sibling  x7 |                                              | J forward-sexp X 6         |                |                        |       |
+|----+----------+-------------------------------------+-------+-------+-----------------------------------------+-------------------------------------+----------------------------------------------+----------------------------+----------------+------------------------+-------|
+|  1 | kp- +    | show children; go to first child    | fc    | JJXXX | J my-org-dft                            | J my-dired-dft                      |                                              | J down-list                |                |                        |       |
+| 10 | kp- ENTR | show children; go to last child     | lc    | XXXXX | (org-show-children) (next-line)         |                                     |                                              |                            |                |                        | end   |
+|----+----------+-------------------------------------+-------+-------+-----------------------------------------+-------------------------------------+----------------------------------------------+----------------------------+----------------+------------------------+-------|
+|  4 | kp- 8    | goto first uncle                    | fu    |       |                                         |                                     |                                              |                            |                |                        |       |
+|  7 | kp- 2    | goto last uncle                     | lu    |       |                                         |                                     |                                              |                            |                |                        |       |
+|----+----------+-------------------------------------+-------+-------+-----------------------------------------+-------------------------------------+----------------------------------------------+----------------------------+----------------+------------------------+-------|
+|    | kp- -    | search breadth first                |       |       |                                         |                                     |                                              |                            |                |                        |       |
+|----+----------+-------------------------------------+-------+-------+-----------------------------------------+-------------------------------------+----------------------------------------------+----------------------------+----------------+------------------------+-------|
 +  json, xml,  treacl
 
 * elisp - movement functions
@@ -89,6 +89,7 @@ down-list        【Ctrl+Alt+↓】 → Move to first child.      (move into the
 -#+STARTUP: indent
 -#+STARTUP: noindent
 
+** functions
 (org-on-heading-p)
 (org-up-heading-safe)
 (org-map-entries LEVEL=1
@@ -103,6 +104,8 @@ down-list        【Ctrl+Alt+↓】 → Move to first child.      (move into the
 (org-end-of-subtree t)
 (org-element-at-point)
 (org-element-context)
+
+** commands
 org-cycle-hook  STATES: ‘folded’, ‘children’, or ‘subtree’.
 
 org-in-src-block-p
@@ -120,6 +123,7 @@ org-hide-block-toggle
 org-previous bloc C-c M-b
 org-show-block-all
 
+** a trace
 Wrote /home/kleyn/projects/repos/mkmain/landing/jupyClips.org
 --------------Enter
 BEFORE:headline
@@ -141,9 +145,8 @@ Result: "org outline-level=1" [2 times]
 Result: nil [2 times]
 Result: nil [3 times]
 
-No library edebug.el in search path
-
 ** org syntax
+
 (src-block         (:language "jupyter-python" 
                     :switches nil 
                     :parameters nil 
@@ -163,7 +166,7 @@ No library edebug.el in search path
                    :post-affiliated 196 
                    :parent nil))
 
-Result: (headline (:raw-value #1="Jobs" 
+(headline        (:raw-value #1="Jobs" 
                    :begin 413041  :end 413832 
                    :pre-blank 0 
                    :contents-begin 413048 :contents-end 413831 
@@ -179,24 +182,24 @@ Result: (headline (:raw-value #1="Jobs"
                    :post-affiliated 413041 
                    :title #1#))
 
-*** Headline
+*** Headline 
 Greater element.
 In addition to the following list, any property specified in a property drawer attached to the headline will be accessible as an attribute (with an uppercase name, e.g., :CUSTOM_ID).
-  :archivedp    Non-nil if the headline has an archive tag (boolean).
-  :closed    Headline's CLOSED reference, if any (timestamp object or nil)
+  :archivedp     Non-nil if the headline has an archive tag (boolean).
+  :closed        Headline's CLOSED reference, if any (timestamp object or nil)
   :commentedp    Non-nil if the headline has a comment keyword (boolean).
-  :deadline    Headline's DEADLINE reference, if any (timestamp object or nil).
+  :deadline      Headline's DEADLINE reference, if any (timestamp object or nil).
   :footnote-section-p    Non-nil if the headline is a footnote section (boolean).
-  :level    Reduced level of the headline (integer).
-  :pre-blank    Number of blank lines between the headline and the first non-blank line of its contents (integer).
-  :priority    Headline's priority, as a character (integer).
-  :quotedp    Non-nil if the headline contains a quote keyword (boolean).
-  :raw-value    Raw headline's text, without the stars and the tags (string).
-  :scheduled    Headline's SCHEDULED reference, if any (timestamp object or nil).
-  :tags    Headline's tags, if any, without the archive tag. (list of strings).
-  :titl    Parsed headline's text, without the stars and the tags (secondary string).
-  :todo-keyword    Headline's TODO keyword without quote and comment strings, if any (string or nil).
-  :todo-type    Type of headline's TODO keyword, if any (symbol: done, todo).
+  :level         Reduced level of the headline (integer).
+  :pre-blank     Number of blank lines between the headline and the first non-blank line of its contents (integer).
+  :priority      Headline's priority, as a character (integer).
+  :quotedp       Non-nil if the headline contains a quote keyword (boolean).
+  :raw-value     Raw headline's text, without the stars and the tags (string).
+  :scheduled     Headline's SCHEDULED reference, if any (timestamp object or nil).
+  :tags          Headline's tags, if any, without the archive tag. (list of strings).
+  :titl          Parsed headline's text, without the stars and the tags (secondary string).
+  :todo-keyword  Headline's TODO keyword without quote and comment strings, if any (string or nil).
+  :todo-type     Type of headline's TODO keyword, if any (symbol: done, todo).
 
 *** Src Block
 Element.
@@ -211,12 +214,12 @@ Element.
   :value    Source code (string).
 
 
+** map over src blocks to hide
 
-* map over src blocks to hide
-
-Indeed, some code blocks are too long and take up too much space.
-By default, you want to display all the code blocks, only hidden when you set a block of code to hide.
-Suppose there is a block of code in an org file that needs to be hidden, like:
+Indeed, some code blocks are too long and take up too much space.  By
+default, you want to display all the code blocks, only hidden when you
+set a block of code to hide.  Suppose there is a block of code in an
+org file that needs to be hidden, like:
 
 #+BEGIN_SRC emacs-lisp :hidden
 (defun individual-visibility-source-blocks ()
@@ -230,18 +233,16 @@ Suppose there is a block of code in an org file that needs to be hidden, like:
               (save-excursion
                 (beginning-of-line 1)
                 (looking-at org-block-regexp))
-              (cl-assoc
-               ':hidden
-               (cl-third
-                (org-babel-get-src-block-info))))
+              (cl-assoc ':hidden (cl-third (org-babel-get-src-block-info))))
          (org-hide-block-toggle))))))
 
 (add-hook 'org-mode-hook (function individual-visibility-source-blocks))
 #+END_SRC
+
 When the command "individual-visibility-source-blocks" is used, all code blocks are displayed except for the code block.
 
-
 * org-mode babel 
+
 execute code block at point C-c C-c
 open results of code block at point C-c C-o
 insert a header argument with completion C-c C-v j
@@ -255,8 +256,8 @@ execute all code blocks in current subtree C-c C-v s
 switch to the session of the current code block C-c C-v z
 load the current code block into a session C-c C-v l
 
-
-* close previous when moving node
+* code samples
+** close previous when moving node
 
 Show next/prev heading tidily
 
@@ -293,15 +294,14 @@ Show next/prev heading tidily
 (add-to-list 'org-speed-commands-user  '("n" ded/org-show-next-heading-tidily))
 (add-to-list 'org-speed-commands-user  '("p" ded/org-show-previous-heading-tidily))
 
-
-* org-back-to-top-level-heading
+** org-back-to-top-level-heading
 (defun org-back-to-top-level-heading ()
   "Go back to the current top level heading."
   (interactive)
   (or (re-search-backward "^\* " nil t)
       (goto-char (point-min))))
 
-* list overlays
+** list overlays
     (defun list-overlays-at (&optional pos)
       "Describe overlays at POS or point."
       (interactive)
@@ -333,7 +333,7 @@ Show next/prev heading tidily
                 (insert (format " %15S: %S\n" p (overlay-get o p))))))
           (pop-to-buffer buf))))
 
-* overlay records
+** overlay records
           (#<overlay from 5338   to 5426   in pdpNotebook.org>
            #<overlay from 14063  to 14170  in pdpNotebook.org>
            #<overlay from 5980   to 7247   in pdpNotebook.org>
@@ -345,10 +345,7 @@ Show next/prev heading tidily
            #<overlay from 5428   to 5428   in pdpNotebook.org>
            #<overlay from 5970   to 5970   in pdpNotebook.org>)
 
-
-* cycle code block visibility
-
-
+** cycle code block visibility
 
 #+begin_src emacs-lisp
 

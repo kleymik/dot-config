@@ -941,11 +941,11 @@ N.B. TBD drop last ","
 
 (setq ibuffer-saved-filter-groups
   '(("home"
+     ("Dired"        (mode . dired)     )
      ("emacs-config" (or (filename . ".emacs.d") (filename . "emacs-config")))
      ("Org"          (or (mode . org-mode) (filename . "OrgMode")))
      ("*Org"         (name . "*Org")    )
      ("Image"        (mode . Image)     )
-     ("Dired"        (mode . dired)     )
      ("Magit"        (name . "magit\*") )
      ("jupyter"      (name . "jupyter") )
      ("Help"         (name . "*")       ))))
@@ -956,7 +956,9 @@ N.B. TBD drop last ","
    (setq ibuffer-expert t)
    (ibuffer-auto-mode 1)
    (define-key ibuffer-mode-map (kbd "t")     'ibuffer-toggle-filter-group)
-   (define-key ibuffer-mode-map (kbd "C-TAB") 'ibuffer-toggle-filter-group)
+   (define-key ibuffer-mode-map [kp-9]        'previous-line)
+   (define-key ibuffer-mode-map [kp-6]        'ibuffer-toggle-filter-group)
+   (define-key ibuffer-mode-map [kp-3]        'next-line)
    (message "in ibuffer"))
 
 (add-hook 'ibuffer-mode-hook 'my-ibuffer-hooks)   ; (lambda ()                        ;; no need to quote the lambda, but try to avoid using them as hooks
@@ -1268,24 +1270,41 @@ M-x clone-indirect-buffer RET
 * Elisp Mode
 
 #+BEGIN_SRC emacs-lisp
+(defun my-elisp-sexp-grandparent ()
+  "go parent sexp - 2 levels"
+  (interactive)
+  (backward-up-list)
+  (backward-up-list)
+)
+
+(defun my-elisp-backsexp-n (n)
+  "go prev sibling sexp - n times"
+  (interactive)
+  (dotimes (i n) (backward-sexp))
+)
+
+(defun my-elisp-forwardsexp-n (n)
+  "go prev sibling sexp - n times"
+  (interactive)
+  (dotimes (i n) (forward-sexp))
+)
+
 (progn 
+   (define-key emacs-lisp-mode-map [kp-4]           'my-elisp-sexp-grandparent) ; Move to grandparent. 
    (define-key emacs-lisp-mode-map [kp-5]           'backward-up-list)          ; Move to parent. move to the beginning of outer paren pair ; outline-up-heading
+   (define-key emacs-lisp-mode-map [kp-multiply]    '(lambda () (interactive)  (my-elisp-backsexp-n 6)))
    (define-key emacs-lisp-mode-map [kp-9]           'backward-sexp)             ; Move to previous sibling. move to the beginning of previous sexp unit ; org-backward-heading-same-level
    (define-key emacs-lisp-mode-map [kp-6]           'yafolding-toggle-element)
    (define-key emacs-lisp-mode-map [kp-3]           'forward-sexp)              ; Move to next sibling.     move to the end of next sexp unit  ; org-forward-heading-same-level
+   (define-key emacs-lisp-mode-map [kp-decimal]     '(lambda () (interactive)  (my-elisp-forwardsexp-n 6)))
    (define-key emacs-lisp-mode-map [kp-add]         'down-list)                 ; Move to first child.      move into the beginning of first inner paren pair ; my-org-dft; tbd show contents of leaf
 )
 #+END_SRC
-   ;; (define-key emacs-lisp-mode-map [kp-4]        '(lambda () (interactive)  (outline-up-heading 2)))
    ;; (define-key emacs-lisp-mode-map [kp-8]        'my-org-babel-prev)
    ;; (define-key emacs-lisp-mode-map [kp-2]        'my-org-babel-next)
-   ;; (define-key emacs-lisp-mode-map [kp-multiply] '(lambda () (interactive)  (org-backward-heading-same-level 6)))
-   ;; (define-key emacs-lisp-mode-map [kp-6]        'org-cycle)
-   ;; (define-key emacs-lisp-mode-map [kp-decimal]  '(lambda () (interactive)  (org-forward-heading-same-level 6)))
    ;; (define-key emacs-lisp-mode-map [M-home]      'org-collapse)
    ;; (define-key emacs-lisp-mode-map [kp-subtract] 'kill-this-buffer-volatile)
    ;; (define-key emacs-lisp-mode-map [kp-divide]   'toggle-window-split)
-
 
 * Python Mode
 #+BEGIN_SRC emacs-lisp
@@ -1478,16 +1497,64 @@ M-x clone-indirect-buffer RET
   "depth-first traversal for org/babel mode"
   (interactive)
   (message "--------------Enter")
+  (setq oeap (org-element-at-point))                        ; (setq oeap-lv (org-element-property :level oeap))
+  (setq oec (org-element-context))                          ; (setq oec-lv  (org-element-property :level oec))
+  ;(setq curLine (buffer-substring-no-properties (line-beginning-position) (line-end-position)))
+  ;(message (concat "XXX" curLine "XXX"))
+  (message (concat "my-org-dft:BEFORE:" (prin1-to-string (org-element-type oeap)) "  " (prin1-to-string (org-element-type oec))))
+  (cond ((eq (org-element-type oeap) 'headline)
+            (progn (org-show-entry)
+                   (org-show-children)
+                   (next-line)))
+        ((eq (org-element-type oeap) 'src-block)
+            (if (looking-at "^#\\+END_SRC")                 ; have come to end of 
+                (progn (message "Looking at end_src")
+                       (org-hide-block-toggle nil)          ; i.e. hide src block
+                       (next-line))
+                (progn (org-hide-block-toggle 'off)         ; i.e. show src block
+                       (next-line))))
+        ((or (eq (org-element-type oeap) 'example-block) (looking-at "^#\\+RESULTS:")) ;; (eq (org-element-type oeap) 'fixed-width)
+            (progn (message "Looking at RESULT")
+                   (org-babel-hide-result-toggle 'off)      ; i.e. show block
+                   (next-line)))
+        ((eq (org-element-type oeap) 'example-block)
+            (if (looking-at "^#\\+END_EXAMPLE")             ; have come to end of  example
+                (progn (message "Looking at end_example")
+                       (org-hide-block-toggle nil)          ; i.e. hide src block
+                       (next-line))
+                (progn (message "Looking at example")
+                       (org-hide-block-toggle 'off)         ; (org-babel-hide-result-toggle 'off)   ;; i.e. show block
+                       (next-line))))
+        ((memq (org-element-type oeap) '(paragraph fixed-width)) ; otherwise: move down a line
+             (progn (if (looking-at "^$") 
+                        (progn (message "This Line is empty")
+                               (message (prin1-to-string oeap) 
+                               (goto-char (org-element-property :begin oeap))
+                               (org-babel-hide-result-toggle nil)
+                               (next-line)))) ; close result section
+                     (next-line)))
+        (t
+            (progn (message "my-org-dft:got here")
+                   (next-line))))
+                
+  (message (concat "my-org-dft:AFTER:" (prin1-to-string (org-element-type oeap)) "  " (prin1-to-string (org-element-type oec))))
+  )
+
+(defun my-org-uplevel ()
+  "go up a level for org and babel mode"
+  (interactive)
+  (message "--------------Enter")
   (setq oeap (org-element-at-point))                      ; (setq oeap-lv (org-element-property :level oeap))
   (setq oec (org-element-context))                        ; (setq oec-lv  (org-element-property :level oec))
-  (message (concat "my-org-dft:BEFORE:" (prin1-to-string (org-element-type oeap)) "  " (prin1-to-string (org-element-type oec))))
+  (message (concat "my-org-uplevel:BEFORE:" (prin1-to-string (org-element-type oeap)) "  " (prin1-to-string (org-element-type oec))))
+
   (cond ((eq (org-element-type oeap) 'headline)
         (progn (org-show-entry)
                (org-show-children)
-               (next-line)))
+               (outline-up-heading)))
         ((eq (org-element-type oeap) 'src-block)
          (progn (org-hide-block-toggle 'off)          ;; i.e. show block
-                (next-line)))
+         (org-babel-goto-src-block-head)))
         ((eq (org-element-type oeap) 'example-block)
          (progn (org-babel-hide-result-toggle 'off)   ;; i.e. show block
                 (next-line)))
@@ -1495,12 +1562,12 @@ M-x clone-indirect-buffer RET
          (progn (org-babel-hide-result-toggle 'off)   ;; i.e. show block
                 (next-line)))
         ((memq (org-element-type oeap) '(paragraph fixed-width)) ; otherwise: move down a line
-         (progn (next-line)))
+         (progn (message "hello1")))
         (t
-         (progn (message "my-org-dft:got here")
-                (next-line))))
+         (progn (message "my-org-uplevel:got here")
+                )))
                 
-  (message (concat "my-org-dft:AFTER:" (prin1-to-string (org-element-type oeap)) "  " (prin1-to-string (org-element-type oec))))
+  ;(message (concat "my-org-uplevel:AFTER:" (prin1-to-string (org-element-type oeap)) "  " (prin1-to-string (org-element-type oec))))
   )
 
  ; org-mode treepad navigation
@@ -1508,7 +1575,7 @@ M-x clone-indirect-buffer RET
  (define-key org-mode-map [kp-4]           '(lambda () (interactive)  (outline-up-heading 2)))
 
  (define-key org-mode-map [kp-8]           'my-org-babel-prev)
- (define-key org-mode-map [kp-5]           'outline-up-heading)
+ (define-key org-mode-map [kp-5]           'my-org-uplevel)
  (define-key org-mode-map [kp-2]           'my-org-babel-next)
 
  (define-key org-mode-map [kp-multiply]    '(lambda () (interactive)  (org-backward-heading-same-level 6)))
@@ -1973,6 +2040,7 @@ M-x clone-indirect-buffer RET
 (defun my-dired-up-to-parent ()                                                 ;; tbd if not a subdir (i.e. in rootdir), then jump  'dired-up-directory-drop-prev-dired-buffer
   (interactive) 
   (let ((sDpth (dired-subtree--get-depth (dired-subtree--get-ov))))
+       ; (message sDpth)
        (if (eq sDpth 0)
            (dired-up-directory-drop-prev-dired-buffer)
            (dired-subtree-remove)))
