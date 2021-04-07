@@ -69,6 +69,7 @@ convenient prefix key map, for example `C-,`
 ;; org mode and babel
 (require 'org)
 (require 'ox)                 ; org export
+(require 'ox-beamer)
 (require 'ox-gfm)
 (require 'ox-reveal)
 (setq Org-Reveal-root "file:///home/kleyn/ulib/reveal.js-master/js/reveal.js")
@@ -1399,40 +1400,40 @@ M-x clone-indirect-buffer RET
 ;;(global-set-key [remap eval-expression] 'pp-eval-expression)
 
 ** Org Mode
- #+BEGIN_SRC emacs-lisp
- (setq org-default-notes-file "~/myDocs/logbook/notes.org")
- (setq org-cycle-include-plain-lists t)
- (setq org-startup-folded nil)
- (setq org-src-fontify-natively t)
- (setq org-list-allow-alphabetical t)
- (setq org-file-apps '( ("\\.xlsx\\'"    . w2-browser)
-                        ("\\.mm\\'"      . default)
-                        ("\\.x?html?\\'" . default)
-                        ("\\.pdf\\'"     . default)
-                        (directory . emacs)
-                        (auto-mode . emacs)
-                        ))
- (setq org-use-property-inheritance t)
- (defun org-collapse()     (interactive) (org-shifttab 0))
+#+BEGIN_SRC emacs-lisp
+(setq org-default-notes-file "~/myDocs/logbook/notes.org")
+(setq org-cycle-include-plain-lists t)
+(setq org-startup-folded nil)
+(setq org-src-fontify-natively t)
+(setq org-list-allow-alphabetical t)
+(setq org-file-apps '( ("\\.xlsx\\'"    . w2-browser)
+                       ("\\.mm\\'"      . default)
+                       ("\\.x?html?\\'" . default)
+                       ("\\.pdf\\'"     . default)
+                       (directory . emacs)
+                       (auto-mode . emacs)
+                       ))
+(setq org-use-property-inheritance t)
+(defun org-collapse()     (interactive) (org-shifttab 0))
 
 
- (defun org-transpose-table-at-point ()
-   "Transpose orgmode table at point, eliminate hlines."
-   (interactive)
-   (let ((contents (apply #'mapcar* #'list                       ;; <== LOB magic imported here
-                          (remove-if-not 'listp (org-table-to-lisp)))))  ;; remove 'hline from listsignals error if not table
-     (delete-region (org-table-begin) (org-table-end))
-     (insert (mapconcat (lambda(x) (concat "| " (mapconcat 'identity x " | " ) "
-   |\n" ))
-                        contents
-                        ""))
-     (org-table-align))
-   )
+(defun org-transpose-table-at-point ()
+  "Transpose orgmode table at point, eliminate hlines."
+  (interactive)
+  (let ((contents (apply #'mapcar* #'list                       ;; <== LOB magic imported here
+                         (remove-if-not 'listp (org-table-to-lisp)))))  ;; remove 'hline from listsignals error if not table
+    (delete-region (org-table-begin) (org-table-end))
+    (insert (mapconcat (lambda(x) (concat "| " (mapconcat 'identity x " | " ) "
+  |\n" ))
+                       contents
+                       ""))
+    (org-table-align))
+  )
 
- ;; --------- org-mode key bindings
- ;(define-key global-map "\C-cl" 'org-store-link)
- ;(define-key global-map "\C-ca" 'org-agenda)
- (progn
+;; --------- org-mode key bindings
+;(define-key global-map "\C-cl" 'org-store-link)
+;(define-key global-map "\C-ca" 'org-agenda)
+(progn
   (define-key org-mode-map (kbd "C-c C->")  'org-demote-subtree)
   (define-key org-mode-map (kbd "C-c d")    'org-demote-subtree)
 
@@ -1448,620 +1449,620 @@ M-x clone-indirect-buffer RET
 
   (define-key org-mode-map (kbd "C-c n")    'my-org-babel-execute-and-next)
   (define-key org-mode-map (kbd "C-c C-t")  'org-transpose-table-at-point)
- )
- ; ------------------------------------------------------------------ TreeNavPad keys for org-mode
+)
+; ------------------------------------------------------------------ TreeNavPad keys for org-mode
 
- (defun my-org-babel-next ()
-     (interactive)
-     (setq case-fold-search t)
-     (beginning-of-line)
-     (forward-char 3)
-     (re-search-forward "^#.begin_src\\|^#.results:" nil t nil)
-     (beginning-of-line)
-     (recenter '(t))
-     )
+(defun my-org-babel-next ()
+    (interactive)
+    (setq case-fold-search t)
+    (beginning-of-line)
+    (forward-char 3)
+    (re-search-forward "^#.begin_src\\|^#.results:" nil t nil)
+    (beginning-of-line)
+    (recenter '(t))
+    )
 
- (defun my-org-babel-prev ()
-     (interactive)
-     (setq case-fold-search t)
-     (beginning-of-line)
-     (backward-char 1)
-     (re-search-backward "^#.begin_src\\|^#.results:" nil t nil)
-     (beginning-of-line)
-     (recenter-top-bottom 50)
-     )
+(defun my-org-babel-prev ()
+    (interactive)
+    (setq case-fold-search t)
+    (beginning-of-line)
+    (backward-char 1)
+    (re-search-backward "^#.begin_src\\|^#.results:" nil t nil)
+    (beginning-of-line)
+    (recenter-top-bottom 50)
+    )
 
- (defun my-org-dft ()
-   "depth-first traversal for org/babel mode"
-   (interactive)
-   (message "--------------Enter")
-   (setq oeap (org-element-at-point))                        ; (setq oeap-lv (org-element-property :level oeap))
-   (setq oec (org-element-context))                          ; (setq oec-lv  (org-element-property :level oec))
-   ;(setq curLine (buffer-substring-no-properties (line-beginning-position) (line-end-position)))
-   ;(message (concat "XXX" curLine "XXX"))
-   (message (concat "my-org-dft:BEFORE:" (prin1-to-string (org-element-type oeap)) "  " (prin1-to-string (org-element-type oec))))
-   (cond ((eq (org-element-type oeap) 'headline)
-             (progn (org-show-entry)
-                    (org-show-children)
-                    (next-line)))
-         ((eq (org-element-type oeap) 'src-block)
-             (if (looking-at "^#\\+END_SRC")                 ; have come to end of 
-                 (progn (message "Looking at end_src")
-                        (org-hide-block-toggle nil)          ; i.e. hide src block
-                        (next-line))
-                 (progn (org-hide-block-toggle 'off)         ; i.e. show src block
-                        (next-line))))
-         ((or (eq (org-element-type oeap) 'example-block) (looking-at "^#\\+RESULTS:")) ;; (eq (org-element-type oeap) 'fixed-width)
-             (progn (message "Looking at RESULT")
-                    (org-babel-hide-result-toggle 'off)      ; i.e. show block
-                    (next-line)))
-         ((eq (org-element-type oeap) 'example-block)
-             (if (looking-at "^#\\+END_EXAMPLE")             ; have come to end of  example
-                 (progn (message "Looking at end_example")
-                        (org-hide-block-toggle nil)          ; i.e. hide src block
-                        (next-line))
-                 (progn (message "Looking at example")
-                        (org-hide-block-toggle 'off)         ; (org-babel-hide-result-toggle 'off)   ;; i.e. show block
-                        (next-line))))
-         ((memq (org-element-type oeap) '(paragraph fixed-width)) ; otherwise: move down a line
-              (progn (if (looking-at "^$") 
-                         (progn (message "This Line is empty")
-                                (message (prin1-to-string oeap) 
-                                (goto-char (org-element-property :begin oeap))
-                                (org-babel-hide-result-toggle nil)
-                                (next-line)))) ; close result section
-                      (next-line)))
-         (t
-             (progn (message "my-org-dft:got here")
-                    (next-line))))
+(defun my-org-dft ()
+  "depth-first traversal for org/babel mode"
+  (interactive)
+  (message "--------------Enter")
+  (setq oeap (org-element-at-point))                        ; (setq oeap-lv (org-element-property :level oeap))
+  (setq oec (org-element-context))                          ; (setq oec-lv  (org-element-property :level oec))
+  ;(setq curLine (buffer-substring-no-properties (line-beginning-position) (line-end-position)))
+  ;(message (concat "XXX" curLine "XXX"))
+  (message (concat "my-org-dft:BEFORE:" (prin1-to-string (org-element-type oeap)) "  " (prin1-to-string (org-element-type oec))))
+  (cond ((eq (org-element-type oeap) 'headline)
+            (progn (org-show-entry)
+                   (org-show-children)
+                   (next-line)))
+        ((eq (org-element-type oeap) 'src-block)
+            (if (looking-at "^#\\+END_SRC")                 ; have come to end of 
+                (progn (message "Looking at end_src")
+                       (org-hide-block-toggle nil)          ; i.e. hide src block
+                       (next-line))
+                (progn (org-hide-block-toggle 'off)         ; i.e. show src block
+                       (next-line))))
+        ((or (eq (org-element-type oeap) 'example-block) (looking-at "^#\\+RESULTS:")) ;; (eq (org-element-type oeap) 'fixed-width)
+            (progn (message "Looking at example or RESULT")
+                   (org-babel-hide-result-toggle 'off)      ; i.e. show block
+                   (next-line)))
+        ((eq (org-element-type oeap) 'example-block)
+            (if (looking-at "^#\\+END_EXAMPLE")             ; have come to end of  example
+                (progn (message "Looking at end_example")
+                       (org-hide-block-toggle nil)          ; i.e. hide src block
+                       (next-line))
+                (progn (message "Looking at example")
+                       (org-hide-block-toggle 'off)         ; (org-babel-hide-result-toggle 'off)   ;; i.e. show block
+                       (next-line))))
+        ((memq (org-element-type oeap) '(paragraph fixed-width)) ; otherwise: move down a line
+             (progn (if (looking-at "^\\s-*$") 
+                        (progn (message "This Line is empty")
+                               (message (prin1-to-string oeap) 
+                               (goto-char (org-element-property :begin oeap))
+                               (org-babel-hide-result-toggle nil)
+                               (next-line)))) ; close result section
+                     (next-line)))
+        (t
+            (progn (message "my-org-dft:got here")
+                   (next-line))))
                 
-   (message (concat "my-org-dft:AFTER:" (prin1-to-string (org-element-type oeap)) "  " (prin1-to-string (org-element-type oec))))
-   )
+  (message (concat "my-org-dft:AFTER:" (prin1-to-string (org-element-type oeap)) "  " (prin1-to-string (org-element-type oec))))
+  )
 
- (defun my-org-uplevel ()
-   "go up a level for org and babel mode"
-   (interactive)
-   (message "--------------Enter")
-   (setq oeap (org-element-at-point))                      ; (setq oeap-lv (org-element-property :level oeap))
-   (setq oec (org-element-context))                        ; (setq oec-lv  (org-element-property :level oec))
-   (message (concat "my-org-uplevel:BEFORE:" (prin1-to-string (org-element-type oeap)) "  " (prin1-to-string (org-element-type oec))))
+(defun my-org-uplevel ()
+  "go up a level for org and babel mode"
+  (interactive)
+  (message "--------------Enter")
+  (setq oeap (org-element-at-point))                      ; (setq oeap-lv (org-element-property :level oeap))
+  (setq oec (org-element-context))                        ; (setq oec-lv  (org-element-property :level oec))
+  (message (concat "my-org-uplevel:BEFORE:" (prin1-to-string (org-element-type oeap)) "  " (prin1-to-string (org-element-type oec))))
 
-   (cond ((eq (org-element-type oeap) 'headline)
-         (progn (org-show-entry)
-                (org-show-children)
-                (outline-up-heading)))
-         ((eq (org-element-type oeap) 'src-block)
-          (progn (org-hide-block-toggle 'off)          ;; i.e. show block
-          (org-babel-goto-src-block-head)))
-         ((eq (org-element-type oeap) 'example-block)
-          (progn (org-babel-hide-result-toggle 'off)   ;; i.e. show block
-                 (next-line)))
-         ((and (eq (org-element-type oeap) 'fixed-width) (looking-at "^#\\+RESULTS:"))
-          (progn (org-babel-hide-result-toggle 'off)   ;; i.e. show block
-                 (next-line)))
-         ((memq (org-element-type oeap) '(paragraph fixed-width)) ; otherwise: move down a line
-          (progn (message "hello1")))
-         (t
-          (progn (message "my-org-uplevel:got here")
-                 )))
+  (cond ((eq (org-element-type oeap) 'headline)
+        (progn (org-show-entry)
+               (org-show-children)
+               (outline-up-heading)))
+        ((eq (org-element-type oeap) 'src-block)
+         (progn (org-hide-block-toggle 'off)          ;; i.e. show block
+         (org-babel-goto-src-block-head)))
+        ((eq (org-element-type oeap) 'example-block)
+         (progn (org-babel-hide-result-toggle 'off)   ;; i.e. show block
+                (next-line)))
+        ((and (eq (org-element-type oeap) 'fixed-width) (looking-at "^#\\+RESULTS:"))
+         (progn (org-babel-hide-result-toggle 'off)   ;; i.e. show block
+                (next-line)))
+        ((memq (org-element-type oeap) '(paragraph fixed-width)) ; otherwise: move down a line
+         (progn (message "hello1")))
+        (t
+         (progn (message "my-org-uplevel:got here")
+                )))
                 
-   ;(message (concat "my-org-uplevel:AFTER:" (prin1-to-string (org-element-type oeap)) "  " (prin1-to-string (org-element-type oec))))
-   )
+  ;(message (concat "my-org-uplevel:AFTER:" (prin1-to-string (org-element-type oeap)) "  " (prin1-to-string (org-element-type oec))))
+  )
 
-  ; org-mode treepad navigation
- (progn 
-  (define-key org-mode-map [kp-4]           '(lambda () (interactive)  (outline-up-heading 2)))
+ ; org-mode treepad navigation
+(progn 
+ (define-key org-mode-map [kp-4]           '(lambda () (interactive)  (outline-up-heading 2)))
 
-  (define-key org-mode-map [kp-8]           'my-org-babel-prev)
-  (define-key org-mode-map [kp-5]           'my-org-uplevel)
-  (define-key org-mode-map [kp-2]           'my-org-babel-next)
+ (define-key org-mode-map [kp-8]           'my-org-babel-prev)
+ (define-key org-mode-map [kp-5]           'my-org-uplevel)
+ (define-key org-mode-map [kp-2]           'my-org-babel-next)
 
-  (define-key org-mode-map [kp-multiply]    '(lambda () (interactive)  (org-backward-heading-same-level 6)))
-  (define-key org-mode-map [kp-9]           'org-backward-heading-same-level)
-  (define-key org-mode-map [kp-6]           'org-cycle)
-  (define-key org-mode-map [kp-3]           'org-forward-heading-same-level)
-  (define-key org-mode-map [kp-decimal]     '(lambda () (interactive)  (org-forward-heading-same-level 6)))
+ (define-key org-mode-map [kp-multiply]    '(lambda () (interactive)  (org-backward-heading-same-level 6)))
+ (define-key org-mode-map [kp-9]           'org-backward-heading-same-level)
+ (define-key org-mode-map [kp-6]           'org-cycle)
+ (define-key org-mode-map [kp-3]           'org-forward-heading-same-level)
+ (define-key org-mode-map [kp-decimal]     '(lambda () (interactive)  (org-forward-heading-same-level 6)))
 
-  (define-key org-mode-map [kp-add]         'my-org-dft)  ; tbd show contents of leaf
-  (define-key org-mode-map [M-home]         'org-collapse)
+ (define-key org-mode-map [kp-add]         'my-org-dft)  ; tbd show contents of leaf
+ (define-key org-mode-map [M-home]         'org-collapse)
 
-  ;(define-key org-mode-map [kp-subtract]  'kill-this-buffer-volatile)
-  ;(define-key org-mode-map [kp-divide]    'toggle-window-split)
- )
- ; ------------------------------------------------------------------ TreeNavPad keys for org-mode
- ;; needs ox.el = org-exporter.el
- ;;(require 'ox-confluence)
+ ;(define-key org-mode-map [kp-subtract]  'kill-this-buffer-volatile)
+ ;(define-key org-mode-map [kp-divide]    'toggle-window-split)
+)
+; ------------------------------------------------------------------ TreeNavPad keys for org-mode
+;; needs ox.el = org-exporter.el
+;;(require 'ox-confluence)
 
- ;;C-c c       (org-capture)          Call the command org-capture. Note that this key binding is global and not active by default: you need to install it. If you have templates defined see Capture templates, it will offer these templates for selection or use a new Org outline node as the default template. It will insert the template into the target file and switch to an indirect buffer narrowed to this new node. You may then insert the information you want.
- ;;C-c C-c     (org-capture-finalize) Once you have finished entering information into the capture buffer, C-c C-c will return you to the window configuration before the capture process, so that you can resume your work without further distraction. When called with a prefix arg, finalize and then jump to the captured item.
- ;;C-c C-w     (org-capture-refile)   Finalize the capture process by refiling (see Refile and copy) the note to a different place. Please realize that this is a normal refiling command that will be executed—so the cursor position at the moment you run this command is important. If you have inserted a tree with a parent and children, first move the cursor back to the parent. Any prefix argument given to this command will be passed on to the org-refile command.
- ;;C-c C-k     (org-capture-kill)     Abort the capture process and return to the previous state.
- ;;You can also call org-capture in a special way from the agenda, using the k c key combination. With this access, any timestamps inserted by the selected capture template will default to the cursor date in the agenda, rather than to the current date.
- ;;To find the locations of the last stored capture, use org-capture with prefix commands:
- ;;C-u C-c c                          Visit the target location of a capture template. You get to select the template in the usual way.
- ;;C-u C-u C-c c                      Visit the last stored capture item in its buffer.
+;;C-c c       (org-capture)          Call the command org-capture. Note that this key binding is global and not active by default: you need to install it. If you have templates defined see Capture templates, it will offer these templates for selection or use a new Org outline node as the default template. It will insert the template into the target file and switch to an indirect buffer narrowed to this new node. You may then insert the information you want.
+;;C-c C-c     (org-capture-finalize) Once you have finished entering information into the capture buffer, C-c C-c will return you to the window configuration before the capture process, so that you can resume your work without further distraction. When called with a prefix arg, finalize and then jump to the captured item.
+;;C-c C-w     (org-capture-refile)   Finalize the capture process by refiling (see Refile and copy) the note to a different place. Please realize that this is a normal refiling command that will be executed—so the cursor position at the moment you run this command is important. If you have inserted a tree with a parent and children, first move the cursor back to the parent. Any prefix argument given to this command will be passed on to the org-refile command.
+;;C-c C-k     (org-capture-kill)     Abort the capture process and return to the previous state.
+;;You can also call org-capture in a special way from the agenda, using the k c key combination. With this access, any timestamps inserted by the selected capture template will default to the cursor date in the agenda, rather than to the current date.
+;;To find the locations of the last stored capture, use org-capture with prefix commands:
+;;C-u C-c c                          Visit the target location of a capture template. You get to select the template in the usual way.
+;;C-u C-u C-c c                      Visit the last stored capture item in its buffer.
 
- ;; You can also jump to the bookmark org-capture-last-stored, which
- ;; will automatically be created unless you set org-capture-bookmark
- ;; to nil.
- ;; To insert the capture at point in an Org buffer, call org-capture
- ;; with a C-0 prefix argument.
- ;;
+;; You can also jump to the bookmark org-capture-last-stored, which
+;; will automatically be created unless you set org-capture-bookmark
+;; to nil.
+;; To insert the capture at point in an Org buffer, call org-capture
+;; with a C-0 prefix argument.
+;;
 
- (defun org-table-to-sql ()
-   (interactive)
-   (goto-char (point-min))
-   (forward-line 2)
-   (beginning-of-line)
-   (push-mark)
-   (goto-char (mark-marker)) (replace-regexp "^|"           "("      ) ;; replace leading  | with (
-   (goto-char (mark-marker)) (replace-regexp "|$"         t     )      ;; replace trailing |/LOCAL/USR/MK with ),
-   (goto-char (mark-marker)) (replace-regexp "|$"           "),"     ) ;; replace trailing | with ),
-   (goto-char (mark-marker)) (replace-regexp "\|"           ","      ) ;; replace          | with ,
-   (goto-char (mark-marker)) (replace-regexp "[0-9a-z._-]+" "'\\&'"  ) ;; wrap single quotes around words
-   (goto-char (mark-marker)) (replace-regexp ",[ \t]+,"     ",NULL," ) ;; NULL in gaps
-   (goto-char (mark-marker)) (replace-regexp ",[ \t]+,"     ",NULL," ) ;; NULL in gaps  need to run twice!!!
-   (goto-char (mark-marker)) (replace-regexp ",[ \t]+)"     ",NULL)" ) ;; NULL at end
-   (goto-char (point-max)) (search-backward ",") (delete-char 1)       ;; delete comma after list end
-   (goto-char (point-min))
-   (forward-line 2)
-   (insert "INSERT INTO [EQTYBASKETS_R].dbo.returnSeriesRecord")  
-   (newline)
-   (insert "(rsStrategyName, rsOrigin, rsCurrency, rsType, Description, rsAsOfDate, rsShortCode)") 
-   (newline)
-   (insert "VALUES")
-   (newline)
-   )
+(defun org-table-to-sql ()
+  (interactive)
+  (goto-char (point-min))
+  (forward-line 2)
+  (beginning-of-line)
+  (push-mark)
+  (goto-char (mark-marker)) (replace-regexp "^|"           "("      ) ;; replace leading  | with (
+  (goto-char (mark-marker)) (replace-regexp "|$"         t     )      ;; replace trailing |/LOCAL/USR/MK with ),
+  (goto-char (mark-marker)) (replace-regexp "|$"           "),"     ) ;; replace trailing | with ),
+  (goto-char (mark-marker)) (replace-regexp "\|"           ","      ) ;; replace          | with ,
+  (goto-char (mark-marker)) (replace-regexp "[0-9a-z._-]+" "'\\&'"  ) ;; wrap single quotes around words
+  (goto-char (mark-marker)) (replace-regexp ",[ \t]+,"     ",NULL," ) ;; NULL in gaps
+  (goto-char (mark-marker)) (replace-regexp ",[ \t]+,"     ",NULL," ) ;; NULL in gaps  need to run twice!!!
+  (goto-char (mark-marker)) (replace-regexp ",[ \t]+)"     ",NULL)" ) ;; NULL at end
+  (goto-char (point-max)) (search-backward ",") (delete-char 1)       ;; delete comma after list end
+  (goto-char (point-min))
+  (forward-line 2)
+  (insert "INSERT INTO [EQTYBASKETS_R].dbo.returnSeriesRecord")  
+  (newline)
+  (insert "(rsStrategyName, rsOrigin, rsCurrency, rsType, Description, rsAsOfDate, rsShortCode)") 
+  (newline)
+  (insert "VALUES")
+  (newline)
+  )
 
- ;;------------------------------------- org-mode crypt
- (defun rot-region(p1 p2)
-   (interactive "r")
-    (org-mark-subtree)
-   (save-restriction (org-mark-subtree) (rot13-region (point) (mark)))
- )
+;;------------------------------------- org-mode crypt
+(defun rot-region(p1 p2)
+  (interactive "r")
+   (org-mark-subtree)
+  (save-restriction (org-mark-subtree) (rot13-region (point) (mark)))
+)
 
- (defun rot-region_orig(p1 p2)
-   (interactive "r")
-   (save-restriction (narrow-to-region p1 p2) (rot13-region (point-min) (point-max)))
- )
+(defun rot-region_orig(p1 p2)
+  (interactive "r")
+  (save-restriction (narrow-to-region p1 p2) (rot13-region (point-min) (point-max)))
+)
 
- ;; --------------------------------------------------------------------- org-mode
- (defun org-save-code-block(p1 p2)
-   (interactive "r")
-   ;; for use with es.m
-   ;; and put in top matlab IDE buffer
-   (let
-       ((info (org-babel-get-src-block-info 'light)))
-    (when (equal (nth 0 info) "matlab") (write-region (cadr info) nil "//lon0302/dfs/DATA/MULTI_ASSET/MAQS/dataCollection/FI/LOCAL/USR/MK/vc/maqsMk/init/aaa_org_cmd.m"))
-    (when (equal (nth 0 info) "sql")    (write-region (cadr info) nil "//lon0302/dfs/DATA/MULTI_ASSET/MAQS/dataCollection/FI/LOCAL/USR/MK/vc/rs1/SSI.scratch/notebooks/SQL_QUERY_CMD.sql")))
- )
+;; --------------------------------------------------------------------- org-mode
+(defun org-save-code-block(p1 p2)
+  (interactive "r")
+  ;; for use with es.m
+  ;; and put in top matlab IDE buffer
+  (let
+      ((info (org-babel-get-src-block-info 'light)))
+   (when (equal (nth 0 info) "matlab") (write-region (cadr info) nil "//lon0302/dfs/DATA/MULTI_ASSET/MAQS/dataCollection/FI/LOCAL/USR/MK/vc/maqsMk/init/aaa_org_cmd.m"))
+   (when (equal (nth 0 info) "sql")    (write-region (cadr info) nil "//lon0302/dfs/DATA/MULTI_ASSET/MAQS/dataCollection/FI/LOCAL/USR/MK/vc/rs1/SSI.scratch/notebooks/SQL_QUERY_CMD.sql")))
+)
 
- ;; org-mode hooks
- (add-hook 'org-mode-hook  'hide-ctrl-M)
- (message "-------------- Done: Org Mode")
- #+END_SRC
+;; org-mode hooks
+(add-hook 'org-mode-hook  'hide-ctrl-M)
+(message "-------------- Done: Org Mode")
+#+END_SRC
 *** notes
- ;; ------------------------------------------------------ Org-Mode
- ;; ;(define-key global-map "\C-cl" 'org-store-link)
- ;; ;(define-key global-map "\C-ca" 'org-agenda)
- ;; (defalias 'make-org-tbl  (kbd "ESC x org-mode RET ESC < C-SPC ESC > C-c |"))
- ;; (setq org-default-notes-file "~/myDocs/logbook/notes.org")
- ;; (setq org-cycle-include-plain-lists t);; (setq org-startup-folded nil)
- ;; (defalias 'see-logbooks  (kbd "C-x C-f ~/myDocs/logbook RET"))
- ;; (defun org-collapse()     (interactive) (org-shifttab 0))
- ;;
+;; ------------------------------------------------------ Org-Mode
+;; ;(define-key global-map "\C-cl" 'org-store-link)
+;; ;(define-key global-map "\C-ca" 'org-agenda)
+;; (defalias 'make-org-tbl  (kbd "ESC x org-mode RET ESC < C-SPC ESC > C-c |"))
+;; (setq org-default-notes-file "~/myDocs/logbook/notes.org")
+;; (setq org-cycle-include-plain-lists t);; (setq org-startup-folded nil)
+;; (defalias 'see-logbooks  (kbd "C-x C-f ~/myDocs/logbook RET"))
+;; (defun org-collapse()     (interactive) (org-shifttab 0))
+;;
 
 *** faded
- ;---------------------------------------- expand and collapse
- (defun org-advance ()
+;---------------------------------------- expand and collapse
+(defun org-advance ()
+  (interactive)
+  (when (buffer-narrowed-p)
+  (beginning-of-buffer)
+  (widen)
+  (org-forward-heading-same-level 1))
+  (org-narrow-to-subtree)
+  )
+
+(defun org-retreat ()
+  (interactive)
+  (when (buffer-narrowed-p)
+    (beginning-of-buffer)
+    (widen)
+    (org-backward-heading-same-level 1))
+    (org-narrow-to-subtree)
+    )
+
+--------------;--------------------------------------------------------------------- org-confluence
+; needs ox.el = org-exporter.el
+(require 'ox-confluence)
+(require 'org-exp)
+(require 'org-export)
+(require 'org-confluence)
+
+;----------------------------------------------------------------------------------- org-trello
+;; NO: (add-to-list 'load-path "L:/MyDocs/ulib/emacs/org-trello-master/")
+;;its here: /home/kleynmi/l_C/cygwin64/home/kleynmi/.emacs.d/elpa/org-trello-0.8.1/org-trello.el:
+
+(require 'org-trello)
+;; load trello-key.el
+(add-to-list 'auto-mode-alist '("\\.trello$" . org-mode)) ;; org-trello major mode for all .trello files
+(add-hook 'org-mode-hook                                  ;; add a hook function to check if this is trello file
+          (lambda ()                                      ;; then activate the org-trello minor mode.
+            (let ((filename (buffer-file-name (current-buffer))))
+              (when (and filename (string= "trello" (file-name-extension filename)))
+              (org-trello-mode)))))
+
+(org-trello-install-key-and-token)
+(org-trello-install-board-metadata)
+(org-trello-update-board-metadata)
+(org-trello-sync-buffer t) ; sync of the entire buffer FROM trello.
+
+(setq board-name (read-from-minibuffer "Trello Board: ")
+
+(defun mk-init-keys-trello ()         ; read keys an register them via org-trello function
+   (load "~/.emacs.d/trello-key.el")
+   (orgtrello-controller--do-install-config-file my-trello-id my-trello-consumer-key my-trello-access-token 'do-ask-for-overwrite)
+)
+
+(defun mk-refresh-from-trello ()   ; sync the entire buffer FROM trello.
    (interactive)
-   (when (buffer-narrowed-p)
-   (beginning-of-buffer)
-   (widen)
-   (org-forward-heading-same-level 1))
-   (org-narrow-to-subtree)
-   )
+   ;; (switch-to-buffer board-name)
+   ;; (buffer-mode "org-mode")
+   (org-trello-update-board-metadata)  (message "org-trello-update-board-metadata done")
+   (org-trello-sync-buffer t)    (message "org-trello-sync-buffer done");; t=> FROM TRELLO -TO-> FILE
 
- (defun org-retreat ()
+)
+
+(defun mk-get-from-trello ()   ; prompt for a board, then sync the buffer FROM trello.
    (interactive)
-   (when (buffer-narrowed-p)
-     (beginning-of-buffer)
-     (widen)
-     (org-backward-heading-same-level 1))
-     (org-narrow-to-subtree)
-     )
+   (org-trello-install-board-metadata) (message "org-trello-install-board-metadata done") ;; only for a new board, prompts for board
+   (org-trello-update-board-metadata)  (message "org-trello-update-board-metadata done")
+   (org-trello-sync-buffer t)          (message "org-trello-sync-buffer done")  ;; t=> FROM TRELLO -TO-> FILE
+)
 
- --------------;--------------------------------------------------------------------- org-confluence
- ; needs ox.el = org-exporter.el
- (require 'ox-confluence)
- (require 'org-exp)
- (require 'org-export)
- (require 'org-confluence)
+;; (orgtrello-controller-do-sync-buffer-from-trello)
+;; org-trello-install-key-and-token
+;; (org-trello-update-board-metadata)
+;; (Org-trello-sync-buffer t)
 
- ;----------------------------------------------------------------------------------- org-trello
- ;; NO: (add-to-list 'load-path "L:/MyDocs/ulib/emacs/org-trello-master/")
- ;;its here: /home/kleynmi/l_C/cygwin64/home/kleynmi/.emacs.d/elpa/org-trello-0.8.1/org-trello.el:
-
- (require 'org-trello)
- ;; load trello-key.el
- (add-to-list 'auto-mode-alist '("\\.trello$" . org-mode)) ;; org-trello major mode for all .trello files
- (add-hook 'org-mode-hook                                  ;; add a hook function to check if this is trello file
-           (lambda ()                                      ;; then activate the org-trello minor mode.
-             (let ((filename (buffer-file-name (current-buffer))))
-               (when (and filename (string= "trello" (file-name-extension filename)))
-               (org-trello-mode)))))
-
- (org-trello-install-key-and-token)
- (org-trello-install-board-metadata)
- (org-trello-update-board-metadata)
- (org-trello-sync-buffer t) ; sync of the entire buffer FROM trello.
-
- (setq board-name (read-from-minibuffer "Trello Board: ")
-
- (defun mk-init-keys-trello ()         ; read keys an register them via org-trello function
-    (load "~/.emacs.d/trello-key.el")
-    (orgtrello-controller--do-install-config-file my-trello-id my-trello-consumer-key my-trello-access-token 'do-ask-for-overwrite)
- )
-
- (defun mk-refresh-from-trello ()   ; sync the entire buffer FROM trello.
-    (interactive)
-    ;; (switch-to-buffer board-name)
-    ;; (buffer-mode "org-mode")
-    (org-trello-update-board-metadata)  (message "org-trello-update-board-metadata done")
-    (org-trello-sync-buffer t)    (message "org-trello-sync-buffer done");; t=> FROM TRELLO -TO-> FILE
-
- )
-
- (defun mk-get-from-trello ()   ; prompt for a board, then sync the buffer FROM trello.
-    (interactive)
-    (org-trello-install-board-metadata) (message "org-trello-install-board-metadata done") ;; only for a new board, prompts for board
-    (org-trello-update-board-metadata)  (message "org-trello-update-board-metadata done")
-    (org-trello-sync-buffer t)          (message "org-trello-sync-buffer done")  ;; t=> FROM TRELLO -TO-> FILE
- )
-
- ;; (orgtrello-controller-do-sync-buffer-from-trello)
- ;; org-trello-install-key-and-token
- ;; (org-trello-update-board-metadata)
- ;; (Org-trello-sync-buffer t)
-
- ;;(org-trello-current-prefix-keybinding "C-c o" nil (org-trello))
- ;; (progn
- ;;   (require 'org)
- ;;   (require 'org-trello-utils)
- ;;   (require 'org-trello-log)
- ;;   (require 'org-trello-hash)
- ;;   (require 'dash)
- ;;   (require 'org-trello))
+;;(org-trello-current-prefix-keybinding "C-c o" nil (org-trello))
+;; (progn
+;;   (require 'org)
+;;   (require 'org-trello-utils)
+;;   (require 'org-trello-log)
+;;   (require 'org-trello-hash)
+;;   (require 'dash)
+;;   (require 'org-trello))
 
 *** Org-Babel
 
- #+BEGIN_SRC emacs-lisp
-  ;(org-babel-do-load-languages
-  ; 'org-babel-load-languages
-  ; '((python . t)))
+#+BEGIN_SRC emacs-lisp
+ ;(org-babel-do-load-languages
+ ; 'org-babel-load-languages
+ ; '((python . t)))
 
-  (org-babel-do-load-languages 'org-babel-load-languages '((shell . t)
-                                                           (matlab . t)
-                                                           (python . t)
-                                                           (emacs-lisp . t)
-                                                           (latex . t)
-                                                           (jupyter . t)
-                                                           (dot . t)))
-  ;; (ipython . t)
-  ;; (ein . t)
+ (org-babel-do-load-languages 'org-babel-load-languages '((shell . t)
+                                                          (matlab . t)
+                                                          (python . t)
+                                                          (emacs-lisp . t)
+                                                          (latex . t)
+                                                          (jupyter . t)
+                                                          (dot . t)))
+ ;; (ipython . t)
+ ;; (ein . t)
 
-  (defun my-org-babel-execute-and-next ()
-     (interactive)
-     (org-babel-execute-src-block)
-     (org-babel-next-src-block)
-     (recenter-top-bottom 50)
-  )
+ (defun my-org-babel-execute-and-next ()
+    (interactive)
+    (org-babel-execute-src-block)
+    (org-babel-next-src-block)
+    (recenter-top-bottom 50)
+ )
 
-  (message "-------------- Done: Org-Mode Section")
- #+END_SRC
+ (message "-------------- Done: Org-Mode Section")
+#+END_SRC
 
- #+RESULTS:
- : -------------- Done: Org-Mode Section
+#+RESULTS:
+: -------------- Done: Org-Mode Section
 
-  ;;(require 'org-crypt)
-  ;;(org-crypt-use-before-save-magic)
-  ;;(setq org-tags-exclude-from-inheritance (quote ("crypt")))
-  ;;(setq org-crypt-key nil)
-  ;;
-  ;;(defun crypt-region (p1 p2)
-  ;;  "replace region with crypted"
-  ;;  (interactive "r")
-  ;;  (save-restriction
-  ;;    (narrow-to-region p1 p2)
-  ;;    (goto-char (point-min))
-  ;;    (while (re-search-forward REGEXP nil t)
-  ;;      (replace-match TO-STRING nil nil))
-  ;;    )
-  ;;  )
+ ;;(require 'org-crypt)
+ ;;(org-crypt-use-before-save-magic)
+ ;;(setq org-tags-exclude-from-inheritance (quote ("crypt")))
+ ;;(setq org-crypt-key nil)
+ ;;
+ ;;(defun crypt-region (p1 p2)
+ ;;  "replace region with crypted"
+ ;;  (interactive "r")
+ ;;  (save-restriction
+ ;;    (narrow-to-region p1 p2)
+ ;;    (goto-char (point-min))
+ ;;    (while (re-search-forward REGEXP nil t)
+ ;;      (replace-match TO-STRING nil nil))
+ ;;    )
+ ;;  )
 
-  ;; active Babel languages
-  ;(org-babel-do-load-languages
-  ; 'org-babel-load-languages
-  ; '((R . t)
-  ;   (emacs-lisp . nil)
-  ;   ))
+ ;; active Babel languages
+ ;(org-babel-do-load-languages
+ ; 'org-babel-load-languages
+ ; '((R . t)
+ ;   (emacs-lisp . nil)
+ ;   ))
 
 ** Latex Mode
- ;; (setq exec-path (append exec-path '("/usr/texbin"))) ; not needed
+;; (setq exec-path (append exec-path '("/usr/texbin"))) ; not needed
 
- ;Org Mode can generate Portable Network Graphics (png) bitmaps from L
- ;If you plan to edit LaTeX source code blocks separately, with C-c ', or want to control the size of pdf snippets,
+;Org Mode can generate Portable Network Graphics (png) bitmaps from L
+;If you plan to edit LaTeX source code blocks separately, with C-c ', or want to control the size of pdf snippets,
 
- ;then it is highly recommended that AucTeX be installed, as well.
- ; AucTeX is an extensible package for writing and formatting TeX
- ; files. Assuming that AucTeX is installed properly, the following line
- ;in .emacs will ensure that AucTeX is loaded.
- ;(load "auctex.el" nil t t)
+;then it is highly recommended that AucTeX be installed, as well.
+; AucTeX is an extensible package for writing and formatting TeX
+; files. Assuming that AucTeX is installed properly, the following line
+;in .emacs will ensure that AucTeX is loaded.
+;(load "auctex.el" nil t t)
 
- ;;Also highly recommended is RefTeX, a cross-reference, bibliography, glossary, and index manager initially written by the creator of Org Mode, Carsten Dominik. Add the following line to .emacs:
- ;;(add-hook 'LaTeX-mode-hook 'turn-on-reftex)
+;;Also highly recommended is RefTeX, a cross-reference, bibliography, glossary, and index manager initially written by the creator of Org Mode, Carsten Dominik. Add the following line to .emacs:
+;;(add-hook 'LaTeX-mode-hook 'turn-on-reftex)
 
 ** Dired Mode
- #+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp
 
- ;;(setq dired-use-ls-dired nil)
- (setq dired-dwim-target t)
- (setq dired-subtree-line-prefix "     ")
+;;(setq dired-use-ls-dired nil)
+(setq dired-dwim-target t)
+(setq dired-subtree-line-prefix "     ")
 
- ;; dired-listing-switches  = "-al"
- ;; M-x customize-variable RET dired-listing-switches RET
- ;; Dired Listing Switches: Hide Value -ahl --time-style=long-iso
- ;;  State: SET for current session only.
- (setq dired-listing-switches "-aoht --time-style=long-iso --group-directories-first") ;; list most recent first (setq dired-listing-switches "-aBhl  ")
- ;; (setq dired-omit-files "^\\..*$")
+;; dired-listing-switches  = "-al"
+;; M-x customize-variable RET dired-listing-switches RET
+;; Dired Listing Switches: Hide Value -ahl --time-style=long-iso
+;;  State: SET for current session only.
+(setq dired-listing-switches "-aoht --time-style=long-iso --group-directories-first") ;; list most recent first (setq dired-listing-switches "-aBhl  ")
+;; (setq dired-omit-files "^\\..*$")
 
- ;;(use-package dired-x :config
- ;;  (progn
- ;;    (setq dired-omit-verbose nil)
- ;;    (add-hook 'dired-mode-hook #'dired-omit-mode)
- ;;    (setq dired-omit-files (concat dired-omit-files "\\|^.DS_STORE$\\|^.projectile$"))))
+;;(use-package dired-x :config
+;;  (progn
+;;    (setq dired-omit-verbose nil)
+;;    (add-hook 'dired-mode-hook #'dired-omit-mode)
+;;    (setq dired-omit-files (concat dired-omit-files "\\|^.DS_STORE$\\|^.projectile$"))))
 
- ;;(org-babel-load-file "~/.emacs.d/dotEmacs.org")
- ;;(org-babel-load-file (expand-file-name "~/.emacs.d/dotEmacs.org"))
+;;(org-babel-load-file "~/.emacs.d/dotEmacs.org")
+;;(org-babel-load-file (expand-file-name "~/.emacs.d/dotEmacs.org"))
 
- ;; This isn't nearly as drastic as what you're looking for, but it is possible to customize how Emacs calls ls in dired-mode.
- ;; I used it to omit the group ID of files with the -o option, saving some horizontal screen real estate.
+;; This isn't nearly as drastic as what you're looking for, but it is possible to customize how Emacs calls ls in dired-mode.
+;; I used it to omit the group ID of files with the -o option, saving some horizontal screen real estate.
 
- (defun my-dired-load-hook ()
-     (autoload 'wdired-change-to-wdired-mode "wdired")
-     (setq dired-no-confirm '(revert-subdirs)))
-     ;; Set dired-x global variables here.  For example:
-     ;; (setq dired-guess-shell-gnutar "gtar")
-     ;; (setq dired-x-hands-off-my-keys nil)
-     ;; (setq dired-omit-files "^\\.?#\\|^\\.$\\|^\\.\\.$") ; <- from inside emacs?
-     ;; (setq dired-omit-files "^#\\|^\\.$|\\.\\.$")
-     ;; (setq dired-omit-files "^\\|^\\..*$")
-     ;; (setq dired-omit-files "^\\..*$")
-     ; ;(setq dired-omit-extensions '(".asv" "~" ".o" ".pyc" ".class"))
- (add-hook 'dired-load-hook 'my-dired-load-hook)
+(defun my-dired-load-hook ()
+    (autoload 'wdired-change-to-wdired-mode "wdired")
+    (setq dired-no-confirm '(revert-subdirs)))
+    ;; Set dired-x global variables here.  For example:
+    ;; (setq dired-guess-shell-gnutar "gtar")
+    ;; (setq dired-x-hands-off-my-keys nil)
+    ;; (setq dired-omit-files "^\\.?#\\|^\\.$\\|^\\.\\.$") ; <- from inside emacs?
+    ;; (setq dired-omit-files "^#\\|^\\.$|\\.\\.$")
+    ;; (setq dired-omit-files "^\\|^\\..*$")
+    ;; (setq dired-omit-files "^\\..*$")
+    ; ;(setq dired-omit-extensions '(".asv" "~" ".o" ".pyc" ".class"))
+(add-hook 'dired-load-hook 'my-dired-load-hook)
 
- (defun my-dired-mode-hook ()
-     ;; Set dired-x buffer-local variables here.  For example:
-     (dired-omit-mode 1)
-     (setq dired-omit-verbose nil)
-     (setq dired-omit-files-p t)
-     (setq dired-omit-files "^\\..*$")
-     (setq dired-omit-extensions '(".asv" "~" ".o" ".pyc" ".class"))
-     (toggle-truncate-lines 1)
-     (setq dired-no-confirm '(revert-subdirs)))
- (add-hook 'dired-mode-hook 'my-dired-mode-hook)             ;(setq dired-mode-hook nil)
+(defun my-dired-mode-hook ()
+    ;; Set dired-x buffer-local variables here.  For example:
+    (dired-omit-mode 1)
+    (setq dired-omit-verbose nil)
+    (setq dired-omit-files-p t)
+    (setq dired-omit-files "^\\..*$")
+    (setq dired-omit-extensions '(".asv" "~" ".o" ".pyc" ".class"))
+    (toggle-truncate-lines 1)
+    (setq dired-no-confirm '(revert-subdirs)))
+(add-hook 'dired-mode-hook 'my-dired-mode-hook)             ;(setq dired-mode-hook nil)
 
- (defadvice dired-sort-toggle-or-edit (after dired-sort-to-top activate)
-    "Move to beginning of buffer (instead of keeping point on the current file)."
+(defadvice dired-sort-toggle-or-edit (after dired-sort-to-top activate)
+   "Move to beginning of buffer (instead of keeping point on the current file)."
+   (goto-char (point-min))
+   (forward-line 3))
+
+(defun dired-find-file-drop-prev-dired-buffer (&optional arg)
+  (interactive)
+  (dired-find-file)
+  (switch-to-prev-buffer)
+  (setq oldBuff  (buffer-name))  ;; returns current buffer
+  (kill-buffer)
+  (setq newBuff (buffer-name))  ;; returns current buffer
+  (message (format "dired switched DOWN to %s -> %s" oldBuff newBuff))
+)
+
+(defun dired-up-directory-drop-prev-dired-buffer (&optional arg)
+  (interactive)
+  (dired-up-directory)
+  (switch-to-prev-buffer)
+  (setq oldBuff  (buffer-name))  ;; returns current buffer
+  (kill-buffer)
+  (setq newBuff  (buffer-name))  ;; returns current buffer
+  (message (format "dired switched UP to %s <- %s" newBuff oldBuff))
+)
+
+(defun dired-ediff-git (&optional arg)
+  (interactive)
+  (setq ffn (dired-get-filename))
+  (setq fn  (dired-get-filename "no-dir"))
+  (setq-default fill-column     200)
+  (ediff-revision fn)
+  ;;(dired-rename-file ffn (concat "//lon0302/dfs/DATA/MULTI_ASSET/MAQS/dataCollection/FI/LOCAL/ARCHIVE/OLD/" fn))
+  ;; dired-rename-file (file newname ok-if-already-exists)
+  )
+
+(defun dired-move-to-old (&optional arg)
+  (interactive)
+  (setq curDrdBuff (current-buffer))
+  (setq ffn (dired-get-filename))
+  (setq fn  (dired-get-filename "no-dir"))
+  (switch-to-buffer "*Scratch*")
+  (insert "hello dired-move-to-old") (newline)
+  (insert ffn)  (newline)
+  (insert fn)   (newline)
+  (insert "bye dired-move-to-old")  (newline)
+  (rename-file ffn (concat "~/tmp/" fn))
+  (switch-to-buffer curDrdBuff)
+  (revert-buffer)
+  ;;(dired-rename-file ffn (concat "//lon0302/dfs/DATA/MULTI_ASSET/MAQS/dataCollection/FI/LOCAL/ARCHIVE/OLD/" fn))
+  ;;dired-rename-file (file newname ok-if-already-exists)
+  )
+
+(defun dired-cd-eshell (&optional arg)
+  "Move down one line and view the current file in another window."
+  (interactive)
+  (setq ffn (dired-get-filename))
+  (message (concat "ffn" ffn))
+  (switch-to-buffer "*eshell*")
+  (goto-char (point-max))
+  (insert (concat "cd " (file-name-directory ffn) "; ll" ))
+  )
+
+(defun dired-paste-to-yank-buffer (&optional arg)
+  "Move down one line and view the current file in another window."
+  (interactive)
+  (setq ffn (dired-get-filename))
+  (message ffn)
+  (kill-append (dired-get-filename) nil)
+  )
+
+;;------------------------------------ dired peek at file contents
+(defun dired-view-next ()
+  "Move down one line and view the current file in another window."
+  (interactive)
+  (dired-next-line 1)
+  (dired-view-current)
+  ;(other-window 1)
+  ;(switch-to-buffer (previous-buffer))
+  )
+
+(defun dired-view-previous ()
+  "Move up one line and view the current file in another window."
+  (interactive)
+  (dired-previous-line 1)
+  (dired-view-current)
+  ;(other-window 1)
+  ;(switch-to-buffer (previous-buffer))
+  )
+
+(defun dired-view-current ()
+  "View the current file in another window (possibly newly created)."
+  (interactive)
+  (if (not (window-parent))
+      (split-window nil nil t))                         ; create a new window -right side if necessary
+  (let ((file (dired-get-file-for-visit))
+        (dbuffer (current-buffer)))
+    (other-window 1)                                    ; switch to the other window
+    (unless (equal dbuffer (current-buffer))            ; don't kill the dired buffer
+      (if (or view-mode (equal major-mode 'dired-mode)) ; only if in view- or dired-mode
+          (kill-buffer)))                               ; ... kill it
+    (let ((filebuffer (get-file-buffer file)))
+      (if filebuffer                                    ; does a buffer already look at the file
+          (switch-to-buffer filebuffer)                 ; simply switch
+        (view-file file))                               ; ... view it
+      (other-window -1)
+      (get-file-buffer file)))                         ; give the attention back to the dired buffer
+   )
+
+;; ensure "." and ".." are skipped
+(defvar subdired-listing-switches "-oht --time-style=long-iso --group-directories-first"  "omit -a relative to dired-listing-switches")
+; redefine dired-subtree--readin with subdired-listing-switches
+(defun dired-subtree--readin (dir-name)
+  "Read in the directory.
+   Return a string suitable for insertion in `dired' buffer."
+  (with-temp-buffer
+    (insert-directory dir-name subdired-listing-switches nil t)
+    (delete-char -1)
     (goto-char (point-min))
-    (forward-line 3))
+    (kill-line 1)
+    (insert "  ")
+    (while (= (forward-line) 0)
+      (insert "  "))
+    (delete-char -2)
+    (buffer-string))
+  )
 
- (defun dired-find-file-drop-prev-dired-buffer (&optional arg)
-   (interactive)
-   (dired-find-file)
-   (switch-to-prev-buffer)
-   (setq oldBuff  (buffer-name))  ;; returns current buffer
-   (kill-buffer)
-   (setq newBuff (buffer-name))  ;; returns current buffer
-   (message (format "dired switched DOWN to %s -> %s" oldBuff newBuff))
- )
+(progn
+  (define-key dired-mode-map "J"               'dired-move-to-old) ; junk
+  (define-key dired-mode-map "O"               'ergoemacs-open-in-external-app)  ;; '(lambda () (interactive) (w32-browser (dired-replace-in-string "/" "\\" (dired-get-filename)))))
+  (define-key dired-mode-map (kbd "r")         'wdired-change-to-wdired-mode)
+  (define-key dired-mode-map (kbd "t")         'dired-omit-mode)
+  (define-key dired-mode-map (kbd "c")         'dired-ediff-git)      ;; compare to last version with ediff
+  (define-key dired-mode-map (kbd "e")         'dired-cd-eshell)      ;; was dired-subtree-only-this-file
+  (define-key dired-mode-map (kbd "p")         'dired-paste-to-yank-buffer)
+  (define-key dired-mode-map [M-down]          'dired-view-next)      ;; was dired-previous-line
+  (define-key dired-mode-map [M-up]            'dired-view-previous)  ;; was dired-next-line
+)
 
- (defun dired-up-directory-drop-prev-dired-buffer (&optional arg)
-   (interactive)
-   (dired-up-directory)
-   (switch-to-prev-buffer)
-   (setq oldBuff  (buffer-name))  ;; returns current buffer
-   (kill-buffer)
-   (setq newBuff  (buffer-name))  ;; returns current buffer
-   (message (format "dired switched UP to %s <- %s" newBuff oldBuff))
- )
+(defvar dired-subtree-last-previewed-buffer nil  "record which previous preview buffer to delete")
+(make-variable-buffer-local 'dired-subtree-last-previewed-buffer)
 
- (defun dired-ediff-git (&optional arg)
-   (interactive)
-   (setq ffn (dired-get-filename))
-   (setq fn  (dired-get-filename "no-dir"))
-   (setq-default fill-column     200)
-   (ediff-revision fn)
-   ;;(dired-rename-file ffn (concat "//lon0302/dfs/DATA/MULTI_ASSET/MAQS/dataCollection/FI/LOCAL/ARCHIVE/OLD/" fn))
-   ;; dired-rename-file (file newname ok-if-already-exists)
+
+; ------------------------------------------------------------------ TreeNavPad keys for dired
+(defun my-subdired-dft ()
+  "depth-first traversal for dired-subtree"
+  (interactive) 
+  (let ((sDpth (dired-subtree--get-depth (dired-subtree--get-ov))))
+    (if (dired-utils-is-dir-p)
+        (if (dired-subtree--is-expanded-p)
+            (dired-subtree-remove)
+            (dired-subtree-insert))
+        (progn
+          (if  dired-subtree-last-previewed-buffer (kill-buffer dired-subtree-last-previewed-buffer))   ;; delete previous preview buffer, if any
+          (setq dired-subtree-last-previewed-buffer (dired-view-current))           ;; record previewed buffer
+          (dired-next-line 1)
+          (setq cDpth (dired-subtree--get-depth (dired-subtree--get-ov)))
+          (message (concat "cDpth=" (number-to-string cDpth) "--" "sDpth" (number-to-string sDpth)))
+          (if (< cDpth sDpth)                                                      ;; have we gone up a level, if so remove the subtree we were just in
+              (progn
+                (dired-previous-line 1)
+                (dired-subtree-remove)
+                (dired-next-line 1))))))
    )
 
- (defun dired-move-to-old (&optional arg)
-   (interactive)
-   (setq curDrdBuff (current-buffer))
-   (setq ffn (dired-get-filename))
-   (setq fn  (dired-get-filename "no-dir"))
-   (switch-to-buffer "*Scratch*")
-   (insert "hello dired-move-to-old") (newline)
-   (insert ffn)  (newline)
-   (insert fn)   (newline)
-   (insert "bye dired-move-to-old")  (newline)
-   (rename-file ffn (concat "~/tmp/" fn))
-   (switch-to-buffer curDrdBuff)
-   (revert-buffer)
-   ;;(dired-rename-file ffn (concat "//lon0302/dfs/DATA/MULTI_ASSET/MAQS/dataCollection/FI/LOCAL/ARCHIVE/OLD/" fn))
-   ;;dired-rename-file (file newname ok-if-already-exists)
+(defun my-dired-up-to-parent ()                                                 ;; tbd if not a subdir (i.e. in rootdir), then jump  'dired-up-directory-drop-prev-dired-buffer
+  (interactive) 
+  (let ((sDpth (dired-subtree--get-depth (dired-subtree--get-ov))))
+       ; (message sDpth)
+       (if (eq sDpth 0)
+           (dired-up-directory-drop-prev-dired-buffer)
+           (dired-subtree-remove)))
    )
 
- (defun dired-cd-eshell (&optional arg)
-   "Move down one line and view the current file in another window."
-   (interactive)
-   (setq ffn (dired-get-filename))
-   (message (concat "ffn" ffn))
-   (switch-to-buffer "*eshell*")
-   (goto-char (point-max))
-   (insert (concat "cd " (file-name-directory ffn) "; ll" ))
+(defun my-dired-subtree-toggle () 
+  (interactive) 
+  (if (dired-subtree--is-expanded-p)
+      (progn (dired-next-line 1) (dired-subtree-remove))
+      (progn (dired-subtree-insert) (dired-previous-line 1)))  
    )
 
- (defun dired-paste-to-yank-buffer (&optional arg)
-   "Move down one line and view the current file in another window."
-   (interactive)
-   (setq ffn (dired-get-filename))
-   (message ffn)
-   (kill-append (dired-get-filename) nil)
-   )
+(defun my-dired-subtree-next-sibling-n (n)
+  (interactive)
+  (dotimes (i n) (dired-subtree-next-sibling))
+  )
 
- ;;------------------------------------ dired peek at file contents
- (defun dired-view-next ()
-   "Move down one line and view the current file in another window."
-   (interactive)
-   (dired-next-line 1)
-   (dired-view-current)
-   ;(other-window 1)
-   ;(switch-to-buffer (previous-buffer))
-   )
+(defun my-dired-subtree-prev-sibling-n (n)
+  (interactive)
+  (dotimes (i n) (dired-subtree-prev-sibling))
+  )
 
- (defun dired-view-previous ()
-   "Move up one line and view the current file in another window."
-   (interactive)
-   (dired-previous-line 1)
-   (dired-view-current)
-   ;(other-window 1)
-   ;(switch-to-buffer (previous-buffer))
-   )
-
- (defun dired-view-current ()
-   "View the current file in another window (possibly newly created)."
-   (interactive)
-   (if (not (window-parent))
-       (split-window nil nil t))                         ; create a new window -right side if necessary
-   (let ((file (dired-get-file-for-visit))
-         (dbuffer (current-buffer)))
-     (other-window 1)                                    ; switch to the other window
-     (unless (equal dbuffer (current-buffer))            ; don't kill the dired buffer
-       (if (or view-mode (equal major-mode 'dired-mode)) ; only if in view- or dired-mode
-           (kill-buffer)))                               ; ... kill it
-     (let ((filebuffer (get-file-buffer file)))
-       (if filebuffer                                    ; does a buffer already look at the file
-           (switch-to-buffer filebuffer)                 ; simply switch
-         (view-file file))                               ; ... view it
-       (other-window -1)
-       (get-file-buffer file)))                         ; give the attention back to the dired buffer
-    )
-
- ;; ensure "." and ".." are skipped
- (defvar subdired-listing-switches "-oht --time-style=long-iso --group-directories-first"  "omit -a relative to dired-listing-switches")
- ; redefine dired-subtree--readin with subdired-listing-switches
- (defun dired-subtree--readin (dir-name)
-   "Read in the directory.
-    Return a string suitable for insertion in `dired' buffer."
-   (with-temp-buffer
-     (insert-directory dir-name subdired-listing-switches nil t)
-     (delete-char -1)
-     (goto-char (point-min))
-     (kill-line 1)
-     (insert "  ")
-     (while (= (forward-line) 0)
-       (insert "  "))
-     (delete-char -2)
-     (buffer-string))
-   )
-
- (progn
-   (define-key dired-mode-map "J"               'dired-move-to-old) ; junk
-   (define-key dired-mode-map "O"               'ergoemacs-open-in-external-app)  ;; '(lambda () (interactive) (w32-browser (dired-replace-in-string "/" "\\" (dired-get-filename)))))
-   (define-key dired-mode-map (kbd "r")         'wdired-change-to-wdired-mode)
-   (define-key dired-mode-map (kbd "t")         'dired-omit-mode)
-   (define-key dired-mode-map (kbd "c")         'dired-ediff-git)      ;; compare to last version with ediff
-   (define-key dired-mode-map (kbd "e")         'dired-cd-eshell)      ;; was dired-subtree-only-this-file
-   (define-key dired-mode-map (kbd "p")         'dired-paste-to-yank-buffer)
-   (define-key dired-mode-map [M-down]          'dired-view-next)      ;; was dired-previous-line
-   (define-key dired-mode-map [M-up]            'dired-view-previous)  ;; was dired-next-line
- )
-
- (defvar dired-subtree-last-previewed-buffer nil  "record which previous preview buffer to delete")
- (make-variable-buffer-local 'dired-subtree-last-previewed-buffer)
+(progn ;; dired treepad navigation
+  (define-key dired-mode-map [kp-4]             '(lambda () (interactive)  (my-dired-up-to-parent) (my-dired-up-to-parent)))
+  (define-key dired-mode-map [kp-5]                                        'my-dired-up-to-parent)                   ;; move #6=u1 
+  (define-key dired-mode-map [kp-multiply]      '(lambda () (interactive)  (my-dired-subtree-prev-sibling-n 7)))     ;; moveto nth sibling, and open(org-backward-heading-same-level 6)))
+  (define-key dired-mode-map [kp-9]                                        'dired-subtree-previous-sibling)          ;; move #2=ps 
+  (define-key dired-mode-map [kp-6]                                        'my-dired-subtree-toggle)                 ;; tbd toggle with 'dired-subtree-remove ;; toggle open children
+  (define-key dired-mode-map [kp-3]                                        'dired-subtree-next-sibling)              ;; move #8=ns 
+  (define-key dired-mode-map [kp-decimal]       '(lambda () (interactive)  (my-dired-subtree-next-sibling-n 7)))     ;; moveto nth sibling, and open
+  (define-key dired-mode-map [kp-add]           'my-subdired-dft)                                                    ;; dired-subtree-insert move #8=ns     ;; open and moveto first child, 
+  (define-key dired-mode-map [C-kp-add]         'dired-find-file)
+)
+; ------------------------------------------------------------------ TreeNavPad keys for dired
 
 
- ; ------------------------------------------------------------------ TreeNavPad keys for dired
- (defun my-subdired-dft ()
-   "depth-first traversal for dired-subtree"
-   (interactive) 
-   (let ((sDpth (dired-subtree--get-depth (dired-subtree--get-ov))))
-     (if (dired-utils-is-dir-p)
-         (if (dired-subtree--is-expanded-p)
-             (dired-subtree-remove)
-             (dired-subtree-insert))
-         (progn
-           (if  dired-subtree-last-previewed-buffer (kill-buffer dired-subtree-last-previewed-buffer))   ;; delete previous preview buffer, if any
-           (setq dired-subtree-last-previewed-buffer (dired-view-current))           ;; record previewed buffer
-           (dired-next-line 1)
-           (setq cDpth (dired-subtree--get-depth (dired-subtree--get-ov)))
-           (message (concat "cDpth=" (number-to-string cDpth) "--" "sDpth" (number-to-string sDpth)))
-           (if (< cDpth sDpth)                                                      ;; have we gone up a level, if so remove the subtree we were just in
-               (progn
-                 (dired-previous-line 1)
-                 (dired-subtree-remove)
-                 (dired-next-line 1))))))
-    )
+;;--------------------------------- ----------------------------- Tramp
+;;(setq tramp-default-method "ssh")
+(setq tramp-verbose 10)
+;; /adb::/path/to/file.
 
- (defun my-dired-up-to-parent ()                                                 ;; tbd if not a subdir (i.e. in rootdir), then jump  'dired-up-directory-drop-prev-dired-buffer
-   (interactive) 
-   (let ((sDpth (dired-subtree--get-depth (dired-subtree--get-ov))))
-        ; (message sDpth)
-        (if (eq sDpth 0)
-            (dired-up-directory-drop-prev-dired-buffer)
-            (dired-subtree-remove)))
-    )
-
- (defun my-dired-subtree-toggle () 
-   (interactive) 
-   (if (dired-subtree--is-expanded-p)
-       (progn (dired-next-line 1) (dired-subtree-remove))
-       (progn (dired-subtree-insert) (dired-previous-line 1)))  
-    )
-
- (defun my-dired-subtree-next-sibling-n (n)
-   (interactive)
-   (dotimes (i n) (dired-subtree-next-sibling))
-   )
-
- (defun my-dired-subtree-prev-sibling-n (n)
-   (interactive)
-   (dotimes (i n) (dired-subtree-prev-sibling))
-   )
-
- (progn ;; dired treepad navigation
-   (define-key dired-mode-map [kp-4]             '(lambda () (interactive)  (my-dired-up-to-parent) (my-dired-up-to-parent)))
-   (define-key dired-mode-map [kp-5]                                        'my-dired-up-to-parent)                   ;; move #6=u1 
-   (define-key dired-mode-map [kp-multiply]      '(lambda () (interactive)  (my-dired-subtree-prev-sibling-n 7)))     ;; moveto nth sibling, and open(org-backward-heading-same-level 6)))
-   (define-key dired-mode-map [kp-9]                                        'dired-subtree-previous-sibling)          ;; move #2=ps 
-   (define-key dired-mode-map [kp-6]                                        'my-dired-subtree-toggle)                 ;; tbd toggle with 'dired-subtree-remove ;; toggle open children
-   (define-key dired-mode-map [kp-3]                                        'dired-subtree-next-sibling)              ;; move #8=ns 
-   (define-key dired-mode-map [kp-decimal]       '(lambda () (interactive)  (my-dired-subtree-next-sibling-n 7)))     ;; moveto nth sibling, and open
-   (define-key dired-mode-map [kp-add]           'my-subdired-dft)                                                    ;; dired-subtree-insert move #8=ns     ;; open and moveto first child, 
-   (define-key dired-mode-map [C-kp-add]         'dired-find-file)
- )
- ; ------------------------------------------------------------------ TreeNavPad keys for dired
-
-
- ;;--------------------------------- ----------------------------- Tramp
- ;;(setq tramp-default-method "ssh")
- (setq tramp-verbose 10)
- ;; /adb::/path/to/file.
-
- (message "-------------- Done: Dired Section")
- #+END_SRC
+(message "-------------- Done: Dired Section")
+#+END_SRC
 
 *** Dired/subtree funs
 
@@ -2323,9 +2324,6 @@ M-x clone-indirect-buffer RET
   ;Call the ztree-diff interactive function: M-x ztree-diff
 
 
- ;;-------------------------------------------------------------------------------- NeoTree
- (add-to-list 'load-path "/home/uri03204/ulib/emacs/neotree")
- (require 'neotree)
  ;;-------------------------------------------------------------------------------- ztree
  (setq load-path (append load-path '("/home/uri03204/ulib/emacs/ztree-master"))) ;; (insert (format "%s" load-path))
  (require 'ztree-diff)
@@ -2490,24 +2488,22 @@ org-goto
    M-i babel> complete-symbol
 
 ** Function Keys
-|--------------+-----------+--------------+--------------+------+------------------+--------------+-----------+--------------------+------+-------------+-----------+-------+--------------|
-| F1           | F2        | F3           | F4           | ***  | F5               | F6           | F7        | F8                 | ***  | F9          | F10       | F11   | F12          |
-|--------------+-----------+--------------+--------------+------+------------------+--------------+-----------+--------------------+------+-------------+-----------+-------+--------------|
-| *eshell*     | doAndDone | ibuffers     | dired ~/     |      | app-open    file | window flip  | print var | babel exec block   |      | macro-start | tog node  | selv0 | edebug fun   |
-|--------------+-----------+--------------+--------------+------+------------------+--------------+-----------+--------------------+------+-------------+-----------+-------+--------------|
-| *bash*       | mySystems | dotEmacs     | dired repos/ | CTRL | open @point file | truncation   |           | babel exec & next  | CTRL | macro-go    | tog all   | selv+ | debug-off    |
-| *python*     | scratch   | dotBashrc    | dired hist/  | SHFT | clip @point file | bool flip    |           | babel exec subtree | SHFT | macro-end   | open all  | selv- | debug-on     |
-|--------------+-----------+--------------+--------------+------+------------------+--------------+-----------+--------------------+------+-------------+-----------+-------+--------------|
-| *babel sess* | jupyClips | recenter top |              | ALT  | clip currnt file | table transp |           |                    | ALT  |             | yafolding |       | tog py break |
-| *ansi*?      | access    | recenter mid |              | SUPR | clip dired  file |              |           | babel session buff | SUPR |             |           |       |              |
-|--------------+-----------+--------------+--------------+------+------------------+--------------+-----------+--------------------+------+-------------+-----------+-------+--------------|
+|----------+-----------+--------------+--------------+------+------------------+--------------+-----------+--------------------+------+-------------+-----------+-------+--------------|
+| F1       | F2        | F3           | F4           | ***  | F5               | F6           | F7        | F8                 | ***  | F9          | F10       | F11   | F12          |
+|----------+-----------+--------------+--------------+------+------------------+--------------+-----------+--------------------+------+-------------+-----------+-------+--------------|
+| *eshell* | doAndDone | ibuffers     | dired ~/     |      | app-open    file | window flip  | print var | babel exec block   |      | macro-start | tog node  | selv0 | edebug fun   |
+|----------+-----------+--------------+--------------+------+------------------+--------------+-----------+--------------------+------+-------------+-----------+-------+--------------|
+| *bash*   | mySystems | dotEmacs     | dired repos/ | CTRL | open @point file | tog truncate |           | babel exec & next  | CTRL | macro-go    | tog all   | selv+ | debug-off    |
+| *python* | scratch   | dotBashrc    | dired hist/  | SHFT | clip @point file | bool-flip    |           | babel exec subtree | SHFT | macro-end   | open all  | selv- | debug-on     |
+|----------+-----------+--------------+--------------+------+------------------+--------------+-----------+--------------------+------+-------------+-----------+-------+--------------|
+|          | jupyClips | recenter top |              | ALT  | clip currnt file | table transp |           | babel latex?       | ALT  |             | yafolding |       | tog py break |
+|          | access    | recenter mid |              | SUPR | clip dired  file |              |           | babel session      | SUPR |             |           |       |              |
+|----------+-----------+--------------+--------------+------+------------------+--------------+-----------+--------------------+------+-------------+-----------+-------+--------------|
 
 #+BEGIN_SRC emacs-lisp
 (global-set-key [f1]       '(lambda () (interactive) (progn (if (eq (get-buffer "*eshell*") nil) (eshell))     (switch-to-buffer "*eshell*"))))
 (global-set-key [C-f1]     '(lambda () (interactive) (progn (if (eq (get-buffer "*shell*")  nil) (shell))      (switch-to-buffer "*shell*"))))
 (global-set-key [S-f1]     '(lambda () (interactive) (progn (if (eq (get-buffer "*Python*") nil) (run-python)) (switch-to-buffer "*Python*"))))
-(global-set-key [M-f1]     '(lambda () (interactive) (org-babel-switch-to-session)))
-(global-set-key [s-f1]     '(lambda () (interactive) (org-babel-execute-subtree)))
 ;;'ielm) ;; open file under cursor ;;(global-set-key [M-f9] 'insertLastSexp) ;; insert result
 
 (global-set-key [f2]       '(lambda () (interactive) (find-file "/home/kleyn/aNotes/doAndDone.org")))
@@ -2538,9 +2534,10 @@ org-goto
 (global-set-key [M-f5]     'filepath-on-clipboard)
 (global-set-key [s-f5]     'dired-paste-to-yank-buffer)
 
-(global-set-key [f6]       'org-transpose-table-at-point)
-(global-set-key [C-f6]     'bool-flip-do-flip)
-(global-set-key [S-f6]     'toggle-truncate-lines)
+(global-set-key [f6]       'toggle-window-split)
+(global-set-key [C-f6]     'toggle-truncate-lines)
+(global-set-key [S-f6]     'bool-flip-do-flip)
+(global-set-key [M-f6]     'org-transpose-table-at-point)
 
 (global-set-key [f7]       '(lambda () (interactive)  (let* ((currWord (thing-at-point 'symbol t))
                                                              (currWordVal (symbol-value (intern currWord))))
@@ -2549,7 +2546,11 @@ org-goto
                                                           (cl-prettyprint currWordVal))))
 (global-set-key [S-f7]     'show-hist)                           ;; (global-set-key [S-f7] 'buffer-menu-sort-by-filename)
 
-(global-set-key [f8]       'toggle-window-split)
+(global-set-key [f8]     '(lambda () (interactive) (org-babel-execute-src-block)))
+(global-set-key [C-f8]   '(lambda () (interactive) (my-org-babel-execute-and-next)))
+(global-set-key [S-f8]   '(lambda () (interactive) (org-babel-execute-subtree)))
+(global-set-key [M-f8]   '(lambda () (interactive)  (org-latex-preview)))
+(global-set-key [s-f8]   '(lambda () (interactive) (org-babel-switch-to-session)))
 
 (global-set-key [f9]       'kmacro-start-macro)                  ;; 'ielm)  ;; open file under cursor
 (global-set-key [C-f9]     'kmacro-end-and-call-macro)           ;; see-shell-output) ;ergoemacs-open-in-external-app
