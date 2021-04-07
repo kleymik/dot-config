@@ -59,7 +59,7 @@ function sgf () {
 }
 
 
-alias sleepMaxwell='sync && sleep 20 && systemctl suspend'
+alias sleepMaxwell='sync && sleep 10 && systemctl suspend -i'
 
 # ALIAS ------------------------------------------------------------------------ alias
 function ag () {
@@ -92,12 +92,12 @@ export HISTFILE=~/history/commands/history.$$.$(date +%Y%m%d_%H%M)
 alias h='history 30'
 alias hh='history 300'
 alias hs='history | tee ~/history/commands/history_`date +%Y%m%d_%H%M` | tail -30'
-function hl   () { history | tail -40 ; }
-function hll  () { ls -lrt ~/history/commands | tail -6 ; }
-function hg   () { history | grep "$@" | cut -b 8- | sort | uniq                                ; }
-#function hgg () { grep "$@" ~/history/commands/hist*`date +%Y%m*`                              ; }
+function hl   () { history | tail -40                                                                     ; }
+function hll  () { ls -lrt ~/history/commands | tail -6                                                   ; }
+function hg   () { history | grep "$@" | cut -b 8- | sort | uniq                                          ; }
+#function hgg () { grep "$@" ~/history/commands/hist*`date +%Y%m*`                                        ; }
 function hgg  () { find  ~/history/commands/ -mtime -100 -type f | sort | xargs grep -i "$@" | cut -b 46- ; }
-function hggg () { grep "$@" ~/history/commands/*                                               ; }
+function hggg () { grep "$@" ~/history/commands/*                                                         ; }
 
 # log terminal activity - but messes up the use of this script
 function termLog () { script ~/history/termLogs/termLog_"$@"_`date +%Y%m%d_%H%M`; }
@@ -125,6 +125,7 @@ alias gdaprocs='netstat -tlnp 2>/dev/null | grep java | sort -k 7'
 alias jpps='/dls_sw/apps/java/x64/gda842/bin/jps'
 alias rd='rdesktop -a 32 -x 0x80 -g 1920x1080 DIAMRL5319 -r sound:remote'
 function see () { more `which "$@"`; }
+
 
 # ------------------------------------------------------------------------------ networky stuff
 alias netsl='netstat -tlnp'
@@ -232,7 +233,7 @@ function gitcfg () {
 #alias tbird='(export LC_TIME=en_DK.UTF-8; /usr/lib/thunderbird/thunderbird )'
 #alias ff='firefox  -P default -new-instance 2> /dev/null &'
 #alias ffn='firefox -P news    -new-instance 2> /dev/null &'
-alias firefox='flatpak run org.mozilla.firefox'
+alias firefoxfp='flatpak run org.mozilla.firefox'
 # -------------------------------------------------------------- emacs
 alias emnw='emacs26 -nw -fg black  -bg white1'
 alias ew='emacsclient -n'
@@ -247,6 +248,10 @@ alias cw='cut -b -$COLUMNS'
 alias app_open='xdg-open'
 
 # ------------------------------------------------------------------------------- process stuff
+
+export NMON=CcdtJr
+
+
 # ps -ejH
 # pstree
 # alias ptree='ps -ef --forest'
@@ -422,6 +427,16 @@ alias xtmy='xterm  -sl 20000 -bg darkgrey  -fg white  -cr lightblue     &'
 alias xtmo='xterm  -sl 20000 -bg orange4   -fg white  -cr lightgreen    &'
 alias xtmv='xterm  -sl 20000 -bg palevioletred -fg black -cr lightgreen &'
 
+# --------------------------------------------------------------------------------- start jobs
+function startJobs () {
+  firefox &
+  thunderbird &
+  emacs &
+  chromium-browser &
+  krdc &
+  kmix &
+}
+
 # ---------------------------------------------------------------------------------- window title
 # function my_set_screen_title() {
 #   echo -ne "\ekHELLO$1\e\\"
@@ -494,6 +509,9 @@ alias remNfsEuler='sudo mount.cifs -o username=kleyn,uid=1000,gid=1000 //192.168
 alias apt-all='aptitude search ~i'
 
 # misc
+alias utilBlk='lsblk'
+alias utilUsb='lsusb'
+alias utilHw='lshw'
 alias utilCpu='lscpu | egrep "Model name|Socket|Thread|NUMA|CPU\(s\)"'
 alias utilGpu='glxinfo |grep -i -o "device|memory\|[0-9]\{1,12\} MB" |head -n 1'
 alias utilNet='ip a | grep inet'
