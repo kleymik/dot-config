@@ -25,12 +25,13 @@ promptFunc() {
   # right before prompting for the
   # next command, save the previous
   # command in a file. $(hostname)
-  echo "$(date +%Y-%m-%d--%H-%M-%S) : $$ : $PWD: $(history 1)" >> ~/history/commands/history_$(date +%Y-%V)
+  echo "$(date +%Y-%m-%d--%H-%M-%S) : $$ : $PWD: $(history 1)" >> ~/history/commands/history_$(date +%Y-w%V)
 }
 
 export HISTTIMEFORMAT='%Y%m%d-%T: '
 PROMPT_COMMAND=promptFunc
 PROMPT_DIRTRIM=20
+export VIRTUAL_ENV_DISABLE_PROMPT=1
 # export PS1="\e[0;36m=[\h:\u:\$\$]=:\t:\w:\e[m\n>"
 # export PS1="\e[0;36m=[\$(parse_git_branch) \$(parse_pyvenv)]=:\t:\w:\e[m\n>\e]0;CWD=\$PWD VENV=\$VIRTUAL_ENV\a"
 # add pid to title (doesn't update on prompt)
@@ -39,6 +40,7 @@ PROMPT_DIRTRIM=20
 #export PS1="\e[0;36m=[ \h:\u:\$\$ ]=:[ \t ]:[ \w ]:\e[m\n>"
 #export PS1="\e[0;36m=[\$(parse_git_branch) \$(parse_pyvenv)]=:\t:\w:\e[m\n>"
 export PS1="\e[0;36m[ \h:\u:\$\$ ]:[ \$(parse_pyvenv) ]:[ \t ]:[ \w ]:\e[m\n>"
+#export PS1="\e[0;36m[ \h:\u:\$\$ ]:[ \t ]:[ \w ]:\e[m\n>"
 
 # Colors ----------------------------------------------------------------------- Colors
 alias grep='grep --color=auto'                # show differences in colour
@@ -59,7 +61,9 @@ function sgf () {
 }
 
 
+# sudo umount ~/Euler; ?
 alias sleepMaxwell='sync && sleep 10 && systemctl suspend -i'
+alias wakeMaxwell='pkill pavucontrol-qt ; pulseaudio -k ; sleep 40 ; pavucontrol-qt &'
 
 # ALIAS ------------------------------------------------------------------------ alias
 function ag () {
@@ -88,7 +92,7 @@ alias ll='ls -lF --color=auto --time-style=long-iso --group-directories-first'
 alias l='stat --printf="%y\t%6s\t%-16n\n" * | cut -b -16,36-'
 
 # HISTORY ---------------------------------------------------------------------- history
-export HISTFILE=~/history/commands/history.$$.$(date +%Y%m%d_%H%M)
+export HISTFILE=~/history/commands/history_$(date +%Y%m%d_%H%M).$$
 alias h='history 30'
 alias hh='history 300'
 alias hs='history | tee ~/history/commands/history_`date +%Y%m%d_%H%M` | tail -30'
@@ -118,8 +122,8 @@ alias kill_hard='kill -9'
 alias jobs='jobs -l'
 # ------------------------------------------------------------------------------ misc
 #alias py-ws2345='python -m SimpleHTTPServer 2345 &' # python2
-alias py-ws2345='python -m http.server 2345'         # python3
-alias py-def-env='source ~kleyn/projects/pyvenvs/envB-py38-all/bin/activate'
+alias py-ws2345='python -m http.server 2345'         # python3 
+alias py-def-env='source ~kleyn/projects/pyvenvs/envD.D-py39-ml/bin/activate'
 alias py-jupyter='cd ~; jupyter notebook';           # ensure http server can see all folders
 alias gdaprocs='netstat -tlnp 2>/dev/null | grep java | sort -k 7'
 alias jpps='/dls_sw/apps/java/x64/gda842/bin/jps'
@@ -428,13 +432,15 @@ alias xtmo='xterm  -sl 20000 -bg orange4   -fg white  -cr lightgreen    &'
 alias xtmv='xterm  -sl 20000 -bg palevioletred -fg black -cr lightgreen &'
 
 # --------------------------------------------------------------------------------- start jobs
+#  firefox &
+#  emacs &
+#  krdc &
 function startJobs () {
-  firefox &
-  thunderbird &
-  emacs &
-  chromium-browser &
-  krdc &
-  kmix &
+  (microsoft-edge-beta &)
+  (microsoft-edge-dev &)  
+  (sleep 3) && (thunderbird &)
+  (sleep 3) && (chromium-browser &)
+  (sleep 3) && (pavucontrol-qt &)
 }
 
 # ---------------------------------------------------------------------------------- window title
@@ -498,20 +504,22 @@ alias svndd='svn --diff-cmd "diff" --extensions "-ywbB --suppress-common-lines -
 # powershell
 # alias pws='powershell.exe - < '
 
+alias forloop='echo "for a in *; do echo \$a; cmd \$a; done"'
+
 # rem ---------------------------------------------------------------------------------------- remoting
 alias remGem='ssh -p 8022 192.168.1.93'
 alias remGemWired='ssh -p 8022 192.168.1.161'
 alias remCos='ssh -p 8022 192.168.1.209'
 alias remNok='ssh -Y root@192.168.1.187'
-alias remTuringX='ssh -Y 192.168.1.180'
+alias remTuringX='ssh -Y 192.168.1.179'
 alias remTuringS='screen /dev/ttyS0 38400'
-alias remNfsEuler='sudo mount.cifs -o username=kleyn,uid=1000,gid=1000 //192.168.1.177/Users/kleyn ~/Euler'
+alias remNfsMountEuler='sudo mount.cifs -o username=kleyn,uid=1000,gid=1000 //192.168.1.177/Users/kleyn ~/Euler'
 alias apt-all='aptitude search ~i'
 
 # misc
-alias utilBlk='lsblk'
+alias utilBlk='lsblk -o NAME,SIZE,TYPE,MOUNTPOINT,LABEL,FSTYPE,UUID'
 alias utilUsb='lsusb'
-alias utilHw='lshw'
+alias utilHw='lshw  | grep product'
 alias utilCpu='lscpu | egrep "Model name|Socket|Thread|NUMA|CPU\(s\)"'
 alias utilGpu='glxinfo |grep -i -o "device|memory\|[0-9]\{1,12\} MB" |head -n 1'
 alias utilNet='ip a | grep inet'
