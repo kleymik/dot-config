@@ -75,7 +75,6 @@ function al () {
   declare -f | grep "()" | egrep -v '^_|COMPREPLY';
   alias ;
 }
-alias showFuns='declare -F'
 
 # ------------------------------------------------------------------------------- ls
 # Some shortcuts for different directory listings
@@ -119,7 +118,6 @@ alias kill_hup='kill -1'
 alias kill_int='kill -2'
 alias kill_term='kill -15'
 alias kill_hard='kill -9'
-alias jobs='jobs -l'
 # ------------------------------------------------------------------------------ misc
 #alias py-ws2345='python -m SimpleHTTPServer 2345 &' # python2
 alias py-ws2345='python -m http.server 2345'         # python3 
@@ -130,10 +128,6 @@ alias jpps='/dls_sw/apps/java/x64/gda842/bin/jps'
 alias rd='rdesktop -a 32 -x 0x80 -g 1920x1080 DIAMRL5319 -r sound:remote'
 function see () { more `which "$@"`; }
 
-
-# ------------------------------------------------------------------------------ networky stuff
-alias netsl='netstat -tlnp'
-alias lsofi='lsof -n -i'
 
 # ------------------------------------------------------------------------------ diamond/hdf5/nexus
 alias h5dumpHeaders='h5dump -H'
@@ -523,6 +517,12 @@ alias utilHw='lshw  | grep product'
 alias utilCpu='lscpu | egrep "Model name|Socket|Thread|NUMA|CPU\(s\)"'
 alias utilGpu='glxinfo |grep -i -o "device|memory\|[0-9]\{1,12\} MB" |head -n 1'
 alias utilNet='ip a | grep inet'
+alias utilNetstat='netstat -tlnp'
+alias utilLsof='lsof -n -i'
+alias utilJobs='jobs -l'
+alias utilFuns='declare -F'
+alias utilPstree='ps -ef --forest'
+
 
 # audio of new device
 #dmesg -tW -l notice | gawk '{ if ($4 == "Attached") { system("echo New device attached | espeak") } }
