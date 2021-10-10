@@ -1,14 +1,14 @@
 # MFK bash initialisation
-# 20140415_14:13:25 diamond account
+# 20140415_14:13:25 diamond account, but goes all the way back to cs.utexas.edu in the early 1990's
+# N.B keep this cript make idempotent!
 
-# TBD make idempotent!
 echo "bashrc start"
-# add this alias to .bashrc: alias sb='source ~/dot/dotBashrc'
+# keep this script separate from from .bashrc add this alias to .bashrc: alias sb='source ~/dot/dotBashrc'
 
 # If not running interactively, don't do anything
 # [[ "$-" != *i* ]] && return
 
-# ------------------------------------------------------------------------------ PROMPT MANGLING (see notes at bottom)
+# PROMPT ---------------------------------------------------------------------- prompt mangling (see notes at bottom)
 parse_git_branch() {
      git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/ (\1)/'
 }
@@ -39,10 +39,10 @@ export VIRTUAL_ENV_DISABLE_PROMPT=1
 # echo -ne "\e]0;CWD=$PWD\a"
 #export PS1="\e[0;36m=[ \h:\u:\$\$ ]=:[ \t ]:[ \w ]:\e[m\n>"
 #export PS1="\e[0;36m=[\$(parse_git_branch) \$(parse_pyvenv)]=:\t:\w:\e[m\n>"
-export PS1="\e[0;36m[ \h:\u:\$\$ ]:[ \$(parse_pyvenv) ]:[ \t ]:[ \w ]:\e[m\n>"
 #export PS1="\e[0;36m[ \h:\u:\$\$ ]:[ \t ]:[ \w ]:\e[m\n>"
+export PS1="\e[0;36m[ \h:\u:\$\$ ]:[ \$(parse_pyvenv) ]:[ \t ]:[ \w ]:\e[m\n>"
 
-# Colors ----------------------------------------------------------------------- Colors
+# COLORS ---------------------------------------------------------------------- Colors
 alias grep='grep --color=auto'                # show differences in colour
 alias egrep='egrep --color=auto'              # show differences in colour
 alias fgrep='fgrep --color=auto'              # show differences in colour
@@ -65,7 +65,7 @@ function sgf () {
 alias sleepMaxwell='sync && sleep 10 && systemctl suspend -i'
 alias wakeMaxwell='pkill pavucontrol-qt ; pulseaudio -k ; sleep 40 ; pavucontrol-qt &'
 
-# ALIAS ------------------------------------------------------------------------ alias
+# ALIAS ----------------------------------------------------------------------- alias
 function ag () {
   declare -f | grep "$@";
   alias      | grep "$@";
@@ -76,7 +76,7 @@ function al () {
   alias ;
 }
 
-# ------------------------------------------------------------------------------- ls
+# LS -------------------------------------------------------------------------- ls
 # Some shortcuts for different directory listings
 # or globally export TIME_STYLE=long-iso
 #--time-style=long-iso
@@ -113,12 +113,13 @@ function termLog () { script ~/history/termLogs/termLog_"$@"_`date +%Y%m%d_%H%M`
 # alias hhg='grep $1 ~/history/bash/hist*`'
 # alias hhhg='grep $1 ~/history/bash/hist*`'
 
-# ------------------------------------------------------------------------------ kill
+# KILL ------------------------------------------------------------------------ kill
 alias kill_hup='kill -1'
 alias kill_int='kill -2'
 alias kill_term='kill -15'
 alias kill_hard='kill -9'
-# ------------------------------------------------------------------------------ misc
+
+# MISC ------------------------------------------------------------------------ misc
 #alias py-ws2345='python -m SimpleHTTPServer 2345 &' # python2
 alias py-ws2345='python -m http.server 2345'         # python3 
 alias py-def-env='source ~kleyn/projects/pyvenvs/envD.D-py39-ml/bin/activate'
@@ -129,12 +130,9 @@ alias rd='rdesktop -a 32 -x 0x80 -g 1920x1080 DIAMRL5319 -r sound:remote'
 function see () { more `which "$@"`; }
 
 
-# ------------------------------------------------------------------------------ diamond/hdf5/nexus
+# ----------------------------------------------------------------------------- hdf5/nexus
 alias h5dumpHeaders='h5dump -H'
 alias h5dumpContents='h5dump -n'
-
-# ------------------------------------------------------------------------------ eclipse
-alias kepler='/dls_sw/apps/eclipse/eclipse432_linux64_20140725/eclipse'
 
 function rg_nxs () { # $1 = dir; remember to module load nexus
 # search nexus files
@@ -143,6 +141,10 @@ function rg_nxs () { # $1 = dir; remember to module load nexus
    nxtraverse -f $f -r -n 50;
   done;
 }
+
+# ------------------------------------------------------------------------------ eclipse
+alias kepler='/dls_sw/apps/eclipse/eclipse432_linux64_20140725/eclipse'
+
 
 # ------------------------------------------------------------------------------ module
 # module avail - list of modules available and their respective directory path
@@ -153,7 +155,7 @@ function rg_nxs () { # $1 = dir; remember to module load nexus
 # alias gdaFiltServerLog='rep -vF -f ~/ubin/gda_server_filter.txt'
 # alias gdaFiltClientLog='rep -vF -f ~/ubin/gda_client_filter.txt'
 
-# GIT -------------------------------------------------------------------------- git
+# GIT ------------------------------------------------------------------------- git
 # include git completions
 # . ~/.git-completion.bash
 
@@ -232,20 +234,20 @@ function gitcfg () {
 #alias ff='firefox  -P default -new-instance 2> /dev/null &'
 #alias ffn='firefox -P news    -new-instance 2> /dev/null &'
 alias firefoxfp='flatpak run org.mozilla.firefox'
-# -------------------------------------------------------------- emacs
+# ----------------------------------------------------------------------------- emacs
 alias emnw='emacs26 -nw -fg black  -bg white1'
 alias ew='emacsclient -n'
 #function emd () { emacsclient -n --eval "(ediff-files \"$1\" \"$2\")" }
 export EDITOR='emacs26 -nw'
 alias emacs='emacs26'
 
-#-------------------------------------------------------------------------------- cd stuff
+#------------------------------------------------------------------------------ cd stuff
 function cv   () { builtin cd "$@"; ls --color=auto --format=vertical --time-style=long-iso -lr; }
 alias cu='cv ..'
 alias cw='cut -b -$COLUMNS'
 alias app_open='xdg-open'
 
-# ------------------------------------------------------------------------------- process stuff
+# ----------------------------------------------------------------------------- process stuff
 
 export NMON=CcdtJr
 
@@ -285,7 +287,7 @@ function psprint(){
 }
 
 
-# ENV ----------------------------------------------------------------------------- env
+# ENV ------------------------------------------------------------------------- env
 alias pe='printenv'
 function pg   () { printenv | grep "$@"; }
 # list out ":"-separated env var vertically, defaults to listing PATH
@@ -320,7 +322,7 @@ function evrm  () {
 
 alias myPath='echo $PATH'
 
-# printing ---------------------------------------------------------------------------------------------------- printing
+# PRINTING -------------------------------------------------------------------- printing
 # doesn't work as one-liner def
 # function enscPort   () { enscript                       -c            -T 3 -P dh.g.51.col.1  --font=Courier$@ }
 # function enscPortBw () { enscript                       -c            -T 3 -P dh.g.51.bw.1   --font=Courier$@ }
@@ -338,7 +340,7 @@ alias myPath='echo $PATH'
 #  721  enscript --pretty-print=python gda.py --language=html --color=1 --font=Courier8 --output=gda.py.html
 #  722  enscript --pretty-print=python gda.py --language=html --color=1 --font=Courier8 -P dh.g.51.col.1
 
-# readline ---------------------------------------------------------------- readline bind keyboard shortcuts
+# READLINE -------------------------------------------------------------------- readline bind keyboard shortcuts
 # bind: 1) insert pwd; 2) expand line 3) e-x-ecute date command
 bind '"\ep": "${PWD}"'
 bind '"\ee": "\e\C-e"'
@@ -354,7 +356,7 @@ bind '"\er": reverse-search-history'
 # bind '"\ed": kill-word'  <- this is the fix
 # bind -p | grep '\\e' | grep d  | grep -v lower | grep -v digit
 
-# grep ---------------------------------------------------------------------------------------------------- find/grep
+# FIND/GREP ------------------------------------------------------------------- find/grep
 alias gr=grep
 alias gi='grep -i'
 
@@ -415,7 +417,7 @@ function tstArgs() {
 }
 
 
-# --------------------------------------------------------------------------------- xterm colored
+# ----------------------------------------------------------------------------- xterm colored
 alias xtm='xterm   -sl 2000 &'
 alias xtmr='xterm  -sl 20000 -bg darkred   -fg white  -cr lightblue     &'
 alias xtmg='xterm  -sl 20000 -bg darkgreen -fg yellow -cr lightblue     &'
@@ -425,7 +427,7 @@ alias xtmy='xterm  -sl 20000 -bg darkgrey  -fg white  -cr lightblue     &'
 alias xtmo='xterm  -sl 20000 -bg orange4   -fg white  -cr lightgreen    &'
 alias xtmv='xterm  -sl 20000 -bg palevioletred -fg black -cr lightgreen &'
 
-# --------------------------------------------------------------------------------- start jobs
+# ----------------------------------------------------------------------------- start jobs
 #  firefox &
 #  emacs &
 #  krdc &
@@ -437,7 +439,7 @@ function startJobs () {
   (sleep 3) && (pavucontrol-qt &)
 }
 
-# ---------------------------------------------------------------------------------- window title
+# ----------------------------------------------------------------------------- window title
 # function my_set_screen_title() {
 #   echo -ne "\ekHELLO$1\e\\"
 #   PROMPT_COMMAND='echo -ne "\033]0;"myWindowTitle"\007"'
@@ -477,7 +479,7 @@ function rp(){
     fi
 }
 
-# ------------------------------------------------------------------------------------------ misc/old
+# ----------------------------------------------------------------------------- misc/old
 # x windows mutiwindow
 # alias sxw='startxwin'
 
@@ -500,7 +502,7 @@ alias svndd='svn --diff-cmd "diff" --extensions "-ywbB --suppress-common-lines -
 
 alias forloop='echo "for a in *; do echo \$a; cmd \$a; done"'
 
-# rem ---------------------------------------------------------------------------------------- remoting
+# REM ------------------------------------------------------------------------- remoting
 alias remGem='ssh -p 8022 192.168.1.93'
 alias remGemWired='ssh -p 8022 192.168.1.161'
 alias remCos='ssh -p 8022 192.168.1.209'
@@ -557,7 +559,7 @@ function remSyncFromCosmo () {
 # M$ Windows
 export DOTNET_CLI_TELEMETRY_OPTOUT=0
 
-# greeting ------------------------------------------------------------------------------------ greeting
+# greeting -------------------------------------------------------------------- greeting
 # termLog :( messes up this file
 
 py-def-env
@@ -574,7 +576,7 @@ pwd
 
 
 
-#-------------------------------------------------------------------------------- docs/notes
+#------------------------------------------------------------------------------ docs/notes
 # edit a given function in situ
 #function efn {
 #       echo       "function $1" > /tmp/edit_bash_fn
@@ -687,7 +689,7 @@ pwd
 #
 # Alias cd=cd_func
 
-# ------------------------------------------------------------------------------ PROMPT MANGLING
+# PROMPT MANGLING ----------------------------------------------------------------------------- prompt mangling notes
 #PS1="\t:\w:"
 #export PS1="\e[0;31m[\u@\h \W]\$ \e[m "
 #export PS1="==\d\t:\w:\n>>"
