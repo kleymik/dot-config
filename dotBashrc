@@ -1,6 +1,6 @@
 # MFK bash initialisation
 # 20140415_14:13:25 diamond account, but goes all the way back to cs.utexas.edu in the early 1990's
-# N.B keep this script make idempotent!
+# N.B keep this script idempotent!
 
 echo "bashrc start"
 # keep this script separate from from .bashrc add this alias to .bashrc: alias sb='source ~/dot/dotBashrc'
@@ -212,22 +212,34 @@ function gitcfg () {
 }
 
 # ------------------------------------------------------------------------------- apps
+
+alias app_open='xdg-open'
+
 #alias tbird='(export LC_TIME=en_DK.UTF-8; /usr/lib/thunderbird/thunderbird )'
 #alias ff='firefox  -P default -new-instance 2> /dev/null &'
 #alias ffn='firefox -P news    -new-instance 2> /dev/null &'
 alias firefoxfp='flatpak run org.mozilla.firefox'
+alias libreOffice='/usr/lib/libreoffice/program/soffice.bin &'
+
+# ------------------------- LD_LIBRARY_PATH for ipopt
+## Note Under linux you might need to let the OS know where to look for the Ipopt lib files, e.g. use:
+## $ export LD_LIBRARY_PATH=<PATH to Ipopt lib files>
+#export LD_LIBRARY_PATH=/usr/local/lib
+#export LD_RUN_PATH=/usr/local/lib
+
 # ----------------------------------------------------------------------------- emacs
 alias emnw='emacs26 -nw -fg black  -bg white1'
 alias ew='emacsclient -n'
 #function emd () { emacsclient -n --eval "(ediff-files \"$1\" \"$2\")" }
 export EDITOR='emacs26 -nw'
-alias emacs='emacs26'
+#alias emacs='emacs26'
+alias emacs='emacs27 -l ~/.emacs.d/init.el'
+
 
 #------------------------------------------------------------------------------ cd stuff
 function cv   () { builtin cd "$@"; ls --color=auto --format=vertical --time-style=long-iso -lr; }
 alias cu='cv ..'
 alias cw='cut -b -$COLUMNS'
-alias app_open='xdg-open'
 
 # ----------------------------------------------------------------------------- process stuff
 
@@ -380,8 +392,8 @@ function rgrepi() { echo "1=$1"
 # alias fd=find
 # find with exclusion
 function fd() {
-     echo "Numargs=$# : $@"
-     if [[ "$#" != "2" ]]; then
+     echo "Numargs=$# : $@ : ${@:3}"
+     if [[ "$#" -le "2" ]]; then
       echo "fd \$1=dir \$2=pat"
      else
        find $1 -iname $2
@@ -427,17 +439,15 @@ alias xtmy='xterm  -sl 20000 -bg darkgrey  -fg white  -cr lightblue     &'
 alias xtmo='xterm  -sl 20000 -bg orange4   -fg white  -cr lightgreen    &'
 alias xtmv='xterm  -sl 20000 -bg palevioletred -fg black -cr lightgreen &'
 
-
 # ----------------------------------------------------------------------------- start jobs
 #  firefox &
 #  emacs &
 #  krdc &
 function startJobs () {
-  (microsoft-edge-beta &)
-  (microsoft-edge-dev &)  
-  (sleep 3) && (thunderbird &)
-  (sleep 3) && (chromium-browser &)
-  (sleep 3) && (pavucontrol-qt &)
+  (microsoft-edge &)
+  (sleep 5) && (thunderbird &)
+  (sleep 5) && (chromium-browser &)
+  (sleep 5) && (pavucontrol-qt &)
 }
 
 # ----------------------------------------------------------------------------- window title
@@ -508,9 +518,10 @@ alias remGem='ssh -p 8022 192.168.1.93'
 alias remGemWired='ssh -p 8022 192.168.1.161'
 alias remCos='ssh -p 8022 192.168.1.209'
 alias remNok='ssh -Y root@192.168.1.187'
-alias remTuringX='ssh -Y 192.168.1.179'
-alias remTuringS='screen /dev/ttyS0 38400'
+alias remTuring='ssh -Y 192.168.1.180'
+#alias remTuringS='screen /dev/ttyS0 38400'
 alias remNfsMountEuler='sudo mount.cifs -o username=kleyn,uid=1000,gid=1000 //192.168.1.177/Users/kleyn ~/Euler'
+alias remNfsMountMarie='sudo mount.cifs -o username=kleyn,uid=1000,gid=1000 //192.168.1.176/Users/kleyn ~/Marie'
 alias apt-all='aptitude search ~i'
 
 # misc
@@ -525,6 +536,7 @@ alias utilLsof='lsof -n -i'
 alias utilJobs='jobs -l'
 alias utilFuns='declare -F'
 alias utilPstree='ps -ef --forest'
+alias utilDf='watch -n 1 df -m'
 
 
 # audio of new device
