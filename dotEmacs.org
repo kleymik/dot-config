@@ -3,6 +3,8 @@ invoked by ~/.emacs.d/init.el
  (package-initialize)
  (org-babel-load-file "~/.emacs.d/dotEmacs.org)
 
+
+
 * New Stuff/Notes
 
 default-directory
@@ -52,16 +54,32 @@ convenient prefix key map, for example `C-,`
 
 (require 'uniquify)
 (require 'ob)
-(require 'cl)                 ; for transpose
+;(require 'cl)                 ; for transpose
 (require 'regexp-opt)
 (require 'em-alias)           ; for eshell
 
 (require 'dired-x)
 (require 'wdired)
-(load-library "dired-subtree")
+(require 'dired-subtree)
+(require 'dired-sidebar)
+(setq dired-sidebar-width 100)
+;(setq dired-subtree-line-prefix "--")
+(setq dired-subtree-line-prefix "  ")
+
+(defun sidebar-toggle ()  ; tbd install ibuffer sidebar
+  "Toggle both `dired-sidebar' and `ibuffer-sidebar'."
+  (interactive)
+  (dired-sidebar-toggle-sidebar)
+  (ibuffer-sidebar-toggle-sidebar))
+; dired-sidebar-theme
 ;; (require 'dired-lis)
 ;; (require 'dired-k)
 ;; (require 'diffview)        ; make patch files look like ediff
+
+;(use-package dired-sidebar
+;  :bind (("C-x C-n" . dired-sidebar-toggle-sidebar))
+;  :ensure nil
+;  :commands (dired-sidebar-toggle-sidebar))
 
 (load-library "vigenere")
 (require 'yafolding)          ; (require 'origami)
@@ -75,7 +93,7 @@ convenient prefix key map, for example `C-,`
 (setq Org-Reveal-root "file:///home/kleyn/ulib/reveal.js-master/js/reveal.js")
 (setq Org-Reveal-title-slide nil)
 
-(require 'org-eww)
+;(require 'org-eww)
 
 (require 'orgtbl-join)
 ;(load-file "orgtbl-join.el")
@@ -87,7 +105,7 @@ convenient prefix key map, for example `C-,`
 (setq org-confirm-babel-evaluate nil)    ;; no-confirm
 (with-eval-after-load 'org (add-hook 'org-babel-after-execute-hook 'org-redisplay-inline-images))
 ; (defun org-export-get-reference (a b) nil)
-; org<->python deprecated 
+; org<->python deprecated
 ;(add-hook 'org-babel-after-execute-hook 'org-display-inline-images 'append)
 ;ein - better to use emacs-ipython-notebook?
 ;(require 's)
@@ -98,7 +116,7 @@ convenient prefix key map, for example `C-,`
 ;(require 'ein)
 ;(require 'ein-notebook)
 ;(require 'ein-subpackages)
-
+(require 'zmq)
 (require 'calc)
 
 (message "-------------- Done: Packages")
@@ -130,7 +148,7 @@ convenient prefix key map, for example `C-,`
 (defun diredTuringOut()         (interactive) (dired "/scp:kleyn@192.168.1.8:/home/kleyn"))
 (defun instimestamp()           (interactive) (insert (format-time-string "%Y%m%d_%H:%M:%S")))
 (defun see-dotBashRc()          (interactive) (find-file "/home/kleyn/config/dot/.bashrc"))
-(defun see-orglink-dired()      (interactive) (org-open-at-point t)) 
+(defun see-orglink-dired()      (interactive) (org-open-at-point t))
 (defun see-shell-output()       (interactive) (switch-to-buffer-other-window "*Shell Command Output*"))
 (defun see-sql()                (interactive) (find-file "C:/MyDocs/notebooks/sqlScripts.org"))
 (defun show-hist()              (interactive) (list-command-history))
@@ -313,7 +331,7 @@ convenient prefix key map, for example `C-,`
     ;(align-regexp (- (region-beginning) 10) (region-end) " ;=")   ; align results
     ;(align-regexp (- (region-beginning) 10) (region-end) " ; ")   ; align descriptions
     (backward-up-list)
-) 
+)
 
 ;;; "\\(\\s-*\\)(")
 
@@ -385,7 +403,7 @@ convenient prefix key map, for example `C-,`
         (set-window-configuration snapshot)
       (message "Snapshot %s not found" snapshot-name))))
 
-;; ------------------------------------------------------------------- transpose windows 
+;; ------------------------------------------------------------------- transpose windows
 (defun toggle-window-split ()
   (interactive)
   (if (= (count-windows) 2)
@@ -493,21 +511,21 @@ convenient prefix key map, for example `C-,`
 ;; (with-current-buffer (current-buffer)  (proto-swap "bar" "foo"))
 
 ;;---- option2 parallel swap
-(defun parallel-swap (plist &optional start end)  ;; (require 'cl)
-  (interactive
-   `(,(loop with input = (read-from-minibuffer "Swap: ")
-            with limit = (length input)
-            for (item . index) = (read-from-string input 0)
-                            then (read-from-string input index)
-            collect (prin1-to-string item t) until (<= limit index))
-     ,@(if (use-region-p) `(,(region-beginning) ,(region-end)))))
-  (let* ((alist (list (cons (car plist) (cadr plist)) (cons (cadr plist) (car plist))))
-       ;;(alist (loop for (key val . tail) on plist by #'cddr collect (cons key val)))
-         (matcher (regexp-opt (mapcar #'car alist) 'words)))
-    (save-excursion
-      (goto-char (or start (point)))
-      (while (re-search-forward matcher (or end (point-max)) t)
-        (replace-match (cdr (assoc-string (match-string 0) alist)))))))
+;(defun parallel-swap (plist &optional start end)  ;; (require 'cl)
+;  (interactive
+;   `(,(loop with input = (read-from-minibuffer "Swap: ")
+;            with limit = (length input)
+;            for (item . index) = (read-from-string input 0)
+;                            then (read-from-string input index)
+;            collect (prin1-to-string item t) until (<= limit index))
+;     ,@(if (use-region-p) `(,(region-beginning) ,(region-end)))))
+;  (let* ((alist (list (cons (car plist) (cadr plist)) (cons (cadr plist) (car plist))))
+;       ;;(alist (loop for (key val . tail) on plist by #'cddr collect (cons key val)))
+;         (matcher (regexp-opt (mapcar #'car alist) 'words)))
+;    (save-excursion
+;      (goto-char (or start (point)))
+;      (while (re-search-forward matcher (or end (point-max)) t)
+;        (replace-match (cdr (assoc-string (match-string 0) alist)))))))
 
 (defun uniq-lines (beg end)
   "Unique lines in region.
@@ -852,7 +870,9 @@ N.B. TBD drop last ","
 
 * Settings
 #+BEGIN_SRC emacs-lisp
-(global-hl-line-mode t) 
+(message "-------------- Start Settings")
+(setq calendar-week-start-day 1) ; set....mark to get count of days
+(global-hl-line-mode t)
 (desktop-save-mode 1)  ; desktop-revert desktop-change-dir
 
 (blink-cursor-mode 0)
@@ -931,7 +951,7 @@ N.B. TBD drop last ","
 
 ;; ----------------------------------------------- Backup location
 ;;  /data/data/com.termux/files/home/storage/external/backups
-(if (search "termux" (getenv "SHELL"))
+(if (string-match "termux" (getenv "SHELL"))
       (progn ; gem
         (setq backup-directory-alist          `((".*" . , "/data/data/com.termux/files/home/internalBackup/emacs")))
         (setq auto-save-file-name-transforms  `((".*" ,   "/data/data/com.termux/files/home/internalBackup/emacs" t))))
@@ -986,6 +1006,7 @@ N.B. TBD drop last ","
    (message "in ibuffer"))
 
 (add-hook 'ibuffer-mode-hook 'my-ibuffer-hooks)   ; (lambda ()                        ;; no need to quote the lambda, but try to avoid using them as hooks
+
 
 (setq ibuffer-formats
       '((mark modified read-only locked " "
@@ -1317,7 +1338,7 @@ M-x clone-indirect-buffer RET
  ; (define-key org-mode-map [kp-6]    'org-cycle)
  ; <remap> <backward-sentence>     python-nav-backward-block
  ; <remap> <backward-up-list>      python-nav-backward-up-list
- ; <remap> <forward-sentence>      python-nav-forward-block  python-nav-beginning-block 
+ ; <remap> <forward-sentence>      python-nav-forward-block  python-nav-beginning-block
 
  ; yafolding-go-parent-element
 
@@ -1420,18 +1441,18 @@ M-x clone-indirect-buffer RET
 (defun org-collapse()     (interactive) (org-shifttab 0))
 
 ;; also in org-table.el (defun org-table-transpose-table-at-point ()
-(defun org-transpose-table-at-point ()
-  "Transpose orgmode table at point, eliminate hlines."
-  (interactive)
-  (let ((contents (apply #'mapcar* #'list                       ;; <== LOB magic imported here
-                         (remove-if-not 'listp (org-table-to-lisp)))))  ;; remove 'hline from listsignals error if not table
-    (delete-region (org-table-begin) (org-table-end))
-    (insert (mapconcat (lambda(x) (concat "| " (mapconcat 'identity x " | " ) "
-  |\n" ))
-                       contents
-                       ""))
-    (org-table-align))
-  )
+;(defun org-transpose-table-at-point ()
+;  "Transpose orgmode table at point, eliminate hlines."
+;  (interactive)
+;  (let ((contents (apply #'mapcar* #'list                       ;; <== LOB magic imported here
+;                         (remove-if-not 'listp (org-table-to-lisp)))))  ;; remove 'hline from listsignals error if not table
+;    (delete-region (org-table-begin) (org-table-end))
+;    (insert (mapconcat (lambda(x) (concat "| " (mapconcat 'identity x " | " ) "
+;  |\n" ))
+;                       contents
+;                       ""))
+;    (org-table-align))
+;  )
 
 ;; --------- org-mode key bindings
 ;(define-key global-map "\C-cl" 'org-store-link)
@@ -1489,9 +1510,9 @@ M-x clone-indirect-buffer RET
   (goto-char (point-max)) (search-backward ",") (delete-char 1)       ;; delete comma after list end
   (goto-char (point-min))
   (forward-line 2)
-  (insert "INSERT INTO [EQTYBASKETS_R].dbo.returnSeriesRecord")  
+  (insert "INSERT INTO [EQTYBASKETS_R].dbo.returnSeriesRecord")
   (newline)
-  (insert "(rsStrategyName, rsOrigin, rsCurrency, rsType, Description, rsAsOfDate, rsShortCode)") 
+  (insert "(rsStrategyName, rsOrigin, rsCurrency, rsType, Description, rsAsOfDate, rsShortCode)")
   (newline)
   (insert "VALUES")
   (newline)
@@ -1706,9 +1727,10 @@ M-x clone-indirect-buffer RET
 (dired-rainbow-define audio "#329EE8" dired-pickle-extensions)
 
 
+
 ;;(setq dired-use-ls-dired nil)
 (setq dired-dwim-target t)
-(setq dired-subtree-line-prefix "     ")
+
 
 ;; dired-listing-switches  = "-al"
 ;; M-x customize-variable RET dired-listing-switches RET
@@ -1896,7 +1918,7 @@ M-x clone-indirect-buffer RET
 ; ------------------------------------------------------------------ TreeNavPad keys for dired
 (defun my-subdired-dft ()
   "depth-first traversal for dired-subtree"
-  (interactive) 
+  (interactive)
   (let ((sDpth (dired-subtree--get-depth (dired-subtree--get-ov))))
     (if (dired-utils-is-dir-p)
         (if (dired-subtree--is-expanded-p)
@@ -1916,7 +1938,7 @@ M-x clone-indirect-buffer RET
    )
 
 (defun my-dired-up-to-parent ()                                                 ;; tbd if not a subdir (i.e. in rootdir), then jump  'dired-up-directory-drop-prev-dired-buffer
-  (interactive) 
+  (interactive)
   (let ((sDpth (dired-subtree--get-depth (dired-subtree--get-ov))))
        ; (message sDpth)
        (if (eq sDpth 0)
@@ -1924,11 +1946,11 @@ M-x clone-indirect-buffer RET
            (dired-subtree-remove)))
    )
 
-(defun my-dired-subtree-toggle () 
-  (interactive) 
+(defun my-dired-subtree-toggle ()
+  (interactive)
   (if (dired-subtree--is-expanded-p)
       (progn (dired-next-line 1) (dired-subtree-remove))
-      (progn (dired-subtree-insert) (dired-previous-line 1)))  
+      (progn (dired-subtree-insert) (dired-previous-line 1)))
    )
 
 (defun my-dired-subtree-next-sibling-n (n)
@@ -2033,7 +2055,7 @@ M-x clone-indirect-buffer RET
 *** faded
  ;; if it's a folder=>insert subdir  & move to first; elseif it's a file = >preview-in-other window and move to next, if it's previewed,....
  (defun my-subdired-dfs ()
-   (interactive) 
+   (interactive)
    (dired-subtree--is-expanded-p)
    (dired-utils-is-dir-p)
    (dired-utils-is-file-p)
@@ -2044,7 +2066,7 @@ M-x clone-indirect-buffer RET
          (dired-subtree-remove))))
 
  (defun my-subdired-dfs ()
-   (interactive) 
+   (interactive)
    (dired-utils-is-dir-p)
    (dired-utils-is-file-p)
    (let ((sDpth (dired-subtree--get-depth (dired-subtree--get-ov))))
@@ -2238,6 +2260,7 @@ for flushing messages to *Message* buffer
 
 #+END_SRC
 * Key Bindings
+
 ** notes: may be useful
  M-0 w                       ;; dired copy path
  C-x C-v                     ;; find alternate file   -> then grab filepath
@@ -2346,7 +2369,7 @@ for flushing messages to *Message* buffer
 
 ** org-babel keys notes
 C-down / C-up = next section / previous section in org-babel
-org-goto 
+org-goto
 
   C-c C-o     results in separate buffer
   C-c C-o     open link
@@ -2415,10 +2438,10 @@ org-goto
 
 (global-set-key [f3]       '(lambda () (interactive) (ibuffer "home" nil) (ibuffer-switch-to-saved-filter-groups "home")))
 (global-set-key [C-f3]     '(lambda () (interactive) (find-file "/home/kleyn/.emacs.d/dotEmacs.org") (search-forward "** Function Keys") (org-show-subtree)))  ;; nok900  'my-openfile  'neotree-show
-(global-set-key [S-f3]     '(lambda () (interactive) (find-file "/home/kleyn/config/dot/dotBashrc") )) 
-(global-set-key [M-f3]     '(lambda () (interactive) (progn (find-file (concat "/home/kleyn/history/commands/history_" 
-                                                                        (format-time-string "%Y" (current-time)) 
-                                                                        "-w" 
+(global-set-key [S-f3]     '(lambda () (interactive) (find-file "/home/kleyn/config/dot/dotBashrc") ))
+(global-set-key [M-f3]     '(lambda () (interactive) (progn (find-file (concat "/home/kleyn/history/commands/history_"
+                                                                        (format-time-string "%Y" (current-time))
+                                                                        "-w"
                                                                         (format-time-string "%W" (current-time))))
                                                             (setq truncate-lines t)
                                                             (goto-char (point-max))
@@ -2426,9 +2449,11 @@ org-goto
 
 ;;(global-set-key [S-f3]   'org-save-code-block)
 
-(global-set-key [f4]       '(lambda () (interactive) (dired "~/" nil)))
-(global-set-key [C-f4]     '(lambda () (interactive) (dired "~/projects" nil)))
-(global-set-key [S-f4]     '(lambda () (interactive) (dired "~/projects/repos" nil)))
+;  'sidebar-toggle
+(global-set-key [f4]      '(lambda () (interactive)  (dired-sidebar-switch-to-dir "~/")))
+(global-set-key [C-f4]    '(lambda () (interactive)  (dired-sidebar-switch-to-dir (file-name-directory (buffer-file-name)))))
+(global-set-key [S-f4]    '(lambda () (interactive)  (dired "~/" nil)))
+;(global-set-key [S-f4]    '(lambda () (interactive) (dired "~/projects/repos" nil)))
 (global-set-key [M-f4]     '(lambda () (interactive) (recenter-top-bottom  0)))
 (global-set-key [s-f4]     '(lambda () (interactive) (recenter-top-bottom 50)))
 
@@ -2496,6 +2521,36 @@ org-goto
 #+END_SRC
 
 ** KeyPad Keys
+
+#+begin_src emacs-lisp
+(global-set-key [(next)]        'cycle-buffer)
+(global-set-key [C-down]        'cycle-buffer)              ;; avoid default binding (global-set-key (kbd "C-c <down>")  'windmove-down)
+(global-set-key [(prior)]       'cycle-buffer-backward)
+(global-set-key [C-up]          'previous-buffer)
+(global-set-key [C-down]        'next-buffer)               ;; 'cycle-buffer  avoid default binding (global-set-key (kbd "C-c <down>")  'windmove-down)
+
+(global-set-key [S-down]        'scroll-one-line-up)
+(global-set-key [S-up]          'scroll-one-line-down)
+
+(global-set-key [C-insert]      'clipboard-kill-ring-save)
+(global-set-key [S-insert]      'clipboard-yank)
+
+(global-set-key [S-left]        'window-hshrink)
+(global-set-key [S-right]       'window-hwiden)
+
+(global-set-key [M-insert]      'toggle-window-split)
+(global-set-key [M-delete]      'kill-this-buffer-volatile)
+
+(message "-------------- Done: Keybindings Section")
+#+end_src
+;;(global-set-key [M-up]         'kill-this-buffer-volatile) ;; kill-buffer
+;;(global-set-key [M-+]           'text-scale-increase)
+;;(global-set-key [C-down]        'windmove-down)        ;(global-set-key (kbd "C-c <down>")  'windmove-down);
+;;(global-set-key [C-left]        'windmove-left)        ;(global-set-key (kbd "C-c <left>")  'windmove-left)
+;;(global-set-key [C-right]       'windmove-right)       ;(global-set-key (kbd "C-c <right>") 'windmove-right)
+;;(global-set-key [C-up]          'windmove-up)          ;(global-set-key (kbd "C-c <up>")    'windmove-up)
+
+
 *** KeyPad Map 1
  |-------+----------------+----------------+----------------+-------+-------|
  | mod   | NumLock        |              / | *              | -     |       |
@@ -2563,68 +2618,49 @@ org-goto
  |----+--------+-------------------------------------+-------+-------+-----------------------------------------+-------------------------------------+----------------------------------------------+----------------------------+----------+----------------+------------------------+-------|
 
 *** Keypad Global Key Bindings
- #+begin_src emacs-lisp
- (global-set-key [(next)]        'cycle-buffer)
- (global-set-key [C-down]        'cycle-buffer)              ;; avoid default binding (global-set-key (kbd "C-c <down>")  'windmove-down)
- (global-set-key [(prior)]       'cycle-buffer-backward)
- (global-set-key [C-up]          'previous-buffer)
- (global-set-key [C-down]        'next-buffer)               ;; 'cycle-buffer  avoid default binding (global-set-key (kbd "C-c <down>")  'windmove-down)
-
- (global-set-key [S-down]        'scroll-one-line-up)
- (global-set-key [S-up]          'scroll-one-line-down)
-
- (global-set-key [C-insert]      'clipboard-kill-ring-save)
- (global-set-key [S-insert]      'clipboard-yank)
-
- (global-set-key [S-left]        'window-hshrink)
- (global-set-key [S-right]       'window-hwiden)
-
- (global-set-key [M-insert]      'toggle-window-split)
- (global-set-key [M-delete]      'kill-this-buffer-volatile)
- #+end_src
 *** TreeNavPad keys for dired-mode
 #+begin_src emacs-lisp
 (progn ;; dired treepad navigation
-  (define-key dired-mode-map [kp-4]               '(lambda () (interactive)   (my-dired-up-to-parent) (my-dired-up-to-parent)))                                                                             
-  (define-key dired-mode-map [kp-5]                                           'my-dired-up-to-parent)                           ;; move #6=u1                                                               
-                                                                                                                                                                                                           
-  (define-key dired-mode-map [kp-multiply]        '(lambda () (interactive)  (my-dired-subtree-prev-sibling-n 7)))              ;; moveto nth sibling, and open(org-backward-heading-same-level 6)          
-  (define-key dired-mode-map [kp-9]               'dired-subtree-previous-sibling)                                              ;; move #2=ps                                                               
-  (define-key dired-mode-map [kp-6]               'my-dired-subtree-toggle)                                                     ;; tbd toggle with 'dired-subtree-remove ;; toggle open children            
-  (define-key dired-mode-map [kp-3]               'dired-subtree-next-sibling)                                                  ;; move #8=ns                                                               
-  (define-key dired-mode-map [kp-decimal]         '(lambda () (interactive)  (my-dired-subtree-next-sibling-n 7)))              ;; moveto nth sibling, and open                                             
-                                                                                                                                                                                                           
-  (define-key dired-mode-map [kp-add]             'dired-find-file-drop-prev-dired-buffer)                                      ;; dired-find-file                                                          
-  (define-key dired-mode-map [C-kp-add]           'my-subdired-dft)                                                             ;; dired-subtree-insert move #8=ns     ;; open and moveto first child,      
+  (define-key dired-mode-map [kp-4]               '(lambda () (interactive)   (my-dired-up-to-parent) (my-dired-up-to-parent)))
+  (define-key dired-mode-map [kp-5]                                           'my-dired-up-to-parent)                           ;; move #6=u1
+
+  (define-key dired-mode-map [kp-multiply]        '(lambda () (interactive)  (my-dired-subtree-prev-sibling-n 7)))              ;; moveto nth sibling, and open(org-backward-heading-same-level 6)
+  (define-key dired-mode-map [kp-9]               'dired-subtree-previous-sibling)                                              ;; move #2=ps
+  (define-key dired-mode-map [kp-6]               'my-dired-subtree-toggle)                                                     ;; tbd toggle with 'dired-subtree-remove ;; toggle open children
+  (define-key dired-mode-map [kp-3]               'dired-subtree-next-sibling)                                                  ;; move #8=ns
+  (define-key dired-mode-map [kp-decimal]         '(lambda () (interactive)  (my-dired-subtree-next-sibling-n 7)))              ;; moveto nth sibling, and open
+
+  (define-key dired-mode-map [kp-add]             'dired-find-file-drop-prev-dired-buffer)                                      ;; dired-find-file
+  (define-key dired-mode-map [C-kp-add]           'my-subdired-dft)                                                             ;; dired-subtree-insert move #8=ns     ;; open and moveto first child,
 )
 #+end_src
 
 *** TreeNavPad keys for org-mode
 #+begin_src emacs-lisp
-(progn 
-  (define-key org-mode-map [kp-4]                 '(lambda () (interactive)  (outline-up-heading 2)))                                                          
-  (define-key org-mode-map [kp-5]                 'my-org-uplevel)                                                                                             
-                                                                                                                                                              
-  (define-key org-mode-map [kp-multiply]          '(lambda () (interactive)  (org-backward-heading-same-level 6)))                                             
-  (define-key org-mode-map [kp-9]                 'org-backward-heading-same-level)                                                                            
-  (define-key org-mode-map [kp-6]                 'org-cycle)                                                                                                  
-  (define-key org-mode-map [kp-3]                 'org-forward-heading-same-level)                                                                             
-  (define-key org-mode-map [kp-decimal]           '(lambda () (interactive)  (org-forward-heading-same-level 6)))                                              
-                                                                                                                                                              
-  (define-key org-mode-map [kp-add]               'my-org-dft)                                                                  ;; tbd show contents of leaf   
-                                                                                                                                                              
-  (define-key org-mode-map [kp-8]                 'my-org-babel-prev)                                                                                          
-  (define-key org-mode-map [kp-2]                 'my-org-babel-next)                                                                                          
-                                                                                                                                                              
-  (define-key org-mode-map [M-home]               'org-collapse)                                                                                               
+(progn
+  (define-key org-mode-map [kp-4]           '(lambda () (interactive)  (outline-up-heading 2)))
+  (define-key org-mode-map [kp-5]           'my-org-uplevel)
 
-  ;(define-key org-mode-map [kp-subtract]  'kill-this-buffer-volatile)
-  ;(define-key org-mode-map [kp-divide]    'toggle-window-split)
+  (define-key org-mode-map [kp-multiply]    '(lambda () (interactive)  (org-backward-heading-same-level 6)))
+  (define-key org-mode-map [kp-9]           'org-backward-heading-same-level)
+  (define-key org-mode-map [kp-6]           'org-cycle)
+  (define-key org-mode-map [kp-3]           'org-forward-heading-same-level)
+  (define-key org-mode-map [kp-decimal]     '(lambda () (interactive)  (org-forward-heading-same-level 6)))
+
+  (define-key org-mode-map [kp-add]         'my-org-dft)                                                                  ;; tbd show contents of leaf
+
+  (define-key org-mode-map [kp-8]           'my-org-babel-prev)
+  (define-key org-mode-map [kp-2]           'my-org-babel-next)
+
+  (define-key org-mode-map [M-home]         'org-collapse)
+
+ ;(define-key org-mode-map [kp-subtract]    'kill-this-buffer-volatile)
+ ;(define-key org-mode-map [kp-divide]      'toggle-window-split)
 )
 #+end_src
 
-**** functions for key binds
  ------------------------------------------------------------------ TreeNavPad keys for org-mode
+**** functions for key binds
 
 (defun my-org-babel-next ()
     (interactive)
@@ -2660,7 +2696,7 @@ org-goto
                    (org-show-children)
                    (next-line)))
         ((eq (org-element-type oeap) 'src-block)
-            (if (looking-at "^#\\+END_SRC")                 ; have come to end of 
+            (if (looking-at "^#\\+END_SRC")                 ; have come to end of
                 (progn (message "Looking at end_src")
                        (org-hide-block-toggle nil)          ; i.e. hide src block
                        (next-line))
@@ -2679,9 +2715,9 @@ org-goto
                        (org-hide-block-toggle 'off)         ; (org-babel-hide-result-toggle 'off)   ;; i.e. show block
                        (next-line))))
         ((memq (org-element-type oeap) '(paragraph fixed-width)) ; otherwise: move down a line
-             (progn (if (looking-at "^\\s-*$") 
+             (progn (if (looking-at "^\\s-*$")
                         (progn (message "This Line is empty")
-                               (message (prin1-to-string oeap) 
+                               (message (prin1-to-string oeap)
                                (goto-char (org-element-property :begin oeap))
                                (org-babel-hide-result-toggle nil)
                                (next-line)))) ; close result section
@@ -2689,7 +2725,7 @@ org-goto
         (t
             (progn (message "my-org-dft:got here")
                    (next-line))))
-                
+
   (message (concat "my-org-dft:AFTER:" (prin1-to-string (org-element-type oeap)) "  " (prin1-to-string (org-element-type oec))))
   )
 
@@ -2719,7 +2755,7 @@ org-goto
         (t
          (progn (message "my-org-uplevel:got here")
                 )))
-                
+
   ;(message (concat "my-org-uplevel:AFTER:" (prin1-to-string (org-element-type oeap)) "  " (prin1-to-string (org-element-type oec))))
   )
 
@@ -2729,8 +2765,8 @@ org-goto
 
 *** TreeNavPad keys emacs-lisp-mode
 #+begin_src emacs-lisp
-(progn 
-  (define-key emacs-lisp-mode-map [kp-4]          'my-elisp-sexp-grandparent)                                            ;; Move to grandparent. 
+(progn
+  (define-key emacs-lisp-mode-map [kp-4]          'my-elisp-sexp-grandparent)                                            ;; Move to grandparent.
   (define-key emacs-lisp-mode-map [kp-5]          'backward-up-list)                                                     ;; Move to parent. move to the beginning of outer paren pair ; outline-up-heading
 
   (define-key emacs-lisp-mode-map [kp-multiply]   '(lambda () (interactive)  (my-elisp-backsexp-n 6)))
@@ -2744,7 +2780,7 @@ org-goto
 #+end_src
 
 **** functions for key binds
-#+begin_src emacs-lisp  
+#+begin_src emacs-lisp
 (defun my-elisp-sexp-grandparent ()
   "go parent sexp - 2 levels"
   (interactive)
@@ -2765,8 +2801,13 @@ org-goto
 )
 #+end_src
 
+;; (define-key emacs-lisp-mode-map [kp-8]        'my-org-babel-prev)
+;; (define-key emacs-lisp-mode-map [kp-2]        'my-org-babel-next)
+;; (define-key emacs-lisp-mode-map [M-home]      'org-collapse)
+;; (define-key emacs-lisp-mode-map [kp-subtract] 'kill-this-buffer-volatile)
+;; (define-key emacs-lisp-mode-map [kp-divide]   'toggle-window-split)
 
-#+begin_src emacs-lisp  
+#+begin_src emacs-lisp
  (message "-------------- Done: KeyPad Section")
 #+end_src
 
@@ -2892,7 +2933,7 @@ org-goto
        "Call edebug here. FN is assumed to be a symbol of the function you are in."
        `(if (consp (get ,fn 'edebug))
            (edebug)))
-    
+
     (defun clear-edebug (fn-sym)
       "Remove 'edebug property from FN-SYM, a function symbol."
       (put fn-sym 'edebug nil))
