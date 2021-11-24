@@ -1,6 +1,6 @@
 # MFK bash initialisation
 # 20140415_14:13:25 diamond account, but goes all the way back to cs.utexas.edu in the early 1990's
-# N.B keep this cript make idempotent!
+# N.B keep this script make idempotent!
 
 echo "bashrc start"
 # keep this script separate from from .bashrc add this alias to .bashrc: alias sb='source ~/dot/dotBashrc'
@@ -42,25 +42,7 @@ export VIRTUAL_ENV_DISABLE_PROMPT=1
 #export PS1="\e[0;36m[ \h:\u:\$\$ ]:[ \t ]:[ \w ]:\e[m\n>"
 export PS1="\e[0;36m[ \h:\u:\$\$ ]:[ \$(parse_pyvenv) ]:[ \t ]:[ \w ]:\e[m\n>"
 
-# COLORS ---------------------------------------------------------------------- Colors
-alias grep='grep --color=auto'                # show differences in colour
-alias egrep='egrep --color=auto'              # show differences in colour
-alias fgrep='fgrep --color=auto'              # show differences in colour
-
-function sgf () {
-  #show greps
-  echo "-------------------------------------------greps"
-  alias | grep grep
-  echo 'grep -ir --include \"*.m\" --exclude \"*foo*\" <word> <folder>'
-  echo "-------------------------------------------finds"
-  alias | grep find
-  echo 'for a in $(find . -maxdepth 1 -mindepth 1 -type d); do echo $a; done'
-  echo "find -maxdepth 1 -printf '%t %s %p\n'"
-  echo "find . -iname '*.pst'  -printf \"%TY-%Tm-%Td %TH:%TM %p %m\n\""
-  echo "-------------------------------------------"
-}
-
-
+# ----------------------------------------------------------------------------- sleep and wake
 # sudo umount ~/Euler; ?
 alias sleepMaxwell='sync && sleep 10 && systemctl suspend -i'
 alias wakeMaxwell='pkill pavucontrol-qt ; pulseaudio -k ; sleep 40 ; pavucontrol-qt &'
@@ -356,6 +338,24 @@ bind '"\er": reverse-search-history'
 # bind '"\ed": kill-word'  <- this is the fix
 # bind -p | grep '\\e' | grep d  | grep -v lower | grep -v digit
 
+# COLOR GREP  ---------------------------------------------------------------------- Colors
+alias grep='grep --color=auto'                # show differences in colour
+alias egrep='egrep --color=auto'              # show differences in colour
+alias fgrep='fgrep --color=auto'              # show differences in colour
+
+function sgf () {
+  #show greps
+  echo "-------------------------------------------greps"
+  alias | grep grep
+  echo 'grep -ir --include \"*.m\" --exclude \"*foo*\" <word> <folder>'
+  echo "-------------------------------------------finds"
+  alias | grep find
+  echo 'for a in $(find . -maxdepth 1 -mindepth 1 -type d); do echo $a; done'
+  echo "find -maxdepth 1 -printf '%t %s %p\n'"
+  echo "find . -iname '*.pst'  -printf \"%TY-%Tm-%Td %TH:%TM %p %m\n\""
+  echo "-------------------------------------------"
+}
+
 # FIND/GREP ------------------------------------------------------------------- find/grep
 alias gr=grep
 alias gi='grep -i'
@@ -427,6 +427,7 @@ alias xtmy='xterm  -sl 20000 -bg darkgrey  -fg white  -cr lightblue     &'
 alias xtmo='xterm  -sl 20000 -bg orange4   -fg white  -cr lightgreen    &'
 alias xtmv='xterm  -sl 20000 -bg palevioletred -fg black -cr lightgreen &'
 
+
 # ----------------------------------------------------------------------------- start jobs
 #  firefox &
 #  emacs &
@@ -462,7 +463,7 @@ function startJobs () {
 #  xdotool set_window --name "$$:$1" `$currWindow
 # }
 
-# manipulate symlink
+# manipulate symlink - "repoint"
 function rp(){
     echo "repoint existing link arg1 -> arg2"
     if [[ "$#" == "2" ]]; then
@@ -502,7 +503,7 @@ alias svndd='svn --diff-cmd "diff" --extensions "-ywbB --suppress-common-lines -
 
 alias forloop='echo "for a in *; do echo \$a; cmd \$a; done"'
 
-# REM ------------------------------------------------------------------------- remoting
+# REM ------------------------------------------------------------------------- remoteing
 alias remGem='ssh -p 8022 192.168.1.93'
 alias remGemWired='ssh -p 8022 192.168.1.161'
 alias remCos='ssh -p 8022 192.168.1.209'
@@ -550,7 +551,7 @@ function remSyncFromCosmo () {
     ~kleyn/mySystems/cosmo/root/storage/sdCard
   # --progress
   # --exclude=/storage
-  # rsync -nlrvvv --size-only --delete --delete-excluded --port=8022                              u0_a102@192.168.1.160:/storage/9874-190B/Android/data/com.termux/files/MyDocs/aNotes/  ~kleyn/mySystems/cosmo/root/storage/sdCard/Android/data/com.termux/files/MyDocs/aNotes
+  # rsync -nlrvvv --size-only --delete --delete-excluded --port=8022  u0_a102@192.168.1.160:/storage/9874-190B/Android/data/com.termux/files/MyDocs/aNotes/  ~kleyn/mySystems/cosmo/root/storage/sdCard/Android/data/com.termux/files/MyDocs/aNotes
   # rsync -crv --delete --delete-excluded ~/dcim/   kleyn@192.168.1.89:/home/kleyn/mySystems/gem/dcim
   # rsync -crv --delete --delete-excluded ~/MyDocs/ kleyn@192.168.1.89:/home/kleyn/mySystems/gem/MyDocs
   # rsync -crv --delete --delete-excluded ~/        kleyn@192.168.1.89:/home/kleyn/mySystems/gem
@@ -592,18 +593,10 @@ pwd
 # application.  To override the alias instruction use a \ before, ie
 # \rm will call the real rm not the alias.
 #
-# Interactive operation...
-# alias rm='rm -i'
-# alias cp='cp -i'
-# alias mv='mv -i'
-#
-# Default to human readable figures
-# alias df='df -h'
-# alias du='du -h'
-#
+
 # Misc :)
 # alias less='less -r'                          # raw control characters
-# alias lesss='less -S'                           # trim to screen
+# alias lesss='less -S'                         # trim to screen
 # alias whence='type -a'                        # where, of a sort
 
 # ------------------------------------------------------------------------------ Umask
@@ -615,11 +608,6 @@ pwd
 # umask 077
 
 # ------------------------------------------------------------------------------ Functions
-#
-# Some people use a different file for functions
-# if [ -f "${HOME}/.bash_functions" ]; then
-#   source "${HOME}/.bash_functions"
-# fi
 #
 # Some example functions:
 #
@@ -690,15 +678,15 @@ pwd
 # Alias cd=cd_func
 
 # PROMPT MANGLING ----------------------------------------------------------------------------- prompt mangling notes
-#PS1="\t:\w:"
-#export PS1="\e[0;31m[\u@\h \W]\$ \e[m "
-#export PS1="==\d\t:\w:\n>>"
+# PS1="\t:\w:"
+# export PS1="\e[0;31m[\u@\h \W]\$ \e[m "
+# export PS1="==\d\t:\w:\n>>"
 # insert env var [\$FOO]
-#use \! for numbering
-#PROMPT_DIRTRIM=4  # number of trailing directory components
-#export PS1="\e[0;36m==:\t:\w:>\e[m"
-#export PS1="\e[0;36m==:\t:\w:\e[m\n>"
-#CONDA_DEFAULT_ENV
+# use \! for numbering
+# PROMPT_DIRTRIM=4  # number of trailing directory components
+# export PS1="\e[0;36m==:\t:\w:>\e[m"
+# export PS1="\e[0;36m==:\t:\w:\e[m\n>"
+# CONDA_DEFAULT_ENV
 # colour
 # Color Code
 # Black 0;30
