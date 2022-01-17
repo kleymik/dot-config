@@ -30,6 +30,7 @@ convenient prefix key map, for example `C-,`
 (define-key global-map "\C-co" 'org-capture)
 ------------------------------------------------------------------------------
 
+
 * Packages
 #+BEGIN_SRC emacs-lisp
 (setq load-path (append load-path '("~/ulib/emacs/")))
@@ -60,8 +61,9 @@ convenient prefix key map, for example `C-,`
 (require 'dired-x)
 (require 'wdired)
 (require 'dired-subtree)
+
 (require 'dired-sidebar)
-(setq dired-sidebar-width 90)
+(setq dired-sidebar-width 70)
 (setq dired-subtree-line-prefix "  ")
 
 (require 'dired-rainbow)
@@ -448,6 +450,11 @@ convenient prefix key map, for example `C-,`
     (fill-paragraph nil)))
 
 ;;-------------------------------------------------------------------- Enhanced Line Editing
+(defun delete-whitespace-right ()
+   (interactive) ;; "\\s-"
+   (delete-region (point) (save-excursion (skip-chars-forward "[ \t]+") (point)))
+)
+
 (defun ed-copy-line (arg)
   "Copy lines to the kill ring"
   (interactive "p")
@@ -846,6 +853,7 @@ N.B. TBD drop last ","
 ;      (replace-string "# \+ pycharm=[^#]+(#%%.+)}" "[[https://www.lds.org/scriptures/search?lang=eng&query=\1&x=0&y=0][\1]]"  nil (region-beginning) (region-end))
 ;   ))
 
+
 * Settings
 #+BEGIN_SRC emacs-lisp
 (message "-------------- Start Settings")
@@ -1092,6 +1100,7 @@ M-x clone-indirect-buffer RET
 ; good place to find custom themes is here: emacsthemes.com
 ; Now load your custom theme by typing the following:
 ; M-x customize-themes ;;;now press return
+
 
 * Modes Assoc List
 #+BEGIN_SRC emacs-lisp
@@ -2225,6 +2234,7 @@ M-x clone-indirect-buffer RET
  (require 'ztree-diff)
  (require 'ztree-dir)
 
+
 * Hooks
 for python -made named function so remove-hook can be used
 for flushing messages to *Message* buffer
@@ -2247,7 +2257,6 @@ for flushing messages to *Message* buffer
 
 #+END_SRC
 * Key Bindings
-
 ** notes: may be useful
  M-0 w                       ;; dired copy path
  C-x C-v                     ;; find alternate file   -> then grab filepath
@@ -2328,6 +2337,7 @@ for flushing messages to *Message* buffer
 (global-set-key (kbd "C-c C-t") 'org-table-convert-region)
 (global-set-key (kbd "C-c t")   'toggle-truncate-lines)
 (global-set-key (kbd "C-c w")   'delete-trailing-whitespace)
+(global-set-key (kbd "s-\\")    'delete-whitespace-right)
 (global-set-key (kbd "C-<tab>") 'yafolding-toggle-element)
 
 (global-set-key (kbd "C-x 3")   '(lambda () (interactive) (split-window-right) (other-window 1))) ;; was switch-to-buffer
@@ -2531,40 +2541,45 @@ org-goto
  | mod   | NumLock        |              / | *              | -     |       |
  |-------+----------------+----------------+----------------+-------+-------|
  |       |                |                |                |       |       |
+ |       |                |                |                |       |       |
  | CTRL  |                |                |                | zoom- | CTRL  |
- | SHIFT |                |                |    *UP x 10*   |       | SHIFT |
+ | SHIFT |                |                |                |       | SHIFT |
  | ALT   |                |                |                |       | ALT   |
  | SUPER |                |                |                |       | SUPER |
  |-------+----------------+----------------+----------------+-------+-------|
  | mod   | 7 Home         |             8^ | 9 PgUp         | +     | +     |
  |-------+----------------+----------------+----------------+-------+-------|
+ |       |                |    *UP*        |                |       |       |
  |       |                |                |                |       |       |
  | CTRL  |                |                |                |       | CTRL  |
- | SHIFT |                |                |    *UP*        | *IN*  | SHIFT |
+ | SHIFT |                |                |                |       | SHIFT |
  | ALT   |                |                |                |       | ALT   |
  | SUPER |                |                |                |       | SUPER |
  |-------+----------------+----------------+----------------+-------+-------|
  | mod   | 4 <            |              5 | 6 >            | +     |       |
  |-------+----------------+----------------+----------------+-------+-------|
+ |       |    *OUT*       |   *CYCLE*      |    *IN*        |       |       |
  |       |                |                |                |       |       |
  | CTRL  |                |                |                |       | CTRL  |
- | SHIFT |                |    *OUT*       |   *CYCLE*      | *IN*  | SHIFT |
+ | SHIFT |                |                |                |       | SHIFT |
  | ALT   |                |                |                |       | ALT   |
  | SUPER |                |                |                |       | SUPER |
  |-------+----------------+----------------+----------------+-------+-------|
  | mod   | 1              |             2v | 3PgUp          | +     |       |
  |-------+----------------+----------------+----------------+-------+-------|
+ |       |                |    *DOWN*      |                |       |       |
  |       |                |                |                |       |       |
  | CTRL  |                |                |                |       | CTRL  |
- | SHIFT |                |                |   *DOWN*       |       | SHIFT |
+ | SHIFT |                |                |                |       | SHIFT |
  | ALT   |                |                |                |       | ALT   |
  | SUPER |                |                |                |       | SUPER |
  |-------+----------------+----------------+----------------+-------+-------|
  | mod   | 0              |              0 | .              | Enter |       |
  |-------+----------------+----------------+----------------+-------+-------|
  |       |                |                |                |       |       |
+ |       |                |                |                |       |       |
  | CTRL  |                |                |                |       | CTRL  |
- | SHIFT |                |                |   *DOWN x 10*  |       | SHIFT |
+ | SHIFT |                |                |                |       | SHIFT |
  | ALT   |                |                |                |       | ALT   |
  | SUPER |                |                |                |       | SUPER |
  |-------+----------------+----------------+----------------+-------+-------|
@@ -2602,7 +2617,7 @@ org-goto
 *** KeyPad Map 2
  SHIFT => don't collapse
  |----+--------+-------------------------------------+-------+-------+-----------------------------------------+-------------------------------------+---------+----------------------------------------------+----------------------------+------+----------------+------------------------+------------+-------|
- |  # | KEY    | DESCRIPTION                         | ABBRV | SoFar | org-mode/babel                          | dired                               | sidebar | python                                       | elisp                      | json | xml/yafoldable | ibuffer                | TreeziCalc  | table |
+ |  # | KEY    | DESCRIPTION                         | ABBRV | SoFar | org-mode/babel                          | dired                               | sidebar | python                                       | elisp                      | json | xml/yafoldable | ibuffer                | TreeziCalc | table |
  |----+--------+-------------------------------------+-------+-------+-----------------------------------------+-------------------------------------+---------+----------------------------------------------+----------------------------+------+----------------+------------------------+------------+-------|
  |  5 | kp-4   | upto grandparent; collapse children | up2   | JJXJX | J outline-up-heading X 2 : tbd collapse | J dired-up-to-parent X 2            |         |                                              | J backward-up-list X 2     |      |                |                        |            | home  |
  |  6 | kp-5   | upto parent;      collapse children | up1   | JJXJX | j outline-up-heading     : tbd collapse | J dired-up-to-parent                |         | python-nav-backward-up-list/-beginning-block | J backward-up-list         |      |                |                        |            | left  |
@@ -2646,43 +2661,48 @@ TBD
   ;;(define-key dired-sidebar-mode-map [kp-2]      'dired-next-line)
 
   (define-key dired-sidebar-mode-map [kp-5]        '(lambda ()                                                      ;; keep
-                                                        (interactive) 
-                                                        (message (format "%d %d" (line-number-at-pos) (dired-subtree--get-depth (dired-subtree--get-ov))))
-                                                        (if (= (dired-subtree--get-depth (dired-subtree--get-ov)) 0)
-                                                            (dired-sidebar-up-directory)
-                                                            (dired-subtree-up)))))
-  ;; (define-key dired-sidebar-mode-map [C-kp-5]      'dired-sidebar-up-directory) now subsumed in kp-5
+                                                       (interactive) 
+                                                       (message (format "%d %d" (line-number-at-pos) (dired-subtree--get-depth (dired-subtree--get-ov))))
+                                                       (if (= (dired-subtree--get-depth (dired-subtree--get-ov)) 0)
+                                                          (dired-sidebar-up-directory)
+                                                          (dired-subtree-up))))
+
 
   (define-key dired-sidebar-mode-map [kp-9]        'dired-subtree-previous-sibling)                                 ;; move #2=ps
   (define-key dired-sidebar-mode-map [kp-6]        'dired-sidebar-subtree-toggle)
-                           
+  (define-key dired-sidebar-mode-map [kp-3]        'dired-subtree-next-sibling)                                     ;; move #8=ns                           
 
   (define-key dired-sidebar-mode-map [kp-subtract] '(lambda () (interactive) (dired-sidebar-subtree-toggle) (dired-next-lne)))
-  (define-key dired-sidebar-mode-map [kp-add]      '(lambda ()                                                      ;; first child, open if needed
-                                                        (interactive) 
-                                                        (if (not (dired-subtree--is-expanded-p)) (dired-sidebar-subtree-toggle))
-                                                        (dired-next-line 1)))                                       ;; dired-sidebar-find-file
-  (define-key dired-sidebar-mode-map [C-kp-add]      'dired-sidebar-find-file)
 
-  (define-key dired-sidebar-mode-map "O"             'ergoemacs-open-in-external-app)  
+  (define-key dired-sidebar-mode-map [kp-add]      '(lambda ()                                                      ;; first child, open if needed
+                                                       (interactive) 
+                                                       (if (not (dired-subtree--is-expanded-p)) (dired-sidebar-subtree-toggle))
+                                                       (dired-next-line 1)))                                       ;; dired-sidebar-find-file
+  (define-key dired-sidebar-mode-map [C-kp-add]    'dired-sidebar-find-file)
+
+  (define-key dired-sidebar-mode-map "O"           'ergoemacs-open-in-external-app)  
+
+  ;; (define-key dired-sidebar-mode-map [C-kp-5]      'dired-sidebar-up-directory) now subsumed in kp-5
 )
 #+end_src
 
 #+begin_src emacs-lisp
 
 (progn ;; dired treepad navigation
-  (define-key dired-mode-map [kp-4]                '(lambda () (interactive)   (my-dired-up-to-parent) (my-dired-up-to-parent)))
-  (define-key dired-mode-map [kp-5]                'my-dired-up-to-parent)                                                       ;; move #6=u1
 
-  (define-key dired-mode-map [kp-multiply]         '(lambda () (interactive)  (my-dired-subtree-prev-sibling-n 7)))              ;; moveto nth sibling, and open(org-backward-heading-same-level 6)
-  (define-key dired-mode-map [kp-9]                'dired-subtree-previous-sibling)                                              ;; move #2=ps
-  (define-key dired-mode-map [kp-6]                'my-dired-subtree-toggle)                                                     ;; tbd toggle with 'dired-subtree-remove ;; toggle open children
-  (define-key dired-mode-map [kp-3]                'dired-subtree-next-sibling)                                                  ;; move #8=ns
-  (define-key dired-mode-map [kp-decimal]          '(lambda () (interactive)  (my-dired-subtree-next-sibling-n 7)))              ;; moveto nth sibling, and open
+  (define-key dired-mode-map [kp-5]                'my-dired-up-to-parent)                                          ;; ok-same as sidebar; move #6=u1  
 
-  (define-key dired-mode-map [kp-add]              'dired-find-file-drop-prev-dired-buffer)                                      ;; dired-find-file
-  (define-key dired-mode-map [C-kp-add]            'my-subdired-dft)                                                             ;; dired-subtree-insert move #8=ns     ;; open and moveto first child,
+  (define-key dired-mode-map [kp-9]                'dired-subtree-previous-sibling)                                 ;; ok-same as sidebar; move #2=ps
+  (define-key dired-mode-map [kp-6]                'my-dired-subtree-toggle)                                        ;; ok-same as sidebar; tbd toggle with 'dired-subtree-remove ;; toggle open children
+  (define-key dired-mode-map [kp-3]                'dired-subtree-next-sibling)                                     ;; ok-same as sidebar;  move #8=ns
+
+  (define-key dired-mode-map [kp-add]              'my-subdired-dft)                                                ;; dired-subtree-insert move #8=ns     ;; open and moveto first child,
+  (define-key dired-mode-map [C-kp-add]            'dired-find-file-drop-prev-dired-buffer)                         ;; dired-find-file
+
+  ; (define-key dired-mode-map [kp-4]                '(lambda () (interactive)   (my-dired-up-to-parent) (my-dired-up-to-parent)))
+  ; (define-key dired-mode-map [kp-decimal]          '(lambda () (interactive)  (my-dired-subtree-next-sibling-n 7)))              ;; moveto nth sibling, and open
 )
+
 #+end_src
 
 *** TreeNavPad keys for org-mode
@@ -2944,6 +2964,7 @@ TBD
 ;; (global-set-key  "\C-xv-" 'tfs/delete)
 ;; (global-set-key  "\C-xvc" 'tfs/changeset)
 
+
 * Debugging
 ;;-------------------------------------------------------------------- DEBUG
 ;;Go to where your function is defined and type M-x edebug-defun,
@@ -3002,6 +3023,7 @@ TBD
         ((= n 1) 1)
         ((>  n 1) (progn (stop-here 'fact) (* n (fact (1- n)))))
         (t nil)))
+
 
 * ESHELL
 ;; (add-to-list 'eshell-command-aliases-list (list "l"     "stat --printf=%y\t%6s\t%-16n\n * | cut -b -16,36-"))
