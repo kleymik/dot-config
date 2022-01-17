@@ -5,6 +5,8 @@ invoked by ~/.emacs.d/init.el
 
 * New Stuff/Notes
 
+(setq cur-syntax-table (syntax-table)) ; better to use "describe-syntax"
+undefine a funcion: ;(fmakunbound 'trysc-propagate-rails) 
 default-directory
 good fonts "Ubuntu Mono"
 
@@ -29,7 +31,6 @@ convenient prefix key map, for example `C-,`
 (global-set-key [f4]            'see-orglink-dired) ;;     'desktop-save)
 (define-key global-map "\C-co" 'org-capture)
 ------------------------------------------------------------------------------
-
 
 * Packages
 #+BEGIN_SRC emacs-lisp
@@ -112,13 +113,6 @@ convenient prefix key map, for example `C-,`
 (cursor-flash-mode 1)
 (setq cursor-flash-interval 0.10)
 
-;(require 'highlight-sexp)  - fails
-;(add-hook 'lisp-mode-hook 'highlight-sexp-mode)
-;(add-hook 'emacs-lisp-mode-hook 'highlight-sexp-mode)
-; hl-sexp-background-color
-;  - hl-sexp-foreground-color
-;  - hl-sexp-face
-;; Enable `highlight-sexps-mode'
 
 ;; --------- deprecated
 ; (require 'cl)                 ; for transpose
@@ -724,34 +718,133 @@ C-x C-f /adb::/storage/emulated/0
                           end)))
 
 * Function Definitions - TreesyCalc
-
-#+begin_src emacs-lisp
+#+begin_src elisp
 ;; ------------------------------------------------------------------- TreesyCalc
-
 (defun insertTreeCalcSexp ()
-   "Eval expression and insert value after the expression"
+   "Eval expression and insert value on the top line of the sexp, after the ;= after the operator"
     (interactive)
     (save-excursion
-        (backward-up-list)                                                                              ; go to start of enclosing sexp
-        (mark-sexp)                                                                                     ; set sexp as region
-        (setq selSexp (buffer-substring-no-properties (region-beginning) (region-end)))                 ; tbd cleanse angle brackets from string
+        (backward-up-list)                                                                 ; go to start of enclosing sexp
+        (mark-sexp)                                                                        ; set sexp as region
+        (setq selSexp (buffer-substring-no-properties (region-beginning) (region-end)))    ; tbd cleanse angle brackets from string
         (message "sexp = %s" selSexp)
-        (setq res (my-eval-string selSexp))                                                             ; evaluate the sexp
-        (message "res = %s" res)
-                                                                                                        ; find where to put the result
-        (goto-char (line-beginning-position))                                                           ; goto start of sexp=region
-        (cond ((setq result-bgn (search-forward-regexp "\(.[ \t]+;=" (line-end-position) nil))          ; goto jusr after "<operator><space>;="
-               (cond ((setq result-end (search-forward-regexp " ;;;" (line-end-position) nil))          ; goto just after "<triple-semi-colon>"
+        (setq res (my-eval-string selSexp))                                                ; evaluate the sexp
+        (message "res = %s" res)                                                           
+                                                                                           ; find where to put the result
+        (goto-char (line-beginning-position))                                              ; goto start of sexp=region
+        (cond ((setq result-bgn (re-search-forward "\(.[ \t]+;=" (line-end-position) nil)) ; goto just after "<operator><space>;="
+               (cond ((setq result-end (re-search-forward " ;;;" (line-end-position) nil)) ; goto just after "<triple-semi-colon>"
                       (setq reg-selection (delete-and-extract-region result-bgn (- result-end (length " ;;;"))))
                       (message "got mark-point region = XX%sXX" reg-selection)))))
         (setq resStr (format "%4.0f" res))
         (message "new-string %i XX%sXX" (length resStr) resStr)
-        (goto-char result-bgn)
-        (insert (concat "" resStr "" ))
+        (goto-char resut-bgn)
+        (insert resStr) 
     )
-    (mark-sexp)                                                                                     ; set sexp as region
+    (mark-sexp)                                                                            ; set region as sexp
     (trsyc-align)
 )
+
+(defun align-lisp ()
+   "run at top of sexp"
+   (interactive)
+   (indent-pp-sexp)
+   (mark-sexp)
+   (align-regexp (region-beginning) (region-end) "\\(\\s-*\\); ")   ; align results
+)
+
+(defun trsyc-insert-initial-panel ()
+  "create the initial panel"
+  (interactive)
+  (insert "#+begin_src elisp")                                                                                (newline)
+  (insert ";-sexps-------------------;;;-rails--;;;-notes----------------------------------------------;;;;") (newline)
+  (insert "(+ ;=2                    ;;;        ;;; result")                                                  (newline)
+  (insert "   1                      ;;;        ;;; ")                                                        (newline)
+  (insert "   1                      ;;;        ;;; ")                                                        (newline)
+  (insert ")                         ;;;        ;;;")                                                         (newline)
+  (insert ";-sexps-------------------;;;-rails--;;;-notes----------------------------------------------;;;;") (newline)
+  (insert "#+end_src elisp") (newline)
+)
+
+(defun trsyc-align ()
+  "Align semi-colon sections in sexp region"
+  (interactive)
+  (backward-up-list)
+  (mark-sexp)
+  (align-regexp (- (region-beginning) 0) (region-end) "\\(\\s-*\\);;;")   ; align results
+)
+
+(defun trsyc-propagate-rails ()
+  "cut rails rectangle, propagate values"
+  (interactive)
+  (let ((pnl-tl-regex "^;-sexps-")
+        (rails-regex  ";;;-rails-+;")
+        (outVal-regex "\\()\\|;;;\\)"))
+    (message "-------------------------------------------------------------------")
+    (search-backward-regexp "^;-sexps-")                                                                  ; search up to get to panel top header line
+    (setq header-line-bgn (line-beginning-position))
+    (setq rails-box-top (re-search-forward-range rails-regex (line-end-position)))                        ; (message "rails-box-top %s" rails-box-top)
+
+    (goto-char (line-end-position))                                                                       ; move to bottom of panel
+    (setq rails-box-bot (re-search-forward-range rails-regex nil))                                        ; (message "Found rails top  %i, tl %i, tr %i" header-line-bgn (car rails-box-top) (cdr rails-box-bot))
+
+    (setq rectangle-as-list (extract-rectangle (car rails-box-top) (cdr rails-box-bot)))
+    (setq rectangle-as-list (trsyc-los-transpose rectangle-as-list))
+    (dotimes (li (length rectangle-as-list)) (message "Found rails %i %s" li (nth li rectangle-as-list))) ; 
+    (dotimes (li (length rectangle-as-list))                                                              ; find each rail and propagate values accordingly
+       (setq rail (nth li rectangle-as-list))
+       (cond ((and (string-match "i" rail)                                                                ; check  it's a rail: has (i)nput, (o)utput and vertical dashes
+                   (string-match "o" rail)                                                               
+                   (string-match "|" rail))               
+             (setq inValPos (string-match "i" rail))                                                      ; find the source position
+             (setq outValPosLst '())
+             (dotimes (pi (length rail) outValPosLst)                                                     ; collect all the sink positions
+               (if (string-equal "o" (substring rail pi (+ pi 1))) (setq outValPosLst (cons pi outValPosLst))))
+             (message "rail %i source pos=%s, sink posns=%s" li inValPos outValPosLst)
+
+            (goto-char header-line-bgn)                                                                   ; find (offset) position&value of source (=input), and (offset) positions of sinks(=output)
+            (next-line inValPos)                                                                          ; move down by offset number of lines
+            (setq selSrc (buffer-substring-no-properties (line-beginning-position) (- (re-search-forward "\\()\\|;;;\\)") 1)))
+            (setq inVal (format "%s" (my-eval-string selSrc)))
+            (message "selSrc XX%sXX = %s" selSrc inVal)
+            (dolist (p outValPosLst)                                                                      ; mark the sinks
+                (goto-char header-line-bgn) 
+                (next-line p)
+                (setq selSnk (re-search-forward-range "\\()\\|;;;\\)" (line-end-position)))               ; find value to replace
+                (delete-char 1)
+                (insert inVal)))))            
+    (message "-------------------------------------------------------------------")         
+   )            
+)
+
+(defun re-search-forward-range (regex bound)
+   "return start and end of regexp match"
+   (cons  
+      (re-search-forward regex bound nil)   ; (forward-sexp) doesn't work
+      (match-beginning 0))
+)
+
+(defun trsyc-los-transpose (rowsLst)
+  "Convert a list of strings representing the rows of a rectangular region 
+   into a list of strings representing the columns of the same region"
+  (setq colsLst '())
+  (dotimes (c (length (car rowsLst)) colsLst)
+       (setq colStr "")
+       (setq colsLst (append colsLst 
+                             (list (dolist (r rowsLst colStr) 
+                                      (setq colStr (concat colStr (substring r c (+ c 1)))))))))
+)
+;; -------------------------------------------------------------------------------- cuts
+;; (setq rails-box-br (re-search-forward       ";;;-rails-+;"))                                           ; search down to get panel botom and find rail box bottom right
+;; (setq rails-box-bl (match-beginning 0))                                                                 ; find rail box bottom left
+;; (setq rails-box-bot (cons rails-box-br rails-box-bl))
+
+;; (setq rails-box-tr (re-search-forward ";;;-rails-+;" (line-end-position) nil))                          ; find rail box top-right
+;; (setq rails-box-tl (match-beginning 0))
+
+;; (goto-char (line-beginning-position))
+;; (delete-char 1)            (insert "I")                                                        ; mark the source
+;; (setq src-end (search-forward-regexp ".+(\)|;;;)" (line-end-position) nil))                   ; (forward-sexp) doesn't work
 
 ;; (message "new-string %i XX%sXX" (length new-string) new-string)
 ;; (insert new-string)     
@@ -760,17 +853,10 @@ C-x C-f /adb::/storage/emulated/0
 ;; (delete-region (- (region-beginning) 2) (region-end))                            ; delete region and replace with result
 ;; (setq reg-selection (buffer-substring-no-properties (region-beginning) (region-end)))
 
-(defun trsyc-align ()
-  "Align semi colon sections in sexp region"
-  (interactive)
-  (backward-up-list)
-  (mark-sexp)
-  (align-regexp (- (region-beginning) 0) (region-end) "\\(\\s-*\\);;;")   ; align results
-)
-
-(defun trysc-propagate-rails ()
-  "cut rails rectangle, propagate values"
-  (interactive)
+  ;(mapc (lambda (x) (message "Found rails %s" x)) rectangle-as-list)
+  ;(message rectangle-as-list)
+  
+  ;(copy-rectangle-as-kill START END)
   ; reg-search-back for "^;-sexps-;;;;;"
   ; reg-seach on same line for ;-rails-;
   ; foreach rail-col in rails:
@@ -778,7 +864,7 @@ C-x C-f /adb::/storage/emulated/0
   ;    find-eval value on this line
   ;    foreach output-line
   ;   
-)
+
 
 ;; ------------------------------------------------------------------- Eval
 (defun eval-and-insert ()
@@ -808,6 +894,9 @@ C-x C-f /adb::/storage/emulated/0
 ;; (octal, hexadecimal, and character).
 
 #+end_src
+
+#+RESULTS:
+: my-insert-last-sexp
 
 * Commands Quick Ref
 (dired  "/ssh:192.168.1.124#8022:/data/data/com.termux/files/home")  ; using  port
@@ -934,14 +1023,13 @@ regexp classes:
 ;;
 ;;(defun replace-thing ()
 ;;  (interactive)
-;;  (replace-regexp "\(pycharm\)" "XX\1XX"  nil (point-min) (point-max)))
-;;  (if (region-active-p)      ;;(replace-regexp "(pycharm)" "X\1X"  nil (region-beginning) (region-end))
+;;  (replace-regexp "\(pycharm\)" "XX\1XX"  nil (point-min) (point-max))) 
+;;  (if (region-active-p)      ;;(replace-regexp "(pycharm)" "X\1X"  nil region-beginning) (region-end))
 ;(defun replace-thing ()
 ;  (interactive)
 ;  (if (region-active-p)
 ;      (replace-string "# \+ pycharm=[^#]+(#%%.+)}" "[[https://www.lds.org/scriptures/search?lang=eng&query=\1&x=0&y=0][\1]]"  nil (region-beginning) (region-end))
 ;   ))
-
 
 * Settings
 #+BEGIN_SRC emacs-lisp
@@ -967,7 +1055,7 @@ regexp classes:
 (setq ispell-personal-dictionary "~/.emacs.d/aspell.EN.pws")
 (setq kill-ring-max 12)
 (setq line-number-mode t) 
-(setq max-lisp-eval-depth1200) ; 800
+(setq max-lisp-eval-depth 1200) ; 800
 (setq ediff-window-setup-function 'ediff-setup-windows-plain)
 (setq uniquify-buffer-name-style 'forward)
 (setq use-dialog-box nil)
@@ -977,20 +1065,6 @@ regexp classes:
 (setq-default line-spacing 0.06)
 (setq-default indent-tabs-mode nil)
 (setq ivy-height 10)
- 
-; ------------------------------------- highlighting
-(global-hl-line-mode 1) ; 0 to turn off
-(set-face-background hl-line-face "gray30")
-(show-paren-mode 1)
-(setq show-paren-style 'expression) ; or parenthesis of mixed
-(set-face-background 'show-paren-match "#111111")
-;(set-face-background 'show-paren-match "#444444")
-(set-face-attribute  'show-paren-match nil :weight 'bold :underline nil :overline nil :slant 'normal) 
-;(list-colors-display);
-(setq show-paren-when-point-inside-paren t)
-(setq show-paren-when-point-in-periphery t)
-
-(setq-default x-stretch-cursor t)
 
 (tool-bar-mode -1)
 (setq-default frame-title-format "%f")
@@ -1203,6 +1277,46 @@ M-x clone-indirect-buffer RET
 ; Now load your custom theme by typing the following:
 ; M-x customize-themes ;;;now press return
 
+* Highlighting
+; ------------------------------------- highlighting
+#+begin_src elisp
+;(require 'highlight-sexp)  - fails
+;(add-hook 'lisp-mode-hook 'highlight-sexp-mode)
+;(add-hook 'emacs-lisp-mode-hook 'highlight-sexp-mode)
+; hl-sexp-background-color
+;  - hl-sexp-foreground-color
+;  - hl-sexp-face
+;; Enable `highlight-sexps-mode'
+
+(global-hl-line-mode 1) ; 0 to turn off
+(set-face-background hl-line-face "gray30")
+(show-paren-mode 1)
+(setq show-paren-style 'expression) ; or parenthesis of mixed
+(set-face-background 'show-paren-match  "#888888")
+;(set-face-background 'show-paren-match "#444444")
+(set-face-attribute  'show-paren-match nil :weight 'bold :underline nil :overline nil :slant 'normal) 
+;(list-colors-display);
+(setq show-paren-when-point-inside-paren t)
+(setq show-paren-when-point-in-periphery t)
+
+(defvar my-wacky-syntax-table
+   (let ((table (make-syntax-table emacs-lisp-mode-syntax-table)))
+        (modify-syntax-entry ?[ "w" table)
+        (modify-syntax-entry ?] "w" table)
+        table))
+
+(setq syntax-table_elisp-backup (make-syntax-table emacs-lisp-mode-syntax-table))
+;Put this in the InitFile, and call it from a buffer with
+;(set-syntax-table my-wacky-syntax-table)
+
+(defun my-show-paren-hooks ()   ;; drop angle brackets from matching via syntax-table
+   (modify-syntax-entry ?< "w")
+   (modify-syntax-entry ?> "w")
+)
+;(add-hook 'show-paren-mode-hook 'my-show-paren-hooks)   ; TDB
+
+(setq-default x-stretch-cursor t)
+#+end_src
 
 * Modes Assoc List
 #+BEGIN_SRC emacs-lisp
@@ -2287,7 +2401,6 @@ M-x clone-indirect-buffer RET
  (require 'ztree-diff)
  (require 'ztree-dir)
 
-
 * Hooks
 for python -made named function so remove-hook can be used
 for flushing messages to *Message* buffer
@@ -2400,6 +2513,8 @@ for flushing messages to *Message* buffer
 ; qwerty 0th row
 (global-set-key (kbd "C-x 3")   '(lambda () (interactive) (split-window-right) (other-window 1))) ;; was switch-to-buffer
 ; qwerty 1st row - treesycalc
+(global-set-key (kbd "C-x q")   'align-lisp)
+(global-set-key (kbd "C-x w")   'eval-defun)
 (global-set-key (kbd "C-x e")   'eval-last-sexp)
 (global-set-key (kbd "C-x t")   'instimestamp)
 (global-set-key (kbd "C-x y")   'insertTreeCalcSexp)
@@ -2426,6 +2541,8 @@ for flushing messages to *Message* buffer
 (global-set-key (kbd "M-$")     'query-replace-regexp)
 (global-set-key (kbd "M-y")     'counsel-yank-pop)
 (global-set-key (kbd "M-o")     'ace-window)  ;(setq aw-background nil)
+
+(global-set-key (kbd "<end>")    'other-window)
 
 (message "-------------- Done: Global Keys")
 #+END_SRC
@@ -3090,7 +3207,6 @@ TBD
 ;; (global-set-key  "\C-xv-" 'tfs/delete)
 ;; (global-set-key  "\C-xvc" 'tfs/changeset)
 
-
 * Debugging
 ;;-------------------------------------------------------------------- DEBUG
 ;;Go to where your function is defined and type M-x edebug-defun,
@@ -3149,7 +3265,6 @@ TBD
         ((= n 1) 1)
         ((>  n 1) (progn (stop-here 'fact) (* n (fact (1- n)))))
         (t nil)))
-
 
 * ESHELL
 ;; (add-to-list 'eshell-command-aliases-list (list "l"     "stat --printf=%y\t%6s\t%-16n\n * | cut -b -16,36-"))
@@ -3506,7 +3621,6 @@ add below to your .emacs
 Type ec <command> from eshll prompt will open another buffer with command output/status.
 (print foo) === echo $foo
 eshell-parse-command 'ls -l'
-
 
 
 * Faded
