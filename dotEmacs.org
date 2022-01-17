@@ -118,10 +118,6 @@ convenient prefix key map, for example `C-,`
 ; hl-sexp-background-color
 ;  - hl-sexp-foreground-color
 ;  - hl-sexp-face
-
-;(require 'highlight-sexps)  fails
-;(add-hook 'lisp-mode-hook 'highlight-sexps-mode)
-;(add-hook 'emacs-lisp-mode-hook 'highlight-sexps-mode)
 ;; Enable `highlight-sexps-mode'
 
 ;; --------- deprecated
@@ -235,7 +231,7 @@ convenient prefix key map, for example `C-,`
 (defun filepath-on-clipboard ()
   "Put the current file name on the clipboard"
   (interactive)
-  (let ((filename (if (equal major-mode 'dired-mode)
+ (let ((filename (if (memq major-mode '(dired-mode dired-sidebar-mode)) 
                       default-directory
                     (buffer-file-name))))
     (when filename
@@ -323,70 +319,6 @@ convenient prefix key map, for example `C-,`
   (Buffer-menu-sort 6))
 
 
-;; ------------------------------------------------------------------- TreesyCalc
-
-(defun insertTreeCalcSexp ()
-   "Eval expression and insert value after the expression"
-    (interactive)
-    (save-excursion
-        (backward-up-list)
-        (mark-sexp)
-        (setq selSexp (buffer-substring-no-properties (region-beginning) (region-end))) ;< cleanse angle brackets from string
-        (message "sexp:%s" selSexp)
-
-        (setq res (my-eval-string selSexp))
-        (message "res :%s" res)
-
-        (goto-char (line-beginning-position))
-        (cond ((search-forward-regexp "\(.[ \t]+;=" (line-end-position) nil)  ; try just after operator
-               (push-mark)
-               (cond ((search-forward-regexp ";;;" (line-end-position) nil)   ; otherwise after semi-colon
-                      (setq reg-selection (buffer-substring-no-properties (region-beginning) (region-end)))
-                      ;; delete-and-extract-region?
-                      ;; (setq reg-selection (buffer-substring-no-properties (delete-and-extract-region (region-beginning) (region-end))))
-                      (message "got mark-point region:%s" reg-selection)))))
-
-        ; replace in region string
-        (delete-region (- (region-beginning) 2) (region-end))                  ; delete region
-        (setq resStr (format "%4.0f" res))
-        (setq new-string (concat ";= " resStr "  " (substring  reg-selection (+ (length ";= ") (length resStr)))))
-        (message "new-string %i XX%sXX" (length new-string) new-string)
-        (insert new-string)     
-    )
-)
-    ;(mark-sexp)
-        ;(align-regexp (- (region-beginning) 10) (region-end) " ;;; ")   ; align results
-        ;(align-regexp (- (region-beginning) 10) (region-end) " ;;  ")   ; align descriptions
-        ;(backward-up-list)
-
-
-
-;; ------------------------------------------------------------------- Eval
-(defun eval-and-insert ()
-  "Eval expression and insert value after the expression"
-  (interactive)
-  (pp-eval-expression (preceding-sexp))
-  ;;(eval-print-last-sexp 0)
-)
-
-(defun my-eval-string (string)
-  "Evaluate elisp code stored in a string."
-  (eval (car (read-from-string string))))
-
- ;; TBD format based on datatype or use C-u C-x C-e
-
-(defun my-insert-last-sexp ()
-    (interactive)
-    (let ((value (eval (preceding-sexp))))
-      ;;(kill-sexp -1)
-      (insert (format " = %S" value))))  ;; TBD format based on datatype or use C-u C-x C-e
-
-;; Normally, this function truncates long output according to the value
-;; of the variables `eval-expression-print-length' and
-;; `eval-expression-print-level'.  With a prefix argument of zero,
-;; however, there is no such truncation.  Such a prefix argument
-;; lso causes integers to be printed in several additional formats
-;; (octal, hexadecimal, and character).
 
 ;; ------------------------------------------------------------------- transpose sexps
 ;; transpose items in list
@@ -656,7 +588,7 @@ convenient prefix key map, for example `C-,`
   (interactive)
   (let (doIt (myFileList
               (cond
-               ((string-equal major-mode "dired-mode") (dired-get-marked-files))
+               ((memq major-mode '(dired-mode dired-sidebar-mode)) (dired-get-marked-files))
                (t (list (buffer-file-name))) ) ) )
     (setq doIt (if (<= (length myFileList) 5)
                    t
@@ -669,9 +601,6 @@ convenient prefix key map, for example `C-,`
        ((string-equal system-type "cygwin")
         (mapc (lambda (fPath) (message (concat "cygstart.exe " fPath))) myFileList)
         (mapc (lambda (fPath) (shell-command (concat "cygstart.exe " fPath))) myFileList))
-
-       ((string-equal system-type "darwin")
-        (mapc (lambda (fPath) (shell-command (format "open \"%s\"" fPath)) )  myFileList))
 
        ((string-equal system-type "gnu/linux")
         (mapc (lambda (fPath) (let ((process-connection-type nil)) (start-process "" nil "xdg-open" fPath)) ) myFileList))
@@ -794,6 +723,92 @@ C-x C-f /adb::/storage/emulated/0
                           start
                           end)))
 
+* Function Definitions - TreesyCalc
+
+#+begin_src emacs-lisp
+;; ------------------------------------------------------------------- TreesyCalc
+
+(defun insertTreeCalcSexp ()
+   "Eval expression and insert value after the expression"
+    (interactive)
+    (save-excursion
+        (backward-up-list)                                                                              ; go to start of enclosing sexp
+        (mark-sexp)                                                                                     ; set sexp as region
+        (setq selSexp (buffer-substring-no-properties (region-beginning) (region-end)))                 ; tbd cleanse angle brackets from string
+        (message "sexp = %s" selSexp)
+        (setq res (my-eval-string selSexp))                                                             ; evaluate the sexp
+        (message "res = %s" res)
+                                                                                                        ; find where to put the result
+        (goto-char (line-beginning-position))                                                           ; goto start of sexp=region
+        (cond ((setq result-bgn (search-forward-regexp "\(.[ \t]+;=" (line-end-position) nil))          ; goto jusr after "<operator><space>;="
+               (cond ((setq result-end (search-forward-regexp " ;;;" (line-end-position) nil))          ; goto just after "<triple-semi-colon>"
+                      (setq reg-selection (delete-and-extract-region result-bgn (- result-end (length " ;;;"))))
+                      (message "got mark-point region = XX%sXX" reg-selection)))))
+        (setq resStr (format "%4.0f" res))
+        (message "new-string %i XX%sXX" (length resStr) resStr)
+        (goto-char result-bgn)
+        (insert (concat "" resStr "" ))
+    )
+    (mark-sexp)                                                                                     ; set sexp as region
+    (trsyc-align)
+)
+
+;; (message "new-string %i XX%sXX" (length new-string) new-string)
+;; (insert new-string)     
+;; (setq new-string (concat "" resStr "  " (substring  reg-selection (+ (length ";= ") (length resStr)))))
+;; (message "delete result region =XX%sXX" (buffer-substring-no-properties (region-beginning) (region-end)))
+;; (delete-region (- (region-beginning) 2) (region-end))                            ; delete region and replace with result
+;; (setq reg-selection (buffer-substring-no-properties (region-beginning) (region-end)))
+
+(defun trsyc-align ()
+  "Align semi colon sections in sexp region"
+  (interactive)
+  (backward-up-list)
+  (mark-sexp)
+  (align-regexp (- (region-beginning) 0) (region-end) "\\(\\s-*\\);;;")   ; align results
+)
+
+(defun trysc-propagate-rails ()
+  "cut rails rectangle, propagate values"
+  (interactive)
+  ; reg-search-back for "^;-sexps-;;;;;"
+  ; reg-seach on same line for ;-rails-;
+  ; foreach rail-col in rails:
+  ;    find input line
+  ;    find-eval value on this line
+  ;    foreach output-line
+  ;   
+)
+
+;; ------------------------------------------------------------------- Eval
+(defun eval-and-insert ()
+  "Eval expression and insert value after the expression"
+  (interactive)
+  (pp-eval-expression (preceding-sexp))
+  ;;(eval-print-last-sexp 0)
+)
+
+(defun my-eval-string (string)
+  "Evaluate elisp code stored in a string."
+  (eval (car (read-from-string string))))
+
+ ;; TBD format based on datatype or use C-u C-x C-e
+
+(defun my-insert-last-sexp ()
+    (interactive)
+    (let ((value (eval (preceding-sexp))))
+      ;;(kill-sexp -1)
+      (insert (format " = %S" value))))  ;; TBD format based on datatype or use C-u C-x C-e
+
+;; Normally, this function truncates long output according to the value
+;; of the variables `eval-expression-print-length' and
+;; `eval-expression-print-level'.  With a prefix argument of zero,
+;; however, there is no such truncation.  Such a prefix argument
+;; lso causes integers to be printed in several additional formats
+;; (octal, hexadecimal, and character).
+
+#+end_src
+
 * Commands Quick Ref
 (dired  "/ssh:192.168.1.124#8022:/data/data/com.termux/files/home")  ; using  port
 cosmo -> /run/user/1000/52efffd273e1b33b/Android/data/com.termux/files
@@ -857,6 +872,7 @@ vc-ediff
 
 #+END_SRC
 -------------------------------------------------------------- SAMPLE REPLACE REGEXP
+(replace-regexp "[[:alpha:]\.]=" "" nil (region-beginning) (region-end))
 replace unprintable ""
 (replace-string "" "")
 (replace-string "" "")
@@ -873,6 +889,24 @@ replace unprintable ""
 (replace-regexp " [0-9][0-9]:[0-9][0-9]:[0-9][0-9]" "" nil (point-min) (point-max)) ; clear " HH:MM:SS"
 N.B. TBD drop last ","
 
+regexp classes:
+‘[:ascii:]’    This matches any ASCII character (codes 0–127).
+‘[:alnum:]’    This matches any letter or digit. For multibyte characters, it matches characters whose Unicode ‘general-category’ property (see Character Properties) indicates they are alphabetic or decimal number characters.
+‘[:alpha:]’    This matches any letter. For multibyte characters, it matches characters whose Unicode ‘general-category’ property (see Character Properties) indicates they are alphabetic characters.
+‘[:blank:]’    This matches horizontal whitespace, as defined by Annex C of the Unicode Technical Standard #18. In particular, it matches spaces, tabs, and other characters whose Unicode ‘general-category’ property (see Character Properties) indicates they are spacing separators.
+‘[:cntrl:]’    This matches any character whose code is in the range 0–31.
+‘[:digit:]’    This matches ‘0’ through ‘9’. Thus, ‘[-+[:digit:]]’ matches any digit, as well as ‘+’ and ‘-’.
+‘[:graph:]’    This matches graphic characters—everything except whitespace, ASCII and non-ASCII control characters, surrogates, and codepoints unassigned by Unicode, as indicated by the Unicode ‘general-category’ property (see Character Properties).
+‘[:lower:]’    This matches any lower-case letter, as determined by the current case table (see Case Tables). If case-fold-search is non-nil, this also matches any upper-case letter.
+‘[:multibyte:]’This matches any multibyte character (see Text Representations).
+‘[:nonascii:]’ This matches any non-ASCII character.
+‘[:print:]’    This matches any printing character—either whitespace, or a graphic character matched by ‘[:graph:]’.
+‘[:punct:]’    This matches any punctuation character. (At present, for multibyte characters, it matches anything that has non-word syntax.)
+‘[:space:]’    This matches any character that has whitespace syntax (see Syntax Class Table).
+‘[:unibyte:]’  This matches any unibyte character (see Text Representations).
+‘[:upper:]’    This matches any upper-case letter, as determined by the current case table (see Case Tables). If case-fold-search is non-nil, this also matches any lower-case letter.
+‘[:word:]’     This matches any character that has word syntax (see Syntax Class Table).
+‘[:xdigit:]’   This matches the hexadecimal digits: ‘0’ through ‘9’, ‘a’ through ‘f’ and ‘A’ through ‘F’.
 
 ;; (while (search-forward-regexp "^# \\+ pycharm=[^#]+#%% \\([^,}]+\\).*$" nil t)
 ;; drop # and \n} cruft at end
@@ -932,8 +966,8 @@ N.B. TBD drop last ","
 (setq inhibit-splash-screen t)
 (setq ispell-personal-dictionary "~/.emacs.d/aspell.EN.pws")
 (setq kill-ring-max 12)
-(setq line-number-mode t)
-(setq max-lisp-eval-depth 1200) ; 800
+(setq line-number-mode t) 
+(setq max-lisp-eval-depth1200) ; 800
 (setq ediff-window-setup-function 'ediff-setup-windows-plain)
 (setq uniquify-buffer-name-style 'forward)
 (setq use-dialog-box nil)
@@ -943,13 +977,14 @@ N.B. TBD drop last ","
 (setq-default line-spacing 0.06)
 (setq-default indent-tabs-mode nil)
 (setq ivy-height 10)
-
+ 
 ; ------------------------------------- highlighting
 (global-hl-line-mode 1) ; 0 to turn off
-
+(set-face-background hl-line-face "gray30")
 (show-paren-mode 1)
 (setq show-paren-style 'expression) ; or parenthesis of mixed
-(set-face-background 'show-paren-match "#444444")
+(set-face-background 'show-paren-match "#111111")
+;(set-face-background 'show-paren-match "#444444")
 (set-face-attribute  'show-paren-match nil :weight 'bold :underline nil :overline nil :slant 'normal) 
 ;(list-colors-display);
 (setq show-paren-when-point-inside-paren t)
@@ -1918,7 +1953,7 @@ M-x clone-indirect-buffer RET
         (dbuffer (current-buffer)))
     (other-window 1)                                    ; switch to the other window
     (unless (equal dbuffer (current-buffer))            ; don't kill the dired buffer
-      (if (or view-mode (equal major-mode 'dired-mode)) ; only if in view- or dired-mode
+      (if (or view-mode (memq major-mode '(dired-mode dired-sidebar-mode))) ; only if in view- or dired-mode
           (kill-buffer)))                               ; ... kill it
     (let ((filebuffer (get-file-buffer file)))
       (if filebuffer                                    ; does a buffer already look at the file
@@ -2364,7 +2399,7 @@ for flushing messages to *Message* buffer
 ; C-x
 ; qwerty 0th row
 (global-set-key (kbd "C-x 3")   '(lambda () (interactive) (split-window-right) (other-window 1))) ;; was switch-to-buffer
-; qwerty 1st row
+; qwerty 1st row - treesycalc
 (global-set-key (kbd "C-x e")   'eval-last-sexp)
 (global-set-key (kbd "C-x t")   'instimestamp)
 (global-set-key (kbd "C-x y")   'insertTreeCalcSexp)
@@ -2703,10 +2738,10 @@ TBD
 
   (define-key dired-sidebar-mode-map [kp-subtract] '(lambda () (interactive) (dired-sidebar-subtree-toggle) (dired-next-lne)))
 
-  (define-key dired-sidebar-mode-map [kp-6]        '(lambda () (interactive) ;; first child, open if needed
+  (define-key dired-sidebar-mode-map [kp-6]        'dired-sidebar-find-file)
+  (define-key dired-sidebar-mode-map [C-kp-6]      '(lambda () (interactive) ;; first child, open if needed
                                                        (if (not (dired-subtree--is-expanded-p)) (dired-sidebar-subtree-toggle))
                                                        (dired-next-line 1)))                                       ;; dired-sidebar-find-file
-  (define-key dired-sidebar-mode-map [C-kp-6]      'dired-sidebar-find-file)
 
   (define-key dired-sidebar-mode-map "O"           '(lambda () (interactive) (ergoemacs-open-in-external-app)))
 
@@ -2721,8 +2756,8 @@ TBD
   (define-key dired-mode-map [kp-5]                'my-dired-subtree-toggle)                                        ;; ok-same as sidebar; tbd toggle with 'dired-subtree-remove ;; toggle open children
   (define-key dired-mode-map [kp-2]                'dired-subtree-next-sibling)                                     ;; ok-same as sidebar;  move #8=ns
 
-  (define-key dired-mode-map [kp-6]                'my-subdired-dft)                                                ;; dired-subtree-insert move #8=ns     ;; open and moveto first child,
-  (define-key dired-mode-map [C-kp-6 ]             'dired-find-file-drop-prev-dired-buffer)                         ;; dired-find-file
+  (define-key dired-mode-map [kp-6 ]               'dired-find-file-drop-prev-dired-buffer)                         ;; dired-find-file
+  (define-key dired-mode-map [C-kp-6]              'my-subdired-dft)                                                ;; dired-subtree-insert move #8=ns     ;; open and moveto first child,
 
   ; (define-key dired-mode-map [kp-4]                '(lambda () (interactive)   (my-dired-up-to-parent) (my-dired-up-to-parent)))
   ; (define-key dired-mode-map [kp-decimal]          '(lambda () (interactive)  (my-dired-subtree-next-sibling-n 7)))              ;; moveto nth sibling, and open
@@ -2779,6 +2814,7 @@ TBD
 #+end_src
 
 *** TreeNavPad keys for org-mode
+
 #+begin_src emacs-lisp
 (progn
   ; (define-key org-mode-map [kp-4]               '(lambda () (interactive)  (outline-up-heading 2)))
@@ -2786,7 +2822,7 @@ TBD
 
   (define-key org-mode-map [kp-multiply]           '(lambda () (interactive)  (org-backward-heading-same-level 6)))
   (define-key org-mode-map [kp-8]                  'org-backward-heading-same-level)
-  (define-key org-mode-map [kp-5]                  'org-cycle)
+  (define-key org-mode-map [kp-5]                  'my-org-cycle-or-fold)
   (define-key org-mode-map [kp-2]                  'org-forward-heading-same-level)                                ;; tbd fix: not if in body of heading
   (define-key org-mode-map [kp-decimal]            '(lambda () (interactive)  (org-forward-heading-same-level 6)))
 
@@ -2805,6 +2841,15 @@ TBD
 ;;(define-key org-mode-map [kp-divide]               'toggle-window-split)
 
 ;; functions for key binds
+
+(defun my-org-cycle-or-fold ()
+  "use language-folding if in code block, otherwise usual org-cycle"
+  (interactive)
+  (if (string-equal "emacs-lisp" (nth 0 (org-babel-get-src-block-info))) ;;(org-in-src-block) 
+      (yafolding-toggle-element)
+      (org-cycle))
+)
+
 
 (defun my-org-toggle-subtree ()
   "try to emulate dired 2-cycle rather than TAB 3-cycle"
