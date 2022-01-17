@@ -108,6 +108,22 @@ convenient prefix key map, for example `C-,`
 (require 'zmq)
 (require 'calc)
 
+(require 'cursor-flash)
+(cursor-flash-mode 1)
+(setq cursor-flash-interval 0.10)
+
+;(require 'highlight-sexp)  - fails
+;(add-hook 'lisp-mode-hook 'highlight-sexp-mode)
+;(add-hook 'emacs-lisp-mode-hook 'highlight-sexp-mode)
+; hl-sexp-background-color
+;  - hl-sexp-foreground-color
+;  - hl-sexp-face
+
+;(require 'highlight-sexps)  fails
+;(add-hook 'lisp-mode-hook 'highlight-sexps-mode)
+;(add-hook 'emacs-lisp-mode-hook 'highlight-sexps-mode)
+;; Enable `highlight-sexps-mode'
+
 ;; --------- deprecated
 ; (require 'cl)                 ; for transpose
 ; (require 'org-eww)
@@ -306,6 +322,45 @@ convenient prefix key map, for example `C-,`
   (interactive "P")
   (Buffer-menu-sort 6))
 
+
+;; ------------------------------------------------------------------- TreesyCalc
+
+(defun insertTreeCalcSexp ()
+   "Eval expression and insert value after the expression"
+    (interactive)
+    (save-excursion
+        (backward-up-list)
+        (mark-sexp)
+        (setq selSexp (buffer-substring-no-properties (region-beginning) (region-end))) ;< cleanse angle brackets from string
+        (message "sexp:%s" selSexp)
+
+        (setq res (my-eval-string selSexp))
+        (message "res :%s" res)
+
+        (goto-char (line-beginning-position))
+        (cond ((search-forward-regexp "\(.[ \t]+;=" (line-end-position) nil)  ; try just after operator
+               (push-mark)
+               (cond ((search-forward-regexp ";;;" (line-end-position) nil)   ; otherwise after semi-colon
+                      (setq reg-selection (buffer-substring-no-properties (region-beginning) (region-end)))
+                      ;; delete-and-extract-region?
+                      ;; (setq reg-selection (buffer-substring-no-properties (delete-and-extract-region (region-beginning) (region-end))))
+                      (message "got mark-point region:%s" reg-selection)))))
+
+        ; replace in region string
+        (delete-region (- (region-beginning) 2) (region-end))                  ; delete region
+        (setq resStr (format "%4.0f" res))
+        (setq new-string (concat ";= " resStr "  " (substring  reg-selection (+ (length ";= ") (length resStr)))))
+        (message "new-string %i XX%sXX" (length new-string) new-string)
+        (insert new-string)     
+    )
+)
+    ;(mark-sexp)
+        ;(align-regexp (- (region-beginning) 10) (region-end) " ;;; ")   ; align results
+        ;(align-regexp (- (region-beginning) 10) (region-end) " ;;  ")   ; align descriptions
+        ;(backward-up-list)
+
+
+
 ;; ------------------------------------------------------------------- Eval
 (defun eval-and-insert ()
   "Eval expression and insert value after the expression"
@@ -320,7 +375,7 @@ convenient prefix key map, for example `C-,`
 
  ;; TBD format based on datatype or use C-u C-x C-e
 
-(defun insertLastSexp ()
+(defun my-insert-last-sexp ()
     (interactive)
     (let ((value (eval (preceding-sexp))))
       ;;(kill-sexp -1)
@@ -858,7 +913,6 @@ N.B. TBD drop last ","
 #+BEGIN_SRC emacs-lisp
 (message "-------------- Start Settings")
 (setq calendar-week-start-day 1) ; set....mark to get count of days
-(global-hl-line-mode t)
 (desktop-save-mode 1)  ; desktop-revert desktop-change-dir
 
 (blink-cursor-mode 0)
@@ -889,12 +943,26 @@ N.B. TBD drop last ","
 (setq-default line-spacing 0.06)
 (setq-default indent-tabs-mode nil)
 (setq ivy-height 10)
+
+; ------------------------------------- highlighting
+(global-hl-line-mode 1) ; 0 to turn off
+
 (show-paren-mode 1)
+(setq show-paren-style 'expression) ; or parenthesis of mixed
+(set-face-background 'show-paren-match "#444444")
+(set-face-attribute  'show-paren-match nil :weight 'bold :underline nil :overline nil :slant 'normal) 
+;(list-colors-display);
+(setq show-paren-when-point-inside-paren t)
+(setq show-paren-when-point-in-periphery t)
+
+(setq-default x-stretch-cursor t)
+
 (tool-bar-mode -1)
 (setq-default frame-title-format "%f")
 (transient-mark-mode t)  ;;(setq-default frame-title-format "%b %p %p(%f)")
 
 (setq require-final-newline nil) ;; means don't add newline
+
 
 ;; ----------------------------------------------- Show keystrokes in progress
 (setq echo-keystrokes 0.1)
@@ -1020,7 +1088,6 @@ N.B. TBD drop last ","
 ;; --------------------------------------------- Custom Variables go in ~/emacs.d/init.el
 (setq default-truncate-lines t)
 (setq tab-width 4)  ;;(setq tab-width 2)
-(setq-default x-stretch-cursor t)
 
 ;; --------------------------------------------- TAGS
 ;; !! run find with absolute path
@@ -1062,7 +1129,7 @@ N.B. TBD drop last ","
 (set-face-background 'default "paleturquoise")
 (set-face-background 'default "lightblue")
 
-(global-hl-line-mode t) ; (global-hl-line-unhighlight) (global-hl-line-highlight)
+(global-hl-line-mode 0) ; (global-hl-line-unhighlight) (global-hl-line-highlight)
 (global-mark-ring-max 50)
 
 (setq set-mark-command-repeat-pop 1) ;;-- needs emacs version 22
@@ -1895,55 +1962,6 @@ M-x clone-indirect-buffer RET
 (make-variable-buffer-local 'dired-subtree-last-previewed-buffer)
 
 
-; ------------------------------------------------------------------ TreeNavPad keys for dired
-(defun my-subdired-dft ()
-  "depth-first traversal for dired-subtree"
-  (interactive)
-  (let ((sDpth (dired-subtree--get-depth (dired-subtree--get-ov))))
-    (if (dired-utils-is-dir-p)
-        (if (dired-subtree--is-expanded-p)
-            (dired-subtree-remove)
-            (dired-subtree-insert))
-        (progn
-          (if  dired-subtree-last-previewed-buffer (kill-buffer dired-subtree-last-previewed-buffer))   ;; delete previous preview buffer, if any
-          (setq dired-subtree-last-previewed-buffer (dired-view-current))           ;; record previewed buffer
-          (dired-next-line 1)
-          (setq cDpth (dired-subtree--get-depth (dired-subtree--get-ov)))
-          (message (concat "cDpth=" (number-to-string cDpth) "--" "sDpth" (number-to-string sDpth)))
-          (if (< cDpth sDpth)                                                      ;; have we gone up a level, if so remove the subtree we were just in
-              (progn
-                (dired-previous-line 1)
-                (dired-subtree-remove)
-                (dired-next-line 1))))))
-   )
-
-(defun my-dired-up-to-parent ()                                                 ;; tbd if not a subdir (i.e. in rootdir), then jump  'dired-up-directory-drop-prev-dired-buffer
-  (interactive)
-  (let ((sDpth (dired-subtree--get-depth (dired-subtree--get-ov))))
-       ; (message sDpth)
-       (if (eq sDpth 0)
-           (dired-up-directory-drop-prev-dired-buffer)
-           (dired-subtree-remove)))
-   )
-
-(defun my-dired-subtree-toggle ()
-  (interactive)
-  (if (dired-subtree--is-expanded-p)
-      (progn (dired-next-line 1) (dired-subtree-remove))
-      (progn (dired-subtree-insert) (dired-previous-line 1)))
-   )
-
-(defun my-dired-subtree-next-sibling-n (n)
-  (interactive)
-  (dotimes (i n) (dired-subtree-next-sibling))
-  )
-
-(defun my-dired-subtree-prev-sibling-n (n)
-  (interactive)
-  (dotimes (i n) (dired-subtree-prev-sibling))
-  )
-
-
 ;;--------------------------------- ----------------------------- sidebar
 (defun sidebar-toggle ()  ; tbd install ibuffer sidebar  ; not longr used?
   "Toggle both `dired-sidebar' and `ibuffer-sidebar'."
@@ -2319,49 +2337,60 @@ for flushing messages to *Message* buffer
 
 ** Global Keys
 #+BEGIN_SRC emacs-lisp
-(global-set-key (kbd "M-o") 'ace-window)
-;(setq aw-background nil)
+; 20211215_15:09:19 ordered by order on QWERTY keyboard
 ;;  (global-set-key "\C-q"          'quoted-insert)  ; for resetting, already default
-(global-set-key (kbd "C-c <")   'selective-display-level-decr)
-(global-set-key (kbd "C-c >")   'selective-display-level-incr)
-(global-set-key (kbd "C-c b")   'ediff-buffers)
-(global-set-key (kbd "C-c C-b") 'compare-windows)
-(global-set-key (kbd "C-c d")   'ediff-directories)
-;(global-set-key (kbd "C-c h")   'diredHome)
+
+; C-c
+; qwerty 1st row
+(global-set-key (kbd "C-<tab>") 'yafolding-toggle-element)
+(global-set-key (kbd "C-c q")   'lines-to-cslist)           ;; 'quick-calc
+(global-set-key (kbd "C-c w")   'delete-trailing-whitespace)
+(global-set-key (kbd "C-c r")   'auto-revert-tail-mode)
+(global-set-key (kbd "C-c t")   'toggle-truncate-lines)
+(global-set-key (kbd "C-c C-t") 'org-table-convert-region)
 (global-set-key (kbd "C-c i")   'indent-to-column)
+; qwerty 2nd row
+(global-set-key (kbd "C-c s")   'parallel-swap)
+(global-set-key (kbd "C-c d")   'ediff-directories)
 (global-set-key (kbd "C-c j")   'go-to-column)              ;; "jump"
 (global-set-key (kbd "C-c l")   'ed-dup-line)
-(global-set-key (kbd "C-c q")   'lines-to-cslist)           ;; 'quick-calc
-(global-set-key (kbd "C-c r")   'auto-revert-tail-mode)
-(global-set-key (kbd "C-c s")   'parallel-swap)
-(global-set-key (kbd "C-c C-t") 'org-table-convert-region)
-(global-set-key (kbd "C-c t")   'toggle-truncate-lines)
-(global-set-key (kbd "C-c w")   'delete-trailing-whitespace)
-(global-set-key (kbd "s-\\")    'delete-whitespace-right)
-(global-set-key (kbd "C-<tab>") 'yafolding-toggle-element)
+(global-set-key (kbd "C-c ;")   'comment-or-uncomment-region)
+; qwerty 3rd row
+(global-set-key (kbd "C-c b")   'ediff-buffers)
+(global-set-key (kbd "C-c C-b") 'compare-windows)
+(global-set-key (kbd "C-c <")   'selective-display-level-decr)
+(global-set-key (kbd "C-c >")   'selective-display-level-incr)
 
+; C-x
+; qwerty 0th row
 (global-set-key (kbd "C-x 3")   '(lambda () (interactive) (split-window-right) (other-window 1))) ;; was switch-to-buffer
-(global-set-key (kbd "C-x b")   'ivy-switch-buffer) ;; was switch-to-buffer
-(global-set-key (kbd "C-x c")   'filepath-on-clipboard)
+; qwerty 1st row
+(global-set-key (kbd "C-x e")   'eval-last-sexp)
+(global-set-key (kbd "C-x t")   'instimestamp)
+(global-set-key (kbd "C-x y")   'insertTreeCalcSexp)
+(global-set-key (kbd "C-x i")   'my-insert-last-sexp) ; ielm
+(global-set-key (kbd "C-x p")   'my-transpose-sexps)
+; qwerty 2nd row
 (global-set-key (kbd "C-x d")   'dired)
 (global-set-key (kbd "C-x f")   'find-function) ;; set-fill-column other-frame view-buffer-other-frame switch-to-buffer-other-frame
 (global-set-key (kbd "C-x G")   'vc-ediff)
 (global-set-key (kbd "C-x g")   'magit-status)
-(global-set-key (kbd "C-x i")   'insertLastSexp) ; ielm
 (global-set-key (kbd "C-x l")   'list-matching-lines)
-(global-set-key (kbd "C-x p")   'my-transpose-sexps)
-(global-set-key (kbd "C-x t")   'instimestamp)
-(global-set-key (kbd "C-x C-b") '(lambda () (interactive) (ibuffer "home") (ibuffer-switch-to-saved-filter-groups "home")))  ; (global-set-key (kbd "C-x C-b") 'my-list-buffers)
 ;;(global-set-key (kbd "C-x G") '(lambda () (interactive) (progn (switch-to-buffer-other-frame (current-buffer)) (vc-ediff))))
 ;;(global-set-key (kbd "C-x G") '(lambda () (interactive) (progn (make-frame '((minibuffer . t))) )))   ;; (vc-ediff)
+; qwerty 3rd row
+(global-set-key (kbd "C-x c")   'filepath-on-clipboard)
+(global-set-key (kbd "C-x b")   'ivy-switch-buffer) ;; was switch-to-buffer
+(global-set-key (kbd "C-x C-b") '(lambda () (interactive) (ibuffer "home") (ibuffer-switch-to-saved-filter-groups "home")))  ; (global-set-key (kbd "C-x C-b") 'my-list-buffers)
 
+(global-set-key (kbd "s-\\")    'delete-whitespace-right)
 (global-set-key (kbd "C-z")     'undo)                      ;; replace-string
 (global-set-key (kbd "C-.")     'repeat)
-(global-set-key (kbd "C-c ;")   'comment-or-uncomment-region)
 
 ;(global-set-key (kbd "M-.")    'hs-toggle-hiding)         ;; was xref find defs
 (global-set-key (kbd "M-$")     'query-replace-regexp)
 (global-set-key (kbd "M-y")     'counsel-yank-pop)
+(global-set-key (kbd "M-o")     'ace-window)  ;(setq aw-background nil)
 
 (message "-------------- Done: Global Keys")
 #+END_SRC
@@ -2413,7 +2442,7 @@ org-goto
 (global-set-key [S-f1]     '(lambda () (interactive) (progn (if (eq (get-buffer "*Python*") nil) (run-python)) (switch-to-buffer "*Python*"))))
 (global-set-key [M-f1]     '(lambda () (interactive) (progn (set-mark-command 0))))
 (global-set-key [s-f1]     'split-window-3)
-(defun split-window-3()
+(defun split-window-3 ()
  "Splite window into 4 sub-window"
  (interactive)
  (if (= 1 (length (window-list)))
@@ -2427,7 +2456,7 @@ org-goto
 )
 
 
-;;'ielm) ;; open file under cursor ;;(global-set-key [M-f9] 'insertLastSexp) ;; insert result
+;;'ielm) ;; open file under cursor ;;(global-set-key [M-f9] 'my-insert-last-sexp) ;; insert result
 
 (global-set-key [f2]       '(lambda () (interactive) (find-file "/home/kleyn/aNotes/doAndDone.org")))
 (global-set-key [C-f2]     '(lambda () (interactive) (find-file "/home/kleyn/aNotes/mySystems.org")))
@@ -2535,56 +2564,7 @@ org-goto
 	(?? aw-show-dispatch-help))
   "List of actions for `aw-dispatch-default'.")
 ** KeyPad Keys
-*** Keypad Global Key Bindings
-*** KeyPad Map 1
- |-------+----------------+----------------+----------------+-------+-------|
- | mod   | NumLock        |              / | *              | -     |       |
- |-------+----------------+----------------+----------------+-------+-------|
- |       |                |                |                |       |       |
- |       |                |                |                |       |       |
- | CTRL  |                |                |                | zoom- | CTRL  |
- | SHIFT |                |                |                |       | SHIFT |
- | ALT   |                |                |                |       | ALT   |
- | SUPER |                |                |                |       | SUPER |
- |-------+----------------+----------------+----------------+-------+-------|
- | mod   | 7 Home         |             8^ | 9 PgUp         | +     | +     |
- |-------+----------------+----------------+----------------+-------+-------|
- |       |                |    *UP*        |                |       |       |
- |       |                |                |                |       |       |
- | CTRL  |                |                |                |       | CTRL  |
- | SHIFT |                |                |                |       | SHIFT |
- | ALT   |                |                |                |       | ALT   |
- | SUPER |                |                |                |       | SUPER |
- |-------+----------------+----------------+----------------+-------+-------|
- | mod   | 4 <            |              5 | 6 >            | +     |       |
- |-------+----------------+----------------+----------------+-------+-------|
- |       |    *OUT*       |   *CYCLE*      |    *IN*        |       |       |
- |       |                |                |                |       |       |
- | CTRL  |                |                |                |       | CTRL  |
- | SHIFT |                |                |                |       | SHIFT |
- | ALT   |                |                |                |       | ALT   |
- | SUPER |                |                |                |       | SUPER |
- |-------+----------------+----------------+----------------+-------+-------|
- | mod   | 1              |             2v | 3PgUp          | +     |       |
- |-------+----------------+----------------+----------------+-------+-------|
- |       |                |    *DOWN*      |                |       |       |
- |       |                |                |                |       |       |
- | CTRL  |                |                |                |       | CTRL  |
- | SHIFT |                |                |                |       | SHIFT |
- | ALT   |                |                |                |       | ALT   |
- | SUPER |                |                |                |       | SUPER |
- |-------+----------------+----------------+----------------+-------+-------|
- | mod   | 0              |              0 | .              | Enter |       |
- |-------+----------------+----------------+----------------+-------+-------|
- |       |                |                |                |       |       |
- |       |                |                |                |       |       |
- | CTRL  |                |                |                |       | CTRL  |
- | SHIFT |                |                |                |       | SHIFT |
- | ALT   |                |                |                |       | ALT   |
- | SUPER |                |                |                |       | SUPER |
- |-------+----------------+----------------+----------------+-------+-------|
-
-
+*** Midpad Global Key Bindings
 #+begin_src emacs-lisp
 (global-set-key [(next)]        'cycle-buffer)
 (global-set-key [C-down]        'cycle-buffer)              ;; avoid default binding (global-set-key (kbd "C-c <down>")  'windmove-down)
@@ -2595,6 +2575,7 @@ org-goto
 (global-set-key [S-down]        'scroll-one-line-up)
 (global-set-key [S-up]          'scroll-one-line-down)
 
+
 (global-set-key [C-insert]      'clipboard-kill-ring-save)
 (global-set-key [S-insert]      'clipboard-yank)
 
@@ -2604,7 +2585,7 @@ org-goto
 (global-set-key [M-insert]      'toggle-window-split)
 (global-set-key [M-delete]      'kill-this-buffer-volatile)
 
-(message "-------------- Done: Keybindings Section")
+(message "-------------- Done: Midpad key bindings")
 #+end_src
 
 (global-set-key [M-up]          'kill-this-buffer-volatile) ;; kill-buffer
@@ -2614,30 +2595,78 @@ org-goto
 (global-set-key [C-right]       'windmove-right)       ;(global-set-key (kbd "C-c <right>") 'windmove-right)
 (global-set-key [C-up]          'windmove-up)          ;(global-set-key (kbd "C-c <up>")    'windmove-up)
 
-*** KeyPad Map 2
- SHIFT => don't collapse
- |----+--------+-------------------------------------+-------+-------+-----------------------------------------+-------------------------------------+---------+----------------------------------------------+----------------------------+------+----------------+------------------------+------------+-------|
- |  # | KEY    | DESCRIPTION                         | ABBRV | SoFar | org-mode/babel                          | dired                               | sidebar | python                                       | elisp                      | json | xml/yafoldable | ibuffer                | TreeziCalc | table |
- |----+--------+-------------------------------------+-------+-------+-----------------------------------------+-------------------------------------+---------+----------------------------------------------+----------------------------+------+----------------+------------------------+------------+-------|
- |  5 | kp-4   | upto grandparent; collapse children | up2   | JJXJX | J outline-up-heading X 2 : tbd collapse | J dired-up-to-parent X 2            |         |                                              | J backward-up-list X 2     |      |                |                        |            | home  |
- |  6 | kp-5   | upto parent;      collapse children | up1   | JJXJX | j outline-up-heading     : tbd collapse | J dired-up-to-parent                |         | python-nav-backward-up-list/-beginning-block | J backward-up-list         |      |                |                        |            | left  |
- |----+--------+-------------------------------------+-------+-------+-----------------------------------------+-------------------------------------+---------+----------------------------------------------+----------------------------+------+----------------+------------------------+------------+-------|
- |  3 | kp-*   | move to previous sibling X7         | ps6   | JJXJX | J org-backward-heading-same-level x7    | J my-dired-subtree-prev-sibling  x7 |         |                                              | J backward-sexp x 6        |      |                |                        |            |       |
- |  2 | kp-9   | move to previous sibling            | ps    | JJXJX | J org-backward-heading-same-level       | J dired-subtree-previous-sibling    |         | python-nav-backward-[block/list/..]          | J backward-sexp            |      |                | J                      |            | up    |
- |    | kp-6   | toggle children                     | tc    | JJJJX | J org-cycle                             | J my-dired-subtree-toggle           |         | J yafolding-toggle-element                   | J yafolding-toggle-element |      |                | J toggle ibuffer group |            | right |
- |  8 | kp-3   | move to next     sibling            | ns    | JJXJX | J org-forward-heading-same-level        | J dired-subtree-next-sibling        |         | python-nav-forward-[block/list/..]           | J forward-sexp             |      |                | J                      |            | down  |
- |  9 | kp-.   | move to next     sibling X7         | ns6   | JJXJX | J org-forward-heading-same-level  x7    | J my-dired-subtree-next-sibling  x7 |         |                                              | J forward-sexp X 6         |      |                |                        |            |       |
- |----+--------+-------------------------------------+-------+-------+-----------------------------------------+-------------------------------------+---------+----------------------------------------------+----------------------------+------+----------------+------------------------+------------+-------|
- |  1 | kp-+   | show children; go to first child    | fc    | JJXXX | J my-org-dft                            | J my-dired-dft                      |         |                                              | J down-list                |      |                |                        |            |       |
- | 10 | kp-NTR | show children; go to last child     | lc    | XXXXX | (org-show-children) (next-line)         |                                     |         |                                              |                            |      |                |                        |            | end   |
- |----+--------+-------------------------------------+-------+-------+-----------------------------------------+-------------------------------------+---------+----------------------------------------------+----------------------------+------+----------------+------------------------+------------+-------|
- |  4 | kp-8   | goto first uncle                    | fu    |       |                                         |                                     |         |                                              |                            |      |                |                        |            |       |
- |  7 | kp-2   | goto last uncle                     | lu    |       |                                         |                                     |         |                                              |                            |      |                |                        |            |       |
- |----+--------+-------------------------------------+-------+-------+-----------------------------------------+-------------------------------------+---------+----------------------------------------------+----------------------------+------+----------------+------------------------+------------+-------|
- |    | kp--   | search breadth first                |       |       |                                         |                                     |         |                                              |                            |      |                |                        |            |       |
- |----+--------+-------------------------------------+-------+-------+-----------------------------------------+-------------------------------------+---------+----------------------------------------------+----------------------------+------+----------------+------------------------+------------+-------|
+*** Keypad Global Key Bindings
+#+begin_src emacs-lisp
+(progn 
+  (global-set-key [S-kp-prior]        'scroll-one-line-down)  ;; = S-kp9
+  (global-set-key [S-kp-right]        '(lambda () (interactive) (recenter-top-bottom '(t))))   ;; = S-kp6
+  (global-set-key [S-kp-next]         'scroll-one-line-up)     ;; = S-kp3
+)
+#+end_src
 
-*** TreeNavPad keys for dired-modes
+*** Keypad Map 1
+:         |----------------+----------------+----------------+----------|        
+:         |         NumLock|               /|               *|         -|        
+: modifier|                |                |                |          |modifier
+: |       |                |                |                |          |       |
+: | CTRL >|                |                |                |          |<CTRL  |
+: | SHIFT>|                |                |                |          |<SHIFT |
+: | ALT  >|                |                |                |          |<ALT   |
+: | SUPER>|                |                |                |          |<SUPER |
+: |-------+----------------+----------------+----------------+----------+-------|
+: |       |          7 Home| *UP*        8 ^|          9 PgUp|         +|       |
+: |       |                |                | previous-line  |          |       |
+: | CTRL >|                |                |                |          |<CTRL  |
+: | SHIFT>|                |                | scroll-1-up    |          |<SHIFT |
+: | ALT  >|                |                |                |          |<ALT   |
+: | SUPER>|                |                |                |          |<SUPER |
+: |-------+----------------+----------------+----------------+          +-------|
+: |       | *OUT*       4 <| *CYCLE*       5| *IN/DFT*    6 >|          |       |
+: |       |                |                |                |          |       |
+: | CTRL >|                |                |                |          |<CTRL  |
+: | SHIFT>|                |                | scroll-center  |          |<SHIFT |
+: | ALT  >|                |                |                |          |<ALT   |
+: | SUPER>|                |                |                |          |<SUPER |
+: |-------+----------------+----------------+----------------+----------+-------|
+: |       |           1 End| *DOWN*      2 v|          3 PgUp|     Enter|       |
+: |       |                |                | next-line      |          |       |
+: | CTRL >|                |                |                |          |<CTRL  |
+: | SHIFT>|                |                | scroll-1-down  |          |<SHIFT |
+: | ALT  >|                |                |                |          |<ALT   |
+: | SUPER>|                |                |                |          |<SUPER |
+: |-------+----------------+----------------+----------------+          +-------|
+: |       |                            0 Ins|           . Del|          |       |
+: |       |                                 |                |          |       |
+: | CTRL >|                                 |                |          |<CTRL  |
+: | SHIFT>|                                 |                |          |<SHIFT |
+: | ALT  >|                                 |                |          |<ALT   |
+: | SUPER<|                                 |                |          |<SUPER |
+: |-------+---------------------------------+----------------+----------+-------|
+
+*** Keypad Map 2
+ |---+------+-------------------------------------+-------+-------+-----------------------------------------+-------------------------------------+---------+----------------------------------------------+----------------------------+------+----------------+------------------------+------------+-------|
+ | # | KEY  | DESCRIPTION                         | ABBRV | SoFar | org-mode/babel                          | dired                               | sidebar | python                                       | elisp                      | json | xml/yafoldable | ibuffer                | TreeziCalc | table |
+ |---+------+-------------------------------------+-------+-------+-----------------------------------------+-------------------------------------+---------+----------------------------------------------+----------------------------+------+----------------+------------------------+------------+-------|
+ |   | kp-4 | move upto parent;                   | out   | JJXJX | j outline-up-heading     : tbd collapse | J dired-up-to-parent                |         | python-nav-backward-up-list/-beginning-block | J backward-up-list         |      |                |                        |            | left  |
+ |---+------+-------------------------------------+-------+-------+-----------------------------------------+-------------------------------------+---------+----------------------------------------------+----------------------------+------+----------------+------------------------+------------+-------|
+ |   | kp-8 | move to previous sibling            | sup   | JJXJX | J org-backward-heading-same-level       | J dired-subtree-previous-sibling    |         | python-nav-backward-[block/list/..]          | J backward-sexp            |      |                | J                      |            | up    |
+ |   | kp-5 | troggle children                    | trg   | JJJJX | J org-cycle                             | J my-dired-subtree-toggle           |         | J yafolding-toggle-element                   | J yafolding-toggle-element |      |                | J toggle ibuffer group |            | right |
+ |   | kp-2 | move to next     sibling            | sdn   | JJXJX | J org-forward-heading-same-level        | J dired-subtree-next-sibling        |         | python-nav-forward-[block/list/..]           | J forward-sexp             |      |                | J                      |            | down  |
+ |---+------+-------------------------------------+-------+-------+-----------------------------------------+-------------------------------------+---------+----------------------------------------------+----------------------------+------+----------------+------------------------+------------+-------|
+ |   | kp-6 | go in; expand/dft if needed         | in    | JJXXX | J my-org-dft                            | J my-dired-dft                      |         |                                              | J down-list                |      |                |                        |            |       |
+ |   | kp-9 | up one line                         | prv   |       |                                         |                                     |         |                                              |                            |      |                |                        |            |       |
+ |   | kp-3 | down one line                       | nxt   |       |                                         |                                     |         |                                              |                            |      |                |                        |            |       |
+ |---+------+-------------------------------------+-------+-------+-----------------------------------------+-------------------------------------+---------+----------------------------------------------+----------------------------+------+----------------+------------------------+------------+-------|
+ |   |      | goto first uncle                    | fu    |       |                                         |                                     |         |                                              |                            |      |                |                        |            |       |
+ |   |      | goto last uncle                     | lu    |       |                                         |                                     |         |                                              |                            |      |                |                        |            |       |
+ |   |      | show children; go to last child     | lc    | XXXXX | (org-show-children) (next-line)         |                                     |         |                                              |                            |      |                |                        |            | end   |
+ |   |      | move to next     sibling X7         | ns6   | JJXJX | J org-forward-heading-same-level  x7    | J my-dired-subtree-next-sibling  x7 |         |                                              | J forward-sexp X 6         |      |                |                        |            |       |
+ |   |      | move to previous sibling X7         | ps6   | JJXJX | J org-backward-heading-same-level x7    | J my-dired-subtree-prev-sibling  x7 |         |                                              | J backward-sexp x 6        |      |                |                        |            |       |
+ |   |      | upto grandparent; collapse children | up2   | JJXJX | J outline-up-heading X 2 : tbd collapse | J dired-up-to-parent X 2            |         |                                              | J backward-up-list X 2     |      |                |                        |            | home  |
+ |   |      | search breadth first                |       |       |                                         |                                     |         |                                              |                            |      |                |                        |            |       |
+ |---+------+-------------------------------------+-------+-------+-----------------------------------------+-------------------------------------+---------+----------------------------------------------+----------------------------+------+----------------+------------------------+------------+-------|
+
+*** TreeNavPad keys for dired modes
 TBD
 (dired-sidebar-subtree-toggle)
 (defvar dired-sidebar-mode-map
@@ -2655,88 +2684,133 @@ TBD
   "Keymap used for symbol `dired-sidebar-mode'.")
 (dired-sidebar-subtree-toggle)
 #+begin_src emacs-lisp
+
 (progn ;; dired-sidebar treepad navigation
 
   ;;(define-key dired-sidebar-mode-map [kp-8]      'dired-previous-line)
   ;;(define-key dired-sidebar-mode-map [kp-2]      'dired-next-line)
 
-  (define-key dired-sidebar-mode-map [kp-5]        '(lambda ()                                                      ;; keep
-                                                       (interactive) 
+  (define-key dired-sidebar-mode-map [kp-4]        '(lambda () (interactive)                                                       ;; keep
                                                        (message (format "%d %d" (line-number-at-pos) (dired-subtree--get-depth (dired-subtree--get-ov))))
                                                        (if (= (dired-subtree--get-depth (dired-subtree--get-ov)) 0)
                                                           (dired-sidebar-up-directory)
                                                           (dired-subtree-up))))
 
 
-  (define-key dired-sidebar-mode-map [kp-9]        'dired-subtree-previous-sibling)                                 ;; move #2=ps
-  (define-key dired-sidebar-mode-map [kp-6]        'dired-sidebar-subtree-toggle)
-  (define-key dired-sidebar-mode-map [kp-3]        'dired-subtree-next-sibling)                                     ;; move #8=ns                           
+  (define-key dired-sidebar-mode-map [kp-8]        'dired-subtree-previous-sibling)                                 ;; move #2=ps
+  (define-key dired-sidebar-mode-map [kp-5]        'dired-sidebar-subtree-toggle)
+  (define-key dired-sidebar-mode-map [kp-2]        'dired-subtree-next-sibling)                                     ;; move #8=ns                           
 
   (define-key dired-sidebar-mode-map [kp-subtract] '(lambda () (interactive) (dired-sidebar-subtree-toggle) (dired-next-lne)))
 
-  (define-key dired-sidebar-mode-map [kp-add]      '(lambda ()                                                      ;; first child, open if needed
-                                                       (interactive) 
+  (define-key dired-sidebar-mode-map [kp-6]        '(lambda () (interactive) ;; first child, open if needed
                                                        (if (not (dired-subtree--is-expanded-p)) (dired-sidebar-subtree-toggle))
                                                        (dired-next-line 1)))                                       ;; dired-sidebar-find-file
-  (define-key dired-sidebar-mode-map [C-kp-add]    'dired-sidebar-find-file)
+  (define-key dired-sidebar-mode-map [C-kp-6]      'dired-sidebar-find-file)
 
-  (define-key dired-sidebar-mode-map "O"           'ergoemacs-open-in-external-app)  
+  (define-key dired-sidebar-mode-map "O"           '(lambda () (interactive) (ergoemacs-open-in-external-app)))
 
   ;; (define-key dired-sidebar-mode-map [C-kp-5]      'dired-sidebar-up-directory) now subsumed in kp-5
 )
-#+end_src
-
-#+begin_src emacs-lisp
 
 (progn ;; dired treepad navigation
 
-  (define-key dired-mode-map [kp-5]                'my-dired-up-to-parent)                                          ;; ok-same as sidebar; move #6=u1  
+  (define-key dired-mode-map [kp-4]                'my-dired-up-to-parent)                                          ;; ok-same as sidebar; move #6=u1  
 
-  (define-key dired-mode-map [kp-9]                'dired-subtree-previous-sibling)                                 ;; ok-same as sidebar; move #2=ps
-  (define-key dired-mode-map [kp-6]                'my-dired-subtree-toggle)                                        ;; ok-same as sidebar; tbd toggle with 'dired-subtree-remove ;; toggle open children
-  (define-key dired-mode-map [kp-3]                'dired-subtree-next-sibling)                                     ;; ok-same as sidebar;  move #8=ns
+  (define-key dired-mode-map [kp-8]                'dired-subtree-previous-sibling)                                 ;; ok-same as sidebar; move #2=ps
+  (define-key dired-mode-map [kp-5]                'my-dired-subtree-toggle)                                        ;; ok-same as sidebar; tbd toggle with 'dired-subtree-remove ;; toggle open children
+  (define-key dired-mode-map [kp-2]                'dired-subtree-next-sibling)                                     ;; ok-same as sidebar;  move #8=ns
 
-  (define-key dired-mode-map [kp-add]              'my-subdired-dft)                                                ;; dired-subtree-insert move #8=ns     ;; open and moveto first child,
-  (define-key dired-mode-map [C-kp-add]            'dired-find-file-drop-prev-dired-buffer)                         ;; dired-find-file
+  (define-key dired-mode-map [kp-6]                'my-subdired-dft)                                                ;; dired-subtree-insert move #8=ns     ;; open and moveto first child,
+  (define-key dired-mode-map [C-kp-6 ]             'dired-find-file-drop-prev-dired-buffer)                         ;; dired-find-file
 
   ; (define-key dired-mode-map [kp-4]                '(lambda () (interactive)   (my-dired-up-to-parent) (my-dired-up-to-parent)))
   ; (define-key dired-mode-map [kp-decimal]          '(lambda () (interactive)  (my-dired-subtree-next-sibling-n 7)))              ;; moveto nth sibling, and open
 )
+
+; ------------------------------------------------------------------ TreeNavPad keys for dired
+(defun my-subdired-dft ()
+  "depth-first traversal for dired-subtree"
+  (interactive)
+  (let ((sDpth (dired-subtree--get-depth (dired-subtree--get-ov))))
+    (if (dired-utils-is-dir-p)
+        (if (dired-subtree--is-expanded-p)
+            (dired-subtree-remove)
+            (dired-subtree-insert))
+        (progn
+          (if  dired-subtree-last-previewed-buffer (kill-buffer dired-subtree-last-previewed-buffer))   ;; delete previous preview buffer, if any
+          (setq dired-subtree-last-previewed-buffer (dired-view-current))           ;; record previewed buffer
+          (dired-next-line 1)
+          (setq cDpth (dired-subtree--get-depth (dired-subtree--get-ov)))
+          (message (concat "cDpth=" (number-to-string cDpth) "--" "sDpth" (number-to-string sDpth)))
+          (if (< cDpth sDpth)                                                      ;; have we gone up a level, if so remove the subtree we were just in
+              (progn
+                (dired-previous-line 1)
+                (dired-subtree-remove)
+                (dired-next-line 1))))))
+   )
+
+(defun my-dired-up-to-parent ()                                                 ;; tbd if not a subdir (i.e. in rootdir), then jump  'dired-up-directory-drop-prev-dired-buffer
+  (interactive)
+  (let ((sDpth (dired-subtree--get-depth (dired-subtree--get-ov))))
+       ; (message sDpth)
+       (if (eq sDpth 0)
+           (dired-up-directory-drop-prev-dired-buffer)
+           (dired-subtree-remove)))
+   )
+
+(defun my-dired-subtree-toggle ()
+  (interactive)
+  (if (dired-subtree--is-expanded-p)
+      (progn (dired-next-line 1) (dired-subtree-remove))
+      (progn (dired-subtree-insert) (dired-previous-line 1)))
+   )
+
+(defun my-dired-subtree-next-sibling-n (n)
+  (interactive)
+  (dotimes (i n) (dired-subtree-next-sibling))
+  )
+
+(defun my-dired-subtree-prev-sibling-n (n)
+  (interactive)
+  (dotimes (i n) (dired-subtree-prev-sibling))
+  )
 
 #+end_src
 
 *** TreeNavPad keys for org-mode
 #+begin_src emacs-lisp
 (progn
-  (define-key org-mode-map [kp-4]                  '(lambda () (interactive)  (outline-up-heading 2)))
-  (define-key org-mode-map [kp-5]                  'my-org-uplevel)
+  ; (define-key org-mode-map [kp-4]               '(lambda () (interactive)  (outline-up-heading 2)))
+  (define-key org-mode-map [kp-4]                  'my-org-uplevel)
 
   (define-key org-mode-map [kp-multiply]           '(lambda () (interactive)  (org-backward-heading-same-level 6)))
-  (define-key org-mode-map [kp-9]                  'org-backward-heading-same-level)
-  (define-key org-mode-map [kp-6]                  'org-cycle)
-  (define-key org-mode-map [kp-3]                  'org-forward-heading-same-level)
+  (define-key org-mode-map [kp-8]                  'org-backward-heading-same-level)
+  (define-key org-mode-map [kp-5]                  'org-cycle)
+  (define-key org-mode-map [kp-2]                  'org-forward-heading-same-level)                                ;; tbd fix: not if in body of heading
   (define-key org-mode-map [kp-decimal]            '(lambda () (interactive)  (org-forward-heading-same-level 6)))
 
-  (define-key org-mode-map [kp-add]                'my-org-dft)                                                                  ;; tbd show contents of leaf
+  (define-key org-mode-map [kp-9]                  'previous-line)                                                  ;; tbd show contents of leaf
+  (define-key org-mode-map [kp-6]                  'my-org-dft)                                                  ;; tbd show contents of leaf
+  (define-key org-mode-map [kp-3]                  'next-line)                                                     ;; tbd show contents of leaf
 
-  (define-key org-mode-map [kp-8]                  'my-org-babel-prev)
-  (define-key org-mode-map [kp-2]                  'my-org-babel-next)
+  (define-key org-mode-map [kp-7]                  'my-org-babel-prev)
+  (define-key org-mode-map [kp-1]                  'my-org-babel-next)
 
   (define-key org-mode-map [M-home]                'org-collapse)
 
 )
-#+end_src
-(define-key org-mode-map [kp-subtract]             'kill-this-buffer-volatile)
-(define-key org-mode-map [kp-divide]               'toggle-window-split)
 
- ------------------------------------------------------------------ TreeNavPad keys for org-mode
-**** functions for key binds
-#+begin_src emacs-lisp
+;;(define-key org-mode-map [kp-subtract]             'kill-this-buffer-volatile)
+;;(define-key org-mode-map [kp-divide]               'toggle-window-split)
+
+;; functions for key binds
+
 (defun my-org-toggle-subtree ()
   "try to emulate dired 2-cycle rather than TAB 3-cycle"
   (interactive)
   (message "--------------Enter")
-  (let ((oeap (org-element-at-point))                        ; (setq oeap-lv (org-element-property :level oeap))
+  (let ((oeap (org-element-at-point))                       ; (setq oeap-lv (org-element-property :level oeap))
         (oec (org-element-context)))                        ; (setq oec-lv  (org-element-property :level oec))
      (if (eq curr-command last-command)
          (progn (org-show-entry)
@@ -2745,58 +2819,58 @@ TBD
 )
 
 (defun my-org-babel-next ()
-    (interactive)
-    (setq case-fold-search t)
-    (beginning-of-line)
-    (forward-char 3)
-    (re-search-forward "^#.begin_src\\|^#.results:" nil t nil)
-    (beginning-of-line)
-    (recenter '(t))
+   (interactive)
+   (setq case-fold-search t)
+   (beginning-of-line)
+   (forward-char 3)
+   (re-search-forward "^#.begin_src\\|^#.results:" nil t nil)
+   (beginning-of-line)
+   (recenter '(t))
 )
 
 (defun my-org-babel-prev ()
-    (interactive)
-    (setq case-fold-search t)
-    (beginning-of-line)
-    (backward-char 1)
-    (re-search-backward "^#.begin_src\\|^#.results:" nil t nil)
-    (beginning-of-line)
-    (recenter-top-bottom 50)
+   (interactive)
+   (setq case-fold-search t)
+   (beginning-of-line)
+   (backward-char 1)
+   (re-search-backward "^#.begin_src\\|^#.results:" nil t nil)
+   (beginning-of-line)
+   (recenter-top-bottom 50)
 )
 
 (defun my-org-dft ()
-  "depth-first traversal for org/babel mode"
-  (interactive)
-  (message "--------------Enter")
-  (setq oeap (org-element-at-point))                        ; (setq oeap-lv (org-element-property :level oeap))
-  (setq oec (org-element-context))                          ; (setq oec-lv  (org-element-property :level oec))
-  ;(setq curLine (buffer-substring-no-properties (line-beginning-position) (line-end-position)))
-  ;(message (concat "XXX" curLine "XXX"))
-  (message (concat "my-org-dft:BEFORE:" (prin1-to-string (org-element-type oeap)) "  " (prin1-to-string (org-element-type oec))))
-  (cond ((eq (org-element-type oeap) 'headline)
-            (progn (org-show-entry)
+   "depth-first traversal for org/babel mode"
+   (interactive)
+   (message "--------------Enter")
+   (setq oeap (org-element-at-point))                        ; (setq oeap-lv (org-element-property :level oeap))
+   (setq oec (org-element-context))                          ; (setq oec-lv  (org-element-property :level oec))
+   ;(setq curLine (buffer-substring-no-properties (line-beginning-position) (line-end-position)))
+   ;(message (concat "XXX" curLine "XXX"))
+   (message (concat "my-org-dft:BEFORE:" (prin1-to-string (org-element-type oeap)) "  " (prin1-to-string (org-element-type oec))))
+   (cond ((eq (org-element-type oeap) 'headline)
+             (progn (org-show-entry)
                    (org-show-children)
                    (next-line)))
-        ((eq (org-element-type oeap) 'src-block)
-            (if (looking-at "^#\\+END_SRC")                 ; have come to end of
+         ((eq (org-element-type oeap) 'src-block)
+             (if (looking-at "^#\\+END_SRC")                 ; have come to end of
                 (progn (message "Looking at end_src")
                        (org-hide-block-toggle nil)          ; i.e. hide src block
                        (next-line))
                 (progn (org-hide-block-toggle 'off)         ; i.e. show src block
                        (next-line))))
-        ((or (eq (org-element-type oeap) 'example-block) (looking-at "^#\\+RESULTS:")) ;; (eq (org-element-type oeap) 'fixed-width)
-            (progn (message "Looking at example or RESULT")
+         ((or (eq (org-element-type oeap) 'example-block) (looking-at "^#\\+RESULTS:")) ;; (eq (org-element-type oeap) 'fixed-width)
+             (progn (message "Looking at example or RESULT")
                    (org-babel-hide-result-toggle 'off)      ; i.e. show block
                    (next-line)))
-        ((eq (org-element-type oeap) 'example-block)
-            (if (looking-at "^#\\+END_EXAMPLE")             ; have come to end of  example
+         ((eq (org-element-type oeap) 'example-block)
+             (if (looking-at "^#\\+END_EXAMPLE")             ; have come to end of  example
                 (progn (message "Looking at end_example")
                        (org-hide-block-toggle nil)          ; i.e. hide src block
                        (next-line))
                 (progn (message "Looking at example")
                        (org-hide-block-toggle 'off)         ; (org-babel-hide-result-toggle 'off)   ;; i.e. show block
                        (next-line))))
-        ((memq (org-element-type oeap) '(paragraph fixed-width)) ; otherwise: move down a line
+         ((memq (org-element-type oeap) '(paragraph fixed-width)) ; otherwise: move down a line
              (progn (if (looking-at "^\\s-*$")
                         (progn (message "This Line is empty")
                                (message (prin1-to-string oeap)
@@ -2804,64 +2878,68 @@ TBD
                                (org-babel-hide-result-toggle nil)
                                (next-line)))) ; close result section
                      (next-line)))
-        (t
+                           
+         (t
             (progn (message "my-org-dft:got here")
                    (next-line))))
 
-  (message (concat "my-org-dft:AFTER:" (prin1-to-string (org-element-type oeap)) "  " (prin1-to-string (org-element-type oec))))
+   (message (concat "my-org-dft:AFTER:" (prin1-to-string (org-element-type oeap)) "  " (prin1-to-string (org-element-type oec))))
 )
 
 (defun my-org-uplevel ()
-  "go up a level for org and babel mode"
-  (interactive)
-  (message "--------------Enter")
-  (setq oeap (org-element-at-point))                      ; (setq oeap-lv (org-element-property :level oeap))
-  (setq oec (org-element-context))                        ; (setq oec-lv  (org-element-property :level oec))
-  (message (concat "my-org-uplevel:BEFORE:" (prin1-to-string (org-element-type oeap)) "  " (prin1-to-string (org-element-type oec))))
+   "go up a level for org and babel mode"
+   (interactive)
+   (message "--------------Enter")
+   (setq oeap (org-element-at-point))                      ; (setq oeap-lv (org-element-property :level oeap))
+   (setq oec (org-element-context))                        ; (setq oec-lv  (org-element-property :level oec))
+   (message (concat "my-org-uplevel:BEFORE:" (prin1-to-string (org-element-type oeap)) "  " (prin1-to-string (org-element-type oec))))
 
-  (cond ((eq (org-element-type oeap) 'headline)
-        (progn (org-show-entry)
-               (org-show-children)
-               (outline-up-heading)))
-        ((eq (org-element-type oeap) 'src-block)
-         (progn (org-hide-block-toggle 'off)          ;; i.e. show block
-         (org-babel-goto-src-block-head)))
-        ((eq (org-element-type oeap) 'example-block)
-         (progn (org-babel-hide-result-toggle 'off)   ;; i.e. show block
-                (next-line)))
+   (cond ((or (memq (org-element-type oeap) '(headline table))
+              (looking-at "^#\\+begin_"))
+          (progn (message "heading, table")
+                 (org-up-element)))
+         ((eq (org-element-type oeap) 'src-block)
+          (progn (message "code block")
+                 (org-babel-goto-src-block-head)))
+         ((eq (org-element-type oeap) 'example-block)
+          (progn (org-babel-hide-result-toggle 'off)   ;; i.e. show block
+                 (next-line)))
         ((and (eq (org-element-type oeap) 'fixed-width) (looking-at "^#\\+RESULTS:"))
          (progn (org-babel-hide-result-toggle 'off)   ;; i.e. show block
                 (next-line)))
         ((memq (org-element-type oeap) '(paragraph fixed-width)) ; otherwise: move down a line
-         (progn (message "hello1")))
+         (progn 
+           (message "hello1")
+           (org-up-element)
+           ))
+        ((eq (org-element-type oeap) 'table-row) ; otherwise: move down a line
+         (while (progn 
+                    (message "in table row")
+                    (previous-line)
+                    (equal (org-element-type (org-element-at-point)) 'table-row))))
         (t
-         (progn (message "my-org-uplevel:got here")
-                )))
-
-  ;(message (concat "my-org-uplevel:AFTER:" (prin1-to-string (org-element-type oeap)) "  " (prin1-to-string (org-element-type oec))))
+         (progn (message "my-org-uplevel:got here"))))
 )
+  ;(message (concat "my-org-uplevel:AFTER:" (prin1-to-string (org-element-type oeap)) "  " (prin1-to-string (org-element-type oec))))
 #+end_src
-; org-mode treepad navigation
-; ------------------------------------------------------------------ TreeNavPad keys for org-mode
 
-*** TreeNavPad keys for emacs-lisp-mode
+*** TreeNavPad keys for emacs-lisp mode
 #+begin_src emacs-lisp
 (progn
-  (define-key emacs-lisp-mode-map [kp-4]          'my-elisp-sexp-grandparent)                                            ;; Move to grandparent.
-  (define-key emacs-lisp-mode-map [kp-5]          'backward-up-list)                                                     ;; Move to parent. move to the beginning of outer paren pair ; outline-up-heading
 
-  (define-key emacs-lisp-mode-map [kp-multiply]   '(lambda () (interactive)  (my-elisp-backsexp-n 6)))
-  (define-key emacs-lisp-mode-map [kp-9]          'backward-sexp)                                                        ;; Move to previous sibling. move to the beginning of previous sexp unit ; org-backward-heading-same-level
-  (define-key emacs-lisp-mode-map [kp-6]          'yafolding-toggle-element)
-  (define-key emacs-lisp-mode-map [kp-3]          'forward-sexp)                                                         ;; Move to next sibling.     move to the end of next sexp unit  ; org-forward-heading-same-level
-  (define-key emacs-lisp-mode-map [kp-decimal]    '(lambda () (interactive)  (my-elisp-forwardsexp-n 6)))
+  (define-key emacs-lisp-mode-map [kp-4]          'backward-up-list)                                                     ;; Move to parent. move to the beginning of outer paren pair ; outline-up-heading
 
-  (define-key emacs-lisp-mode-map [kp-add]        'down-list)                                                            ; Move to first child.      move into the beginning of first inner paren pair ; my-org-dft; tbd show contents of leaf
+  (define-key emacs-lisp-mode-map [kp-8]          'backward-sexp)                                                        ;; Move to previous sibling. move to the beginning of previous sexp unit ; org-backward-heading-same-level
+  (define-key emacs-lisp-mode-map [kp-5]          'yafolding-toggle-element)
+  (define-key emacs-lisp-mode-map [kp-2]          'forward-sexp)                                                         ;; Move to next sibling.     move to the end of next sexp unit  ; org-forward-heading-same-level
+
+  (define-key emacs-lisp-mode-map [kp-6]          'down-list)                                                              ; Move to first child.      move into the beginning of first inner paren pair ; my-org-dft; tbd show contents of leaf
+
+  ; (define-key emacs-lisp-mode-map [kp-4]          'my-elisp-sexp-grandparent)                                           ;; Move to grandparent.
+  ; (define-key emacs-lisp-mode-map [kp-multiply]   '(lambda () (interactive)  (my-elisp-backsexp-n 6)))
+  ; (define-key emacs-lisp-mode-map [kp-decimal]    '(lambda () (interactive)  (my-elisp-forwardsexp-n 6)))
 )
-#+end_src
-
-**** functions for key binds
-#+begin_src emacs-lisp
+;; functions for key binds
 (defun my-elisp-sexp-grandparent ()
   "go parent sexp - 2 levels"
   (interactive)
@@ -2880,7 +2958,10 @@ TBD
   (interactive)
   (dotimes (i n) (forward-sexp))
 )
+
+(message "-------------- Done: KeyPad Section")
 #+end_src
+
 
 ;; (define-key emacs-lisp-mode-map [kp-8]        'my-org-babel-prev)
 ;; (define-key emacs-lisp-mode-map [kp-2]        'my-org-babel-next)
@@ -2889,7 +2970,7 @@ TBD
 ;; (define-key emacs-lisp-mode-map [kp-divide]   'toggle-window-split)
 
 #+begin_src emacs-lisp
- (message "-------------- Done: KeyPad Section")
+ (message "-------------- Done: Keybindings Section")
 #+end_src
 
 ** not used
