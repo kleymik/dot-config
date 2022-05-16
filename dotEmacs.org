@@ -1,39 +1,15 @@
-*Emacs Initialisation*
+  *Emacs Initialisation*
+
 invoked by ~/.emacs.d/init.el
  (package-initialize)
  (org-babel-load-file "~/.emacs.d/dotEmacs.org)
 
-* New Stuff/Notes
-
-(setq cur-syntax-table (syntax-table)) ; better to use "describe-syntax"
-undefine a funcion: ;(fmakunbound 'trysc-clear-all-whitespace-columns) 
-default-directory
-good fonts "Ubuntu Mono"
-
-Print message listing key sequences that invoke the command DEFINITION.
-Argument is a command definition, usually a symbol with a function definition.
-If INSERT (the prefix arg) is non-nil, insert the message in the buffer.
-
-TBD dired-find-file-otherwindow open a cygwin link by inspecting it
-
------------------------------------------------------------------------------- Org-Mode
-(print (cadr info) (get-buffer "*scratch*"))
-(write-region (cadr info) nil "L:/MyDocs/history/matlabCmds/org_cmd.m")
-(write-region (cadr info) nil "C:/MyDocs/grepHist/aaa_org_cmd.m"))
-(save-restriction (org-mark-subtree) (rot13-region (point) (mark))))
-
-find-dired  calls unix find
-Dired Listing Switches: Hide Value -ahl --time-style=long-iso
-of emacs.  It is advised to place bindings for these into a
-convenient prefix key map, for example `C-,`
-
--------------------------------------------------------------------- Key Bindings
-(global-set-key [f4]            'see-orglink-dired) ;;     'desktop-save)
-(define-key global-map "\C-co" 'org-capture)
-------------------------------------------------------------------------------
+comments: *one* ";"
+deafult theme: tango-dark
 
 * Packages
 #+BEGIN_SRC emacs-lisp
+
 (setq load-path (append load-path '("~/ulib/emacs/")))
 (setq load-path (append load-path '("~/ulib/emacs/dired-hacks")))
 
@@ -44,41 +20,37 @@ convenient prefix key map, for example `C-,`
 (add-to-list 'package-archives '("elpaorg" . "https://elpa.gnu.org/packages/")      t)
 (add-to-list 'package-archives '("org"     . "https://orgmode.org/elpa/")           t)
 
-;;(add-to-list 'package-archives '("mlpamlk" . "https://melpa.milkbox.net/packages/") t)
-;; Added by Package.el.  This must come before configurations of
-;; installed packages.  Don't delete this line.  If you don't want it,
-;; just comment it out by adding a semicolon to the start of the line.
-;; You may delete these explanatory comments.
+;(add-to-list 'package-archives '("mlpamlk" . "https://melpa.milkbox.net/packages/") t)
+; Added by Package.el.  This must come before configurations of
+; installed packages.  Don't delete this line.  If you don't want it,
+; just comment it out by adding a semicolon to the start of the line.
+; You may delete these explanatory comments.
 
-; --------- dired 
-;(require 'all-the-icons-dired-mode)
-;(load "all-the-icons-dired.el")
-;(add-hook 'dired-mode-hook 'all-the-icons-dired-mode)
 (require 'uniquify)
 (require 'ob)
 (require 'regexp-opt)
 (require 'em-alias)           ; for eshell
+; (require 'diffview)        ; make patch files look like ediff
+
+; ----------------------- dired etc
 
 (require 'dired-x)
 (require 'wdired)
 (require 'dired-subtree)
-
 (require 'dired-sidebar)
-(setq dired-sidebar-width 70)
-(setq dired-subtree-line-prefix "  ")
-
 (require 'dired-rainbow)
-(defconst dired-pickle-extensions  '("pk")  "Dired pickle file extensions")
-(dired-rainbow-define audio "#329EE8" dired-pickle-extensions)
-
-;; dired-sidebar-theme
-;; (require 'dired-lis)
-;; (require 'dired-k)
-;; (require 'diffview)        ; make patch files look like ediff
-;(use-package dired-sidebar
-;  :bind (("C-x C-n" . dired-sidebar-toggle-sidebar))
-;  :ensure nil
-;  :commands (dired-sidebar-toggle-sidebar))
+;(require 'neotree)
+;(require 'dired-lis)
+;(require 'dired-k)
+; (use-package dired-sidebar
+;   :bind (("C-x C-n" . dired-sidebar-toggle-sidebar))
+;   :ensure nil
+;   :commands (dired-sidebar-toggle-sidebar))
+; (require 'all-the-icons-dired-mode)
+; (load "all-the-icons-dired.el")
+; (add-hook 'dired-mode-hook 'all-the-icons-dired-mode)
+; (require 'filetree) ; doesn't do selective expansion
+; dired-sidebar-theme
 
 (load-library "vigenere")
 (require 'yafolding)          ; (require 'origami)
@@ -91,7 +63,6 @@ convenient prefix key map, for example `C-,`
 (require 'ox-reveal)
 (setq Org-Reveal-root "file:///home/kleyn/ulib/reveal.js-master/js/reveal.js")
 (setq Org-Reveal-title-slide nil)
-
 (require 'orgtbl-join)
 ;(load-file "orgtbl-join.el")
 ;(load-file "org-insert-dblock.el") ;; optional, extends C-c C-c i
@@ -99,9 +70,6 @@ convenient prefix key map, for example `C-,`
 ; ---------jupyter / ipython / emacs
 (require 'jupyter)
 (require 'pyvenv) ; M-x: pyvenv-activate RET <path-to-venv>
-(setq org-confirm-babel-evaluate nil)    ;; no-confirm
-(with-eval-after-load 'org (add-hook 'org-babel-after-execute-hook 'org-redisplay-inline-images))
-; (defun org-export-get-reference (a b) nil)
 ; org<->python deprecated
 ;(add-hook 'org-babel-after-execute-hook 'org-display-inline-images 'append)
 ; ein - better to use emacs-ipython-notebook?
@@ -109,10 +77,9 @@ convenient prefix key map, for example `C-,`
 (require 'zmq)
 (require 'calc)
 
-(require 'cursor-flash)
-(cursor-flash-mode 1)
-(setq cursor-flash-interval 0.10)
-
+;(require 'cursor-flash)
+;(cursor-flash-mode 1)
+;(setq cursor-flash-interval 0.10)
 
 ;; --------- deprecated
 ; (require 'cl)                 ; for transpose
@@ -125,49 +92,18 @@ convenient prefix key map, for example `C-,`
 ; (require 'ein-notebook)
 ; (require 'ein-subpackages)
 
-
 (message "-------------- Done: Packages")
 #+END_SRC
-
 * Function Definitions
+#+begin_src emacs-lisp
+(message "-------------- Start: Handy Function Definitions")
 
-#+BEGIN_SRC emacs-lisp
+(defun overwrite-yank ()
+  (interactive)
+  (delete-char (length (current-kill 0)))
+  (yank)
+)
 
-
-;;----------------------------------------------------- one-liners
-(defun describe-last-function() (interactive) (describe-function last-command))
-(defun diredFaraday()           (interactive) (dired "/scp:kleyn@192.168.1.89:/home/kleyn"))
-(defun diredGem()               (interactive) (dired "/scp:u0_a94@192.168.1.93#8022:/data/data/com.termux/files/home/MyDocs"))
-(defun diredGem2()              (interactive) (dired "/ssh:u0_a94@192.168.1.93#8022:/data/data/com.termux/files/home/MyDocs"))
-(defun diredHome ()             (interactive) (dired "/home/kleyn/" nil))
-(defun diredTuringIn()          (interactive) (dired "/scp:kleyn@192.168.1.243:/home/kleyn"))
-(defun diredTuringOut()         (interactive) (dired "/scp:kleyn@192.168.1.8:/home/kleyn"))
-(defun instimestamp()           (interactive) (insert (format-time-string "%Y%m%d_%H:%M:%S")))
-(defun see-dotBashRc()          (interactive) (find-file "/home/kleyn/config/dot/.bashrc"))
-(defun see-orglink-dired()      (interactive) (org-open-at-point t))
-(defun see-shell-output()       (interactive) (switch-to-buffer-other-window "*Shell Command Output*"))
-(defun see-sql()                (interactive) (find-file "C:/MyDocs/notebooks/sqlScripts.org"))
-(defun show-hist()              (interactive) (list-command-history))
-(defun slashBwd()               (interactive) (replace-string  "/" "\\" nil (line-beginning-position) (line-end-position)))
-(defun slashFwd()               (interactive) (replace-string "\\"  "/" nil (line-beginning-position) (line-end-position)))
-
-;;(defun diredGemA()            (interactive) (dired "/adb::/data/data/com.termux/files/home/MyDocs"))
-;;(defun diredGemA()            (interactive) (dired "/adb::/storage"))
-
-;;----------------------------------------------------- for small keyboards without function keys
-(defun ke()  (interactive)  (kill-emacs))
-(defun ds()  (interactive)  (eshell))
-(defun cf3() (interactive)  (eshell))
-(defun da()  (interactive)  (find-file "/data/data/com.termux/files/home/org/access.org"))
-(defun sf3() (interactive)  (find-file "/data/data/com.termux/files/home/dot/dotBashrc"))
-(defun sf8() (interactive)  (dired-omit-mode))
-(defun db()  (interactive)  (find-file "/data/data/com.termux/files/home/dot/dotBashrc"))
-(defun dd()  (interactive)  (find-file "/data/data/com.termux/files/home/MyDocs/aNotes/org/doAndDone.org"))
-(defun de()  (interactive)  (find-file "/data/data/com.termux/files/home/.emacs.d/dotEmacs.org"))
-(defun f3()  (interactive)  (find-file "/data/data/com.termux/files/home/.emacs.d/dotEmacs.org"))
-(defun dz()  (interactive)  (progn (ztree-dir "/data/data/com.termux/files/home/MyDocs/projects") (split-window-right 40)))
-
-;;----------------------------------------------------- new
 (defun bool-flip-do-flip ()
   (interactive)
   (let ((currWord (thing-at-point 'word))
@@ -180,17 +116,20 @@ convenient prefix key map, for example `C-,`
                             ((equal currWord "True")  "False")))
     (save-excursion
       (delete-region (car bnds) (cdr bnds))
-      (insert flippedWord))))
+      (insert flippedWord)))
+)
 
 (defun make-region-read-only (start end)
   (interactive "*r")
   (let ((inhibit-read-only t))
-    (put-text-property start end 'read-only t)))
+    (put-text-property start end 'read-only t))
+)
 
 (defun make-region-read-write (start end)
   (interactive "*r")
   (let ((inhibit-read-only t))
-    (put-text-property start end 'read-only nil)))
+    (put-text-property start end 'read-only nil))
+)
 
 (defun set-region-writeable ()
   "Removes the read-only text property from the marked region.
@@ -199,27 +138,14 @@ convenient prefix key map, for example `C-,`
   ;; See https://stackoverflow.com/questions/7410125
   (interactive)
   (with-silent-modifications
-    (remove-text-properties (point-min) (point-max) '(read-only t))))
+    (remove-text-properties (point-min) (point-max) '(read-only t)))
+)
 
 (defun remove-region-read-only ()
   (interactive)
   (let ((inhibit-read-only t))
-    (remove-text-properties  (point-min) (point-max) '(read-only t))
-    ;; (eshell-quit-process)
-  ))
-
-(defun fixReadOnly ()
-  (interactive)
-  (let ((inhibit-read-only t))
-    (remove-text-properties  (point-min) (point-max) '(read-only t))
-    ;; (eshell-quit-process)
-  ))
-
-(defun eshell/clear ()
-  "Clear the eshell buffer."
-  (interactive)
-  (let ((inhibit-read-only t))
-    (erase-buffer)))
+    (remove-text-properties  (point-min) (point-max) '(read-only t)))
+)
 
 ;;---------------------------------------------------- Other
 (defun filepath-on-clipboard ()
@@ -232,65 +158,45 @@ convenient prefix key map, for example `C-,`
       (with-temp-buffer
         (insert filename)
         (clipboard-kill-region (point-min) (point-max)))
-      (message filename))))
+      (message filename)))
+)
 
 (defun hide-ctrl-M ()
   "Hides the disturbing carriage return '^M' showing up in files containing mixed UNIX and DOS line endings."
   (interactive)
   (setq buffer-display-table (make-display-table))
-  (aset buffer-display-table ?\^M []))
-
-(defun insertcodePyCodeSnippet ()
-  (interactive)
-  (move-end-of-line nil)
-  (if (= (line-beginning-position) (line-end-position))
-      (progn (move-beginning-of-line nil)
-             (indent-according-to-mode)
-             (insert "breakpoint()")
-             (newline)
-             (indent-according-to-mode)
-             (previous-line))
-      (progn (backward-word)
-             (let ((currWord (thing-at-point 'word)))
-             (if (equal currWord "breakpoint")
-               (delete-region (line-beginning-position) (+ (line-end-position)1))
-               (progn (move-beginning-of-line nil)
-                      (indent-according-to-mode)
-                      (insert "breakpoint()")
-                      (newline)
-                      (indent-according-to-mode)
-                      (previous-line)))))))
-
-;; (insert "from util import dbg_toolbag as t; t.brk()")
-;; (insert "from see import see; import ipdb; ipdb.set_trace(context=15) # breakpoint()")
-;; (newline-and-indent)
-;; (end-of-line)
-;; (open-line)
+  (aset buffer-display-table ?\^M [])
+)
 
 ;; ------------------------------------------------------------------- Scroll One Line At a time
 (defun scroll-one-line-up (&optional arg)
   "Scroll the selected window up (forward in the text) one line (or N lines)."
   (interactive "p")
-  (scroll-up (or arg 1)))
+  (scroll-up (or arg 1))
+)
 (defun scroll-one-line-down (&optional arg)
   "Scroll the selected window down (backward in the text) one line (or N)."
   (interactive "p")
-  (scroll-down (or arg 1)))
+  (scroll-down (or arg 1))
+)
 
 ;;-------------------------------------------------------------------- Column space
 (defun go-to-column (column)
   (interactive "nColumn: ")
-  (move-to-column column t))
+  (move-to-column column t)
+)
 
 ;; ------------------------------------------------------------------- Window Sizing
 (defun window-hwiden (&optional arg)
   "Widen window"
   (interactive "p")
-  (enlarge-window-horizontally 10))
+  (enlarge-window-horizontally 10)
+)
 (defun window-hshrink (&optional arg)
   "Shrink window"
   (interactive "p")
-  (shrink-window-horizontally 10))
+  (shrink-window-horizontally 10)
+)
 
 ;; ------------------------------------------------------------------- unfill-paragraph
 ;;; Stefan Monnier <foo at acm.org>. It is the opposite of
@@ -299,20 +205,15 @@ convenient prefix key map, for example `C-,`
 (defun unfill-paragraph ()
   (interactive)
   (let ((fill-column (point-max)))
-    (fill-paragraph nil)))
+    (fill-paragraph nil))
+)
 
-;;  ------------------------------------------------------------------ Buffer List Menu
-(defun my-list-buffers (&optional files-only)
-  "Display a list of existing buffers with file only"
-  (interactive "P")
-  (switch-to-buffer (list-buffers-noselect t)))
-(setq Buffer-menu-name-width 80)
-
-(defun buffer-menu-sort-by-filename (&optional arg)
-  (interactive "P")
-  (Buffer-menu-sort 6))
-
-
+;;-------------------------------------------------------------------- unjustify
+(defun unjustify-paragraph ()
+  (interactive)
+  (let ((fill-column (point-max)))
+    (fill-paragraph nil))
+)
 
 ;; ------------------------------------------------------------------- transpose sexps
 ;; transpose items in list
@@ -337,7 +238,8 @@ convenient prefix key map, for example `C-,`
       (delete-region beg (point))
       (insert rhs)
       (re-search-forward "[,]\\s-*" nil t)
-      (save-excursion (insert lhs)))))
+      (save-excursion (insert lhs))))
+)
 
 ;; ------------------------------------------------------------------- save/restore window config
 (defvar window-snapshots '())
@@ -347,12 +249,14 @@ convenient prefix key map, for example `C-,`
   (interactive)
   (let ((key (if key key (read-string "Enter a name for the snapshot: "))))
     (setf (alist-get key window-snapshots) (current-window-configuration))
-    (message "%s window snapshot saved!" key)))
+    (message "%s window snapshot saved!" key))
+)
 
 (defun get-window-snapshot (key)
   "Given a KEY return the saved value in `window-snapshots` alist."
   (let ((value (assoc key window-snapshots)))
-    (cdr value)))
+    (cdr value))
+)
 
 (defun restore-window-snapshot ()
   "Restore a window snapshot from the window-snapshots alist."
@@ -361,7 +265,8 @@ convenient prefix key map, for example `C-,`
          (snapshot (get-window-snapshot snapshot-name)))
     (if snapshot
         (set-window-configuration snapshot)
-      (message "Snapshot %s not found" snapshot-name))))
+      (message "Snapshot %s not found" snapshot-name)))
+)
 
 ;; ------------------------------------------------------------------- transpose windows
 (defun toggle-window-split ()
@@ -387,34 +292,47 @@ convenient prefix key map, for example `C-,`
           (set-window-buffer (selected-window) this-win-buffer)
           (set-window-buffer (next-window) next-win-buffer)
           (select-window first-win)
-          (if this-win-2nd (other-window 1))))))
+          (if this-win-2nd (other-window 1)))))
+)
 
 ;;-------------------------------------------------------------------- Buffer / Buffer Menu
+(setq Buffer-menu-name-width 80)
+
+(defun my-list-buffers (&optional files-only)
+  "Display a list of existing buffers with file only"
+  (interactive "P")
+  (switch-to-buffer (list-buffers-noselect t))
+)
+
 (defun buffer-menu-sort-by-filename (&optional arg)
   (interactive "P")
-  (Buffer-menu-sort 6))
+  (Buffer-menu-sort 6)
+)
 
 (defun kill-this-buffer-volatile ()
     "Kill current buffer, even if it has been modified."
     (interactive)
     (set-buffer-modified-p nil)
-    (kill-this-buffer))
+    (kill-this-buffer)
+)
 
 (defun my-revert-buffer ()
   (interactive)
   (revert-buffer nil t) ; don't ask to confirm
-  (goto-char (point-max)))
+  (goto-char (point-max))
+)
 
 (defun mk-new-buffer ()
   (interactive)
   (switch-to-buffer (generate-new-buffer (make-temp-name "foo")))
-  (clipboard-yank))
+  (clipboard-yank)
+)
 
 ;;-------------------------------------------------------------------- Shell
 (defun shell-command-on-buffer (command)
   (interactive "Shell command on buffer: ")
-  (shell-command-on-region (point-min) (point-max) command t))
-
+  (shell-command-on-region (point-min) (point-max) command t)
+)
 
 ;;-------------------------------------------------------------------- Line Spacing
 (defun toggle-line-spacing ()
@@ -422,13 +340,8 @@ convenient prefix key map, for example `C-,`
   (interactive)
   (if (eq line-spacing nil)
       (setq-default line-spacing 0.05)  ; add 0.5  height between lines
-    (setq-default line-spacing nil)))   ; no extra height between lines
-
-;;-------------------------------------------------------------------- unjustify
-(defun unjustify-paragraph ()
-  (interactive)
-  (let ((fill-column (point-max)))
-    (fill-paragraph nil)))
+    (setq-default line-spacing nil))    ; no extra height between lines
+)
 
 ;;-------------------------------------------------------------------- Enhanced Line Editing
 (defun delete-whitespace-right ()
@@ -441,7 +354,8 @@ convenient prefix key map, for example `C-,`
   (interactive "p")
   (kill-ring-save (line-beginning-position)
                   (line-beginning-position (+ 1 arg)))
-  (message "%d line%s copied" arg (if (= 1 arg) "" "s")))
+  (message "%d line%s copied" arg (if (= 1 arg) "" "s"))
+)
 
 (defun ed-dup-line ()
   "Duplicate line under cursor"
@@ -454,8 +368,8 @@ convenient prefix key map, for example `C-,`
       (move-to-column 0)
       (yank))
     (move-to-column start-column))
-  (message "line is dup'ed"))
-
+  (message "line is dup'ed")
+)
 
 ;;---- option1 proto swap
 (defun proto-swap (a b)  ;; (require 'regexp-opt)
@@ -471,26 +385,10 @@ convenient prefix key map, for example `C-,`
         (when (looking-at (regexp-opt (list b)))
           ; (message "match b")
           (replace-match a))
-        (goto-char (match-end 0))))))
+        (goto-char (match-end 0)))))
+)
 
 ;; (with-current-buffer (current-buffer)  (proto-swap "bar" "foo"))
-
-;;---- option2 parallel swap
-;(defun parallel-swap (plist &optional start end)  ;; (require 'cl)
-;  (interactive
-;   `(,(loop with input = (read-from-minibuffer "Swap: ")
-;            with limit = (length input)
-;            for (item . index) = (read-from-string input 0)
-;                            then (read-from-string input index)
-;            collect (prin1-to-string item t) until (<= limit index))
-;     ,@(if (use-region-p) `(,(region-beginning) ,(region-end)))))
-;  (let* ((alist (list (cons (car plist) (cadr plist)) (cons (cadr plist) (car plist))))
-;       ;;(alist (loop for (key val . tail) on plist by #'cddr collect (cons key val)))
-;         (matcher (regexp-opt (mapcar #'car alist) 'words)))
-;    (save-excursion
-;      (goto-char (or start (point)))
-;      (while (re-search-forward matcher (or end (point-max)) t)
-;        (replace-match (cdr (assoc-string (match-string 0) alist)))))))
 
 (defun uniq-lines (beg end)
   "Unique lines in region.
@@ -509,24 +407,9 @@ convenient prefix key map, for example `C-,`
               (re-search-forward
                (format "^%s" (regexp-quote (car kill-ring))) nil t)
             (replace-match "" nil nil))
-          (goto-char next-line))))))
+          (goto-char next-line)))))
+)
 ;(w32-shell-execute "open" )
-
-;;-------------------------------------------------------------------- number a region
-(defun number-region (start end)
-  (interactive "r")
-  (let* ((count 1)
-     (indent-region-function (lambda (start end)
-                   (save-excursion
-                     (setq end (copy-marker end))
-                     (goto-char start)
-                     (while (< (point) end)
-                       (or (and (bolp) (eolp))
-                       (insert (format ",%d " count))
-                       (setq count (1+ count)))
-                       (forward-line 1))
-                     (move-marker end nil)))))
-    (indent-region start end)))
 
 ;;-------------------------------------------------------------------- quotify list of items
 (defun lines-to-cslist (start end &optional arg)
@@ -554,7 +437,8 @@ convenient prefix key map, for example `C-,`
               (when (string-match re-1 line)
                 (delete-region (point-at-bol) (point-at-eol))
                 (insert (replace-regexp-in-string re-1 re-2 line)))
-              (forward-line 1))))))))
+              (forward-line 1)))))))
+)
 
 
 ;;-------------------------------------------------------------------- align
@@ -566,411 +450,113 @@ convenient prefix key map, for example `C-,`
   ;;   The modification amounts to adding some number of whitespaces to that part of the regular expression.
   ;; 3 Additional number of whitespaces to add, the default 1 is fine. Set to 0 if no additional whitespace is needed.
   ;; 4 Finally, answer n/y, depending whether the alignment must be done once or repeated.
-  (align-regexp start end (concat "\\(\\s-*\\)" regexp) 1 1 t))
+  (align-regexp start end (concat "\\(\\s-*\\)" regexp) 1 1 t)
+)
 
-;;-------------------------------------------------------------------- align
 (defun alignFoo (pat)
   (interactive "spattern?")
   (align-regexp (region-beginning) (region-end) (concat "\\(\\s-*\\)" pat) 1 1 nil)
-  ;;(align-regexp beg end (concat "\\(\\s-*\\)" pat) 1 1 nil)
-  )
-
+)
+; (align-regexp beg end (concat "\\(\\s-*\\)" pat) 1 1 nil)
 
 ;;-------------------------------------------------------------------- Open With
 (defun ergoemacs-open-in-external-app ()
   "Open the current file or dired marked files in external app."
   (interactive)
-  (let (doIt (myFileList
-              (cond
-               ((memq major-mode '(dired-mode dired-sidebar-mode)) (dired-get-marked-files))
-               (t (list (buffer-file-name))) ) ) )
-    (setq doIt (if (<= (length myFileList) 5)
-                   t
-                 (y-or-n-p "Open more than 5 files?") ) )
+  (let* ((myFileList (if (memq major-mode '(dired-mode dired-sidebar-mode))
+                       (dired-get-marked-files)
+                       (list (buffer-file-name))))
+         (doIt (if (<= (length myFileList) 5) 
+                  t 
+                  (y-or-n-p "Open more than 5 files?"))))
     (when doIt
       (cond
-       ((string-equal system-type "window-nt")
-        (mapc (lambda (fPath) (w32-shell-execute "open" (replace-regexp-in-string "/" "\\" fPath t t)) ) myFileList))
-
-       ((string-equal system-type "cygwin")
-        (mapc (lambda (fPath) (message (concat "cygstart.exe " fPath))) myFileList)
-        (mapc (lambda (fPath) (shell-command (concat "cygstart.exe " fPath))) myFileList))
 
        ((string-equal system-type "gnu/linux")
-        (mapc (lambda (fPath) (let ((process-connection-type nil)) (start-process "" nil "xdg-open" fPath)) ) myFileList))
-       )
-      )
-    )
+           (dolist (fPath myFileList)
+              (if (string-match ".url$" fPath)
+                  (open-url-file fPath)
+                  (let ((process-connection-type nil)) 
+                     (start-process "" nil "xdg-open" fPath)))))
+
+       ((string-equal system-type "window-nt")
+        (dolist (fPath myFileList)
+            (w32-shell-execute "open" (replace-regexp-in-string "/" "\\" fPath t t))))
+
+       ((string-equal system-type "cygwin")
+        (dolist (fPath myFileList)
+             (message (concat "cygstart.exe " fPath))
+             (shell-command (concat "cygstart.exe " fPath)))))))
 )
 
+(defun open-url-file (filePath)
+  "search contents of a .url file at filePath, and open it in a browser."
+  (interactive)
+  (let ((fileLines (with-temp-buffer (insert-file-contents filePath) (split-string (buffer-string) "\n" t)))
+        (url nil)
+        (title nil))
+   (dolist (l fileLines)
+      (message l)
+      (cond ((string-match "^TITLE:" l) (setq title (substring l (length "TITLE: "))))
+            ((string-match "^URI:" l)   (setq url   (substring l (length "URI: "))))))
+   (message "opening %s in browser"  title)
+   (message "with url %s in browser" url)
+   (when url (browse-url-firefox url)))
+)
 ;; ------------------------------------------------------------------- Selective Display
-(setq selective-display-lev 0)
-(defun selective-display-level-incr (&optional arg)
-        (interactive "P")
-        (setq selective-display-lev (+ selective-display-lev 1))
-        (set-selective-display selective-display-lev))
-(defun selective-display-level-decr (&optional arg)
-        (interactive "P")
-        (setq selective-display-lev (- selective-display-lev 1))
-        (set-selective-display selective-display-lev))
-(defun selective-display-level-zero (&optional arg)
-        (interactive "P")
-        (setq selective-display-lev 0)
-        (set-selective-display selective-display-lev))
+;; tweaked for treesycalc
+(progn
+  (setq selective-display-lev 0)
+  (setq selective-display-inc 1)
+  (setq selective-display-max (* 15 selective-display-inc))
 
-(message "-------------- Done: Handy Funs Section")
-#+END_SRC
+  (defun selective-display-level-rot (&optional arg)
+     (interactive "P")
+     (if (not (eq last-command 'selective-display-level-rot))   ; reset to max-depth at first invocation
+          (setq selective-display-lev selective-display-max))
 
-*** faded
-(add-hook 'find-file-hook  ;; ensure file in production can't be modified via emacs
-  '(lambda ()
-     (when (string= (substring (buffer-file-name) 0 4) "/dls")
-       (message "Toggle to read-only for existing file")
-           ; (read-only-mode ?)
-       (toggle-read-only 1))))
+     (if (or (< selective-display-lev 0)
+             (> selective-display-lev selective-display-max))
+         (setq selective-display-inc (- selective-display-inc)))
+     (setq selective-display-lev (+ selective-display-lev selective-display-inc))
+     (message "sel lev %i %i %s" selective-display-lev selective-display-inc last-command)
+     (set-selective-display (max 1 selective-display-lev)))
 
------------------------------------ scroll windows in synch
- (defun mwheel-scroll-all-function-all (func &optional arg)
-    (if (and scroll-all-mode arg)
-        (save-selected-window
-          (walk-windows
-           (lambda (win)
-             (select-window win)
-             (condition-case nil
-                 (funcall func arg)
-               (error nil)))))
-      (funcall func arg)))
-(defun mwheel-scroll-all-scroll-up-all   (&optional arg)  (interactive) (mwheel-scroll-all-function-all 'scroll-up arg))
-(defun mwheel-scroll-all-scroll-down-all (&optional arg)  (interactive) (mwheel-scroll-all-function-all 'scroll-down arg))
-(setq mwheel-scroll-up-function   'mwheel-scroll-all-scroll-up-all)
-(setq mwheel-scroll-down-function 'mwheel-scroll-all-scroll-down-all)
+  (defun selective-display-level-incr (&optional arg)
+          (interactive "P")
+          (setq selective-display-lev (+ selective-display-lev selective-display-inc))
+          (set-selective-display selective-display-lev))
 
+  (defun selective-display-level-decr (&optional arg)
+          (interactive "P")
+          (setq selective-display-lev (- selective-display-lev selective-display-inc))
+          (set-selective-display selective-display-lev))
 
-(defun replace-selected ()
-  (interactive)
-  (if (region-active-p)
-      (replace-string "^\(.*[0-9]+?:[0-9]+\)" "[[https://www.lds.org/scriptures/search?lang=eng&query=\1&x=0&y=0][\1]]"
-                      nil (region-beginning) (region-end))
-     (replace-regexp "^\(.*[0-9]+?:[0-9]+\)" "[[https://www.lds.org/scriptures/search?lang=eng&query=\1&x=0&y=0][\1]]")
-     ))
-
-
-
-(defun my-indent-to-column (&optional arg)
-  "indent to specificied column"
-  (interactive "p")
-  (indent-to-column (or arg 100)))
-
-------------------------------------------------------------------- Open App
-(defun w32-browser (doc) (w32-shell-execute 1 doc))
-(eval-after-load "dired" '(define-key dired-mode-map [f3]
-                (lambda ()
-                  (interactive)
-                  (w32-browser (dired-replace-in-string "/" "\\" (dired-replace-in-string "/cygdrive/C/" "C:\\" (dired-get-filename)))))))
-
-(defun indent-to-col()     (interactive) (indent-to-column 110))
-(defun see-doAndDone()     (interactive) (find-file "/run/user/1000/a37849ebaffed48d/C0A8-1F0C/Android/data/com.termux/files/MyDocs/aNotes/doAndDone.org"))
-
-/adb::/path/to/file.
-C-x C-f /:adb::/storage/emulated/0
-C-x C-f /adb::/storage/emulated/0
-
--------------------------------------------------------------------- parallel cursor editing
-(defun parallel-replace-read-plist (input)
-  (loop with limit = (length input)
-        for (item . index) = (read-from-string input 0)
-        then (read-from-string input index)
-        collect (prin1-to-string item t) until (<= limit index)))
-
-(defun parallel-replace (plist &optional start end)
-  (interactive
-   (cons
-    (parallel-replace-read-plist (read-from-minibuffer "Replace: "))
-    (when (use-region-p)
-      (list (region-beginning) (region-end)))))
-  (let* ((alist (loop for (key val . tail) on plist by #'cddr
-                      collect (cons key val)))
-         (matcher (regexp-opt (mapcar #'car alist) 'words)))
-    (save-excursion
-      (goto-char (or start (point)))
-      (while (re-search-forward matcher (or end (point-max)) t)
-        (replace-match (cdr (assoc-string (match-string 0) alist)))))))
-
-(defvar parallel-replace-alist nil)
-
-(defun parallel-query-replace (plist &optional start end)
-  (interactive
-   (cons
-    (parallel-replace-read-plist (read-from-minibuffer "Replace: "))
-    (when (use-region-p)
-      (list (region-beginning) (region-end)))))
-  (let* (matcher)
-    (set (make-local-variable 'parallel-replace-alist)
-         (loop for (key val . tail) on plist by #'cddr
-               collect (cons key val)))
-    (setq matcher (regexp-optp (mapcar #'car parallel-replace-alist) 'words))
-    (query-replace-regexp matcher
-                          '(replace-eval-replacement
-                            replace-quote
-                            (cdr (assoc-string (match-string 0) parallel-replace-alist case-fold-search)))
-                          nil
-                          start
-                          end)))
-
-* Function Definitions - TreesyCalc
-#+begin_src elisp
-;; ------------------------------------------------------------------- TreesyCalc
-
-; standard-syntax-table               - This function returns the standard syntax table used by Emacs; most major-modes inherit it.
-; text-mode-syntax-table              - Syntax table used by the major mode for editing text files.
-; c-mode-syntax-table                 - Syntax table for C-mode buffers.
-; java-mode-syntax-table              - Syntax table for java-mode buffers.
-; emacs-lisp-mode-syntax-table        - For EmacsLispMode buffers.
-; lisp-mode-syntax-table              - Syntax table for lisp-mode buffers.
-; lisp-interaction-mode-syntax-table  - Used in the scratch buffer.
-; message-mode-syntax-table           - Syntax table used in message mode.
-
-(defvar syntax-table-backup (make-syntax-table (syntax-table)))
-;(defvar syntax-table-backup (make-syntax-table org-mode-syntax-table))
-;(defvar syntax-table-elisp-backup (make-syntax-table emacs-lisp-mode-syntax-table))
-(defvar my-trsyc-syntax-table
-   (let ((table (make-syntax-table (syntax-table))))
-        (modify-syntax-entry ?< "w" table)
-        (modify-syntax-entry ?> "w" table)
-        table))
-
-;Put this in the InitFile, and call it from a buffer with
-(set-syntax-table my-trsyc-syntax-table)
-
-(defun drop-angle-bracket-matching ()   ;; drop angle brackets from matching via syntax-table
-   (modify-syntax-entry ?< "w")
-   (modify-syntax-entry ?> "w")
-)
-;(add-hook 'show-paren-mode-hook 'my-show-paren-hooks)   ; TDB
-
-(defun trsyc-repl ()
-  "in treesycalc, the read-eval-print loop becomes:
-    1) propagate values along the 'rails'
-    2) evaluate the selected sexp that the cursor is in
-    3) place the result after ';=' at the top of the selected sexp
-    4) reformat,realign entire panel
-    5) move cursor to opening paren of the selected sexp, so that repeating trsyc-repl 
-      will occur one level up, on the sexp enclosing the selected sexp" 
-   (interactive)
-   (trsyc-propagate-rails)
-   (trsyc-update-sexp-result)
-   (trsyc-align-full)
-   (trsyc-move cursor)
+  (defun selective-display-level-zero (&optional arg)
+          (interactive "P")
+          (setq selective-display-lev 0)
+          (set-selective-display selective-display-lev))
 )
 
-(defun trsyc-update-sexp-result ()
-   "Eval expression and insert value on the top line of the sexp, after the ;= after the operator"
-    (interactive)
-    (save-excursion
-        (backward-up-list)                                                                  ; go to start of enclosing sexp
-        (mark-sexp)                                                                         ; set sexp as region
-        (setq selSexp (buffer-substring-no-properties (region-beginning) (region-end)))     ; tbd cleanse angle brackets from string
-        (message "sexp = %s" selSexp)
-        (setq res (my-eval-string selSexp))                                                 ; evaluate the sexp
-        (message "res = %s" res)                                                           
-                                                                                            ; find where to put the result
-        (goto-char (line-beginning-position))                                               ; goto start of sexp=region
-        (cond ((setq result-bgn (re-search-forward "\(.+[ \t]+;=" (line-end-position) nil)) ; goto just after "<operator><space>;="
-               (cond ((setq result-end (re-search-forward " ;;;" (line-end-position) nil))  ; goto just after "<triple-semi-colon>"
-                      (setq reg-selection (delete-and-extract-region result-bgn (- result-end (length " ;;;"))))
-                      (message "got mark-point region = XX%sXX" reg-selection)))))
-        (setq resStr (if (numberp res)
-                         (format " %4.0f" res)
-                         (format " %s" res)))
-        (message "new-string %i XX%sXX" (length resStr) resStr)
-        (goto-char result-bgn)
-        (insert resStr) 
-        ;(trsyc-align-full)
-    )
-    (goto-char result-bgn)    ; go to open-paren of result
-    (goto-char (line-beginning-position))                                               ; goto start of sexp =region
-    (re-search-forward "\(" (line-end-position) nil)
-   (backward-char 1)
-) 
+;--------------------------------------------------------------------------- Regexp Replace
+(defun replace-thing ()
+ (interactive)
+ (goto-char 1)
+    ;; extricate the #%% phrase from all the other cruft on the pycharm line
+    (while (search-forward-regexp "^# \\+ pycharm=[^#]+#%%\\([^,}]+\\).*$" nil t)
+      (setq cruft (match-string 1))
+      (replace-match (concat "#%% " (substring cruft 0 -3)) t nil)
+      (message (concat "#%%%% " (substring cruft 0 -3) "-XXX"))))
 
+;;))                                                                                                           ; drop # and \n} cruft at end
 
- 
-(defun trsyc-insert-initial-panel ()
-  "create the initial panel"
-  (interactive)
-  (insert "#+begin_src elisp")                                                                               (newline)
-  (insert ";-sexps-------------------;;;-rails--;;;-notes----------------------------------------------;;;") (newline)
-  (insert "(+ ;=2                    ;;;        ;;; result")                                                 (newline)
-  (insert "   1                      ;;;        ;;; ")                                                       (newline)
-  (insert "   1                      ;;;        ;;; ")                                                       (newline)
-  (insert ")                         ;;;        ;;;")                                                        (newline)
-  (insert ";-sexps-------------------;;;-rails--;;;-notes----------------------------------------------;;;") (newline)
-  (insert "#+end_src elisp") (newline)
-)
+(message "-------------- Done: Handy Function Definitions")
+#+end_src
+** Eval Elisp
+#+begin_src emacs-lisp
+;(load-library "grex-calc")
 
-(defun trsyc-insert-panel-empty-line ()
-  "add a line with nothing in it"
-  (interactive)
-  (save-excursion
-     (insert "                         ;;;        ;;; ")                                                        (newline)
-     ;(move to correct secp indent point)
-  )
-)
-
-(defun align-non-space (BEG END) 
-  "Align non-space columns in region BEG END."
-  (interactive "r")
-  (align-regexp BEG END "\\(\\s-*\\)\\S-+" 1 0 t))
-
-(defun align-lisp ()
-   "run at top of sexp"
-   (interactive)
-   (indent-pp-sexp)
-   (mark-sexp)
-  (align-regexp (region-beginning) (region-end) "\\(\\s-*\\) ; ")   ; align results   ;; (align-regexp BEG END REGEXP &optional GROUP SPACING REPEAT)
-)
-
-(defun trsyc-align ()
-  "Align semi-colon sections in sexp region"
-  (interactive)
-  (backward-up-list)
-  (mark-sexp)
-  (align-regexp (- (region-beginning) 0) (region-end) "\\(\\s-*\\);;;")
-)
-
-(defun trsyc-align-full ()                                                              ; mark whole panel as region and then do alignment
-  "Align triple-semi-colon panes in panel"
-  (interactive)
-  (save-excursion
-  (let ((pnl-boundary-regex  "^;-sexps-+;")                                             ; to find top or bottom of in panel, the sexp pane
-        (pnl-align-regex "\\(\\s-*\\);;;"))                                             ; align-regexp for alignment pane boundaries alignment 
-      (setq panel-tl (progn (re-search-backward pnl-boundary-regex)                     ; search up to get to panel top header line
-                            (line-beginning-position)))
-      (setq sexp-pane-bot (progn (goto-char (line-end-position))                        ; move to bottom of panel
-                                  (re-search-forward-range pnl-boundary-regex nil)))    ; (message "Found rails top  %i, tl %i, tr %i" panel-tl (car rails-align-top) (cdr rails-box-bot))
-      (goto-char (car sexp-pane-bot))                                               
-      (align-regexp panel-tl (line-end-position) pnl-align-regex 1 0 t)                 ; realign the panel ; args: fails 1 1 t   
-
-      (progn                                                                            ; (trsyc-clear-all-whitespace-columns)
-        (goto-char (car sexp-pane-bot))                                                 ; go to bottom left
-        (setq sexp-pane-bot   (re-search-forward-range pnl-boundary-regex nil)          ; redo since pane has been exanded by alignement (message "Found rails top  %i, tl %i, tr %i" panel-tl (car rails-align-top) (cdr rails-box-bot))
-        (setq rectangle-as-list (extract-rectangle (car panel-tl) (cdr sexp-pane-bot))) ;  remove only-space columns inserted by alig-regexp
-        (dotimes (li (length rectangle-as-list)) (message "Found rails %i %s" li (nth li rectangle-as-list)))   ; 
-        (dotimes (li (length rectangle-as-list)) 
-        (if  (dotimes (li (length rectangle-as-list) allSpace) (setq allSpace (and allSpace (check space))))
-               (delete-region))
-        (setq rectangle-as-list (trsyc-los-transpose rectangle-as-list))
-        
-        (count number of columns that are all-space)
-        (kill-rectangle of this size))
-      (progn                                                                           ; replace any spaces introducted by alignment, into top and botom panel boundary lines, with a dash "-"
-        (goto-char panel-tl)
-        (replace-regexp " " "-" nil (line-beginning-position) (line-end-position))     ; in panel top line
-        (goto-char (line-end-position)) 
-        (re-search-forward-range pnl-boundary-regex nil) 
-        (replace-regexp " " "-" nil (line-beginning-position) (line-end-position)))))  ; in panel top line
-)
-
-(defun trsyc-clear-all-whitespace-columns ()
-  "use transpose to check for any columns that are completely empty, and chop them out with kill-rectangle"
-  (interactive)
-(save-excursion
-  (let* ((pnl-boundary-regex  "^;-sexps-+;")                                                                   ; to find top or bottom of in panel, the sexp pane
-         (pnl-align-regex "\\(\\s-*\\);;;")
-         (panel-tl (progn (re-search-backward pnl-boundary-regex)                                                ; search up to get to panel top header line
-                          (line-beginning-position)))
-         (sexp-pane-bot (progn (next-line)                                                                       ; move to bottom of panel
-                               (re-search-forward-range pnl-boundary-regex nil))))                               ; (message "Found rails top  %i, tl %i, tr %i" panel-tl (car rails-align-top) (cdr rails-box-bot))
-
-      (progn                                                                                                   ; (trsyc-clear-all-whitespace-columns)
-        (goto-char (car sexp-pane-bot))                                                                        ; go to bottom left
-        (setq sexp-pane-bot  (re-search-forward-range pnl-boundary-regex nil))                                 ; redo since pane has been exanded by alignement (message "Found rails top  %i, tl %i, tr %i" panel-tl (car rails-align-top) (cdr rails-box-bot))
-        (setq rectangle-as-list (extract-rectangle panel-tl (cdr sexp-pane-bot)))                        ; remove only-space columns inserted by alig-regexp
-        (setq rectangle-as-list (trsyc-los-transpose rectangle-as-list))
-        (setq numBlankCols 0)
-        (dotimes (li (length rectangle-as-list) numBlankCols) 
-              (setq colStr (nth li rectangle-as-list))
-              (setq colStr (substring colStr 1 (- (length colStr) 1)))
-              (message "Found rails %i %s XXX  %s" li colStr (eq (string-blank-p colStr) 0))  ; 0 means it has only whitespace
-              (if (eq (string-blank-p colStr) 0) (setq numBlankCols (+ numBlankCols 1))))
-       (setq blankColStart (- (cdr sexp-pane-bot) (car sexp-pane-bot) numBlankCols))
-       (message "startCol=%i NumBlankLines=%i" blankColStart numBlankCols)
-
-       (goto-char (+ panel-tl blankColStart)) ;(insert "X")
-       (goto-char (cdr sexp-pane-bot))         ;(insert "Y")
-       (kill-rectangle (+ panel-tl blankColStart) (- (cdr sexp-pane-bot) 3)) 
-))))
-        ;(if nil
-
-          ;(dotimes (li (length rectangle-as-list)) (if  (dotimes (li (length rectangle-as-list) allSpace) (setq allSpace (and allSpace (check space))))  (delete-region)))
-                  ;(count number of columns that are all-space)
-          ;(kill-rectangle of this size))))
-
-
-
-
-(defun trsyc-propagate-rails ()
-  "process rails pane, propagating their values from source(=input) location to
-  their sink(=output) locations"
-
-  (interactive)
-  (let ((pnl-boundary-regex "^;-sexps-")                                                                       ; to find top or bottom of s-expression box in panel
-        (rails-regex        ";;;-rails-+;")                                                                    ; to find top or bottom of rails  box in panel
-        (val-regex          "\\()\\|;;;\\)"))                                                                  ; in sexp box,  find the value or expression - anything after leading white space up too close-paren or ";;;"
-    (message "-------------------------------------------------------------------")
-    (search-backward-regexp pnl-boundary-regex)                                                                ; search up to get to panel top header line
-    (setq header-line-bgn (line-beginning-position))
-    (setq rails-box-top (re-search-forward-range rails-regex (line-end-position)))                             ; (message "rails-box-top %s" rails-box-top)
-
-    (goto-char (line-end-position))                                                                            ; move to bottom of panel
-    (setq rails-box-bot (re-search-forward-range rails-regex nil))                                             ; (message "Found rails top  %i, tl %i, tr %i" header-line-bgn (car rails-box-top) (cdr rails-box-bot))
-
-    (setq rectangle-as-list (extract-rectangle (car rails-box-top) (cdr rails-box-bot)))
-    (setq rectangle-as-list (trsyc-los-transpose rectangle-as-list))
-    (dotimes (li (length rectangle-as-list)) (message "Found rails %i %s" li (nth li rectangle-as-list)))      ; 
-    (dotimes (li (length rectangle-as-list))                                                                   ; find each rail and propagate values accordingly
-       (setq rail (nth li rectangle-as-list))
-       (cond ((and (string-match "i" rail)                                                                     ; check  it's a rail: has (i)nput, (o)utput and vertical dashes
-                   (string-match "o" rail)                                                               
-                   (string-match "|" rail))               
-             (setq inValPos (string-match "i" rail))                                                           ; find the source position
-             (setq outValPosLst '())
-             (dotimes (pi (length rail) outValPosLst)                                                          ; collect all the sink positions
-               (if (string-equal "o" (substring rail pi (+ pi 1))) (setq outValPosLst (cons pi outValPosLst))))
-             (message "rail %i source pos=%s, sink posns=%s" li inValPos outValPosLst)
-
-            (goto-char header-line-bgn)                                                                        ; find (offset) position&value of source (=input), and (offset) positions of sinks(=output)
-            (next-line inValPos)                                                                               ; move down by offset number of lines
-            (setq selSrc (buffer-substring-no-properties (line-beginning-position) (- (re-search-forward val-regex) 1)))
-            (message "selSrc XX%sXX = %s" selSrc)
-            (if (string-match selSrc ";=")                                                                     ; if its a result value, strip off the leading up and including ";="
-               (setq inVal (format "%s" (my-eval-string selSrc)))                                              ; evaluate the string to get the value, then convert back to a string
-               (setq inVal (format "%s" (my-eval-string selSrc)))                                              ; evaluate the string to get the value, then convert back to a string
-
-            (dolist (p outValPosLst)                                                                           ; mark the sinks
-                (goto-char header-line-bgn) 
-                (next-line p)                                                                                  ; move down by offset number of lines
-                (message "insert offset=%i XX%sXX" p inVal)
-                (setq selSnk (re-search-forward-range "[[:alnum:]\\.]+\\()\\|;;;\\)" (line-end-position)))     ; find value to replace
-                (message  "to %s replace YY%sYY" selSnk (buffer-substring-no-properties (car selSnk) (- (cdr selSnk) 1)))
-                (delete-region (car selSnk) (- (cdr selSnk) 1))                                                ; avoid removing rightmost of match which is either a close-paren or a space
-                (backward-char 1)                                                                              ; for the paren
-                (insert inVal)))))            
-                                                                                                               ; tbd cleanup by formatting the lisp and doing panel alignment
-    (message "-------------------------------------------------------------------")         
-   )            
-)
-
-;(setq oldValStr (delete-and-extract-region (line-beginning-position) (re-search-forward val-regex))) 
-;(message "insert offset=%i XX%sXX = %s" p inVal)
-;(setq selSnk (re-search-forward-range "\\S-*\\()\\|;;;\\)" (line-end-position)))                              ; find value to replace
-
-(defun re-search-forward-range (regex bound)
-   "return start and end of regexp match"
-   (let ((endPos (re-search-forward regex bound nil)))                                                         ; (forward-sexp) doesn't work
-   (cons (match-beginning 0)  endPos))           
-)
-
+; ------------------------------------------------------------------- Eval Elisp
 (defun my-eval-defun ()
   "can't get real one to work inside org-mode"
   (interactive)
@@ -981,22 +567,11 @@ C-x C-f /adb::/storage/emulated/0
      (my-eval-string defun-region-str))
 )
 
-(defun trsyc-los-transpose (rowsLst)
-  "Convert a list of strings representing the rows of a rectangular region 
-into a list of strings representing the columns of the same region"
-  (setq colsLst '())
-  (dotimes (c (length (car rowsLst)) colsLst)
-       (setq colStr "")
-       (setq colsLst (append colsLst 
-                             (list (dolist (r rowsLst colStr) 
-                                      (setq colStr (concat colStr (substring r c (+ c 1)))))))))
-)
-;; ------------------------------------------------------------------- Eval
 (defun eval-and-insert ()
-  "Eval expression and insert value after the expression"
+  "Eval expression and insert value after the expression"c
   (interactive)
   (pp-eval-expression (preceding-sexp))
-  ;;(eval-print-last-sexp 0)
+  ;(eval-print-last-sexp 0)
 )
 
 (defun my-eval-string (string)
@@ -1004,14 +579,16 @@ into a list of strings representing the columns of the same region"
   (eval (car (read-from-string string)))
 )
 
- ;; TBD format based on datatype or use C-u C-x C-e
+; TBD format based on datatype or use C-u C-x C-e
 
 (defun my-insert-last-sexp ()
     (interactive)
     (let ((value (eval (preceding-sexp))))
       ;;(kill-sexp -1)
-      (insert (format " = %S" value))))  ;; TBD format based on datatype or use C-u C-x C-e
+      (insert (format " = %S" value)))  ;; TBD format based on datatype or use C-u C-x C-e
+)
 
+; Notes:
 ; Normally, this function truncates long output according to the value
 ; of the variables `eval-expression-print-length' and
 ; `eval-expression-print-level'.  With a prefix argument of zero,
@@ -1030,10 +607,10 @@ into a list of strings representing the columns of the same region"
 ; (delete-region (- (region-beginning) 2) (region-end))                                                        ; delete region and replace with result
 ; (setq reg-selection (buffer-substring-no-properties (region-beginning) (region-end)))
 
-;(mapc (lambda (x) (message "Found rails %s" x)) rectangle-as-list)
-;(message rectangle-as-list)
+; (mapc (lambda (x) (message "Found rails %s" x)) rectangle-as-list)
+; (message rectangle-as-list)
 
-;(copy-rectangle-as-kill START END)
+; (copy-rectangle-as-kill START END)
 ; reg-search-back for "^;-sexps-;;;;;"
 ; reg-seach on same line for ;-rails-;
 ; foreach rail-col in rails:
@@ -1042,155 +619,48 @@ into a list of strings representing the columns of the same region"
 ;    foreach output-line
 ;   
 
-
-
+(message "-------------- Done: Treesycalc")
 #+end_src
 
-#+RESULTS:
-: my-insert-last-sexp
-
-* Commands Quick Ref
-(dired  "/ssh:192.168.1.124#8022:/data/data/com.termux/files/home")                                            ; using  port
-cosmo -> /run/user/1000/52efffd273e1b33b/Android/data/com.termux/files
-(beginning-of-line)
-(end-of-line)
-(goto-char (mark-marker))
-(goto-char (pop-global-mark))
-(remove-hook 'html-mode-hook 'xah-html-mode-keys)                                                              ; removing a hook
-(server-start)
-(setq Buffer-menu-sort-column 6)
-(setq tab-stop-list '(60))
-(x-get-selection-value)
-(xclip-mode 1) for emacs in terminal , export kill-yank
-
-close  to close ^Q^]
-clone-indirect-buffer RET
-ediff-revision
-find-dired   calls unix find
-flush-lines
-go up C-c C-u
-increase/decrease font C-c kepad+ keypad-
-indent-to-column
-isearch-forward-regexp
-map-query-regexp-replace
-package-list-packages
-proced       to view processes
-read-kbd-macro
-rot13-region  (C-c C-r)
-set-buffer-file-coding-system unix <--format
-tail-mode     auto-revert-tail-mode (C-cr)
-telnet host port     to open
-vc-ediff
-
-------------------------------------------------------------------- defalias
-(defalias 'my-open-file   (kbd "C-a C-s / C-b C-s : C-x C-x ESC w C-x C-f C-a C-y DEL C-k RET")
-(defalias 'flipslash      (kbd "C-SPC C-e C-SPC ESC < ESC w C-x b *scratch* RET C-e RET C-y C-r SPC C-f C-SPC C-r total SPC use C-x C-x C-w ESC \ 2*DEL / C-a ESC \ ESC x replace-string / RET \ RET C-a"))
-(defalias 'make-org-tbl   (kbd "ESC x org-mode RET ESC < C-SPC ESC > C-c |"))
-(defalias 'see-logbooks   (kbd "C-x C-f ~/myDocs/logbook RET"))
-(defalias 'vc-ediff-frame (kbd "C-x 5 2 M-x vc-ediff RET y"))
-
-; cleanMlLog
-;;[                     ;; self-insert-command
-;;3*C-k                 ;; kill-line
-(fset 'cleanMlLog [?\C-s ?\[ ?\C-q ?\C-h ?\C-a escape ?\C-k ?\C-k ?\C-k])
-
-* Regexp Replace
-
-#+BEGIN_SRC elisp
-
-(defun replace-thing ()
- (interactive)
- (goto-char 1)
-    ;; extricate the #%% phrase from all the other cruft on the pycharm line
-    (while (search-forward-regexp "^# \\+ pycharm=[^#]+#%%\\([^,}]+\\).*$" nil t)
-      (setq cruft (match-string 1))
-      (replace-match (concat "#%% " (substring cruft 0 -3)) t nil)
-      (message (concat "#%%%% " (substring cruft 0 -3) "-XXX"))))
-
-;;))                                                                                                           ; drop # and \n} cruft at end
-
-
-#+END_SRC
--------------------------------------------------------------- SAMPLE REPLACE REGEXP
-(replace-regexp "[[:alpha:]\.]=" "" nil (region-beginning) (region-end))
-replace unprintable ""
-(replace-string "" "")
-(replace-string "" "")
-(replace-string "" "")
-(replace-regexp "0\.999999([0-9]+)[$,]" "" nil (point-min) (point-max))
-(replace-regexp "[ \t]+" " ")                                                                                  ; REPLACE mutli-space with single-space
-(replace-regexp "[ \t]+|" "_" )                                                                                ; space -> _
-(replace-regexp "[ \t]+" "|")                                                                                  ; space -> |
-(replace-regexp "'[ \t]+'" "|" )   ; space between quotes ->
-(goto-char (mark-marker))
-(replace-regexp "A" "B" nil (if (and transient-mark-mode mark-active) (region-beginning)) (if (and transient-mark-mode mark-active) (region-end)) nil)
-(replace-regexp "A" "B" nil (mark-marker) (point-max))
-(replace-regexp "(line [0-9]+)" "" nil (point-min) (point-max)) ; clear (line 62)
-(replace-regexp " [0-9][0-9]:[0-9][0-9]:[0-9][0-9]" "" nil (point-min) (point-max)) ; clear " HH:MM:SS"
-N.B. TBD drop last ","
-
-regexp classes:
-‘[:ascii:]’    This matches any ASCII character (codes 0–127).
-‘[:alnum:]’    This matches any letter or digit. For multibyte characters, it matches characters whose Unicode ‘general-category’ property (see Character Properties) indicates they are alphabetic or decimal number characters.
-‘[:alpha:]’    This matches any letter. For multibyte characters, it matches characters whose Unicode ‘general-category’ property (see Character Properties) indicates they are alphabetic characters.
-‘[:blank:]’    This matches horizontal whitespace, as defined by Annex C of the Unicode Technical Standard #18. In particular, it matches spaces, tabs, and other characters whose Unicode ‘general-category’ property (see Character Properties) indicates they are spacing separators.
-‘[:cntrl:]’    This matches any character whose code is in the range 0–31.
-‘[:digit:]’    This matches ‘0’ through ‘9’. Thus, ‘[-+[:digit:]]’ matches any digit, as well as ‘+’ and ‘-’.
-‘[:graph:]’    This matches graphic characters—everything except whitespace, ASCII and non-ASCII control characters, surrogates, and codepoints unassigned by Unicode, as indicated by the Unicode ‘general-category’ property (see Character Properties).
-‘[:lower:]’    This matches any lower-case letter, as determined by the current case table (see Case Tables). If case-fold-search is non-nil, this also matches any upper-case letter.
-‘[:multibyte:]’This matches any multibyte character (see Text Representations).
-‘[:nonascii:]’ This matches any non-ASCII character.
-‘[:print:]’    This matches any printing character—either whitespace, or a graphic character matched by ‘[:graph:]’.
-‘[:punct:]’    This matches any punctuation character. (At present, for multibyte characters, it matches anything that has non-word syntax.)
-‘[:space:]’    This matches any character that has whitespace syntax (see Syntax Class Table).
-‘[:unibyte:]’  This matches any unibyte character (see Text Representations).
-‘[:upper:]’    This matches any upper-case letter, as determined by the current case table (see Case Tables). If case-fold-search is non-nil, this also matches any lower-case letter.
-‘[:word:]’     This matches any character that has word syntax (see Syntax Class Table).
-‘[:xdigit:]’   This matches the hexadecimal digits: ‘0’ through ‘9’, ‘a’ through ‘f’ and ‘A’ through ‘F’.
-
-;; (while (search-forward-regexp "^# \\+ pycharm=[^#]+#%% \\([^,}]+\\).*$" nil t)
-;; drop # and \n} cruft at end
-;;(replace-match (substring (match-string 1) 1 -4) t nil)
-;;(concat 'aaa' 'bbb')
-;;(message (concat "XXX" (substring (match-string 1) 0 -2) "XXX"))
-;;(replace-match (concat "XXX" (match-string 1) "XXX") t nil)))
-;;(substring "ABCDEF" 0 -1)
-;;(defun replace-thing ()
-;; (interactive)
-;; (goto-char 1)
-;;    (while (search-forward-regexp "\\([^\\)]+\\)" nil t)
-;;        (replace-match (upcase (match-string 1)) t nil)))
-;;
-;;
-;;"\\+ pycharm[^#]+\\(#[\w]+\\)"
-;;
-;;(defun replace-thing ()
-;;  (interactive)
-;;  (replace-regexp "\\+ pycharm[^#]+\\(#[\w]+\\)" "XX\\1XX"  nil (point-min) (point-max)))
-;;
-;;(defun replace-thing ()
-;;  (interactive)
-;;  (replace-regexp "\\(pycharm\\)" "X\\1X"  nil (point-min) (point-max)))
-;;
-;;(defun replace-thing ()
-;;  (interactive)
-;;  (replace-regexp "\(pycharm\)" "XX\1XX"  nil (point-min) (point-max))) 
-;;  (if (region-active-p)      ;;(replace-regexp "(pycharm)" "X\1X"  nil region-beginning) (region-end))
-;(defun replace-thing ()
-;  (interactive)
-;  (if (region-active-p)
-;      (replace-string "# \+ pycharm=[^#]+(#%%.+)}" "[[https://www.lds.org/scriptures/search?lang=eng&query=\1&x=0&y=0][\1]]"  nil (region-beginning) (region-end))
-;   ))
-
 * Settings
-#+BEGIN_SRC emacs-lisp
-(message "-------------- Start Settings")
+** Highlighting/Cursor Visibility
+; ------------------------------------- highlighting
+(require 'highlight-sexp)  - fails
+(add-hook 'lisp-mode-hook 'highlight-sexp-mode)
+(add-hook 'emacs-lisp-mode-hook 'highlight-sexp-mode)
+ hl-sexp-background-color
+  - hl-sexp-foreground-color
+  - hl-sexp-face
+ Enable `highlight-sexps-mode'
+
+(list-colors-display)
+#+begin_src emacs-lisp
+(message "-------------- Start: Highlighting")
+;(set-face-background hl-line-face "gray50")
+(setq-default x-stretch-cursor t)
+(blink-cursor-mode 0)
+(set-cursor-color "#669966")  ; also at end of init.el, after theming 
+(setq cursor-type 'box)
+
+(global-hl-line-mode 1) ; 0 to turn off
+;(setq  hl-line-range-function 'nil)
+;(setq  hl-line-range-function 'hl-short-range)
+;(defun hl-short-range () (cons (- (point) 5) (+ (point 1)))
+
+(set-face-background 'show-paren-match  "#888888")
+(set-face-attribute  'show-paren-match nil :weight 'bold :underline nil :overline nil :slant 'normal) 
+(show-paren-mode 1)
+(setq show-paren-style 'expression)          ; or parenthesis of mixed
+(setq show-paren-when-point-inside-paren t)
+(setq show-paren-when-point-in-periphery t)
+(message "-------------- Done: Highlighting")
+#+end_src
+
+
+#+begin_src emacs-lisp
+(message "-------------- Start: Settings")
 (setq calendar-week-start-day 1) ; set....mark to get count of days
 (desktop-save-mode 1)  ; desktop-revert desktop-change-dir
-
-(blink-cursor-mode 0)
-(set-cursor-color "#ff0000")
-(setq cursor-type 'box)
 
 (delete-selection-mode 0) ; don't delete selection with next char
 (fset 'yes-or-no-p 'y-or-n-p)
@@ -1198,6 +668,8 @@ regexp classes:
 (setq case-fold-search t)
 (setq column-number-mode t)
 (setq default-truncate-lines t)
+(set-default 'truncate-lines t)
+(setq truncate-partial-width-windows t)
 (setq display-time-day-and-date t) (display-time)
 (setq font-lock-maximum-decoration t) ;; 3
 (setq fill-column 100)
@@ -1222,7 +694,6 @@ regexp classes:
 (transient-mark-mode t)  ;;(setq-default frame-title-format "%b %p %p(%f)")
 
 (setq require-final-newline nil) ;; means don't add newline
-
 
 ;; ----------------------------------------------- Show keystrokes in progress
 (setq echo-keystrokes 0.1)
@@ -1260,7 +731,7 @@ regexp classes:
 ;;    say "yes" to steal from PID?
 ;; (desktop-save-mode 1)  ; desktop-revert desktop-change-dir
 ;; (desktop-change-dir "/home/uri03204/myDocs/config")
-(setq desktop-path '("/home/kleyn/.emacs.d/desktops"))
+(setq desktop-path '("/home/kleyn/config/desktop"))
 ;; (setq desktop-auto-save-timeout 300)
 
 ;; ----------------------------------------------- Backup location
@@ -1273,7 +744,7 @@ regexp classes:
        (setq backup-directory-alist          `((".*" . , "/home/kleyn/history/emacsBackups")))
        (setq auto-save-file-name-transforms  `((".*" ,   "/home/kleyn/history/emacsBackups" t)))))
 
-(message (concat "-------------- Done:backup-directory-alist" (format "%s" backup-directory-alist)))
+(message (concat "-------------- Done: backup-directory-alist" (format "%s" backup-directory-alist)))
 
 (global-subword-mode 1)
 ;; from 'better-defaults.el'
@@ -1297,6 +768,11 @@ regexp classes:
 ; Ibuffer can show you the differences between an unsaved buffer and the file on disk with `=’.
 ; '(lambda ()        (ibuffer-switch-to-saved-filter-groups "home")))
 
+;(use-package ibuffer-sidebar
+;  :bind (("C-x C-b" . ibuffer-sidebar-toggle-sidebar))
+;  :ensure nil
+;  :commands (ibuffer-sidebar-toggle-sidebar))
+
 (setq ibuffer-saved-filter-groups
   '(("home"
      ("Dired"        (mode . dired)     )
@@ -1308,8 +784,8 @@ regexp classes:
      ("jupyter"      (name . "jupyter") )
      ("Help"         (name . "*")       ))))
 
-;;       ("dired"        (mode . dired-mode))
 ;;(setq ibuffer-mode-hook ())
+
 (defun my-ibuffer-hooks ()
    (setq ibuffer-expert t)
    (ibuffer-auto-mode 1)
@@ -1335,16 +811,6 @@ regexp classes:
          )
 )
 
-
-;(defun my-dired-mode-buffer-p (buf)
-;   "Non-nil if buffer BUF is in `dired-mode'."
-;   (with-current-buffer buf
-;     (derived-mode-p 'dired-mode)))
-
-;(defvar ibuffer-never-show-predicates '())
-;(with-eval-after-load "ibuffer" (add-to-list 'ibuffer-never-show-predicates #'my-dired-mode-buffer-p))
-
-
 ;; --------------------------------------------- Custom Variables go in ~/emacs.d/init.el
 (setq default-truncate-lines t)
 (setq tab-width 4)  ;;(setq tab-width 2)
@@ -1357,6 +823,8 @@ regexp classes:
 ;; visit-tags-table
 (setq tags-table-list (list (expand-file-name "~/ulib/tags/emacs_252.tags")))
 
+(custom-set-variables '(gnus-select-method (quote (nnreddit ""))))
+
 ;;------------------------------------------------------------------------------ Eval
 ;; Normally, this function truncates long output according to the value
 ;; of the variables `eval-expression-print-length' and
@@ -1366,6 +834,14 @@ regexp classes:
 ;; (octal, hexadecimal, and character).
 (message "-------------- Done: Settings")
 #+END_SRC
+
+;(defun my-dired-mode-buffer-p (buf)
+;   "Non-nil if buffer BUF is in `dired-mode'."
+;   (with-current-buffer buf
+;     (derived-mode-p 'dired-mode)))
+
+;(defvar ibuffer-never-show-predicates '())
+;(with-eval-after-load "ibuffer" (add-to-list 'ibuffer-never-show-predicates #'my-dired-mode-buffer-p))
 
 ------------------------------------------------------ new stuff
 ;; Save point position between sessions.
@@ -1419,7 +895,6 @@ M-x clone-indirect-buffer RET
 (setq url-http-proxy-basic-auth-storage
     (list (list "proxy.com:8080" (cons "Input your LDAP UID !" (base64-encode-string "LOGIN:PASSWORD")))))
 
-
 ** Themes
 ; tango-dark: good theme in init.el:  '(custom-enabled-themes (quote (tango-dark)))
 ; (add-to-list 'custom-theme-load-path "~/.emacs.d/themes/")
@@ -1428,34 +903,8 @@ M-x clone-indirect-buffer RET
 ; Now load your custom theme by typing the following:
 ; M-x customize-themes ;;;now press return
 
-* Highlighting
-; ------------------------------------- highlighting
-#+begin_src elisp
-;(require 'highlight-sexp)  - fails
-;(add-hook 'lisp-mode-hook 'highlight-sexp-mode)
-;(add-hook 'emacs-lisp-mode-hook 'highlight-sexp-mode)
-; hl-sexp-background-color
-;  - hl-sexp-foreground-color
-;  - hl-sexp-face
-;; Enable `highlight-sexps-mode'
-
-(global-hl-line-mode 1) ; 0 to turn off
-(set-face-background hl-line-face "gray50")
-(show-paren-mode 1)
-(setq show-paren-style 'expression) ; or parenthesis of mixed
-(set-face-background 'show-paren-match  "#888888")
-;(set-face-background 'show-paren-match "#444444")
-(set-face-attribute  'show-paren-match nil :weight 'bold :underline nil :overline nil :slant 'normal) 
-;(list-colors-display);
-(setq show-paren-when-point-inside-paren t)
-(setq show-paren-when-point-in-periphery t)
-(setq-default x-stretch-cursor t)
-#+end_src
-
 * Modes Assoc List
 #+BEGIN_SRC emacs-lisp
-
-
 ;;--------------------------------------------------------- Language Modes
 (add-to-list 'auto-mode-alist '("\\.sas\\'"   . sas-mode)     )
 (add-to-list 'auto-mode-alist '("\\.m\\'"     . octave-mode)  )
@@ -1544,107 +993,6 @@ M-x clone-indirect-buffer RET
 #+END_SRC
 
 * Modes Section
-;; -------------------------- new stuff
-;; ;; Save point position between sessions.
-;; (use-package saveplace)
-;; (setq-default save-place t)
-;; (setq save-place-file (expand-file-name "places" user-emacs-directory))
-
-;; ;; Fix empty pasteboard error.
-;; (setq save-interprogram-paste-before-kill nil)
-
-;; ;; Auto refresh buffers when edits occur outside emacs
-;; (global-auto-revert-mode 1)
-
-;; ;; Also auto refresh dired, but be quiet about it
-;; (setq global-auto-revert-non-file-buffers t)
-;; (setq auto-revert-verbose nil)
-
-;; ;; Show keystrokes in progress
-;; (setq echo-keystrokes 0.5)
-(global-subword-mode 1)
-;; from 'better-defaults.el'
-;; Allow clipboard from outside emacs
-;; (setq x-select-enable-clipboard t
-;;       x-select-enable-primary t
-;;       save-interprogram-paste-before-kill t
-;;       apropos-do-all t
-;;       mouse-yank-at-point t)
-
-;;------------------------------------------------------------------------------- ido Mode
-;; TBD
-;;(load-library "ido")
-;;(setq ido-enable-flex-matching t)
-;;(setq ido-everywhere t)
-;;(ido-mode 1)
-;;(ido-mode t)
-;;(windmove-default-keybindings 'shift)
-
-** Unused
-;; ------------------------------------------------------------------- CSHARP Mode
-;(autload 'csharp-mode "/home/uri03204/myDocs/ulib/emacs/csharp-mode-0.8.5.elc" t)
-(autoload 'csharp-mode "csharp-mode" "Major mode for editing C# code." t)
-(defun csharp-mode-untabify ()
-  (if (string= (substring mode-name 0 2) "C#")
-     (save-excursion
-     (delete-trailing-whitespace)
-     (untabify (point-min) (point-max)))))
-(defun my-csharp-mode-fn ()
-  "function that runs when csharp-mode is initialized for a buffer."
-  (turn-on-auto-revert-mode)
-  (setq indent-tabs-mode nil)
-  (require 'flymake)
-  (setq flymake-mode nil)
-  ;;(add-hook 'write-contents-hooks 'csharp-mode-untabify nil t)
-  )
-  ;;      (require 'yasnippet)
-  ;;      (yas/minor-mode-on)
-  ;;      (require 'rfringe)
-(add-hook  'csharp-mode-hook 'my-csharp-mode-fn t)
-;;(add-hook 'csharp-mode-hook '(lambda () (add-hook 'write-contents-hooks 'csharp-mode-untabify nil t)))
-
-;;-------------------------------------------------------------------- Matlab Mode
-(require 'matlab)
-(setq matlab-indent-function t)
-(setq matlab-shell-command "matlab")
-;;(autoload 'matlab-mode "/home/kleyn/myDocs/ulib/emacs/matlab.elc" "Enter Matlab mode." t)
-;; User Level customizations:
-;;   (setq matlab-verify-on-save-flag nil) ; turn off auto-verify on save
-(defun my-matlab-mode-hook ()
-  (matlab-mode-hilit)                        ; Turn highlight on
-  (setq fill-column 276)             ; where auto-fill should wrap
-  (setq matlab-indent-function t)    ; if you want function bodies indented
-  (setq matlab-indent-level  2)         ; set matlab indentation
-  (set matlab-fill-code nil)
-  (setq indent-tabs-mode nil))
-(add-hook 'matlab-mode-hook 'my-matlab-mode-hook)
-
-;;-------------------------------------------------------------------- iedit Mode
- TBD (autoload 'iedit-mode "/home/uri03204/myDocs/ulib/emacs/iedit.elc" "Enter iedit mode" t)
-
-
-;;-------------------------------------------------------------------- ediff
-;; (setq ediff-shell "C:/cygwin/bin/mintty.exe")
-;;  (if (file-directory-p "c:/cygwin/bin")      (add-to-list 'exec-path "c:/cygwin/bin"))
-;;--------------------------------------------------------------------- Diff Stuff
-;; (diffview-current)
-
-
-;;-------------------------------------------------------------------- Switches
-
-;;-------------------------------------------------------------------- Magit
-;; (add-to-list 'magit-section-initial-visibility-alist '(stashes . hide))
-
-;; ;; ---------------------------------------------------------------- DOS Mode
-;; (autoload 'dos-mode "/home/uri03204/myDocs/ulib/emacs/dos.elc" "Enter DOS CMD mode." t)
-
-;; ------------------------------------------------------------------- Java
-;; TBD add hs-minor-mode for hide/show t
-;; TDB (add-hook  'java-mode-hook 'my-java-mode-hook t)
-;; ;(defun my-java-mode-hook ()
-;; ;  (hs-minor-mode)
-;; ;  (setq indent-tabs-mode nil))
-
 ** Python Mode
 #+BEGIN_SRC emacs-lisp
 
@@ -1680,7 +1028,34 @@ M-x clone-indirect-buffer RET
 
  ; TDB (global-set-key [kp-6]          'yafolding-toggle-element)
 
-(message "-------------- Done: Modes Section")
+(defun insertcodePyCodeSnippet ()
+  (interactive)
+  (move-end-of-line nil)
+  (if (= (line-beginning-position) (line-end-position))
+      (progn (move-beginning-of-line nil)
+             (indent-according-to-mode)
+             (insert "breakpoint()")
+             (newline)
+             (indent-according-to-mode)
+             (previous-line))
+      (progn (backward-word)
+             (let ((currWord (thing-at-point 'word)))
+             (if (equal currWord "breakpoint")
+               (delete-region (line-beginning-position) (+ (line-end-position)1))
+               (progn (move-beginning-of-line nil)
+                      (indent-according-to-mode)
+                      (insert "breakpoint()")
+                      (newline)
+                      (indent-according-to-mode)
+                      (previous-line)))))))
+
+;; (insert "from util import dbg_toolbag as t; t.brk()")
+;; (insert "from see import see; import ipdb; ipdb.set_trace(context=15) # breakpoint()")
+;; (newline-and-indent)
+;; (end-of-line)
+;; (open-line)
+
+(message "-------------- Done: Python Mode Section")
 #+END_SRC
 
 ** Ivy/Counsel Mode
@@ -1761,6 +1136,10 @@ M-x clone-indirect-buffer RET
 
 ** Org Mode
 #+BEGIN_SRC emacs-lisp
+(setq org-confirm-babel-evaluate nil)    ;; no-confirm
+(with-eval-after-load 'org (add-hook 'org-babel-after-execute-hook 'org-redisplay-inline-images))
+(defun org-export-get-reference (a b) nil)
+
 (setq org-default-notes-file "~/myDocs/logbook/notes.org")
 (setq org-cycle-include-plain-lists t)
 (setq org-startup-folded nil)
@@ -1987,19 +1366,19 @@ M-x clone-indirect-buffer RET
                                                           (emacs-lisp . t)
                                                           (latex . t)
                                                           (dot . t)
-                                                          (calc .t)
+                                                          (calc . t)
                                                           (jupyter . t)))   ; !!!!!!!! must be last !!! must be last !!!! for jupyter-python!!!!!!
  ;; (ipython . t)
  ;; (ein . t)
 
- (defun my-org-babel-execute-and-next ()
+(defun my-org-babel-execute-and-next ()
     (interactive)
     (org-babel-execute-src-block)
     (org-babel-next-src-block)
     (recenter-top-bottom 50)
- )
+)
 
- (message "-------------- Done: Org-Mode Section")
+(message "-------------- Done: Org-Mode Section")
 #+END_SRC
 
 #+RESULTS:
@@ -2043,23 +1422,40 @@ M-x clone-indirect-buffer RET
 ;;Also highly recommended is RefTeX, a cross-reference, bibliography, glossary, and index manager initially written by the creator of Org Mode, Carsten Dominik. Add the following line to .emacs:
 ;;(add-hook 'LaTeX-mode-hook 'turn-on-reftex)
 
-** Dired Mode
+** Dired/Sidebar/filetree/neotree Mode
 
-(require 'dired-rainbow)
-
-(defconst dired-audio-files-extensions  '("mp3" "MP3" "ogg" "OGG" "flac" "FLAC" "wav" "WAV")  "Dired Audio files extensions")
+(defconst dired-audio-files-extensions  '("mp3" "MP3" "ogg" "OGG" "flac" "FLAC" "wav" "WAV")  
+          "Dired Audio files extensions")
 (dired-rainbow-define audio "#329EE8" dired-audio-files-extensions)
-
-(defconst dired-video-files-extensions
-    '("vob" "VOB" "mkv" "MKV" "mpe" "mpg" "MPG" "mp4" "MP4" "ts" "TS" "m2ts"
-      "M2TS" "avi" "AVI" "mov" "MOV" "wmv" "asf" "m2v" "m4v" "mpeg" "MPEG" "tp")
-    "Dired Video files extensions")
+(defconst dired-video-files-extensions  '("vob" "VOB" "mkv" "MKV" "mpe" "mpg" "MPG" "mp4" "MP4" "ts" "TS" "m2ts" "M2TS" "avi" "AVI" "mov" "MOV" "wmv" "asf" "m2v" "m4v" "mpeg" "MPEG" "tp")
+          "Dired Video files extensions")
 (dired-rainbow-define video "#B3CCFF" dired-video-files-extensions)
+
 #+BEGIN_SRC emacs-lisp
+
+(defconst dired-pickle-extensions  '("pk")  "Dired pickle file extensions")
+(dired-rainbow-define audio "#329EE8" dired-pickle-extensions)
+
+;;----------------------- neotree
+(setq neo-smart-open nil)
+(setq neo-autorefresh nil)
+(setq neo-window-width 55)
+(setq neo-force-change-root t)
+;neotree-toggle
+
+
+;;----------------------- subtree/sidebar
+(setq dired-sidebar-width 40)
+(setq dired-subtree-line-prefix "  ")
+(setq dired-subtree-use-backgrounds nil)
+(defun sidebar-toggle ()
+  "Toggle both `dired-sidebar' and `ibuffer-sidebar'."
+  (interactive)
+  (dired-sidebar-toggle-sidebar)
+  (ibuffer-sidebar-toggle-sidebar))
 
 ;;(setq dired-use-ls-dired nil)
 (setq dired-dwim-target t)
-
 
 ;; dired-listing-switches  = "-al"
 ;; M-x customize-variable RET dired-listing-switches RET
@@ -2148,7 +1544,7 @@ M-x clone-indirect-buffer RET
   (insert ffn)  (newline)
   (insert fn)   (newline)
   (insert "bye dired-move-to-old")  (newline)
-  (rename-file ffn (concat "~/tmp/" fn))
+  (rename-file ffn (concat "~/itemLog/" fn))
   (switch-to-buffer curDrdBuff)
   (revert-buffer)
   ;;(dired-rename-file ffn (concat "//lon0302/dfs/DATA/MULTI_ASSET/MAQS/dataCollection/FI/LOCAL/ARCHIVE/OLD/" fn))
@@ -2162,6 +1558,7 @@ M-x clone-indirect-buffer RET
   (message (concat "ffn" ffn))
   (switch-to-buffer "*eshell*")
   (goto-char (point-max))
+  ;; (sb)  ;; re-apply eshell aliases
   (insert (concat "cd " (file-name-directory ffn) "; ll" ))
   )
 
@@ -2237,6 +1634,7 @@ M-x clone-indirect-buffer RET
   (define-key dired-mode-map (kbd "c")         'dired-ediff-git)      ;; compare to last version with ediff
   (define-key dired-mode-map (kbd "e")         'dired-cd-eshell)      ;; was dired-subtree-only-this-file
   (define-key dired-mode-map (kbd "p")         'dired-paste-to-yank-buffer)
+  (define-key dired-mode-map (kbd ",")         'dired-sort-toggle-or-edit) ;; to match sidebar-mode
   (define-key dired-mode-map [M-down]          'dired-view-next)      ;; was dired-previous-line
   (define-key dired-mode-map [M-up]            'dired-view-previous)  ;; was dired-next-line
 )
@@ -2245,7 +1643,7 @@ M-x clone-indirect-buffer RET
 (make-variable-buffer-local 'dired-subtree-last-previewed-buffer)
 
 
-;;--------------------------------- ----------------------------- sidebar
+;;--------------------------------- sidebar
 (defun sidebar-toggle ()  ; tbd install ibuffer sidebar  ; not longr used?
   "Toggle both `dired-sidebar' and `ibuffer-sidebar'."
   (interactive)
@@ -2262,7 +1660,7 @@ M-x clone-indirect-buffer RET
 ; (dired-sidebar-toggle dirname)
 
 
-;;--------------------------------- ----------------------------- Tramp
+;;--------------------------------- Tramp
 ;;(setq tramp-default-method "ssh")
 (setq tramp-verbose 10)
 ;; /adb::/path/to/file.
@@ -2492,10 +1890,6 @@ M-x clone-indirect-buffer RET
  (message "-------------- Done: Markup Languages Section")
  #+END_SRC
 
- ;-------------------------------------------------------------------------------- NeoTree
- (add-to-list 'load-path "/home/uri03204/ulib/emacs/neotree")
- (require 'neotree)
- (global-set-key [f3] 'neotree-show)
  ;-------------------------------------------------------------------------------- Ace jump
  ;;
  ;; ace jump mode major function
@@ -2535,27 +1929,6 @@ M-x clone-indirect-buffer RET
  (require 'ztree-diff)
  (require 'ztree-dir)
 
-* Hooks
-for python -made named function so remove-hook can be used
-for flushing messages to *Message* buffer
-#+BEGIN_SRC emacs-lisp
-
-(defun message-buffer-goto-end-of-buffer (&rest args)
-  (let* ((win (get-buffer-window "*Messages*"))
-         (buf (and win (window-buffer win))))
-    (and win (not (equal (current-buffer) buf))
-         (set-window-point
-          win (with-current-buffer buf (point-max))))))
-
-(advice-add 'message :after 'message-buffer-goto-end-of-buffer)
-
-(defun py-clean-file()
-  (if (and (equal major-mode 'python-mode) (not indent-tabs-mode))
-      (delete-trailing-whitespace (point-min) (point-max))))
-;       (untabify (point-min) (point-max)))
-(add-hook 'write-file-hooks 'py-clean-file)
-
-#+END_SRC
 * Key Bindings
 ** notes: may be useful
  M-0 w                       ;; dired copy path
@@ -2606,8 +1979,8 @@ for flushing messages to *Message* buffer
 ** Mousing
 #+BEGIN_SRC emacs-lisp
 (global-set-key (kbd "s-x")         '(lambda () (interactive) (progn (set-mark-command 0))))   ; Super = windowframe key is  mod 4 see xmodmap cycle-buffer
-(global-set-key (kbd "<S-mouse-4>") 'cycle-buffer)
-(global-set-key (kbd "<S-mouse-5>") 'cycle-buffer-backward)
+(global-set-key (kbd "<S-mouse-4>") 'cycle-buffer-permissive)
+(global-set-key (kbd "<S-mouse-5>") 'cycle-buffer-permissive-backward)
 
 (global-set-key (kbd "<C-mouse-4>") 'text-scale-increase)
 (global-set-key (kbd "<C-mouse-5>") 'text-scale-decrease)
@@ -2621,6 +1994,7 @@ for flushing messages to *Message* buffer
 #+BEGIN_SRC emacs-lisp
 ; 20211215_15:09:19 ordered by order on QWERTY keyboard
 ;;  (global-set-key "\C-q"          'quoted-insert)  ; for resetting, already default
+
 
 ; C-c
 ; qwerty 1st row
@@ -2643,15 +2017,19 @@ for flushing messages to *Message* buffer
 (global-set-key (kbd "C-c <")   'selective-display-level-decr)
 (global-set-key (kbd "C-c >")   'selective-display-level-incr)
 
+; C-s
+(global-set-key (kbd "C-s-y")   'overwrite-yank)
+
 ; C-x
 ; qwerty 0th row
 (global-set-key (kbd "C-x 3")   '(lambda () (interactive) (split-window-right) (other-window 1))) ;; was switch-to-buffer
 ; qwerty 1st row - treesycalc
 (global-set-key (kbd "C-x q")   'align-lisp)
-(global-set-key (kbd "C-x w")   'eval-defun)
+(global-set-key (kbd "C-x w")   'grx-tidy)
 (global-set-key (kbd "C-x e")   'eval-last-sexp)
 (global-set-key (kbd "C-x t")   'instimestamp)
-(global-set-key (kbd "C-x y")   'trsyc-update-sexp-result)
+(global-set-key (kbd "C-x y")   'grx-update-sexp-result)
+(global-set-key (kbd "C-x u")   'grx-parse)
 (global-set-key (kbd "C-x i")   'my-insert-last-sexp) ; ielm
 (global-set-key (kbd "C-x p")   'my-transpose-sexps)
 ; qwerty 2nd row
@@ -2750,8 +2128,9 @@ org-goto
 (global-set-key [M-f2]     '(lambda () (interactive) (find-file "/home/kleyn/projects/repos/mkmain/landing/jupyClips.org")))
 (global-set-key [s-f2]     '(lambda () (interactive) (find-file "/home/kleyn/aNotes/access.org")))
 
-;(global-set-key [f3]       'sidebar-toggle)
+
 (global-set-key [f3]       '(lambda () (interactive) (ibuffer "home" nil) (ibuffer-switch-to-saved-filter-groups "home")))
+;(global-set-key [f3]       'ibuffer-sidebar-toggle-sidebar)
 (global-set-key [C-f3]     '(lambda () (interactive) (find-file "/home/kleyn/.emacs.d/dotEmacs.org") (search-forward "** Function Keys") (org-show-subtree)))  ;; nok900  'my-openfile  'neotree-show
 (global-set-key [S-f3]     '(lambda () (interactive) (find-file "/home/kleyn/config/dot/dotBashrc") ))
 (global-set-key [M-f3]     '(lambda () (interactive) (progn (find-file (concat "/home/kleyn/history/commands/history_"
@@ -2764,12 +2143,14 @@ org-goto
 
 ;;(global-set-key [S-f3]   'org-save-code-block)
 ;; dired-sidebar-switch-to-dir 
-(global-set-key [f4]      '(lambda () (interactive)  (dired-sidebar-cmd "~/")))
+(global-set-key [f4]       '(lambda () (interactive)  (dired "~/")))
+;(global-set-key [f4]      'neotree-toggle)
+;(global-set-key [f4]      '(lambda () (interactive)  (dired-sidebar-cmd "~/")))
 (global-set-key [C-f4]    '(lambda () (interactive)  (dired-sidebar-switch-to-dir (file-name-directory (buffer-file-name)))))
 (global-set-key [S-f4]    '(lambda () (interactive)  (dired "~/" nil)))
 ;(global-set-key [S-f4]    '(lambda () (interactive) (dired "~/projects/repos" nil)))
-(global-set-key [M-f4]     '(lambda () (interactive) (recenter-top-bottom  0)))
-(global-set-key [s-f4]     '(lambda () (interactive) (recenter-top-bottom 50)))
+(global-set-key [M-f4]    '(lambda () (interactive) (recenter-top-bottom  0)))
+(global-set-key [s-f4]    '(lambda () (interactive) (recenter-top-bottom 50)))
 
 ;;(global-set-key [C-f4]   'dired-omit-mode)
 
@@ -2782,7 +2163,7 @@ org-goto
 (global-set-key [f6]       'toggle-truncate-lines)
 (global-set-key [C-f6]     'toggle-window-split)
 (global-set-key [S-f6]     'bool-flip-do-flip)
-(global-set-key [M-f6]     'trsyc-update-sexp-result)
+(global-set-key [M-f6]     'grexc-update-sexp-result)
 (global-set-key [s-f6]     '(lambda () (interactive)  (let* ((currWord (thing-at-point 'symbol t))
                                                              (currWordVal (symbol-value (intern currWord))))
                                                           (switch-to-buffer "*scratch*")
@@ -2806,7 +2187,7 @@ org-goto
 (global-set-key [s-f8]   '(lambda () (interactive) (org-babel-switch-to-session)))
 
 (global-set-key [f9]       'kmacro-start-macro)                  ;; 'ielm)  ;; open file under cursor
-(global-set-key [C-f9]     'kmacro-end-and-call-macro)           ;; see-shell-output) ;ergoemacs-open-in-external-app
+(global-set-key [C-f9]     'kmacro-end-and-call-macro)           ;; see-shell-output)
 (global-set-key [S-f9]     'kmacro-end-macro)
 
 (global-set-key [f10]      'yafolding-toggle-element)
@@ -2816,7 +2197,7 @@ org-goto
 (global-set-key [s-f10]    'yafolding-discover)
 
 ; (global-set-key [M-f2]   'buffer-menu-sort-by-filename)
-(global-set-key [M-f10]    'see-shell-output)                    ;; ergoemacs-open-in-external-app
+(global-set-key [M-f10]    'see-shell-output)                    ;; 
 
 (global-set-key [f11]      'selective-display-level-zero)
 (global-set-key [C-f11]    'selective-display-level-incr)
@@ -2851,11 +2232,13 @@ org-goto
 ** KeyPad Keys
 *** Midpad Global Key Bindings
 #+begin_src emacs-lisp
-(global-set-key [(next)]        'cycle-buffer)
-(global-set-key [C-down]        'cycle-buffer)              ;; avoid default binding (global-set-key (kbd "C-c <down>")  'windmove-down)
-(global-set-key [(prior)]       'cycle-buffer-backward)
-(global-set-key [C-up]          'previous-buffer)
-(global-set-key [C-down]        'next-buffer)               ;; 'cycle-buffer  avoid default binding (global-set-key (kbd "C-c <down>")  'windmove-down)
+(global-set-key [(next)]        'cycle-buffer-permissive)
+(global-set-key [C-next]        'cycle-buffer)              ;; avoid default binding (global-set-key (kbd "C-c <down>")  'windmove-down)
+(global-set-key [(prior)]       'cycle-buffer-backward-permissive)
+(global-set-key [C-prior]       'cycle-buffer-backward)
+
+;(global-set-key [C-up]          'previous-buffer)
+;(global-set-key [C-down]        'next-buffer)               ;; 'cycle-buffer  avoid default binding (global-set-key (kbd "C-c <down>")  'windmove-down)
 
 (global-set-key [S-down]        'scroll-one-line-up)
 (global-set-key [S-up]          'scroll-one-line-down)
@@ -2884,16 +2267,7 @@ org-goto
 (global-set-key [C-right]       'windmove-right)       ;(global-set-key (kbd "C-c <right>") 'windmove-right)
 (global-set-key [C-up]          'windmove-up)          ;(global-set-key (kbd "C-c <up>")    'windmove-up)
 
-*** Keypad Global Key Bindings
-#+begin_src emacs-lisp
-(progn 
-  (global-set-key [S-kp-prior]        'scroll-one-line-down)  ;; = S-kp9
-  (global-set-key [S-kp-right]        '(lambda () (interactive) (recenter-top-bottom '(t))))   ;; = S-kp6
-  (global-set-key [S-kp-next]         'scroll-one-line-up)     ;; = S-kp3
-)
-#+end_src
-
-*** Keypad Map 1
+*** Keypad Maps
 :         |----------------+----------------+----------------+----------|        
 :         |         NumLock|               /|               *|         -|        
 : modifier|                |                |                |          |modifier
@@ -2932,7 +2306,6 @@ org-goto
 : | SUPER<|                                 |                |          |<SUPER |
 : |-------+---------------------------------+----------------+----------+-------|
 
-*** Keypad Map 2
  |---+------+-------------------------------------+-------+-------+-----------------------------------------+-------------------------------------+---------+----------------------------------------------+----------------------------+------+----------------+------------------------+------------+-------|
  | # | KEY  | DESCRIPTION                         | ABBRV | SoFar | org-mode/babel                          | dired                               | sidebar | python                                       | elisp                      | json | xml/yafoldable | ibuffer                | TreeziCalc | table |
  |---+------+-------------------------------------+-------+-------+-----------------------------------------+-------------------------------------+---------+----------------------------------------------+----------------------------+------+----------------+------------------------+------------+-------|
@@ -2955,55 +2328,70 @@ org-goto
  |   |      | search breadth first                |       |       |                                         |                                     |         |                                              |                            |      |                |                        |            |       |
  |---+------+-------------------------------------+-------+-------+-----------------------------------------+-------------------------------------+---------+----------------------------------------------+----------------------------+------+----------------+------------------------+------------+-------|
 
-*** TreeNavPad keys for dired modes
-TBD
-(dired-sidebar-subtree-toggle)
-(defvar dired-sidebar-mode-map
-  (let ((map (make-sparse-keymap)))
-    (define-key map (kbd "TAB") 'dired-sidebar-subtree-toggle)
-    (define-key map [tab] 'dired-sidebar-subtree-toggle)
-    (define-key map (kbd "C-m") 'dired-sidebar-find-file)
-    (define-key map (kbd "RET") 'dired-sidebar-find-file)
-    (define-key map (kbd "<return>") 'dired-sidebar-find-file)
-    (define-key map "^" 'dired-sidebar-up-directory)
-    (define-key map "-" 'dired-sidebar-up-directory)
-    (define-key map (kbd "C-o") 'dired-sidebar-find-file-alt)
-    (define-key map [mouse-2] 'dired-sidebar-mouse-subtree-cycle-or-find-file)
-    map)
-  "Keymap used for symbol `dired-sidebar-mode'.")
-(dired-sidebar-subtree-toggle)
-#+begin_src emacs-lisp
+*** KeyPad Bindings
 
-(progn ;; dired-sidebar treepad navigation
+#+begin_src emacs-lisp                       :REM Keypad Global Key Bindings
+(progn 
+  (global-set-key [S-kp-prior]        'scroll-one-line-down)                                 ;; = S-kp9
+  (global-set-key [S-kp-right]        '(lambda () (interactive) (recenter-top-bottom '(t)))) ;; = S-kp6
+  (global-set-key [S-kp-next]         'scroll-one-line-up)                                   ;; = S-kp3
+)
+#+end_src
+#+begin_src emacs-lisp                       :REM TreeNavPad keys for neotree
+(progn ;; neotree treepad navigation                                                             ; (neotree-dir <path>)
+  (define-key neotree-mode-map [kp-4]        'neotree-select-up-node)                            ; (define-key neotree-mode-map [kp-8]      back same level  'neotree-previous-line)
 
-  ;;(define-key dired-sidebar-mode-map [kp-8]      'dired-previous-line)
-  ;;(define-key dired-sidebar-mode-map [kp-2]      'dired-next-line)
+  ;(define-key neotree-mode-map [kp-8]       'neotree-??-prev-sib)
+  (define-key neotree-mode-map [kp-5]        (neotree-make-executor :dir-fn  'neo-open-dir))
+  ;(define-key neotree-mode-map [kp-2]       'neotree-??-next-)
 
-  (define-key dired-sidebar-mode-map [kp-4]        '(lambda () (interactive)                                                       ;; keep
+  (define-key neotree-mode-map [kp-9]        'neotree-previous-line)
+  (define-key neotree-mode-map [kp-6]        'neotree-change-root)                               ; see: "click changes root"
+  (define-key neotree-mode-map [kp-3]        'neotree-next-line)
+
+  (define-key neotree-mode-map [kp-add]      (neotree-make-executor :file-fn 'neotree-quick-look ; tbd and move down one, deleting the other buffer
+                                                                    :dir-fn  'neo-open-dired))
+
+  (define-key neotree-mode-map [kp-0]        (neotree-make-executor :dir-fn  'neo-open-dired))
+  (define-key neotree-mode-map "O"           (neotree-make-executor :file-fn 'opn-f))            ; (define-key neotree-mode-map "O"          (neotree-make-executor :file-fn 'ergoemacs-open-in-external-app))
+)
+
+(defun opn-f (f &optional arg) 
+  (message "xdg-open %s" f)
+  (let ((process-connection-type nil)) 
+     (start-process "" nil "xdg-open" f)))
+#+end_src
+#+begin_src emacs-lisp                       :REM TreeNavPad keys for dired modes 
+;(dired-sidebar-subtree-toggle)
+;(setq dired-subtree-cycle-depth 5) = 5
+
+(progn                                       ;; dired-sidebar treepad navigation
+  ;(define-key dired-sidebar-mode-map [kp-8]      'dired-previous-line)
+  ;(define-key dired-sidebar-mode-map [kp-2]      'dired-next-line)
+
+  (define-key dired-sidebar-mode-map [kp-4]        '(lambda () (interactive)                                        ;; keep
                                                        (message (format "%d %d" (line-number-at-pos) (dired-subtree--get-depth (dired-subtree--get-ov))))
                                                        (if (= (dired-subtree--get-depth (dired-subtree--get-ov)) 0)
                                                           (dired-sidebar-up-directory)
                                                           (dired-subtree-up))))
 
-
   (define-key dired-sidebar-mode-map [kp-8]        'dired-subtree-previous-sibling)                                 ;; move #2=ps
   (define-key dired-sidebar-mode-map [kp-5]        'dired-sidebar-subtree-toggle)
   (define-key dired-sidebar-mode-map [kp-2]        'dired-subtree-next-sibling)                                     ;; move #8=ns                           
 
-  (define-key dired-sidebar-mode-map [kp-subtract] '(lambda () (interactive) (dired-sidebar-subtree-toggle) (dired-next-lne)))
-
   (define-key dired-sidebar-mode-map [kp-6]        'dired-sidebar-find-file)
+  ;(define-key dired-sidebar-mode-map [kp-3]       '(lambda () (interactive) (dired-subtree-cycle 4)))
   (define-key dired-sidebar-mode-map [C-kp-6]      '(lambda () (interactive) ;; first child, open if needed
                                                        (if (not (dired-subtree--is-expanded-p)) (dired-sidebar-subtree-toggle))
                                                        (dired-next-line 1)))                                       ;; dired-sidebar-find-file
 
-  (define-key dired-sidebar-mode-map "O"           '(lambda () (interactive) (ergoemacs-open-in-external-app)))
+  (define-key dired-sidebar-mode-map [kp-subtract] '(lambda () (interactive) (dired-sidebar-subtree-toggle) (dired-next-lne)))
+  (define-key dired-sidebar-mode-map [kp-0]         '(lambda () (interactive) (ergoemacs-open-in-external-app)))
 
-  ;; (define-key dired-sidebar-mode-map [C-kp-5]      'dired-sidebar-up-directory) now subsumed in kp-5
+  ;(define-key dired-sidebar-mode-map [C-kp-5]      'dired-sidebar-up-directory) now subsumed in kp-5
 )
 
 (progn ;; dired treepad navigation
-
   (define-key dired-mode-map [kp-4]                'my-dired-up-to-parent)                                          ;; ok-same as sidebar; move #6=u1  
 
   (define-key dired-mode-map [kp-8]                'dired-subtree-previous-sibling)                                 ;; ok-same as sidebar; move #2=ps
@@ -3013,11 +2401,12 @@ TBD
   (define-key dired-mode-map [kp-6 ]               'dired-find-file-drop-prev-dired-buffer)                         ;; dired-find-file
   (define-key dired-mode-map [C-kp-6]              'my-subdired-dft)                                                ;; dired-subtree-insert move #8=ns     ;; open and moveto first child,
 
-  ; (define-key dired-mode-map [kp-4]                '(lambda () (interactive)   (my-dired-up-to-parent) (my-dired-up-to-parent)))
-  ; (define-key dired-mode-map [kp-decimal]          '(lambda () (interactive)  (my-dired-subtree-next-sibling-n 7)))              ;; moveto nth sibling, and open
+  (define-key dired-mode-map [kp-0]                'dired-view-current)
+  ;(define-key dired-mode-map [kp-4]                '(lambda () (interactive)   (my-dired-up-to-parent) (my-dired-up-to-parent)))
+  ;(define-key dired-mode-map [kp-decimal]          '(lambda () (interactive)  (my-dired-subtree-next-sibling-n 7)))              ;; moveto nth sibling, and open
 )
-
-; ------------------------------------------------------------------ TreeNavPad keys for dired
+#+end_src
+#+begin_src emacs-lisp                       :REM dired navigation functions
 (defun my-subdired-dft ()
   "depth-first traversal for dired-subtree"
   (interactive)
@@ -3036,8 +2425,10 @@ TBD
               (progn
                 (dired-previous-line 1)
                 (dired-subtree-remove)
-                (dired-next-line 1))))))
-   )
+                (dired-next-line 1)))))
+     )
+)
+
 
 (defun my-dired-up-to-parent ()                                                 ;; tbd if not a subdir (i.e. in rootdir), then jump  'dired-up-directory-drop-prev-dired-buffer
   (interactive)
@@ -3046,56 +2437,91 @@ TBD
        (if (eq sDpth 0)
            (dired-up-directory-drop-prev-dired-buffer)
            (dired-subtree-remove)))
-   )
+)
 
 (defun my-dired-subtree-toggle ()
   (interactive)
   (if (dired-subtree--is-expanded-p)
       (progn (dired-next-line 1) (dired-subtree-remove))
       (progn (dired-subtree-insert) (dired-previous-line 1)))
-   )
+)
 
 (defun my-dired-subtree-next-sibling-n (n)
   (interactive)
   (dotimes (i n) (dired-subtree-next-sibling))
-  )
+)
 
 (defun my-dired-subtree-prev-sibling-n (n)
   (interactive)
   (dotimes (i n) (dired-subtree-prev-sibling))
-  )
-
+)
 #+end_src
-
-*** TreeNavPad keys for org-mode
-
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp                       :REM TreeNavPad keys for emacs-lisp mode
 (progn
-  ; (define-key org-mode-map [kp-4]               '(lambda () (interactive)  (outline-up-heading 2)))
-  (define-key org-mode-map [kp-4]                  'my-org-uplevel)
+
+  (define-key emacs-lisp-mode-map [kp-4]     'backward-up-list)                                                     ;; Move to parent. move to the beginning of outer paren pair ; outline-up-heading
+
+  (define-key emacs-lisp-mode-map [kp-8]     'backward-sexp)                                                        ;; Move to previous sibling. move to the beginning of previous sexp unit ; org-backward-heading-same-level
+  (define-key emacs-lisp-mode-map [kp-5]     'yafolding-toggle-element)
+  (define-key emacs-lisp-mode-map [kp-2]     'forward-sexp)                                                         ;; Move to next sibling.     move to the end of next sexp unit  ; org-forward-heading-same-level
+
+  (define-key emacs-lisp-mode-map [kp-6]     'down-list)                                                            ;; Move to first child.      move into the beginning of first inner paren pair ; my-org-dft; tbd show contents of leaf
+
+  ; (define-key emacs-lisp-mode-map [kp-4]          'my-elisp-sexp-grandparent)                                     ;; Move to grandparent.
+  ; (define-key emacs-lisp-mode-map [kp-multiply]   '(lambda () (interactive)  (my-elisp-backsexp-n 6)))
+  ; (define-key emacs-lisp-mode-map [kp-decimal]    '(lambda () (interactive)  (my-elisp-forwardsexp-n 6)))
+)
+
+(defun my-elisp-sexp-grandparent ()                                                                                 ;; functions for key binds
+  "go parent sexp - 2 levels"
+  (interactive)
+  (backward-up-list)
+  (backward-up-list)
+)
+
+(defun my-elisp-backsexp-n (n)
+  "go prev sibling sexp - n times"
+  (interactive)
+  (dotimes (i n) (backward-sexp))
+)
+
+(defun my-elisp-forwardsexp-n (n)
+  "go prev sibling sexp - n times"
+  (interactive)
+  (dotimes (i n) (forward-sexp))
+)
+
+(message "-------------- Done: KeyPad Section")
+#+end_src
+#+begin_src emacs-lisp                       :REM TreeNavPad keys for org-mode
+(progn
+  (define-key org-mode-map [kp-4]                  'my-org-uplevel)   ;  '(lambda () (interactive)  (outline-up-heading 2)))
 
   (define-key org-mode-map [kp-multiply]           '(lambda () (interactive)  (org-backward-heading-same-level 6)))
+
   (define-key org-mode-map [kp-8]                  'org-backward-heading-same-level)
   (define-key org-mode-map [kp-5]                  'my-org-cycle-or-fold)
   (define-key org-mode-map [kp-2]                  'org-forward-heading-same-level)                                ;; tbd fix: not if in body of heading
-  (define-key org-mode-map [kp-decimal]            '(lambda () (interactive)  (org-forward-heading-same-level 6)))
+
 
   (define-key org-mode-map [kp-9]                  'previous-line)                                                  ;; tbd show contents of leaf
   (define-key org-mode-map [kp-6]                  'my-org-dft)                                                  ;; tbd show contents of leaf
   (define-key org-mode-map [kp-3]                  'next-line)                                                     ;; tbd show contents of leaf
 
+  (define-key org-mode-map [kp-decimal]            '(lambda () (interactive)  (org-forward-heading-same-level 6)))
+
   (define-key org-mode-map [kp-7]                  'my-org-babel-prev)
   (define-key org-mode-map [kp-1]                  'my-org-babel-next)
 
   ;;(define-key org-mode-map [M-home]                'org-collapse)
-
 )
 
 ;;(define-key org-mode-map [kp-subtract]             'kill-this-buffer-volatile)
 ;;(define-key org-mode-map [kp-divide]               'toggle-window-split)
 
-;; functions for key binds
-
+;--------------------------------------------------- functions for key binds
+#+end_src
+#+begin_src emacs-lisp                       :REM org navigation functions
 (defun my-org-cycle-or-fold ()
   "use language-folding if in code block, otherwise usual org-cycle"
   (interactive)
@@ -3103,7 +2529,6 @@ TBD
       (yafolding-toggle-element)
       (org-cycle))
 )
-
 
 (defun my-org-toggle-subtree ()
   "try to emulate dired 2-cycle rather than TAB 3-cycle"
@@ -3221,46 +2646,27 @@ TBD
 )
   ;(message (concat "my-org-uplevel:AFTER:" (prin1-to-string (org-element-type oeap)) "  " (prin1-to-string (org-element-type oec))))
 #+end_src
-
-*** TreeNavPad keys for emacs-lisp mode
-#+begin_src emacs-lisp
-(progn
-
-  (define-key emacs-lisp-mode-map [kp-4]          'backward-up-list)                                                     ;; Move to parent. move to the beginning of outer paren pair ; outline-up-heading
-
-  (define-key emacs-lisp-mode-map [kp-8]          'backward-sexp)                                                        ;; Move to previous sibling. move to the beginning of previous sexp unit ; org-backward-heading-same-level
-  (define-key emacs-lisp-mode-map [kp-5]          'yafolding-toggle-element)
-  (define-key emacs-lisp-mode-map [kp-2]          'forward-sexp)                                                         ;; Move to next sibling.     move to the end of next sexp unit  ; org-forward-heading-same-level
-
-  (define-key emacs-lisp-mode-map [kp-6]          'down-list)                                                              ; Move to first child.      move into the beginning of first inner paren pair ; my-org-dft; tbd show contents of leaf
-
-  ; (define-key emacs-lisp-mode-map [kp-4]          'my-elisp-sexp-grandparent)                                           ;; Move to grandparent.
-  ; (define-key emacs-lisp-mode-map [kp-multiply]   '(lambda () (interactive)  (my-elisp-backsexp-n 6)))
-  ; (define-key emacs-lisp-mode-map [kp-decimal]    '(lambda () (interactive)  (my-elisp-forwardsexp-n 6)))
-)
-;; functions for key binds
-(defun my-elisp-sexp-grandparent ()
-  "go parent sexp - 2 levels"
-  (interactive)
-  (backward-up-list)
-  (backward-up-list)
-)
-
-(defun my-elisp-backsexp-n (n)
-  "go prev sibling sexp - n times"
-  (interactive)
-  (dotimes (i n) (backward-sexp))
-)
-
-(defun my-elisp-forwardsexp-n (n)
-  "go prev sibling sexp - n times"
-  (interactive)
-  (dotimes (i n) (forward-sexp))
-)
-
-(message "-------------- Done: KeyPad Section")
+#+begin_src emacs-lisp                       :REM Done
+(message "-------------- Done: Keybindings Section")
 #+end_src
 
+** other
+
+TBD dired-sidebar-mode-map
+(dired-sidebar-subtree-toggle)
+(defvar dired-sidebar-mode-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map (kbd "TAB") 'dired-sidebar-subtree-toggle)
+    (define-key map [tab] 'dired-sidebar-subtree-toggle)
+    (define-key map (kbd "C-m") 'dired-sidebar-find-file)
+    (define-key map (kbd "RET") 'dired-sidebar-find-file)
+    (define-key map (kbd "<return>") 'dired-sidebar-find-file)
+    (define-key map "^" 'dired-sidebar-up-directory)
+    (define-key map "-" 'dired-sidebar-up-directory)
+    (define-key map (kbd "C-o") 'dired-sidebar-find-file-alt)
+    (define-key map [mouse-2] 'dired-sidebar-mouse-subtree-cycle-or-find-file)
+    map)
+  "Keymap used for symbol `dired-sidebar-mode'.")
 
 ;; (define-key emacs-lisp-mode-map [kp-8]        'my-org-babel-prev)
 ;; (define-key emacs-lisp-mode-map [kp-2]        'my-org-babel-next)
@@ -3268,11 +2674,7 @@ TBD
 ;; (define-key emacs-lisp-mode-map [kp-subtract] 'kill-this-buffer-volatile)
 ;; (define-key emacs-lisp-mode-map [kp-divide]   'toggle-window-split)
 
-#+begin_src emacs-lisp
- (message "-------------- Done: Keybindings Section")
-#+end_src
 
-** not used
 
  (define-key global-map "\C-co"  'org-capture)
  (global-set-key "\C-!"          'shell-command) TBD
@@ -3306,7 +2708,7 @@ TBD
  (global-set-key [S-kp-6]        'selective-display-level-incr)
  (global-set-key [S-kp-insert]   'yank)
  (global-set-key [end]           'kill-this-buffer-volatile)
- (global-set-key [f10]           'see-shell-output) ;ergoemacs-open-in-external-app
+ (global-set-key [f10]           'see-shell-output) 
  (global-set-key [f11]           'hs-show-block)
  (global-set-key [f12]           'hs-hide-block)
  (global-set-key [f5]            'ffap) ; bookmark-bmenu-list
@@ -3344,7 +2746,33 @@ TBD
 ;; (global-set-key  "\C-xv-" 'tfs/delete)
 ;; (global-set-key  "\C-xvc" 'tfs/changeset)
 
+* Hooks
+for python -made named function so remove-hook can be used
+for flushing messages to *Message* buffer
+#+BEGIN_SRC emacs-lisp
+
+(defun message-buffer-goto-end-of-buffer (&rest args)
+  (let* ((win (get-buffer-window "*Messages*"))
+         (buf (and win (window-buffer win))))
+    (and win (not (equal (current-buffer) buf))
+         (set-window-point
+          win (with-current-buffer buf (point-max))))))
+
+(advice-add 'message :after 'message-buffer-goto-end-of-buffer)
+
+(defun py-clean-file()
+  (if (and (equal major-mode 'python-mode) (not indent-tabs-mode))
+      (delete-trailing-whitespace (point-min) (point-max))))
+;       (untabify (point-min) (point-max)))
+(add-hook 'write-file-hooks 'py-clean-file)
+
+#+END_SRC
 * Debugging
+#+BEGIN_SRC
+(defun set-debug-on()   (interactive) (progn (setq debug-on-error t)    (message "emacs debug on")))
+(defun set-debug-off()  (interactive) (progn (setq debug-on-error nil)  (message "emacs debug off")))
+#+END_SRC
+
 ;;-------------------------------------------------------------------- DEBUG
 ;;Go to where your function is defined and type M-x edebug-defun,
 ;;This will work the next time the function is called. You can check the docs[1]or just type ?.
@@ -3354,10 +2782,6 @@ TBD
 ;; (toggle-debug-on-error)
 ;; toggle-debug-on-quit
 ;; insert (debug)
-#+BEGIN_SRC
-(defun set-debug-on()   (interactive) (progn (setq debug-on-error t)    (message "emacs debug on")))
-(defun set-debug-off()  (interactive) (progn (setq debug-on-error nil)  (message "emacs debug off")))
-#+END_SRC
 ;;(setq debug-on-error t)
 ;;(setq debug-on-error t)
 ;;(setq debug-on-error nil)
@@ -3404,31 +2828,89 @@ TBD
         (t nil)))
 
 * ESHELL
-;; (add-to-list 'eshell-command-aliases-list (list "l"     "stat --printf=%y\t%6s\t%-16n\n * | cut -b -16,36-"))
 #+BEGIN_SRC emacs-lisp
-(eshell)
-(setq eshell-save-history-on-exit nil)
-(setq eshell-hist-ignoredups t)
-
 (require 'ansi-color)
+
+(setq eshell-save-history-on-exit t)
+(setq eshell-hist-ignoredups t)
+(setq eshell-prompt-function (lambda ()
+                                (setq dts (format-time-string "%Y%m%d%H:%M" (current-time)))                                                                                        
+                                (concat (substring dts 0 8)                                                                                                                         
+                                        "|" (propertize (substring dts 8) 'face `(:foreground "green"))       ;; "|" (car (last (split-string (getenv "VIRTUAL_ENV") "/")))         
+                                        "|" (propertize (substring (pwd) 10) 'face `(:foreground "green"))                                                                          
+                                        "\n:: ")))                                                                                                                                  
+(setq eshell-prompt-regexp "^:: ")
+(add-hook 'eshell-mode-hook '(lambda () (define-key eshell-mode-map (kbd "C-<tab>")  'pcomplete-std-complete)))
+(add-hook 'eshell-mode-hook '(lambda () (define-key eshell-mode-map (kbd "C-a")      'eshell-prompt-bol)))
+
 (defun eshell-handle-ansi-color ()
       (ansi-color-apply-on-region eshell-last-output-start
                                   eshell-last-output-end))
 (add-to-list 'eshell-output-filter-functions 'eshell-handle-ansi-color)
 
+(defun eshell-colors ()
+  (interactive)
+  (setenv "LS_COLORS" "rs=0:di=01;33:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:")
+)
+
+
+;;----------------------------------------------------- one-liner commands for eshell or M-x command prompt
+(defun describe-last-function() (interactive) (describe-function last-command))
+(defun diredCauchy()            (interactive) (dired "/ssh:kleyn@192.168.1.107:/home/kleyn"))
+(defun diredFaraday()           (interactive) (dired "/scp:kleyn@192.168.1.89:/home/kleyn"))
+(defun diredGem()               (interactive) (dired "/scp:u0_a94@192.168.1.93#8022:/data/data/com.termux/files/home/MyDocs"))
+(defun diredGem2()              (interactive) (dired "/ssh:u0_a94@192.168.1.93#8022:/data/data/com.termux/files/home/MyDocs"))
+(defun diredHome ()             (interactive) (dired "/home/kleyn/" nil))
+(defun diredTuringIn()          (interactive) (dired "/scp:kleyn@192.168.1.243:/home/kleyn"))
+(defun diredTuringOut()         (interactive) (dired "/scp:kleyn@192.168.1.8:/home/kleyn"))
+(defun instimestamp()           (interactive) (insert (format-time-string "%Y%m%d_%H:%M:%S")))
+(defun see-dotBashRc()          (interactive) (find-file "/home/kleyn/config/dot/.bashrc"))
+(defun see-orglink-dired()      (interactive) (org-open-at-point t))
+(defun see-shell-output()       (interactive) (switch-to-buffer-other-window "*Shell Command Output*"))
+(defun see-sql()                (interactive) (find-file "C:/MyDocs/notebooks/sqlScripts.org"))
+(defun show-hist()              (interactive) (list-command-history))
+(defun slashBwd()               (interactive) (replace-string  "/" "\\" nil (line-beginning-position) (line-end-position)))
+(defun slashFwd()               (interactive) (replace-string "\\"  "/" nil (line-beginning-position) (line-end-position)))
+;;(defun diredGemA()            (interactive) (dired "/adb::/data/data/com.termux/files/home/MyDocs"))
+;;(defun diredGemA()            (interactive) (dired "/adb::/storage"))
+;;----------------------------------------------------- for small keyboards without function keys
+(defun ke()                     (interactive)  (kill-emacs))                                                                                  
+(defun ds()                     (interactive)  (eshell))                                                                                      
+(defun cf3()                    (interactive)  (eshell))                                                                                      
+(defun da()                     (interactive)  (find-file "/data/data/com.termux/files/home/org/access.org"))                                 
+(defun sf3()                    (interactive)  (find-file "/data/data/com.termux/files/home/dot/dotBashrc"))                                  
+(defun sf8()                    (interactive)  (dired-omit-mode))                                                                             
+(defun db()                     (interactive)  (find-file "/data/data/com.termux/files/home/dot/dotBashrc"))                                  
+(defun dd()                     (interactive)  (find-file "/data/data/com.termux/files/home/MyDocs/aNotes/org/doAndDone.org"))                
+(defun de()                     (interactive)  (find-file "/data/data/com.termux/files/home/.emacs.d/dotEmacs.org"))                          
+(defun f3()                     (interactive)  (find-file "/data/data/com.termux/files/home/.emacs.d/dotEmacs.org"))                          
+(defun dz()                     (interactive)  (progn (ztree-dir "/data/data/com.termux/files/home/MyDocs/projects") (split-window-right 40)))
+
 
 (defun sb ()
  (progn
+  ; ls and cd
   (setq eshell-command-aliases-list ())
-  (add-to-list 'eshell-command-aliases-list (list "ll"    "ls -lF  --time-style=long-iso $*"))
-  (add-to-list 'eshell-command-aliases-list (list "la"    "ls -alF --time-style=long-iso $*"))
-  (add-to-list 'eshell-command-aliases-list (list "cl"    "cd $*; ll"))
+  (add-to-list 'eshell-command-aliases-list (list "ll"    "ls -lF  --time-style=long-iso --color=auto --group-directories-first $*"))
+  (add-to-list 'eshell-command-aliases-list (list "la"    "ls -alF --time-style=long-iso --color=auto --group-directories-first $*"))
+  (add-to-list 'eshell-command-aliases-list (list "cl"    "cd $*; ls -l"))
 
   (add-to-list 'eshell-command-aliases-list (list "al"    "alias"))
   (add-to-list 'eshell-command-aliases-list (list "ag"    "alias | grep $*"))
 
-  (add-to-list 'eshell-command-aliases-list (list "fnd"   "find $*")) ;; plain old find
+  (add-to-list 'eshell-command-aliases-list (list "forloop" "echo \"for f in *.xpm(:r) {convert \\$f.xpm \\$f.png}\" "))
 
+  ; find and grep
+  (add-to-list 'eshell-command-aliases-list (list "ff"      "find-file $1"))
+  (add-to-list 'eshell-command-aliases-list (list "ffo"     "find-file-other-window $1"))
+
+  (add-to-list 'eshell-command-aliases-list (list "sfd"   "echo \"find ~/ -iname 'place*.sqlite' -printf '%TY-%Tm-%Td %TH:%TM %p %m\\n' -size +4G -exec ls -ld {} \\; \"   "))
+  (add-to-list 'eshell-command-aliases-list (list "fd"    "find $*")) ;; plain old find
+  (add-to-list 'eshell-command-aliases-list (list "fg"    "~/ubin/rgrep.py $*"))
+  (add-to-list 'eshell-command-aliases-list (list "gr"    "grep $*"))
+  (add-to-list 'eshell-command-aliases-list (list "gi"    "grep -i $*"))
+
+   ; git 
   (add-to-list 'eshell-command-aliases-list (list "gits"  "git status ."))
   (add-to-list 'eshell-command-aliases-list (list "gith"  "git help"))
   (add-to-list 'eshell-command-aliases-list (list "gita"  "git add $*"))
@@ -3437,47 +2919,112 @@ TBD
   (add-to-list 'eshell-command-aliases-list (list "gitl"  "git log -n 20 --pretty=oneline --abbrev-commit --no-merges --decorate --format=format:'%h - (%ar) %s - %an%d'"))
   (add-to-list 'eshell-command-aliases-list (list "gitcm" "git commit -m"))
 
-  (add-to-list 'eshell-command-aliases-list (list "gr"    "grep $*"))
-  (add-to-list 'eshell-command-aliases-list (list "gi"    "grep -i $*"))
-  (add-to-list 'eshell-command-aliases-list (list "rg"    "~/ubin/fqry/rgrep.py $*"))
-  (add-to-list 'eshell-command-aliases-list (list "h"     "history 30"))
+  ; open files, networks, and processes
   (add-to-list 'eshell-command-aliases-list (list "netsl" "netstat -tlnp"))
   (add-to-list 'eshell-command-aliases-list (list "lsofi" "lsof -n -i"))
+  (add-to-list 'eshell-command-aliases-list (list "psg"     "ps -elf | grep -i $*"))
 
-
-  (add-to-list 'eshell-command-aliases-list (list "hs"    "(setq es_hstFile (save-eshell-history)); cat $es_hstFile; echo $es_hstFile"))
-  (add-to-list 'eshell-command-aliases-list (list "hs2"   "~/.emacs.d/save-history.eshell"))
-  (add-to-list 'eshell-command-aliases-list (list "hl"    "history 60"))
+  ;history
+  (add-to-list 'eshell-command-aliases-list (list "h"    "(counsel-esh-history)"))
+  (add-to-list 'eshell-command-aliases-list (list "hs"    "(setq es_hstFile (save-eshell-history)); cat $es_hstFile; echo $es_hstFile; (save-eshell-terminal)"))
+  ; (add-to-list 'eshell-command-aliases-list (list "hs2"   "~/.emacs.d/save-history.eshell"))
+  (add-to-list 'eshell-command-aliases-list (list "hl"    "(print \"---------------------------\"); history 60 | cut -b 8- | sort | uniq ; (print \"---------------------------\")  "))
   (add-to-list 'eshell-command-aliases-list (list "hll"   "ls -lrt ~/history/commands/ | tail -6"))
   (add-to-list 'eshell-command-aliases-list (list "hg"    "cat $eshell-history-file-name | grep -i $*"))
   (add-to-list 'eshell-command-aliases-list (list "hgg"   "find ~/history/commands/ -mtime -20  -type f | xargs grep -i $*"))
   (add-to-list 'eshell-command-aliases-list (list "hggg"  "find ~/history/commands/ -mtime -365 -type f | xargs grep -i $*"))
   (add-to-list 'eshell-command-aliases-list (list "hgggg" "find ~/history/commands/ -type f | xargs grep -i $*"))
 
+  ; env vars
+  (add-to-list 'eshell-command-aliases-list (list "pe"      "printenv | sort"))
+  (add-to-list 'eshell-command-aliases-list (list "pg"      "printenv | grep -i $*"))
 
+  ; copy paste
+  (add-to-list 'eshell-command-aliases-list (list "clipcopy"  "xclip -selection c"))
+  (add-to-list 'eshell-command-aliases-list (list "clippaste" "xclip -selection c -o; echo '' "))
+  (add-to-list 'eshell-command-aliases-list (list "clipsave"  "xclip -selection c -o >> /home/kleyn/history/scratch.org; echo '' >> /home/kleyn/history/ScratchEmacs"))
+
+  ; sys info
+  (add-to-list 'eshell-command-aliases-list (list "utilPkgsAll" "dpkg -l | cut -b 5-80 > /tmp/eshell_foo; /tmp/eshell_foo"))
+  (add-to-list 'eshell-command-aliases-list (list "utilAptAll" "aptitude search ~i"))
+  (add-to-list 'eshell-command-aliases-list (list "utilBlk"     "lsblk -o NAME,SIZE,TYPE,MOUNTPOINT,LABEL,FSTYPE,UUID"))
+  (add-to-list 'eshell-command-aliases-list (list "utilHw"      "lshw  | grep product"))
+  (add-to-list 'eshell-command-aliases-list (list "utilJobs"    "jobs -l"))
+  (add-to-list 'eshell-command-aliases-list (list "utilLsof"    "lsof -n -i"))
+  (add-to-list 'eshell-command-aliases-list (list "utilNet"     "ip a | grep inet"))
+  (add-to-list 'eshell-command-aliases-list (list "utilNetstat" "netstat -tlnp"))
+  (add-to-list 'eshell-command-aliases-list (list "utilPstree"  "ps -ef --forest"))
+  (add-to-list 'eshell-command-aliases-list (list "utilCpu"     "lscpu | egrep 'Model name|Socket|Thread|NUMA|CPU(s)'"))
+  (add-to-list 'eshell-command-aliases-list (list "utilGpu"     "glxinfo | egrep -i  'memory:|renderer' " ))
+  (add-to-list 'eshell-command-aliases-list (list "utilUsb"     "lsusb"))
+ 
   (add-to-list 'eshell-command-aliases-list (list "remNfsEuler"  "sudo mount.cifs -o username=kleyn,uid=1000,gid=1000 //192.168.1.177/Users/kleyn ~/Euler"))
 
-  (add-to-list 'eshell-command-aliases-list (list "es"    "(save-eshell-terminal)"))
-  (add-to-list 'eshell-command-aliases-list (list "pe"    "printenv | sort"))
-  (add-to-list 'eshell-command-aliases-list (list "pg"    "printenv | grep -i $*"))
-  (add-to-list 'eshell-command-aliases-list (list "ctrlc" "xclip -selection c"))
-
-  (add-to-list 'eshell-command-aliases-list (list "psg"     "ps -elf | grep -i $*"))
-  (add-to-list 'eshell-command-aliases-list (list "ctrlv"   "xclip -selection c -o; echo '' "))
-  (add-to-list 'eshell-command-aliases-list (list "ctrlvv"  "xclip -selection c -o >> /home/kleyn/history/scratch.org; echo '' >> /home/kleyn/history/scratch.org;"))
-  (add-to-list 'eshell-command-aliases-list (list "apt-all" "aptitude search ~i"))
-
-  (defalias 'ff  'find-file)
-  (defalias 'ffo 'find-file-other-window)
   (eshell-printn "------- eshell-command-aliases-list")
   (eshell-printn eshell-command-aliases-list)
   (eshell-printn "------- eshell-mode-map")
   (eshell-printn eshell-mode-map)
+
+  (eshell-colors)
  )
 )
 
 
+(defun save-eshell-history ()
+  (interactive)
+   (setq es_hstFile (concat "/home/kleyn/history/commands/history_eshell_" (format-time-string "%Y%m%d-%H%M" (current-time)) ".lst"))
+   (eshell-write-history)
+   (eshell-write-history)
+   (copy-file "/home/kleyn/.emacs.d/eshell/history" es_hstFile)
+   es_hstFile)
 
+
+(defun eshell-cwd ()
+  " Sets the eshell directory to the current buffer  
+  Usage: M-x eshell-cwd "
+  (interactive)
+
+  (let ((path (file-name-directory (or  (buffer-file-name) default-directory))))
+    (with-current-buffer "*eshell*"
+      (cd path)
+      (eshell-emit-prompt))))
+
+(defun eshell-prompt-bol ()
+  (interactive)
+  (beginning-of-line)
+  (forward-char (length ":: ")))
+
+(defun save-eshell-terminal ()
+  "Clone the current buffer writing it into FILENAME and open it"
+  (interactive "FClone to file: ")
+  (setq eshellFname (concat "/home/kleyn/history/eshell/eshell_buffer_" (format-time-string "%Y%m%d-%H:%M" (current-time)) ".log"))
+  (save-restriction
+    (widen)
+    (write-region (point-min) (point-max) eshellFname nil nil nil 'confirm))
+  (find-file-noselect eshellFname))
+
+(defun eshell/clear ()
+  "Clear the eshell buffer."
+  (interactive)
+  (let ((inhibit-read-only t))
+    (erase-buffer)))
+
+
+(eshell)
+
+
+(message "-------------- Done: Eshell Section")
+#+END_SRC
+
+for f in *.xpm(:r) {convert $f.xpm $f.png}
+for f in *.png(:r) {echo $f.png $f.png}
+
+
+;; nb use egrep (or *grep) rather than grep to avoid using emacs grep
+;; (add-to-list 'eshell-command-aliases-list (list "utilDf"      "watch -n 1 df -m"))
+;; find -maxdepth 1 -printf '%t %s %p\n'
+;; works: find ~/*/ \( -path ~/mySystems/firefoxOld -o -path ~/projects \) -prune -false -o -iname '*.sqlite'
+;; works: find ~/*/ -path ~/mySystems -prune -false -o -iname '*sql'   <- no fucking end-slash on directory path !!!!!!!!!
 ;; aptitude doesn't echo into eshell buffer :(
 
 ;; (add-to-list 'eshell-command-aliases-list (list "hgg"   "cat ~/history/commands/history* | grep -i $*"))
@@ -3490,57 +3037,23 @@ TBD
 ;; (add-to-list 'eshell-command-aliases-list (list "hs"    "(setq es_hstFile (concat \"~/history/commands/history_eshell_\" (format-time-string \"%Y%m%d-%H%M\" (current-time)) \".lst\")); history > $es_hstFile; cat $es_hstFile;"))
 ;; https://emacs.stackexchange.com/questions/27849/how-can-i-setup-eshell-to-use-ivy-for-tab-completion
 
-(defun save-eshell-history ()
-  (interactive)
-   (setq es_hstFile (concat "/home/kleyn/history/commands/history_eshell_" (format-time-string "%Y%m%d-%H%M" (current-time)) ".lst"))
-   (eshell-write-history)
-   (eshell-write-history)
-   (copy-file "/home/kleyn/.emacs.d/eshell/history" es_hstFile)
-   es_hstFile)
-
-(setq eshell-prompt-function (lambda () (concat ":: "))
-      eshell-prompt-regexp "^:: "
-)
-
-(setq eshell-prompt-function
-       (lambda ()
-         (setq dts (format-time-string "%Y%m%d%H:%M" (current-time)))
-         (concat (substring dts 0 8)
-                 "|" (propertize (substring dts 8) 'face `(:foreground "green"))
-;;                 "|" (car (last (split-string (getenv "VIRTUAL_ENV") "/")))
-                 "|" (propertize (substring (pwd) 10) 'face `(:foreground "green"))
-                 "\n:: "))
-
-    eshell-prompt-regexp "^:: "
-)
-
-
+  ;(add-to-list 'eshell-command-aliases-list (list "h"     "history 30"))
 ;; eshell-prompt-regexp "^[^:]*:: "
 ;; (if (= (user-uid) 0) " :: " " :: ")
 ;; (if (= (user-uid) 0) " \n:: " " \n:: ")))
 ;;eshell-prompt-regexp "^::.*\n:: "
+;(setq eshell-prompt-function (lambda () (concat ":: "))
+;      eshell-prompt-regexp "^:: "
+;)
 
-(add-hook 'eshell-mode-hook '(lambda () (define-key eshell-mode-map (kbd "C-<tab>")  'pcomplete-std-complete)))
-(add-hook 'eshell-mode-hook '(lambda () (define-key eshell-mode-map (kbd "C-a")      'eshell-prompt-bol)))
+;; (add-to-list 'eshell-command-aliases-list (list "l"     "stat --printf=%y\t%6s\t%-16n\n * | cut -b -16,36-"))
 
-(defun eshell-prompt-bol ()
-  (interactive)
-  (beginning-of-line)
-  (forward-char (length ":: ")))
-
+;(require 'helm-eshell)  ; use ivy
+;; (add-hook 'eshell-mode-hook '(lambda () (define-key eshell-mode-map (kbd "M-l")      'helm-eshell-history)))
 ;; (add-hook 'eshell-mode-hook '(lambda () (define-key eshell-mode-map (kbd "C-<tab>")  (lambda () (interactive) (pcomplete-std-complete)))))
+;; (add-hook 'eshell-mode-hook '(lambda () (define-key eshell-mode-map (kbd "M-r")      'counsel-esh-history)))
 
-(defun save-eshell-terminal ()
-  "Clone the current buffer writing it into FILENAME and open it"
-  (interactive "FClone to file: ")
-  (setq eshellFname (concat "/home/kleyn/history/eshell_term/eshell_buffer_" (format-time-string "%Y%m%d-%H:%M" (current-time)) ".log"))
-  (save-restriction
-    (widen)
-    (write-region (point-min) (point-max) eshellFname nil nil nil 'confirm))
-  (find-file-noselect eshellFname))
-
-(message "-------------- Done: Eshell Section")
-#+END_SRC
+;;-------------------------------------------------------------------------------- eshell
 
 (emacs-pid)
 (setq eshell-prompt-regexp (concat "^20[0-9][0-9].*\n" (regexp-quote "$") ": "))
@@ -3549,10 +3062,8 @@ TBD
 (setq eshell-cmpl-cycle-completions nil)
 eshell-prompt-regexp (concat "^" (regexp-quote "$")
 
-
 (mapconcat 'identity '("a" "b" "c") ",")
 (mapconcat 'identity (reverse (butlast (reverse (list "home ""kleyn" "projects" )) 3)) "/")
-
 
 (add-to-list 'eshell-command-aliases-list (list "gitst"  "git rev-parse --abbrev-ref HEAD;
                                                           git config branch.$(git rev-parse --abbrev-ref HEAD).description;
@@ -3573,47 +3084,32 @@ eshell-prompt-regexp (concat "^" (regexp-quote "$")
     cp -r $frootDir/dot             $budir
     tar -czvf - $frootDir/gitio >   $budir/gitio.tgz
     du -sm $frootDir/internalBackup/*
-))
+)
 
-;;-------------------------------------------------------------------------------- eshell
-;(eshell/alias "ff" "find-file $1")
-;(eshell/alias "fw" "find-file-other-window $1")
-;(eshell/alias "fr" "find-file-other-frame $1")
+
+(eshell/alias "ff" "find-file $1")
+(eshell/alias "fw" "find-file-other-window $1")
+(eshell/alias "fr" "find-file-other-frame $1")
 
 (add-to-list 'eshell-command-aliases-list (list "rgrepy "python L:\\MyDocs\\ubin\\py\\rgrep.py"))
 (add-to-list 'eshell-command-aliases-list (list "rgrep" "echo \"1=$1\";
                                                         "dosPath=$(cygpath -m $1)"
-                     echo "DOSPATH $dosPath";
-                     echo "2=$2"
-                     echo "3=$3"
-                     echo "grep --color=auto -ir --include=$2 $3 $1;"
-                     # echo "grep -e --color=auto -ir --include=$2 $3 $1;"  -e is different!!!!
-                     grep --color=auto -ir --include="$2" "$3" "$1" ; }
 
-;;(defalias 'open 'find-file)
-;;(defalias 'openo 'find-file-other-window)
-;;(defun eshell/gits ()   (find-file file))
-;;(setq eshell-command-aliases-list (("gits" #("git status" 0 10 (escaped t)))))
+echo "DOSPATH $dosPath";
+echo "2=$2"
+echo "3=$3"
+echo "grep --color=auto -ir --include=$2 $3 $1;"
+# echo "grep -e --color=auto -ir --include=$2 $3 $1;"  -e is different!!!!
+grep --color=auto -ir --include="$2" "$3" "$1" ; }
+
+(defalias 'open 'find-file)
+(defalias 'openo 'find-file-other-window)
+(defun eshell/gits ()   (find-file file))
+setq eshell-command-aliases-list (("gits" #("git status" 0 10 (escaped t)))))
 
 alias ll ls -l $*
 (setq ecal_copy (copy-list eshell-command-aliases-list))
 TBD fix $(git...) doesn't work in eshell
-alias gits echo $(git rev-parse --abbrev-ref HEAD); git config branch.$(git rev-parse --abbrev-ref HEAD).description;  git status
-alias ll ls -l $*
-alias gitbd='git branch --edit-description'
-alias gitbm='git branch --merged'
-alias gitbnm='git branch --no-merged'
-alias gitcln='git clone'
-alias gitf='git fetch'
-alias gitg='git grep'
-alias gitmv='git mv'
-alias gitpl='git pull'
-alias gitps='git push'
-alias gitr='git reset -p'
-alias gitreps='git remote -v'
-alias gitrm='git rm'
-alias gits='echo $(git rev-parse --abbrev-ref HEAD); git config branch.$(git rev-parse --abbrev-ref HEAD).description;  git status; git stash list'
-alias gitsb='git show-branch'
 
 eshell-command-result
 (setq foo (eshell-command-result "git rev-parse --abbrev-ref HEAD"))
@@ -3642,7 +3138,7 @@ prompt
 
   (defalias 'eshell/more 'eshell/less)
 
-* ESHELL TBD
+** ESHELL TBD
 
 
 1.2 Code snippet (from emacswiki and other website)
@@ -3759,8 +3255,292 @@ Type ec <command> from eshll prompt will open another buffer with command output
 (print foo) === echo $foo
 eshell-parse-command 'ls -l'
 
+* Notes
+** Commands Quick Ref
+
+(dired  "/ssh:192.168.1.124#8022:/data/data/com.termux/files/home")                                            ; using  port
+cosmo -> /run/user/1000/52efffd273e1b33b/Android/data/com.termux/files
+(beginning-of-line)
+(end-of-line)
+(goto-char (mark-marker))
+(goto-char (pop-global-mark))
+(remove-hook 'html-mode-hook 'xah-html-mode-keys)                                                              ; removing a hook
+(server-start)
+(setq Buffer-menu-sort-column 6)
+(setq tab-stop-list '(60))
+(x-get-selection-value)
+(xclip-mode 1) for emacs in terminal , export kill-yank
+
+close  to close ^Q^]
+clone-indirect-buffer RET
+ediff-revision
+find-dired   calls unix find
+flush-lines
+go up C-c C-u
+increase/decrease font C-c kepad+ keypad-
+indent-to-column
+isearch-forward-regexp
+map-query-regexp-replace
+package-list-packages
+proced       to view processes
+read-kbd-macro
+rot13-region  (C-c C-r)
+set-buffer-file-coding-system unix <--format
+tail-mode     auto-revert-tail-mode (C-cr)
+telnet host port     to open
+vc-ediff
+
+------------------------------------------------------------------- defalias
+(defalias 'my-open-file   (kbd "C-a C-s / C-b C-s : C-x C-x ESC w C-x C-f C-a C-y DEL C-k RET")
+(defalias 'flipslash      (kbd "C-SPC C-e C-SPC ESC < ESC w C-x b *scratch* RET C-e RET C-y C-r SPC C-f C-SPC C-r total SPC use C-x C-x C-w ESC \ 2*DEL / C-a ESC \ ESC x replace-string / RET \ RET C-a"))
+(defalias 'make-org-tbl   (kbd "ESC x org-mode RET ESC < C-SPC ESC > C-c |"))
+(defalias 'see-logbooks   (kbd "C-x C-f ~/myDocs/logbook RET"))
+(defalias 'vc-ediff-frame (kbd "C-x 5 2 M-x vc-ediff RET y"))
+
+** Regexp
+-------------------------------------------------------------- SAMPLE REPLACE REGEXP
+(replace-regexp "[[:alpha:]\.]+=" "" nil (region-beginning) (region-end))
+replace unprintable ""
+(replace-string "" "")
+(replace-string "" "")
+(replace-string "" "")
+(replace-regexp "0\.999999([0-9]+)[$,]" "" nil (point-min) (point-max))
+(replace-regexp "[ \t]+" " ")                                                                                  ; REPLACE mutli-space with single-space
+(replace-regexp "[ \t]+|" "_" )                                                                                ; space -> _
+(replace-regexp "[ \t]+" "|")                                                                                  ; space -> |
+(replace-regexp "'[ \t]+'" "|" )   ; space between quotes ->
+(goto-char (mark-marker))
+(replace-regexp "A" "B" nil (if (and transient-mark-mode mark-active) (region-beginning)) (if (and transient-mark-mode mark-active) (region-end)) nil)
+(replace-regexp "A" "B" nil (mark-marker) (point-max))
+(replace-regexp "(line [0-9]+)" "" nil (point-min) (point-max)) ; clear (line 62)
+(replace-regexp " [0-9][0-9]:[0-9][0-9]:[0-9][0-9]" "" nil (point-min) (point-max)) ; clear " HH:MM:SS"
+N.B. TBD drop last ","
+
+regexp classes:
+‘[:ascii:]’    This matches any ASCII character (codes 0–127).
+‘[:alnum:]’    This matches any letter or digit. For multibyte characters, it matches characters whose Unicode ‘general-category’ property (see Character Properties) indicates they are alphabetic or decimal number characters.
+‘[:alpha:]’    This matches any letter. For multibyte characters, it matches characters whose Unicode ‘general-category’ property (see Character Properties) indicates they are alphabetic characters.
+‘[:blank:]’    This matches horizontal whitespace, as defined by Annex C of the Unicode Technical Standard #18. In particular, it matches spaces, tabs, and other characters whose Unicode ‘general-category’ property (see Character Properties) indicates they are spacing separators.
+‘[:cntrl:]’    This matches any character whose code is in the range 0–31.
+‘[:digit:]’    This matches ‘0’ through ‘9’. Thus, ‘[-+[:digit:]]’ matches any digit, as well as ‘+’ and ‘-’.
+‘[:graph:]’    This matches graphic characters—everything except whitespace, ASCII and non-ASCII control characters, surrogates, and codepoints unassigned by Unicode, as indicated by the Unicode ‘general-category’ property (see Character Properties).
+‘[:lower:]’    This matches any lower-case letter, as determined by the current case table (see Case Tables). If case-fold-search is non-nil, this also matches any upper-case letter.
+‘[:multibyte:]’This matches any multibyte character (see Text Representations).
+‘[:nonascii:]’ This matches any non-ASCII character.
+‘[:print:]’    This matches any printing character—either whitespace, or a graphic character matched by ‘[:graph:]’.
+‘[:punct:]’    This matches any punctuation character. (At present, for multibyte characters, it matches anything that has non-word syntax.)
+‘[:space:]’    This matches any character that has whitespace syntax (see Syntax Class Table).
+‘[:unibyte:]’  This matches any unibyte character (see Text Representations).
+‘[:upper:]’    This matches any upper-case letter, as determined by the current case table (see Case Tables). If case-fold-search is non-nil, this also matches any lower-case letter.
+‘[:word:]’     This matches any character that has word syntax (see Syntax Class Table).
+‘[:xdigit:]’   This matches the hexadecimal digits: ‘0’ through ‘9’, ‘a’ through ‘f’ and ‘A’ through ‘F’.
+
+;; (while (search-forward-regexp "^# \\+ pycharm=[^#]+#%% \\([^,}]+\\).*$" nil t)
+;; drop # and \n} cruft at end
+;;(replace-match (substring (match-string 1) 1 -4) t nil)
+;;(concat 'aaa' 'bbb')
+;;(message (concat "XXX" (substring (match-string 1) 0 -2) "XXX"))
+;;(replace-match (concat "XXX" (match-string 1) "XXX") t nil)))
+;;(substring "ABCDEF" 0 -1)
+;;(defun replace-thing ()
+;; (interactive)
+;; (goto-char 1)
+;;    (while (search-forward-regexp "\\([^\\)]+\\)" nil t)
+;;        (replace-match (upcase (match-string 1)) t nil)))
+;;
+;;
+;;"\\+ pycharm[^#]+\\(#[\w]+\\)"
+;;
+;;(defun replace-thing ()
+;;  (interactive)
+;;  (replace-regexp "\\+ pycharm[^#]+\\(#[\w]+\\)" "XX\\1XX"  nil (point-min) (point-max)))
+;;
+;;(defun replace-thing ()
+;;  (interactive)
+;;  (replace-regexp "\\(pycharm\\)" "X\\1X"  nil (point-min) (point-max)))
+;;
+;;(defun replace-thing ()
+;;  (interactive)
+;;  (replace-regexp "\(pycharm\)" "XX\1XX"  nil (point-min) (point-max))) 
+;;  (if (region-active-p)      ;;(replace-regexp "(pycharm)" "X\1X"  nil region-beginning) (region-end))
+;(defun replace-thing ()
+;  (interactive)
+;  (if (region-active-p)
+;      (replace-string "# \+ pycharm=[^#]+(#%%.+)}" "[[https://www.lds.org/scriptures/search?lang=eng&query=\1&x=0&y=0][\1]]"  nil (region-beginning) (region-end))
+;   ))
+
+** Modes
+;; ------------------------------------------------------------------- CSHARP Mode
+;(autload 'csharp-mode "/home/uri03204/myDocs/ulib/emacs/csharp-mode-0.8.5.elc" t)
+(autoload 'csharp-mode "csharp-mode" "Major mode for editing C# code." t)
+(defun csharp-mode-untabify ()
+  (if (string= (substring mode-name 0 2) "C#")
+     (save-excursion
+     (delete-trailing-whitespace)
+     (untabify (point-min) (point-max)))))
+(defun my-csharp-mode-fn ()
+  "function that runs when csharp-mode is initialized for a buffer."
+  (turn-on-auto-revert-mode)
+  (setq indent-tabs-mode nil)
+  (require 'flymake)
+  (setq flymake-mode nil)
+  ;;(add-hook 'write-contents-hooks 'csharp-mode-untabify nil t)
+  )
+  ;;      (require 'yasnippet)
+  ;;      (yas/minor-mode-on)
+  ;;      (require 'rfringe)
+(add-hook  'csharp-mode-hook 'my-csharp-mode-fn t)
+;;(add-hook 'csharp-mode-hook '(lambda () (add-hook 'write-contents-hooks 'csharp-mode-untabify nil t)))
+
+;;-------------------------------------------------------------------- Matlab Mode
+(require 'matlab)
+(setq matlab-indent-function t)
+(setq matlab-shell-command "matlab")
+;;(autoload 'matlab-mode "/home/kleyn/myDocs/ulib/emacs/matlab.elc" "Enter Matlab mode." t)
+;; User Level customizations:
+;;   (setq matlab-verify-on-save-flag nil) ; turn off auto-verify on save
+(defun my-matlab-mode-hook ()
+  (matlab-mode-hilit)                        ; Turn highlight on
+  (setq fill-column 276)             ; where auto-fill should wrap
+  (setq matlab-indent-function t)    ; if you want function bodies indented
+  (setq matlab-indent-level  2)         ; set matlab indentation
+  (set matlab-fill-code nil)
+  (setq indent-tabs-mode nil))
+(add-hook 'matlab-mode-hook 'my-matlab-mode-hook)
+
+;;-------------------------------------------------------------------- iedit Mode
+ TBD (autoload 'iedit-mode "/home/uri03204/myDocs/ulib/emacs/iedit.elc" "Enter iedit mode" t)
+
+
+;;-------------------------------------------------------------------- ediff
+;; (setq ediff-shell "C:/cygwin/bin/mintty.exe")
+;;  (if (file-directory-p "c:/cygwin/bin")      (add-to-list 'exec-path "c:/cygwin/bin"))
+;;--------------------------------------------------------------------- Diff Stuff
+;; (diffview-current)
+
+
+;;-------------------------------------------------------------------- Switches
+
+;;-------------------------------------------------------------------- Magit
+;; (add-to-list 'magit-section-initial-visibility-alist '(stashes . hide))
+
+;; ;; ---------------------------------------------------------------- DOS Mode
+;; (autoload 'dos-mode "/home/uri03204/myDocs/ulib/emacs/dos.elc" "Enter DOS CMD mode." t)
+
+;; ------------------------------------------------------------------- Java
+;; TBD add hs-minor-mode for hide/show t
+;; TDB (add-hook  'java-mode-hook 'my-java-mode-hook t)
+;; ;(defun my-java-mode-hook ()
+;; ;  (hs-minor-mode)
+;; ;  (setq indent-tabs-mode nil))
+
+** Misc
+(setq cur-syntax-table (syntax-table)) ; better to use "describe-syntax"
+undefine a funcion: (fmakunbound 'trysc-clear-all-whitespace-columns) 
+
+default-directory
+
+good fonts "Ubuntu Mono"
+
+Print message listing key sequences that invoke the command DEFINITION.
+Argument is a command definition, usually a symbol with a function definition.
+If INSERT (the prefix arg) is non-nil, insert the message in the buffer.
+
+TBD dired-find-file-otherwindow open a cygwin link by inspecting it
+
+------------------------------------------------------------------------------ Org-Mode
+(print (cadr info) (get-buffer "*scratch*"))
+(write-region (cadr info) nil "L:/MyDocs/history/matlabCmds/org_cmd.m")
+(write-region (cadr info) nil "C:/MyDocs/grepHist/aaa_org_cmd.m"))
+(save-restriction (org-mark-subtree) (rot13-region (point) (mark))))
+
+find-dired  calls unix find
+Dired Listing Switches: Hide Value -ahl --time-style=long-iso
+of emacs.  It is advised to place bindings for these into a
+convenient prefix key map, for example `C-,`
+
+-------------------------------------------------------------------- Key Bindings
+(global-set-key [f4]            'see-orglink-dired) ;;     'desktop-save)
+(define-key global-map "\C-co" 'org-capture)
+------------------------------------------------------------------------------
+
+; cleanMlLog
+;;[                     ;; self-insert-command
+;;3*C-k                 ;; kill-line
+(fset 'cleanMlLog [?\C-s ?\[ ?\C-q ?\C-h ?\C-a escape ?\C-k ?\C-k ?\C-k])
+
+;; -------------------------- new stuff
+;; ;; Save point position between sessions.
+;; (use-package saveplace)
+;; (setq-default save-place t)
+;; (setq save-place-file (expand-file-name "places" user-emacs-directory))
+
+;; ;; Fix empty pasteboard error.
+;; (setq save-interprogram-paste-before-kill nil)
+
+;; ;; Auto refresh buffers when edits occur outside emacs
+;; (global-auto-revert-mode 1)
+
+;; ;; Also auto refresh dired, but be quiet about it
+;; (setq global-auto-revert-non-file-buffers t)
+;; (setq auto-revert-verbose nil)
+
+;; ;; Show keystrokes in progress
+;; (setq echo-keystrokes 0.5)
+(global-subword-mode 1)
+;; from 'better-defaults.el'
+;; Allow clipboard from outside emacs
+;; (setq x-select-enable-clipboard t
+;;       x-select-enable-primary t
+;;       save-interprogram-paste-before-kill t
+;;       apropos-do-all t
+;;       mouse-yank-at-point t)
+
+;;------------------------------------------------------------------------------- ido Mode
+;; TBD
+;;(load-library "ido")
+;;(setq ido-enable-flex-matching t)
+;;(setq ido-everywhere t)
+;;(ido-mode 1)
+;;(ido-mode t)
+;;(windmove-default-keybindings 'shift)
 
 * Faded
+
+;;---- option2 parallel swap
+;(defun parallel-swap (plist &optional start end)  ;; (require 'cl)
+;  (interactive
+;   `(,(loop with input = (read-from-minibuffer "Swap: ")
+;            with limit = (length input)
+;            for (item . index) = (read-from-string input 0)
+;                            then (read-from-string input index)
+;            collect (prin1-to-string item t) until (<= limit index))
+;     ,@(if (use-region-p) `(,(region-beginning) ,(region-end)))))
+;  (let* ((alist (list (cons (car plist) (cadr plist)) (cons (cadr plist) (car plist))))
+;       ;;(alist (loop for (key val . tail) on plist by #'cddr collect (cons key val)))
+;         (matcher (regexp-opt (mapcar #'car alist) 'words)))
+;    (save-excursion
+;      (goto-char (or start (point)))
+;      (while (re-search-forward matcher (or end (point-max)) t)
+;        (replace-match (cdr (assoc-string (match-string 0) alist)))))))
+
+;;-------------------------------------------------------------------- number a region
+(defun number-region (start end)
+  (interactive "r")
+  (let* ((count 1)
+         (indent-region-function (lambda (start end)
+                                 (save-excursion
+                                   (setq end (copy-marker end))
+                                   (goto-char start)
+                                   (while (< (point) end)
+                                       (or (and (bolp) (eolp))
+                                           (insert (format ",%d " count))
+                                           (setq count (1+ count)))
+                                      (forward-line 1))
+                     (move-marker end nil)))))
+    (indent-region start end))))
+
+
 (global-set-key [C-kp-add]      'text-scale-increase)
 (global-set-key [C-kp-subtract] 'text-scale-decrease)       ;; with a C-0 prefix argument.
 
@@ -3806,23 +3586,30 @@ eshell-parse-command 'ls -l'
 ;; (global-set-key [S-M-kp-end]  'sgml-fold-element)   ;  fold everything below current element
 ;; (global-set-key [S-M-kp-next] 'sgml-unfold-element)
 
-
 * end bit
 ;(desktop-change-dir "/home/uri03204/myDocs/config")
 
 #+BEGIN_SRC emacs-lisp
-(dired "~/")
+;(dired "~/")
 ;(ztree-dir "/data/data/com.termux/files/home")
 (put 'narrow-to-region 'disabled nil)
 ;;(server-start)
 (setq password-cache-expiry nil)
 (message "dotEmacs.org done")
-(switch-to-buffer "*Messages*")
+;(switch-to-buffer "*Messages*")
 #+END_SRC
 
 ;custom-set-variables and custom set faces in ~/.emacs.d/init.el
 
 #+STARTUP: fold
+
+
+
+
+
+
+
+
 
 
 
