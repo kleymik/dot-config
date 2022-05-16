@@ -109,7 +109,7 @@ alias gdaprocs='netstat -tlnp 2>/dev/null | grep java | sort -k 7'
 alias jpps='/dls_sw/apps/java/x64/gda842/bin/jps'
 alias rd='rdesktop -a 32 -x 0x80 -g 1920x1080 DIAMRL5319 -r sound:remote'
 function see () { more `which "$@"`; }
-
+function where () { for a in $(whereis -b "$@"); do echo $a; done }
 
 # ----------------------------------------------------------------------------- hdf5/nexus
 alias h5dumpHeaders='h5dump -H'
@@ -545,6 +545,7 @@ alias remGemWired='ssh -p 8022 192.168.1.161'
 alias remCos='ssh -p 8022 192.168.1.209'
 alias remNok='ssh -Y root@192.168.1.187'
 alias remTuring='ssh -Y 192.168.1.179'
+alias remCauchy='ssh -Y 192.168.1.107'
 #alias remTuringS='screen /dev/ttyS0 38400'
 alias remNfsMountEuler='sudo mount.cifs -o username=kleyn,uid=1000,gid=1000 //192.168.1.177/Users/kleyn ~/Euler'
 alias remNfsMountMarie='sudo mount.cifs -o username=kleyn,uid=1000,gid=1000 //192.168.1.176/Users/kleyn ~/Marie'
