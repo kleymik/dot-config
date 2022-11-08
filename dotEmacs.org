@@ -631,17 +631,19 @@ invoked by ~/.emacs.d/init.el
 #+begin_src emacs-lisp
 (message "-------------- Start: Highlighting")
 ;(set-face-background hl-line-face "gray50")
-(setq-default x-stretch-cursor t)
+(setq-default x-stretch-cursor t)  ; switch to nil for magit (setq-default x-stretch-cursor nil)
 (blink-cursor-mode 0)
-(set-cursor-color "#669966")  ; also at end of init.el, after theming 
+(set-cursor-color "orange red")  ; also at end of init.el, after theming 
 (setq cursor-type 'box)
 
-(global-hl-line-mode 1) ; 0 to turn off
+(global-hl-line-mode 1) ; (global-hl-line-mode 0) to turn off
 ;(setq  hl-line-range-function 'nil)
 ;(setq  hl-line-range-function 'hl-short-range)
 ;(defun hl-short-range () (cons (- (point) 5) (+ (point 1)))
 
-(set-face-background 'show-paren-match  "#888888")
+;(face-foreground 'show-paren-match)
+(set-face-background 'show-paren-match  "#777777")
+;(set-face-background 'show-paren-match  "#888888")
 (set-face-attribute  'show-paren-match nil :weight 'bold :underline nil :overline nil :slant 'normal) 
 (show-paren-mode 1)
 (setq show-paren-style 'expression)          ; or parenthesis of mixed
@@ -723,7 +725,6 @@ invoked by ~/.emacs.d/init.el
 ;;  use desktop-change-dir to /home/uri03204/.emacs.d/desktop to get it back
 ;;    say "no" to save-desktop?
 ;;    say "yes" to steal from PID?
-;; (desktop-save-mode 1)  ; desktop-revert desktop-change-dir
 ;; (desktop-change-dir "/home/uri03204/myDocs/config")
 ;(desktop-save-mode 1)  ; desktop-revert desktop-change-dir
 ;(setq desktop-path '("/home/kleyn/config/desktop"))
@@ -2009,16 +2010,19 @@ M-x clone-indirect-buffer RET
 (global-set-key (kbd "C-x 3")   '(lambda () (interactive) (split-window-right) (other-window 1))) ;; was switch-to-buffer
 ; qwerty 1st row - treesycalc
 (global-set-key (kbd "C-x q")   'align-lisp)
-(global-set-key (kbd "C-x w")   'grx-tidy)
+(global-set-key (kbd "C-x w")   'grx-panel-tidy)
 (global-set-key (kbd "C-x e")   'eval-last-sexp)
-(global-set-key (kbd "C-x t")   'instimestamp)
+(global-set-key (kbd "C-x t")   'instimestamp)   ; C-x C-t is swap lines
 (global-set-key (kbd "C-x y")   'grx-update-sexp-result)
-(global-set-key (kbd "C-x u")   'grx-parse)
+(global-set-key (kbd "C-x u")   '(lambda () (interactive) (grx-repl t)))      ; full recalc
+(global-set-key (kbd "C-x C-u") '(lambda () (interactive) (grx-repl nil)))    ; propagate rails values only - and hence results = nil
 (global-set-key (kbd "C-x i")   'my-insert-last-sexp) ; ielm
 (global-set-key (kbd "C-x p")   'my-transpose-sexps)
 ; qwerty 2nd row
+(global-set-key (kbd "C-x D")   'image-dired)
 (global-set-key (kbd "C-x d")   'dired)
 (global-set-key (kbd "C-x f")   'find-function) ;; set-fill-column other-frame view-buffer-other-frame switch-to-buffer-other-frame
+(global-set-key (kbd "C-x h")   'grx-prop-rail-vals)
 (global-set-key (kbd "C-x G")   'vc-ediff)
 (global-set-key (kbd "C-x g")   'magit-status)
 (global-set-key (kbd "C-x l")   'list-matching-lines)
@@ -2039,6 +2043,8 @@ M-x clone-indirect-buffer RET
 (global-set-key (kbd "M-o")     'ace-window)  ;(setq aw-background nil)
 
 (global-set-key (kbd "<end>")    'other-window)
+
+;(lambda (x) (interactive) (grx-repl t))
 
 (message "-------------- Done: Global Keys")
 #+END_SRC
@@ -2072,19 +2078,31 @@ org-goto
    M-i babel> complete-symbol
 
 ** Function Keys
-|------+-----------+-----------+-----------+-----------------+---+------------------+----------------+--------------+--------------------+---+-------------+-------------+--------+--------------+------|
-| ***  | F1        | F2        | F3        | F4              | X | F5               | F6             | F7           | F8                 | X | F9          | F10         | F11    | F12          | ***  |
-|------+-----------+-----------+-----------+-----------------+---+------------------+----------------+--------------+--------------------+---+-------------+-------------+--------+--------------+------|
-|      | *eshell*  | doAndDone | ibuffers  | dired ~/        | X | app-open    file | tog truncate   | table sort   | babel exec block   | X | macro-start | tog node    | sel v0 | edebug fun   |      |
-|------+-----------+-----------+-----------+-----------------+---+------------------+----------------+--------------+--------------------+---+-------------+-------------+--------+--------------+------|
-| CTRL | *bash*    | mySystems | dotEmacs  | dired repos/    | X | open @point file | window flip    | table transp | babel exec & next  | X | macro-go    | tog all     | sel v+ | debug-off    | CTRL |
-| SHFT | *python*  | history   | dotBashrc | dired projects/ | X | clip @point file | bool-flip      | table export | babel exec subtree | X | macro-end   | open all    | sel v- | debug-on     | SHFT |
-|------+-----------+-----------+-----------+-----------------+---+------------------+----------------+--------------+--------------------+---+-------------+-------------+--------+--------------+------|
-| ALT  | mark-back | jupyClips | history   | recenter top    | X | clip currnt file | insrt TreeCalc | table cnvrt  | babel latex?       | X |             | yafold mode |        | tog py break | ALT  |
-| SUPR | winsplit3 | access    |           | recenter mid    | X | clip dired  file | print var      |              | babel session      | X |             |             |        |              | SUPR |
-|------+-----------+-----------+-----------+-----------------+---+------------------+----------------+--------------+--------------------+---+-------------+-------------+--------+--------------+------|
+|------+-----------+-----------+------------+-----------------+---+------------------+----------------+----------+--------------+---+-------------+-------------+--------+--------------+------|
+| ***  | F1        | F2        | F3         | F4              | X | F5               | F6             | F7 TABLE | F8 BABEL     | X | F9          | F10         | F11    | F12 DEBUG    | ***  |
+|------+-----------+-----------+------------+-----------------+---+------------------+----------------+----------+--------------+---+-------------+-------------+--------+--------------+------|
+|      | *eshell*  | doAndDone | hist emacs | sidebar         | X | app-open    file | tog truncate   | sort     | exec block   | X | macro-start | tog node    | sel v0 | eval defun   |      |
+|------+-----------+-----------+------------+-----------------+---+------------------+----------------+----------+--------------+---+-------------+-------------+--------+--------------+------|
+| CTRL | *bash*    | mySystems | hist dir   | ibuffer         | X | open @point file | window flip    | transp   | exec & next  | X | macro-go    | tog all     | sel v+ | edebug fun   | CTRL |
+| SHFT | *python*  | bigNotes  | hist wkly  | dired ~/        | X | clip @point file | bool-flip      | export   | exec subtree | X | macro-end   | open all    | sel v- | debug-on     | SHFT |
+|------+-----------+-----------+------------+-----------------+---+------------------+----------------+----------+--------------+---+-------------+-------------+--------+--------------+------|
+| ALT  | mark-back | jupyClips | dotEmacs   | dired projects/ | X | clip currnt file | insrt TreeCalc | cnvrt    | latex?       | X | center top  | yafold mode |        | debug-off    | ALT  |
+| SUPR | winsplit3 | access    | dotBashrc  | dired repos/    | X | clip dired  file | print var      |          | session      | X | center mid  | ya discover |        | tog py break | SUPR |
+|------+-----------+-----------+------------+-----------------+---+------------------+----------------+----------+--------------+---+-------------+-------------+--------+--------------+------|
+, dired change sort ; list-command-history ; then do C-x M-: to see what lisp form ; SUPR \ delete-whitespace-forward ; M-& run async ; M-x term ; M-i jupyter info inspect at point ; 
+/dev/sdc3 8af 109G Cinamon 20.2 ; Brother MFC-J480DW 192.168.78
+/dev/sdc3 1f3 114G Uma     20.2 
 
 #+BEGIN_SRC emacs-lisp
+
+(defun f1()                (interactive)  (eshell))
+(defun sf2()               (interactive)  (find-file "/data/data/com.termux/files/home/org/access.org"))
+(defun cf2()               (interactive)  (find-file "/data/data/com.termux/files/home/MyDocs/aNotes/org/doAndDone.org"))
+(defun sf3()               (interactive)  (find-file "/data/data/com.termux/files/home/dot/dotBashrc"))                                  
+(defun cf3()               (interactive)  (find-file "/data/data/com.termux/files/home/.emacs.d/dotEmacs.org"))                          
+(defun sf8()               (interactive)  (dired-omit-mode))                                                                             
+
+
 (global-set-key [f1]       '(lambda () (interactive) (progn (if (eq (get-buffer "*eshell*") nil) (eshell))     (switch-to-buffer "*eshell*"))))
 (global-set-key [C-f1]     '(lambda () (interactive) (progn (if (eq (get-buffer "*shell*")  nil) (shell))      (switch-to-buffer "*shell*"))))
 (global-set-key [S-f1]     '(lambda () (interactive) (progn (if (eq (get-buffer "*Python*") nil) (run-python)) (switch-to-buffer "*Python*"))))
@@ -2103,45 +2121,36 @@ org-goto
 )
 
 
-;;'ielm) ;; open file under cursor ;;(global-set-key [M-f9] 'my-insert-last-sexp) ;; insert result
-
 (global-set-key [f2]       '(lambda () (interactive) (find-file "/home/kleyn/aNotes/doAndDone.org")))
 (global-set-key [C-f2]     '(lambda () (interactive) (find-file "/home/kleyn/aNotes/mySystems.org")))
-(global-set-key [S-f2]     '(lambda () (interactive) (dired     "/home/kleyn/history/commands/history_2021-w*")))  ; view this week's bash history
+(global-set-key [S-f2]     '(lambda () (interactive) (find-file "/home/kleyn/aNotes/bigNotes.org")))
 (global-set-key [M-f2]     '(lambda () (interactive) (find-file "/home/kleyn/projects/repos/mkmain/landing/jupyClips.org")))
 (global-set-key [s-f2]     '(lambda () (interactive) (find-file "/home/kleyn/aNotes/access.org")))
 
 
-(global-set-key [f3]       '(lambda () (interactive) (ibuffer "home" nil) (ibuffer-switch-to-saved-filter-groups "home")))
-;(global-set-key [f3]       'ibuffer-sidebar-toggle-sidebar)
-(global-set-key [C-f3]     '(lambda () (interactive) (find-file "/home/kleyn/.emacs.d/dotEmacs.org") (search-forward "** Function Keys") (org-show-subtree)))  ;; nok900  'my-openfile  'neotree-show
-(global-set-key [S-f3]     '(lambda () (interactive) (find-file "/home/kleyn/config/dot/dotBashrc") ))
-(global-set-key [M-f3]     '(lambda () (interactive) (progn (find-file (concat "/home/kleyn/history/commands/history_"
-                                                                        (format-time-string "%Y" (current-time))
-                                                                        "-w"
-                                                                        (format-time-string "%W" (current-time))))
+(global-set-key [f3]       'list-command-history) 
+(global-set-key [S-f3]     '(lambda () (interactive) (progn (find-file (concat "/home/kleyn/history/commands/history_" (format-time-string "%Y" (current-time)) "-w" (format-time-string "%W" (current-time))))
                                                             (setq truncate-lines t)
                                                             (goto-char (point-max))
-                                                            (auto-revert-mode))     )) ;; history_2021-w30
+                                                            (auto-revert-mode)))) ;; history_2021-w30
+(global-set-key [C-f3]     '(lambda () (interactive) (dired     "/home/kleyn/history/commands/history_2021-w*")))  ; view this week's bash history
+(global-set-key [M-f3]     '(lambda () (interactive) (find-file "/home/kleyn/.emacs.d/dotEmacs.org") (search-forward "** Function Keys") (org-show-subtree)))  ;; nok900  'my-openfile  'neotree-show
+(global-set-key [s-f3]     '(lambda () (interactive) (find-file "/home/kleyn/config/dot/dotBashrc") ))
 
-;;(global-set-key [S-f3]   'org-save-code-block)
-;; dired-sidebar-switch-to-dir 
-(global-set-key [f4]       '(lambda () (interactive)  (dired "~/")))
-;(global-set-key [f4]      'neotree-toggle)
-;(global-set-key [f4]      '(lambda () (interactive)  (dired-sidebar-cmd "~/")))
-(global-set-key [C-f4]    '(lambda () (interactive)  (dired-sidebar-switch-to-dir (file-name-directory (buffer-file-name)))))
-(global-set-key [S-f4]    '(lambda () (interactive)  (dired "~/" nil)))
-;(global-set-key [S-f4]    '(lambda () (interactive) (dired "~/projects/repos" nil)))
-(global-set-key [M-f4]    '(lambda () (interactive) (recenter-top-bottom  0)))
-(global-set-key [s-f4]    '(lambda () (interactive) (recenter-top-bottom 50)))
 
-;;(global-set-key [C-f4]   'dired-omit-mode)
+(global-set-key [f4]       'make-ide-windows) ; sidebar-toggle
+(global-set-key [C-f4]     '(lambda () (interactive) (ibuffer "home" nil) (ibuffer-switch-to-saved-filter-groups "home")))
+(global-set-key [S-f4]     '(lambda () (interactive) (dired "~/")))
+(global-set-key [M-f4]     '(lambda () (interactive) (dired "~/projects")))
+(global-set-key [s-f4]     '(lambda () (interactive) (dired "~/projects/repos")))
 
-(global-set-key [f5]       'ergoemacs-open-in-external-app)      ;; bookmark-menu-list',
+
+(global-set-key [f5]       'ergoemacs-open-in-external-app)    ;; bookmark-menu-list',
 (global-set-key [C-f5]     'ffap)
 (global-set-key [S-f5]     '(lambda () (interactive)  (let ((fpth (thing-at-point 'filename t))) (kill-new fpth) (message fpth))))  ; copy file path at point
 (global-set-key [M-f5]     'filepath-on-clipboard)
 (global-set-key [s-f5]     'dired-paste-to-yank-buffer)
+
 
 (global-set-key [f6]       'toggle-truncate-lines)
 (global-set-key [C-f6]     'toggle-window-split)
@@ -2153,25 +2162,26 @@ org-goto
                                                           (goto-char (point-min))                                              ;; (print currWordVal  (get-buffer "*scratch*"))
                                                           (cl-prettyprint currWordVal))))
  
-(global-set-key [f7]      'org-table-sort-lines)
-(global-set-key [C-f7]    'org-table-transpose-table-at-point)
-(global-set-key [S-f7]    'org-table-export)                           ;; (global-set-key [S-f7] 'buffer-menu-sort-by-filename)
-(global-set-key [M-f7]    'org-table-convert-region)
-(global-set-key [s-f7]    'org-table-toggle-coordinate-overlays)
+(global-set-key [f7]       'org-table-sort-lines)
+(global-set-key [C-f7]     'org-table-transpose-table-at-point)
+(global-set-key [S-f7]     'org-table-export)                  ;; (global-set-key [S-f7] 'buffer-menu-sort-by-filename)
+(global-set-key [M-f7]     'org-table-convert-region)
+(global-set-key [s-f7]     'org-table-toggle-coordinate-overlays)
 
 
-;(global-set-key [M-f7]   'show-hist)                           ;; (global-set-key [S-f7] 'buffer-menu-sort-by-filename)
+(global-set-key [f8]       '(lambda () (interactive) (org-babel-execute-src-block)))
+(global-set-key [C-f8]     '(lambda () (interactive) (my-org-babel-execute-and-next)))
+(global-set-key [S-f8]     '(lambda () (interactive) (org-babel-execute-subtree)))
+(global-set-key [M-f8]     '(lambda () (interactive) (org-latex-preview)))
+(global-set-key [s-f8]     '(lambda () (interactive) (org-babel-switch-to-session)))
 
 
-(global-set-key [f8]     '(lambda () (interactive) (org-babel-execute-src-block)))
-(global-set-key [C-f8]   '(lambda () (interactive) (my-org-babel-execute-and-next)))
-(global-set-key [S-f8]   '(lambda () (interactive) (org-babel-execute-subtree)))
-(global-set-key [M-f8]   '(lambda () (interactive) (org-latex-preview)))
-(global-set-key [s-f8]   '(lambda () (interactive) (org-babel-switch-to-session)))
-
-(global-set-key [f9]       'kmacro-start-macro)                  ;; 'ielm)  ;; open file under cursor
-(global-set-key [C-f9]     'kmacro-end-and-call-macro)           ;; see-shell-output)
+(global-set-key [f9]       'kmacro-start-macro)                ;; 'ielm)  ;; open file under cursor
+(global-set-key [C-f9]     'kmacro-end-and-call-macro)         ;; see-shell-output)
 (global-set-key [S-f9]     'kmacro-end-macro)
+(global-set-key [M-f9]     '(lambda () (interactive) (recenter-top-bottom  0)))
+(global-set-key [s-f9]     '(lambda () (interactive) (recenter-top-bottom 50)))
+
 
 (global-set-key [f10]      'yafolding-toggle-element)
 (global-set-key [C-f10]    'yafolding-toggle-all)
@@ -2179,23 +2189,39 @@ org-goto
 (global-set-key [M-f10]    'yafolding-mode)
 (global-set-key [s-f10]    'yafolding-discover)
 
-; (global-set-key [M-f2]   'buffer-menu-sort-by-filename)
-(global-set-key [M-f10]    'see-shell-output)                    ;; 
 
 (global-set-key [f11]      'selective-display-level-zero)
 (global-set-key [C-f11]    'selective-display-level-incr)
 (global-set-key [S-f11]    'selective-display-level-decr)
 
-(global-set-key [f12]      'edebug-defun)                        ;; put break in defun/ form whatever - REMOVE by re-evaluating the definition
+
+(global-set-key [f12]      'eval-defun)    
+(global-set-key [C-f12]    'edebug-defun)                      ;; put break in defun/ form whatever - REMOVE by re-evaluating the definition
 (global-set-key [S-f12]    'set-debug-on)
 (global-set-key [M-f12]    'set-debug-off)
 (global-set-key [s-f12]    'insertcodePyCodeSnippet)
 
-(global-unset-key    "\C-x\C-c")                                      ;; Don't quit so easily
-(global-set-key (kbd "C-x C-c C-v")  'save-buffers-kill-emacs)        ;; But we establish a longer sequence that is harder to hit by accident:
+
+(global-unset-key    "\C-x\C-c")                               ;; Don't quit so easily
+(global-set-key (kbd "C-x C-c C-v")  'save-buffers-kill-emacs) ;; But we establish a longer sequence that is harder to hit by accident:
 
 (message "-------------- Done: Function Keys")
+;;'ielm) ;; open file under cursor ;;(global-set-key [M-f9] 'my-insert-last-sexp) ;; insert result
+;; (global-set-key [M-f2]  'buffer-menu-sort-by-filename)
+;; (global-set-key [M-f10]  'see-shell-output)                 ;; 
+;; (global-set-key [M-f7]    'show-hist)                       ;; (global-set-key [S-f7] 'buffer-menu-sort-by-filename)
+;; (global-set-key [C-f4]    '(lambda () (interactive)  (dired-sidebar-switch-to-dir (file-name-directory (buffer-file-name)))))
+;; (global-set-key [S-f4]    '(lambda () (interactive) (dired "~/projects/repos" nil)))
+;; (global-set-key [S-f3]    'org-save-code-block)
+;; dired-sidebar-switch-to-dir 
+;; (global-set-key [f4]      'neotree-toggle)
+;; (global-set-key [f4]      '(lambda () (interactive)  (dired-sidebar-cmd "~/")))
+;; (global-set-key [C-f4]    'dired-omit-mode)
+
 #+END_SRC
+
+#+RESULTS:
+: -------------- Done: Function Keys
 
 ** ace-window keys
 (defvar aw-dispatch-alist
@@ -2858,15 +2884,6 @@ for flushing messages to *Message* buffer
 ;;(defun diredGemA()            (interactive) (dired "/adb::/storage"))
 ;;----------------------------------------------------- for small keyboards without function keys
 (defun ke()                     (interactive)  (kill-emacs))                                                                                  
-(defun ds()                     (interactive)  (eshell))                                                                                      
-(defun cf3()                    (interactive)  (eshell))                                                                                      
-(defun da()                     (interactive)  (find-file "/data/data/com.termux/files/home/org/access.org"))                                 
-(defun sf3()                    (interactive)  (find-file "/data/data/com.termux/files/home/dot/dotBashrc"))                                  
-(defun sf8()                    (interactive)  (dired-omit-mode))                                                                             
-(defun db()                     (interactive)  (find-file "/data/data/com.termux/files/home/dot/dotBashrc"))                                  
-(defun dd()                     (interactive)  (find-file "/data/data/com.termux/files/home/MyDocs/aNotes/org/doAndDone.org"))                
-(defun de()                     (interactive)  (find-file "/data/data/com.termux/files/home/.emacs.d/dotEmacs.org"))                          
-(defun f3()                     (interactive)  (find-file "/data/data/com.termux/files/home/.emacs.d/dotEmacs.org"))                          
 (defun dz()                     (interactive)  (progn (ztree-dir "/data/data/com.termux/files/home/MyDocs/projects") (split-window-right 40)))
 
 
