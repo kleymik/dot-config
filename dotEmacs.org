@@ -2871,6 +2871,7 @@ for flushing messages to *Message* buffer
 #+BEGIN_SRC emacs-lisp
 (require 'ansi-color)
 
+(setq eshell-prefer-lisp-functions nil)
 (setq eshell-save-history-on-exit t)
 (setq eshell-hist-ignoredups t)
 (setq eshell-prompt-function (lambda ()
@@ -2924,7 +2925,7 @@ for flushing messages to *Message* buffer
   (setq eshell-command-aliases-list ())
   (add-to-list 'eshell-command-aliases-list (list "ll"    "ls -lF  --time-style=long-iso --color=auto --group-directories-first $*"))
   (add-to-list 'eshell-command-aliases-list (list "la"    "ls -alF --time-style=long-iso --color=auto --group-directories-first $*"))
-  (add-to-list 'eshell-command-aliases-list (list "cl"    "cd $*; ls -l"))
+  (add-to-list 'eshell-command-aliases-list (list "cv"    "cd $*; ls -l"))
 
   (add-to-list 'eshell-command-aliases-list (list "al"    "alias"))
   (add-to-list 'eshell-command-aliases-list (list "ag"    "alias | grep $*"))
@@ -2932,14 +2933,16 @@ for flushing messages to *Message* buffer
   (add-to-list 'eshell-command-aliases-list (list "forloop" "echo \"for f in *.xpm(:r) {convert \\$f.xpm \\$f.png}\" "))
 
   ; find and grep
-  (add-to-list 'eshell-command-aliases-list (list "ff"      "find-file $1"))
+  ; helm-find-file
+  (add-to-list 'eshell-command-aliases-list (list "ff"      "find-file-goto $1 $2"))
   (add-to-list 'eshell-command-aliases-list (list "ffo"     "find-file-other-window $1"))
 
   (add-to-list 'eshell-command-aliases-list (list "sfd"   "echo \"find ~/ -iname 'place*.sqlite' -printf '%TY-%Tm-%Td %TH:%TM %p %m\\n' -size +4G -exec ls -ld {} \\; \"   "))
-  (add-to-list 'eshell-command-aliases-list (list "fd"    "find $*")) ;; plain old find
-  (add-to-list 'eshell-command-aliases-list (list "fg"    "~/ubin/rgrep.py $*"))
-  (add-to-list 'eshell-command-aliases-list (list "gr"    "grep $*"))
-  (add-to-list 'eshell-command-aliases-list (list "gi"    "grep -i $*"))
+  (add-to-list 'eshell-command-aliases-list (list "fd"    "*find $*"))                                                ; plain old find
+  (add-to-list 'eshell-command-aliases-list (list "rg"    "~/ubin/,rgrep.py $*"))
+  (add-to-list 'eshell-command-aliases-list (list "gr"    "*grep $*"))
+  (add-to-list 'eshell-command-aliases-list (list "gv"    "*grep -v $*"))
+  (add-to-list 'eshell-command-aliases-list (list "gi"    "*grep -i $*"))
 
    ; git 
   (add-to-list 'eshell-command-aliases-list (list "gits"  "git status ."))
@@ -2997,9 +3000,21 @@ for flushing messages to *Message* buffer
   (eshell-printn eshell-mode-map)
 
   (eshell-colors)
+ (set-cursor-color "orange red")
  )
 )
 
+(defun find-file-goto (fPath lineNumber)
+  (interactive)
+  (message "type-of fPath %s" (type-of fPath) )
+  (message "type-of lineNumber %s" (type-of lineNumber) )
+  (find-file (replace-regexp-in-string ":" "" fPath)) ; get rid of possibly trailing colon
+  (when lineNumber 
+    (when (stringp lineNumber)
+          (setq lineNumber (string-to-number (replace-regexp-in-string ":" "" lineNumber))))
+    (goto-char (point-min))
+    (goto-line lineNumber nil))
+)
 
 (defun save-eshell-history ()
   (interactive)
@@ -3008,7 +3023,6 @@ for flushing messages to *Message* buffer
    (eshell-write-history)
    (copy-file "/home/kleyn/.emacs.d/eshell/history" es_hstFile)
    es_hstFile)
-
 
 (defun eshell-cwd ()
   " Sets the eshell directory to the current buffer  
@@ -3046,11 +3060,99 @@ for flushing messages to *Message* buffer
 
 (message "-------------- Done: Eshell Section")
 #+END_SRC
+*** eshell arithmetic
+      $ (length "hi")  --> 2
+      $ length "hi"    --> 2   # ← Works since shell parser calls Lisp
+      $ length hi      --> 2   # ← Works since shell reads as string
+      $ (+ 1 3)        --> 4
+      $ + 1 3          --> 4   # ← Works since shell reads as number
+      $ * 3 (+ 1 2)    --> 9   # ← Shows both shell and lisp parsers
+      $ ls             --> README  pi.py  pi.rb  src  tests
+      $ length *       --> 5   # Globs return a list
+      $ length *.py    --> 1
+      $ touch 'and go.py'
+      $ ls *.py        --> and go.py  pi.py
+      $ echo *.py      --> ("and go.py" "pi.py")   # ← More clear that globs are lists
 
-for f in *.xpm(:r) {convert $f.xpm $f.png}
-for f in *.png(:r) {echo $f.png $f.png}
+*** eshell redirection
+cat mylog.log >> #<buffer *scratch*>       into a buffer
+ echo foo bar baz > #'myvar                into a variable
+Eshell reimplements the following pseu
+/dev/eshell     Prints the output interactively to Eshell.
+/dev/null       Sends the output to the NULL device.
+/dev/clip       Sends the output to the clipboard.
+/dev/kill       Sends the output to the kill ring.
+*** eshell for loops
+for f in web1 web2 { scp info.php $f:/var/www/html/oscmax/catalog }
+for f in {ls -1d *} {echo $f; svn up $f}
+for f in {find . -name '*.java'} {mv $f (replace-regexp-in-string "\\.java$" ".scala" f)}
 
+# Those parens may also be curly braces. Paren for lisp, curly for subshell.
+# See how $f is used in curly brace but f is used in parens
 
+for f in db1 db2 {mysqldump -d -uuser -ppwd (conc
+for f in *.xpm(:r)   {convert $f.xpm $f.png}
+for f in *.png(:r)   {echo $f.png $f.png}
+for f in *.xpm *.jpg {convert $f $f(:s/\..*$/.png/)}
+for f in *.xpm *.jpg {convert $f $f(:r:s/$/.png/)}
+for i in (let (lst)  (dotimes (i 1000) (setq lst (append lst (list i)))) lst) {cp original.txt $i.txt}
+for i in (number-sequence 1 1000) {cp original.txt $i.txt}
+
+:u upper case
+:gs/aaa/bbb/  replace
+:X  rot-12 cipher
+:o sort - order list
+
+*** eshell variables
+$+    This variable always contains the current working directory.
+$-    This variable always contains the previous working directory (the current working directory from before the last cd command).
+$_    It refers to the last argument of the last command.
+$$    This is the result of the last command. In case of an external command, it is t or nil.
+$?    This variable contains the exit code of the last command (0 or 1 for Lisp functions, based on successful completion).
+
+$var             Expands to the value bound to var. This is the main way to use variables in command invocations.
+$"var"  $'var'   Expands to the value bound to var. This is useful to disambiguate the variable name when concatenating it with another value, such as ‘$"var"-suffix’.
+$#var            Expands to the length of the value bound to var. Raises an error if the value is not a sequence (see Sequences in The Emacs Lisp Reference Manual).
+$(lisp)          Expands to the result of evaluating the S-expression (lisp). On its own, this is identical to just (lisp), but with the $, it can be used in a string, such as ‘/some/path/$(lisp).txt’.
+${command}       Returns the output of command, which can be any valid Eshell command invocation, and may even contain expansions.
+$<command>       As with ‘${command}’, evaluates the Eshell command invocation command, but writes the output to a temporary file and returns the file name.
+$var[i]          Expands to the ith element of the value bound to var. If the value is a string, it will be split at whitespace to make it a list. Again, raises an error if the value is not a sequence.
+$var[: i]        As above, but now splitting occurs at the colon character.
+$var[: i j]      As above, but instead of returning just a string, it now returns a list of two strings. If the result is being interpolated into a larger string, this list will be flattened into one big string, with each element separated by a space.
+$var["\\\\" i]   Separate on backslash characters. Actually, the first argument – if it doesn’t have the form of a number, or a plain variable name – can be any regular expression. So to split on numbers, use ‘$var["[0-9]+" 10 20]’.
+$var[hello]      Calls assoc on var with "hello", expecting it to be an alist (see Association Lists in The Emacs Lisp Reference Manual).
+$#var[hello]     Returns the length of the cdr of the element of var whose car is equal to "hello".
+
+*** eshell variable modifiers
+ The options can be combined. For instance, 
+
+ls -l *(@U) list all symbolic links owned by your account:
+ls -l *(@^U)  list all symbolic links that you don’t own by prefixing the ^ symbol:
+
+:L 	lowercase
+:U 	uppercase
+:C 	capitalize
+:h 	dirname
+:t 	basename
+:e 	file extension
+:r 	strip file extension
+:q 	escape special characters
+:S 	split string at any whitespace character
+:S/PAT/ split string at each occurrence of /PAT/
+:E 	evaluate again
+
+Here is the list of modifiers for a list:
+:o 	sort alphabetically
+:O 	reverse sort alphabetically
+:u 	unique list (typically used after :o or :O)
+:R 	reverse the list
+:j 	join list members, separated by a space
+:j/PAT/ 	join list members, separated by PAT
+:i/PAT/ 	exclude all members not matching PAT
+:x/PAT/ 	exclude all members matching PAT
+:s/pat/match/ 	substitute PAT with MATCH
+:g/pat/match/ 	substitute PAT with MATCH for all occurrences
+*** eshell aliasing
 ;; nb use egrep (or *grep) rather than grep to avoid using emacs grep
 ;; (add-to-list 'eshell-command-aliases-list (list "utilDf"      "watch -n 1 df -m"))
 ;; find -maxdepth 1 -printf '%t %s %p\n'
@@ -3067,42 +3169,7 @@ for f in *.png(:r) {echo $f.png $f.png}
 ;; (add-to-list 'eshell-command-aliases-list (list "hs"    "(setq es_hstFile (concat \"/home/kleyn/history/commands/history_eshell_\" (format-time-string \"%Y%m%d-%H%M\" (current-time)) \".lst\")); history > $es_hstFile; cat $es_hstFile;"))
 ;; (add-to-list 'eshell-command-aliases-list (list "hs"    "(setq es_hstFile (concat \"~/history/commands/history_eshell_\" (format-time-string \"%Y%m%d-%H%M\" (current-time)) \".lst\")); history > $es_hstFile; cat $es_hstFile;"))
 ;; https://emacs.stackexchange.com/questions/27849/how-can-i-setup-eshell-to-use-ivy-for-tab-completion
-
-  ;(add-to-list 'eshell-command-aliases-list (list "h"     "history 30"))
-;; eshell-prompt-regexp "^[^:]*:: "
-;; (if (= (user-uid) 0) " :: " " :: ")
-;; (if (= (user-uid) 0) " \n:: " " \n:: ")))
-;;eshell-prompt-regexp "^::.*\n:: "
-;(setq eshell-prompt-function (lambda () (concat ":: "))
-;      eshell-prompt-regexp "^:: "
-;)
-
 ;; (add-to-list 'eshell-command-aliases-list (list "l"     "stat --printf=%y\t%6s\t%-16n\n * | cut -b -16,36-"))
-
-;(require 'helm-eshell)  ; use ivy
-;; (add-hook 'eshell-mode-hook '(lambda () (define-key eshell-mode-map (kbd "M-l")      'helm-eshell-history)))
-;; (add-hook 'eshell-mode-hook '(lambda () (define-key eshell-mode-map (kbd "C-<tab>")  (lambda () (interactive) (pcomplete-std-complete)))))
-;; (add-hook 'eshell-mode-hook '(lambda () (define-key eshell-mode-map (kbd "M-r")      'counsel-esh-history)))
-
-;;-------------------------------------------------------------------------------- eshell
-
-(emacs-pid)
-(setq eshell-prompt-regexp (concat "^20[0-9][0-9].*\n" (regexp-quote "$") ": "))
-(if (= (user-uid) 0) " \n#::" " \n$::"))))
-(setq eshell-prompt-regexp  "^\$:")
-(setq eshell-cmpl-cycle-completions nil)
-eshell-prompt-regexp (concat "^" (regexp-quote "$")
-
-(mapconcat 'identity '("a" "b" "c") ",")
-(mapconcat 'identity (reverse (butlast (reverse (list "home ""kleyn" "projects" )) 3)) "/")
-
-(add-to-list 'eshell-command-aliases-list (list "gitst"  "git rev-parse --abbrev-ref HEAD;
-                                                          git config branch.$(git rev-parse --abbrev-ref HEAD).description;
-                                                          git status -uno --ahead-behind;
-                                                          git log -n 10 --pretty=oneline --abbrev-commit --no-merges --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(bold yellow)%d%C(reset)';
-                                                          git branch -v;
-                                                          echo '';
-                                                          git stash;"))
 
 (add-to-list 'eshell-command-aliases-list (list "doBackup"
     (setq  (concat /data/data/com.termux/files/home/internalBackup/ (format-time-string \"%Y%m%d-%H%M\" (current-time)) \".lst\"))
@@ -3146,6 +3213,18 @@ eshell-command-result
 (setq foo (eshell-command-result "git rev-parse --abbrev-ref HEAD"))
 eshell-read-aliases-list
 
+*** eshell prompt
+;;(add-to-list 'eshell-command-aliases-list (list "h"     "history 30"))
+;; eshell-prompt-regexp "^[^:]*:: "
+;; (if (= (user-uid) 0) " :: " " :: ")
+;; (if (= (user-uid) 0) " \n:: " " \n:: ")))
+;;eshell-prompt-regexp "^::.*\n:: "
+;(setq eshell-prompt-function (lambda () (concat ":: "))
+;      eshell-prompt-regexp "^:: "
+;)
+
+
+
 prompt
     ;; Change the default eshell prompt
     (setq eshell-prompt-function
@@ -3167,10 +3246,36 @@ prompt
             (goto-line line))
         (tyler-eshell-view-file (pop args)))))
 
+*** eshell keymap
+;(require 'helm-eshell)  ; use ivy
+;; (add-hook 'eshell-mode-hook '(lambda () (define-key eshell-mode-map (kbd "M-l")      'helm-eshell-history)))
+;; (add-hook 'eshell-mode-hook '(lambda () (define-key eshell-mode-map (kbd "C-<tab>")  (lambda () (interactive) (pcomplete-std-complete)))))
+;; (add-hook 'eshell-mode-hook '(lambda () (define-key eshell-mode-map (kbd "M-r")      'counsel-esh-history)))
+
+;;-------------------------------------------------------------------------------- eshell
+
+(emacs-pid)
+(setq eshell-prompt-regexp (concat "^20[0-9][0-9].*\n" (regexp-quote "$") ": "))
+(if (= (user-uid) 0) " \n#::" " \n$::"))))
+(setq eshell-prompt-regexp  "^\$:")
+(setq eshell-cmpl-cycle-completions nil)
+eshell-prompt-regexp (concat "^" (regexp-quote "$")
+
+(mapconcat 'identity '("a" "b" "c") ",")
+(mapconcat 'identity (reverse (butlast (reverse (list "home ""kleyn" "projects" )) 3)) "/")
+
+(add-to-list 'eshell-command-aliases-list (list "gitst"  "git rev-parse --abbrev-ref HEAD;
+                                                          git config branch.$(git rev-parse --abbrev-ref HEAD).description;
+                                                          git status -uno --ahead-behind;
+                                                          git log -n 10 --pretty=oneline --abbrev-commit --no-merges --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(bold yellow)%d%C(reset)';
+                                                          git branch -v;
+                                                          echo '';
+                                                          git stash;"))
+
+
   (defalias 'eshell/more 'eshell/less)
 
 ** ESHELL TBD
-
 
 1.2 Code snippet (from emacswiki and other website)
 add below to your .emacs
