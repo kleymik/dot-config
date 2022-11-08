@@ -3679,9 +3679,6 @@ convenient prefix key map, for example `C-,`
     (indent-region start end))))
 
 
-(global-set-key [C-kp-add]      'text-scale-increase)
-(global-set-key [C-kp-subtract] 'text-scale-decrease)       ;; with a C-0 prefix argument.
-
 ;;---------------------------------------------------------------------- SGML XML
 ;C-c C-v        sgml-validate
 ;C-M-h          sgml-mark-current-element
@@ -3724,30 +3721,6 @@ convenient prefix key map, for example `C-,`
 ;; (global-set-key [S-M-kp-end]  'sgml-fold-element)   ;  fold everything below current element
 ;; (global-set-key [S-M-kp-next] 'sgml-unfold-element)
 
-* end bit
-;(desktop-change-dir "/home/uri03204/myDocs/config")
-
-#+BEGIN_SRC emacs-lisp
-;(dired "~/")
-;(ztree-dir "/data/data/com.termux/files/home")
-(put 'narrow-to-region 'disabled nil)
-;;(server-start)
-(setq password-cache-expiry nil)
-(message "dotEmacs.org done")
-;(switch-to-buffer "*Messages*")
-#+END_SRC
-
-;custom-set-variables and custom set faces in ~/.emacs.d/init.el
-
-#+STARTUP: fold
-
-
-
-
-
-
-
-
-
-
+(global-set-key [C-kp-add]      'text-scale-increase)
+(global-set-key [C-kp-subtract] 'text-scale-decrease)       ;; with a C-0 prefix argument.
 
