@@ -1,27 +1,32 @@
 
+* see also
+https://www.masteringemacs.org/article/tree-sitter-complications-of-parsing-languages
+
 * Emacs Treepad - to navigate tree-structured buffers
 SHIFT => don't collapse
-|----+----------+-------------------------------------+-------+-------+-----------------------------------------+-------------------------------------+----------------------------------------------+----------------------------+----------------+------------------------+-------|
-|  # | KEY      | DESCRIPTION                         | ABBRV | SoFar | org-mode with babel                     | dired                               | python                                       | elisp                      | xml/yafoldable | ibuffer                | table |
-|----+----------+-------------------------------------+-------+-------+-----------------------------------------+-------------------------------------+----------------------------------------------+----------------------------+----------------+------------------------+-------|
-|  5 | kp- 4    | opto grandparent; collapse children | up2   | JJXJX | J outline-up-heading X 2 : tbd collapse | J dired-up-to-parent X 2            |                                              | J backward-up-list X 2     |                |                        | home  |
-|  6 | kp- 5    | upto parent;      collapse children | up1   | JJXJX | j outline-up-heading     : tbd collapse | J dired-up-to-parent                | python-nav-backward-up-list/-beginning-block | J backward-up-list         |                |                        | left  |
-|----+----------+-------------------------------------+-------+-------+-----------------------------------------+-------------------------------------+----------------------------------------------+----------------------------+----------------+------------------------+-------|
-|  3 | kp- *    | move to previous sibling X7         | ps6   | JJXJX | J org-backward-heading-same-level x7    | J my-dired-subtree-prev-sibling  x7 |                                              | J backward-sexp x 6        |                |                        |       |
-|  2 | kp- 9    | move to previous sibling            | ps    | JJXJX | J org-backward-heading-same-level       | J dired-subtree-previous-sibling    | python-nav-backward-[block/list/..]          | J backward-sexp            |                | J                      | up    |
-|    | kp- 6    | toggle children                     | tc    | JJJJX | J org-cycle                             | J my-dired-subtree-toggle           | J yafolding-toggle-element                   | J yafolding-toggle-element |                | J toggle ibuffer group | right |
-|  8 | kp- 3    | move to next     sibling            | ns    | JJXJX | J org-forward-heading-same-level        | J dired-subtree-next-sibling        | python-nav-forward-[block/list/..]           | J forward-sexp             |                | J                      | down  |
-|  9 | kp- .    | move to next     sibling X7         | ns6   | JJXJX | J org-forward-heading-same-level  x7    | J my-dired-subtree-next-sibling  x7 |                                              | J forward-sexp X 6         |                |                        |       |
-|----+----------+-------------------------------------+-------+-------+-----------------------------------------+-------------------------------------+----------------------------------------------+----------------------------+----------------+------------------------+-------|
-|  1 | kp- +    | show children; go to first child    | fc    | JJXXX | J my-org-dft                            | J my-dired-dft                      |                                              | J down-list                |                |                        |       |
-| 10 | kp- ENTR | show children; go to last child     | lc    | XXXXX | (org-show-children) (next-line)         |                                     |                                              |                            |                |                        | end   |
-|----+----------+-------------------------------------+-------+-------+-----------------------------------------+-------------------------------------+----------------------------------------------+----------------------------+----------------+------------------------+-------|
-|  4 | kp- 8    | goto first uncle                    | fu    |       |                                         |                                     |                                              |                            |                |                        |       |
-|  7 | kp- 2    | goto last uncle                     | lu    |       |                                         |                                     |                                              |                            |                |                        |       |
-|----+----------+-------------------------------------+-------+-------+-----------------------------------------+-------------------------------------+----------------------------------------------+----------------------------+----------------+------------------------+-------|
-|    | kp- -    | search breadth first                |       |       |                                         |                                     |                                              |                            |                |                        |       |
-|----+----------+-------------------------------------+-------+-------+-----------------------------------------+-------------------------------------+----------------------------------------------+----------------------------+----------------+------------------------+-------|
+|----+--------+-------------------------------------+-------+-------+-----------------------------------------+-------------------------------------+----------------------------------------------+----------------------------+----------------+------------------------+----------+-------|
+|  # | KEY    | DESCRIPTION                         | ABBRV | SoFar | org-mode/babel                          | dired                               | python                                       | elisp                      | xml/yafoldable | ibuffer                | TreeCalc | table |
+|----+--------+-------------------------------------+-------+-------+-----------------------------------------+-------------------------------------+----------------------------------------------+----------------------------+----------------+------------------------+----------+-------|
+|  5 | kp-4   | upto grandparent; collapse children | up2   | JJXJX | J outline-up-heading X 2 : tbd collapse | J dired-up-to-parent X 2            |                                              | J backward-up-list X 2     |                |                        |          | home  |
+|  6 | kp-5   | upto parent;      collapse children | up1   | JJXJX | j outline-up-heading     : tbd collapse | J dired-up-to-parent                | python-nav-backward-up-list/-beginning-block | J backward-up-list         |                |                        |          | left  |
+|----+--------+-------------------------------------+-------+-------+-----------------------------------------+-------------------------------------+----------------------------------------------+----------------------------+----------------+------------------------+----------+-------|
+|  3 | kp-*   | move to previous sibling X7         | ps6   | JJXJX | J org-backward-heading-same-level x7    | J my-dired-subtree-prev-sibling  x7 |                                              | J backward-sexp x 6        |                |                        |          |       |
+|  2 | kp-9   | move to previous sibling            | ps    | JJXJX | J org-backward-heading-same-level       | J dired-subtree-previous-sibling    | python-nav-backward-[block/list/..]          | J backward-sexp            |                | J                      |          | up    |
+|    | kp-6   | toggle children                     | tc    | JJJJX | J org-cycle                             | J my-dired-subtree-toggle           | J yafolding-toggle-element                   | J yafolding-toggle-element |                | J toggle ibuffer group |          | right |
+|  8 | kp-3   | move to next     sibling            | ns    | JJXJX | J org-forward-heading-same-level        | J dired-subtree-next-sibling        | python-nav-forward-[block/list/..]           | J forward-sexp             |                | J                      |          | down  |
+|  9 | kp-.   | move to next     sibling X7         | ns6   | JJXJX | J org-forward-heading-same-level  x7    | J my-dired-subtree-next-sibling  x7 |                                              | J forward-sexp X 6         |                |                        |          |       |
+|----+--------+-------------------------------------+-------+-------+-----------------------------------------+-------------------------------------+----------------------------------------------+----------------------------+----------------+------------------------+----------+-------|
+|  1 | kp-+   | show children; go to first child    | fc    | JJXXX | J my-org-dft                            | J my-dired-dft                      |                                              | J down-list                |                |                        |          |       |
+| 10 | kp-NTR | show children; go to last child     | lc    | XXXXX | (org-show-children) (next-line)         |                                     |                                              |                            |                |                        |          | end   |
+|----+--------+-------------------------------------+-------+-------+-----------------------------------------+-------------------------------------+----------------------------------------------+----------------------------+----------------+------------------------+----------+-------|
+|  4 | kp-8   | goto first uncle                    | fu    |       |                                         |                                     |                                              |                            |                |                        |          |       |
+|  7 | kp-2   | goto last uncle                     | lu    |       |                                         |                                     |                                              |                            |                |                        |          |       |
+|----+--------+-------------------------------------+-------+-------+-----------------------------------------+-------------------------------------+----------------------------------------------+----------------------------+----------------+------------------------+----------+-------|
+|    | kp--   | search breadth first                |       |       |                                         |                                     |                                              |                            |                |                        |          |       |
+|----+--------+-------------------------------------+-------+-------+-----------------------------------------+-------------------------------------+----------------------------------------------+----------------------------+----------------+------------------------+----------+-------|
 +  json, xml,  treacl
+
+
 
 * elisp - movement functions
 emacs-lisp-mode-map
@@ -34,57 +39,74 @@ down-list        【Ctrl+Alt+↓】 → Move to first child.      (move into the
 
 
 #+BEGIN_SRC elisp   :REM emacs-lisp-mode-map
-(current-local-map) =
+  (current-local-map) =
 
-(keymap (menu-bar keymap (emacs-lisp "Emacs-Lisp" keymap (indent-line menu-item "Indent Line" lisp-indent-line)
-                                     (indent-region menu-item "Indent Region" indent-region                                          :help "Indent each nonblank line in the region"      :enable mark-active)
-                                     (comment-region menu-item "Comment Out Region" comment-region                                   :help "Comment or uncomment each line in the region" :enable mark-active)
-                                     (separator-format "--")
-                                     (eval-sexp menu-item "Evaluate Last S-expression" eval-last-sexp                                :help "Evaluate sexp before point; print value in echo area")
-                                     (eval-region menu-item "Evaluate Region" eval-region                                            :help "Execute the region as Lisp code" :enable mark-active)
-                                     (eval-buffer menu-item "Evaluate Buffer" eval-buffer                                            :help "Execute the current buffer as Lisp code")
-                                     (ielm menu-item "Interactive Expression Evaluation" ielm                                        :help "Interactively evaluate Emacs Lisp expressions")
-                                     (separator-eval "--")
-                                     (byte-compile menu-item "Byte-compile This File" emacs-lisp-byte-compile                        :help "Byte compile the file containing the current buffer")
-                                     (emacs-byte-compile-and-load menu-item "Byte-compile and Load" emacs-lisp-byte-compile-and-load :help "Byte-compile the current file (if it has changed), then load compiled code")
-                                     (byte-recompile menu-item "Byte-recompile Directory..." byte-recompile-directory                :help "Recompile every `.el' file in DIRECTORY that needs recompilation")
-                                     (disas menu-item "Disassemble Byte Compiled Object..." disassemble                              :help "Print disassembled code for OBJECT in a buffer")
-                                     (separator-byte "--")
-                                     (edebug-defun menu-item "Instrument Function for Debugging" edebug-defun                        :help "Evaluate the top level form point is in, stepping through with Edebug" :keys "C-u C-M-x")
-                                     (lint "Linting" keymap (lint-d menu-item "Lint Defun" elint-defun                               :help "Lint the function at point")
-                                           (lint-b menu-item "Lint Buffer" elint-current-buffer   :help "Lint the current buffer")
-                                           (lint-f menu-item "Lint File..." elint-file            :help "Lint a file")
-                                           (lint-di menu-item "Lint Directory..." elint-directory :help "Lint a directory")
-                                           )
-                                     (profiling "Profiling" keymap
-                                                (prof-natprof-start menu-item "Start Native Profiler..." profiler-start                :help "Start recording profiling information")
-                                                (prof-natprof-report menu-item "Show Profiler Report" profiler-report                  :help "Show the current profiler report"     :enable (and (featurep (quote profiler)) (profiler-running-p)))
-                                                (prof-natprof-stop menu-item "Stop Native Profiler" profiler-stop                      :help "Stop recording profiling information" :enable (and (featurep (quote profiler)) (profiler-running-p)))
-                                                (sep-natprof "--")
-                                                (prof-func menu-item "Instrument Function..." elp-instrument-function                  :help "Instrument a function for profiling")
-                                                (prof-pack menu-item "Instrument Package..." elp-instrument-package                    :help "Instrument for profiling all function that start with a prefix")
-                                                (prof-res menu-item "Show Profiling Results" elp-results                               :help "Display current profiling results")
-                                                (prof-resfunc menu-item "Reset Counters for Function..." elp-reset-function            :help "Reset the profiling information for a function")
-                                                (prof-resall menu-item "Reset Counters for All Functions" elp-reset-all                :help "Reset the profiling information for all functions being profiled")
-                                                (sep-rem "--")
-                                                (prof-restfunc menu-item "Remove Instrumentation for Function..." elp-restore-function :help "Restore an instrumented function to its original definition")
-                                                (prof-restall menu-item "Remove Instrumentation for All Functions" elp-restore-all     :help "Restore the original definitions of all functions being profiled")
+  (keymap (menu-bar keymap (emacs-lisp "Emacs-Lisp" keymap (indent-line menu-item "Indent Line" lisp-indent-line)
+                                       (indent-region menu-item "Indent Region" indent-region                                          :help "Indent each nonblank line in the region"      :enable mark-active)
+                                       (comment-region menu-item "Comment Out Region" comment-region                                   :help "Comment or uncomment each line in the region" :enable mark-active)
+                                       (separator-format "--")
+                                       (eval-sexp menu-item "Evaluate Last S-expression" eval-last-sexp                                :help "Evaluate sexp before point; print value in echo area")
+                                       (eval-region menu-item "Evaluate Region" eval-region                                            :help "Execute the region as Lisp code" :enable mark-active)
+                                       (eval-buffer menu-item "Evaluate Buffer" eval-buffer                                            :help "Execute the current buffer as Lisp code")
+                                       (ielm menu-item "Interactive Expression Evaluation" ielm                                        :help "Interactively evaluate Emacs Lisp expressions")
+                                       (separator-eval "--")
+                                       (byte-compile menu-item "Byte-compile This File" emacs-lisp-byte-compile                        :help "Byte compile the file containing the current buffer")
+                                       (emacs-byte-compile-and-load menu-item "Byte-compile and Load" emacs-lisp-byte-compile-and-load :help "Byte-compile the current file (if it has changed), then load compiled code")
+                                       (byte-recompile menu-item "Byte-recompile Directory..." byte-recompile-directory                :help "Recompile every `.el' file in DIRECTORY that needs recompilation")
+                                       (disas menu-item "Disassemble Byte Compiled Object..." disassemble                              :help "Print disassembled code for OBJECT in a buffer")
+                                       (separator-byte "--")
+                                       (edebug-defun menu-item "Instrument Function for Debugging" edebug-defun                        :help "Evaluate the top level form point is in, stepping through with Edebug" :keys "C-u C-M-x")
+                                       (lint "Linting" keymap (lint-d menu-item "Lint Defun" elint-defun                               :help "Lint the function at point")
+                                             (lint-b menu-item "Lint Buffer" elint-current-buffer   :help "Lint the current buffer")
+                                             (lint-f menu-item "Lint File..." elint-file            :help "Lint a file")
+                                             (lint-di menu-item "Lint Directory..." elint-directory :help "Lint a directory")
+                                             )
+                                       (profiling "Profiling" keymap
+                                                  (prof-natprof-start menu-item "Start Native Profiler..." profiler-start                :help "Start recording profiling information")
+                                                  (prof-natprof-report menu-item "Show Profiler Report" profiler-report                  :help "Show the current profiler report"     :enable (and (featurep (quote profiler)) (profiler-running-p)))
+                                                  (prof-natprof-stop menu-item "Stop Native Profiler" profiler-stop                      :help "Stop recording profiling information" :enable (and (featurep (quote profiler)) (profiler-running-p)))
+                                                  (sep-natprof "--")
+                                                  (prof-func menu-item "Instrument Function..." elp-instrument-function                  :help "Instrument a function for profiling")
+                                                  (prof-pack menu-item "Instrument Package..." elp-instrument-package                    :help "Instrument for profiling all function that start with a prefix")
+                                                  (prof-res menu-item "Show Profiling Results" elp-results                               :help "Display current profiling results")
+                                                  (prof-resfunc menu-item "Reset Counters for Function..." elp-reset-function            :help "Reset the profiling information for a function")
+                                                  (prof-resall menu-item "Reset Counters for All Functions" elp-reset-all                :help "Reset the profiling information for all functions being profiled")
+                                                  (sep-rem "--")
+                                                  (prof-restfunc menu-item "Remove Instrumentation for Function..." elp-restore-function :help "Restore an instrumented function to its original definition")
+                                                  (prof-restall menu-item "Remove Instrumentation for All Functions" elp-restore-all     :help "Restore the original definitions of all functions being profiled")
+                                                  )
+                                       (tracing "Tracing" keymap
+                                                (tr-f menu-item "Trace Function..." trace-function                    :help "Trace the function given as an argument")
+                                                (tr-q menu-item "Trace Function Quietly..." trace-function-background :help "Trace the function with trace output going quietly to a buffer")
+                                                (tr-sep "--")
+                                                (tr-uf menu-item "Untrace Function..." untrace-function               :help "Untrace function, and possibly activate all remaining advice")
+                                                (tr-a menu-item "Untrace All" untrace-all                             :help "Untrace all currently traced functions")
                                                 )
-                                     (tracing "Tracing" keymap
-                                              (tr-f menu-item "Trace Function..." trace-function                    :help "Trace the function given as an argument")
-                                              (tr-q menu-item "Trace Function Quietly..." trace-function-background :help "Trace the function with trace output going quietly to a buffer")
-                                              (tr-sep "--")
-                                              (tr-uf menu-item "Untrace Function..." untrace-function               :help "Untrace function, and possibly activate all remaining advice")
-                                              (tr-a menu-item "Untrace All" untrace-all                             :help "Untrace all currently traced functions")
-                                              )
-                                     (re-builder menu-item "Construct Regexp" re-builder :help "Construct a regexp interactively")
-                                     (checkdoc menu-item "Check Documentation Strings" checkdoc :help "Check documentation strings for style requirements")
-                                     (eldoc menu-item "Auto-Display Documentation Strings" eldoc-mode :button (:toggle bound-and-true-p eldoc-mode) :help "Display the documentation string for the item under cursor")
-                                     "Emacs-Lisp"))
-        (27 keymap (17 . indent-pp-sexp) (24 . eval-defun) (9 . completion-at-point)) "Emacs-Lisp" keymap (127 . backward-delete-char-untabify) (27 keymap (17 . indent-sexp)) keymap (27 keymap (17 . prog-indent-sexp)))
+                                       (re-builder menu-item "Construct Regexp" re-builder :help "Construct a regexp interactively")
+                                       (checkdoc menu-item "Check Documentation Strings" checkdoc :help "Check documentation strings for style requirements")
+                                       (eldoc menu-item "Auto-Display Documentation Strings" eldoc-mode :button (:toggle bound-and-true-p eldoc-mode) :help "Display the documentation string for the item under cursor")
+                                       "Emacs-Lisp"))
+          (27 keymap (17 . indent-pp-sexp) (24 . eval-defun) (9 . completion-at-point)) "Emacs-Lisp" keymap (127 . backward-delete-char-untabify) (27 keymap (17 . indent-sexp)) keymap (27 keymap (17 . prog-indent-sexp)))
 
 #+END_SRC
 
+* latex table
+#+begin_latex
+\usepackage{multirow}
+\begin{center}
+\begin{tabular}{||c c c c||} 
+\hline
+NumLock & / & \ast & - \\ [0.5ex] 
+\hline
+7 & 8 & 9 & \multirow{2}{*}{+} \\ 
+4 & 5 & 6 \\
+\hline
+1 & 2 & 3 & \multirow{2}{*}{Enter} \\
+\multicolumn{2}{}{0} & .  \\
+\hline
+\end{tabular}
+\end{center}
+#+end_latex
 * org api stuff
 -#+STARTUP: indent
 -#+STARTUP: noindent
@@ -584,7 +606,6 @@ Show next/prev heading tidily
 
 #+end_src
 
-
 * python mode map
   
 #+begin_src emacs-lisp
@@ -670,3 +691,33 @@ Show next/prev heading tidily
         map))
 
 #+end_src
+
+* org test section
+** section 1
+*** subsection A
+textA
+*** subsection B
+textB
+tesxtB
+** section 2
+intro text
+#+begin_src python
+# comment
+a = 1 + 1
+print(a)
+#+end_src
+
+#+RESULTS:
+: None
+
+** section 3
+intro text
+*** section C
+more text
+
+a table 
+| aaaa | bbbb | cccc |
+|    1 |    2 |    3 |
+|------+------+------|
+|    9 |    8 |    7 |
+|------+------+------|
