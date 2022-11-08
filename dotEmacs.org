@@ -4,8 +4,6 @@ invoked by ~/.emacs.d/init.el
  (package-initialize)
  (org-babel-load-file "~/.emacs.d/dotEmacs.org)
 
-comments: *one* ";"
-deafult theme: tango-dark
 
 * Packages
 #+BEGIN_SRC emacs-lisp
@@ -42,10 +40,6 @@ deafult theme: tango-dark
 ;(require 'neotree)
 ;(require 'dired-lis)
 ;(require 'dired-k)
-; (use-package dired-sidebar
-;   :bind (("C-x C-n" . dired-sidebar-toggle-sidebar))
-;   :ensure nil
-;   :commands (dired-sidebar-toggle-sidebar))
 ; (require 'all-the-icons-dired-mode)
 ; (load "all-the-icons-dired.el")
 ; (add-hook 'dired-mode-hook 'all-the-icons-dired-mode)
@@ -660,7 +654,6 @@ deafult theme: tango-dark
 #+begin_src emacs-lisp
 (message "-------------- Start: Settings")
 (setq calendar-week-start-day 1) ; set....mark to get count of days
-(desktop-save-mode 1)  ; desktop-revert desktop-change-dir
 
 (delete-selection-mode 0) ; don't delete selection with next char
 (fset 'yes-or-no-p 'y-or-n-p)
@@ -726,15 +719,17 @@ deafult theme: tango-dark
 ;; (xclip-mode 1) for emacs in terminal , export kill-yank
 
 ;; ---------------------------------------------- Save Session as Desktop
+; use desktop-read to restore kill the lock file
 ;;  use desktop-change-dir to /home/uri03204/.emacs.d/desktop to get it back
 ;;    say "no" to save-desktop?
 ;;    say "yes" to steal from PID?
 ;; (desktop-save-mode 1)  ; desktop-revert desktop-change-dir
 ;; (desktop-change-dir "/home/uri03204/myDocs/config")
-(setq desktop-path '("/home/kleyn/config/desktop"))
-;; (setq desktop-auto-save-timeout 300)
+;(desktop-save-mode 1)  ; desktop-revert desktop-change-dir
+;(setq desktop-path '("/home/kleyn/config/desktop"))
 
 ;; ----------------------------------------------- Backup location
+
 ;;  /data/data/com.termux/files/home/storage/external/backups
 (if (string-match "termux" (getenv "SHELL"))
       (progn ; gem
@@ -745,6 +740,7 @@ deafult theme: tango-dark
        (setq auto-save-file-name-transforms  `((".*" ,   "/home/kleyn/history/emacsBackups" t)))))
 
 (message (concat "-------------- Done: backup-directory-alist" (format "%s" backup-directory-alist)))
+
 
 (global-subword-mode 1)
 ;; from 'better-defaults.el'
@@ -767,11 +763,6 @@ deafult theme: tango-dark
 ; (add-to-list 'ibuffer-never-show-regexps "^\\*")
 ; Ibuffer can show you the differences between an unsaved buffer and the file on disk with `=’.
 ; '(lambda ()        (ibuffer-switch-to-saved-filter-groups "home")))
-
-;(use-package ibuffer-sidebar
-;  :bind (("C-x C-b" . ibuffer-sidebar-toggle-sidebar))
-;  :ensure nil
-;  :commands (ibuffer-sidebar-toggle-sidebar))
 
 (setq ibuffer-saved-filter-groups
   '(("home"
@@ -1422,7 +1413,8 @@ M-x clone-indirect-buffer RET
 ;;Also highly recommended is RefTeX, a cross-reference, bibliography, glossary, and index manager initially written by the creator of Org Mode, Carsten Dominik. Add the following line to .emacs:
 ;;(add-hook 'LaTeX-mode-hook 'turn-on-reftex)
 
-** Dired/Sidebar/filetree/neotree Mode
+** Dired/Sidebar/filetree/neotree Mode/multi window
+
 
 (defconst dired-audio-files-extensions  '("mp3" "MP3" "ogg" "OGG" "flac" "FLAC" "wav" "WAV")  
           "Dired Audio files extensions")
@@ -1431,8 +1423,17 @@ M-x clone-indirect-buffer RET
           "Dired Video files extensions")
 (dired-rainbow-define video "#B3CCFF" dired-video-files-extensions)
 
-#+BEGIN_SRC emacs-lisp
+; (use-package dired-sidebar
+;   :bind (("C-x C-n" . dired-sidebar-toggle-sidebar))
+;   :ensure nil
+;   :commands (dired-sidebar-toggle-sidebar))
 
+;(use-package ibuffer-sidebar
+;  :bind (("C-x C-b" . ibuffer-sidebar-toggle-sidebar))
+;  :ensure nil
+;  :commands (ibuffer-sidebar-toggle-sidebar))
+
+#+begin_src emacs-lisp
 (defconst dired-pickle-extensions  '("pk")  "Dired pickle file extensions")
 (dired-rainbow-define audio "#329EE8" dired-pickle-extensions)
 
@@ -1605,7 +1606,7 @@ M-x clone-indirect-buffer RET
           (switch-to-buffer filebuffer)                 ; simply switch
         (view-file file))                               ; ... view it
       (other-window -1)
-      (get-file-buffer file)))                         ; give the attention back to the dired buffer
+      (get-file-buffer file)))                          ; give the attention back to the dired buffer
    )
 
 ;; ensure "." and ".." are skipped
@@ -1643,30 +1644,13 @@ M-x clone-indirect-buffer RET
 (make-variable-buffer-local 'dired-subtree-last-previewed-buffer)
 
 
-;;--------------------------------- sidebar
-(defun sidebar-toggle ()  ; tbd install ibuffer sidebar  ; not longr used?
-  "Toggle both `dired-sidebar' and `ibuffer-sidebar'."
-  (interactive)
-  (dired-sidebar-toggle-sidebar)
-  (ibuffer-sidebar-toggle-sidebar))
-
-(defun dired-sidebar-cmd (dirname)  ;; TBD opne in *current* window?
-  (interactive "D")
-  (let ((dired-buffer (dired-sidebar-get-or-create-buffer dirname)))
-    (dired-sidebar-show-sidebar dired-buffer)
-    (pop-to-buffer dired-buffer)
-    (setq window-size-fixed nil))
-)
-; (dired-sidebar-toggle dirname)
-
-
 ;;--------------------------------- Tramp
 ;;(setq tramp-default-method "ssh")
 (setq tramp-verbose 10)
 ;; /adb::/path/to/file.
 
 (message "-------------- Done: Dired Section")
-#+END_SRC
+#+end_src
 
 *** Dired/subtree funs
 
@@ -1973,7 +1957,7 @@ M-x clone-indirect-buffer RET
  M-s h w                     ;; hi-lock-write-interactive-patterns Inserts a list of Hi-Lock patterns into the buffer
  RET                         ;; newline
  w                           ;; self-insert-command
- command C-x z, then z again ;; repear last
+ command C-x z, then z again ;; repeat last
  complex command C-x ESC ESC ;; repeat last
 
 ** Mousing
@@ -2018,7 +2002,7 @@ M-x clone-indirect-buffer RET
 (global-set-key (kbd "C-c >")   'selective-display-level-incr)
 
 ; C-s
-(global-set-key (kbd "C-s-y")   'overwrite-yank)
+;(global-set-key (kbd "C-s y")   'overwrite-yank)
 
 ; C-x
 ; qwerty 0th row
@@ -2112,7 +2096,6 @@ org-goto
  (if (= 1 (length (window-list)))
      (progn  (split-window-horizontally -60)
              (split-window-vertically -30) ; lower window gets 40 lines
-
 	    ;(other-window 2)
 	    ;(split-window-horizontally)
 	    )
@@ -3256,6 +3239,7 @@ Type ec <command> from eshll prompt will open another buffer with command output
 eshell-parse-command 'ls -l'
 
 * Notes
+comments: *one* ";"
 ** Commands Quick Ref
 
 (dired  "/ssh:192.168.1.124#8022:/data/data/com.termux/files/home")                                            ; using  port
@@ -3298,6 +3282,7 @@ vc-ediff
 (defalias 'vc-ediff-frame (kbd "C-x 5 2 M-x vc-ediff RET y"))
 
 ** Regexp
+
 -------------------------------------------------------------- SAMPLE REPLACE REGEXP
 (replace-regexp "[[:alpha:]\.]+=" "" nil (region-beginning) (region-end))
 replace unprintable ""
