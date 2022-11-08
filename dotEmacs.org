@@ -1795,6 +1795,20 @@ M-x clone-indirect-buffer RET
  (define-key dired-mode-map (kbd "C-n")       'dired-next-line)
  (define-key dired-mode-map (kbd "C-p")       'dired-previous-line)
 
+#+BEGIN_SRC emacs-lisp
+(defun my-magit-mode-hook ()
+  "Custom `magit-mode' behaviours."
+  ;(setq-default x-stretch-cursor nil)
+  ;(global-hl-line-mode 0) ;; doesn't unod on exit
+  ;(set-cursor-color "#449966")
+  ;(global-hl-line-mode 1)
+ )
+(add-hook 'magit-mode-hook 'my-magit-mode-hook)
+#+end_src
+ window-selection-change-functions
+; (remove-hook 'magit-mode-hook 'my-magit-mode-hook)
+; (setq magit-mode-hook nil)
+
 ** Markup Languages Modes
 #+BEGIN_SRC emacs-lisp
  ;;------------------------------------------------------------------------------ XML
