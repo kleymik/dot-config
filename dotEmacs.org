@@ -1,5 +1,6 @@
   *Emacs Initialisation*
 
+
 invoked by ~/.emacs.d/init.el
  (package-initialize)
  (org-babel-load-file "~/.emacs.d/dotEmacs.org)
@@ -454,6 +455,10 @@ invoked by ~/.emacs.d/init.el
 ; (align-regexp beg end (concat "\\(\\s-*\\)" pat) 1 1 nil)
 
 ;;-------------------------------------------------------------------- Open With
+
+;; Define external image viewer/editor
+(setq image-dired-external-viewer "/usr/bin/xviewer")
+
 (defun ergoemacs-open-in-external-app ()
   "Open the current file or dired marked files in external app."
   (interactive)
@@ -482,6 +487,7 @@ invoked by ~/.emacs.d/init.el
              (message (concat "cygstart.exe " fPath))
              (shell-command (concat "cygstart.exe " fPath)))))))
 )
+
 
 (defun open-url-file (filePath)
   "search contents of a .url file at filePath, and open it in a browser."
@@ -1152,6 +1158,8 @@ M-x clone-indirect-buffer RET
 (setq org-confirm-babel-evaluate nil)    ;; no-confirm
 (with-eval-after-load 'org (add-hook 'org-babel-after-execute-hook 'org-redisplay-inline-images))
 (defun org-export-get-reference (a b) nil)
+(custom-theme-set-faces 'user `(org-level-2 ((t (:foreground "yellow")))))
+(font-lock-add-keywords 'org-mode '(("\\(:REM .+$\\)" 1 font-lock-preprocessor-face prepend)) 'append)   ; Highlight REMark in babel segment +begin_src header
 
 (setq org-default-notes-file "~/myDocs/logbook/notes.org")
 (setq org-cycle-include-plain-lists t)
