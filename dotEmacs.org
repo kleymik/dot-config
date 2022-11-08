@@ -548,7 +548,7 @@ invoked by ~/.emacs.d/init.el
 #+end_src
 ** Eval Elisp
 #+begin_src emacs-lisp
-;(load-library "grex-calc")
+(load-library "grex-calc")
 
 ; ------------------------------------------------------------------- Eval Elisp
 (defun my-eval-defun ()
@@ -617,6 +617,7 @@ invoked by ~/.emacs.d/init.el
 #+end_src
 
 * Settings
+default theme: tango-dark or solarized
 ** Highlighting/Cursor Visibility
 ; ------------------------------------- highlighting
 (require 'highlight-sexp)  - fails
@@ -729,6 +730,17 @@ invoked by ~/.emacs.d/init.el
 ;(desktop-save-mode 1)  ; desktop-revert desktop-change-dir
 ;(setq desktop-path '("/home/kleyn/config/desktop"))
 
+;; Automatically save and restore sessions
+(setq desktop-dirname             "~/config/desktop/"
+      desktop-base-file-name      "emacs.desktop"
+      desktop-base-lock-name      "lock"
+      desktop-path                (list desktop-dirname)
+      desktop-save                t
+      desktop-files-not-to-save   "^$" ;reload tramp paths
+      desktop-load-locked-desktop t
+      desktop-auto-save-timeout   300
+      desktop-restore-frames      nil)
+(desktop-save-mode 1)
 ;; ----------------------------------------------- Backup location
 
 ;;  /data/data/com.termux/files/home/storage/external/backups
@@ -1046,6 +1058,15 @@ M-x clone-indirect-buffer RET
 ;; (newline-and-indent)
 ;; (end-of-line)
 ;; (open-line)
+
+;; this location is "~/.pudb-bp" in older versions of pudb
+(setq pudb-bp-file (expand-file-name "~/.config/pudb/saved-breakpoints-3.9"))
+(defun pudb-add-breakpoint ()
+  (interactive)
+  (append-to-file
+    (concat "b " (file-truename buffer-file-name) ":" (nth 1 (split-string (what-line))) "\n") ; - needs non-symlinked path of source file
+    nil pudb-bp-file))
+;(define-key py-mode-map (kbd "C-c C-t") 'pudb-add-breakpoint)
 
 (message "-------------- Done: Python Mode Section")
 #+END_SRC
@@ -1437,7 +1458,6 @@ M-x clone-indirect-buffer RET
 #+begin_src emacs-lisp
 (defconst dired-pickle-extensions  '("pk")  "Dired pickle file extensions")
 (dired-rainbow-define audio "#329EE8" dired-pickle-extensions)
-
 ;;----------------------- neotree
 (setq neo-smart-open nil)
 (setq neo-autorefresh nil)
@@ -1768,7 +1788,7 @@ M-x clone-indirect-buffer RET
  (define-key dired-mode-map (kbd "C-p")       'dired-previous-line)
 
 ** Markup Languages Modes
- #+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp
  ;;------------------------------------------------------------------------------ XML
  ;;{{{ XML
 
@@ -1873,7 +1893,7 @@ M-x clone-indirect-buffer RET
  ;; (require 'cl)
  ;;
  (message "-------------- Done: Markup Languages Section")
- #+END_SRC
+#+END_SRC
 
  ;-------------------------------------------------------------------------------- Ace jump
  ;;
@@ -2777,10 +2797,13 @@ for flushing messages to *Message* buffer
 
 #+END_SRC
 * Debugging
-#+BEGIN_SRC
+#+begin_src emacs-lisp
 (defun set-debug-on()   (interactive) (progn (setq debug-on-error t)    (message "emacs debug on")))
 (defun set-debug-off()  (interactive) (progn (setq debug-on-error nil)  (message "emacs debug off")))
-#+END_SRC
+#+end_src
+
+#+RESULTS:
+: set-debug-off
 
 ;;-------------------------------------------------------------------- DEBUG
 ;;Go to where your function is defined and type M-x edebug-defun,
