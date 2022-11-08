@@ -43,7 +43,10 @@ export VIRTUAL_ENV_DISABLE_PROMPT=1
 export PS1="\e[0;36m[ \h:\u:\$\$ ]:[ \$(parse_pyvenv) ]:[ \t ]:[ \w ]:\e[m\n>"
 
 # ----------------------------------------------------------------------------- sleep and wake
-alias sleepMaxwell='sync && sleep 10 && systemctl suspend -i'
+alias sleepMaxwell='sync && sleep 15 && systemctl suspend -i & xset -display :0.0 dpms force off'
+#alias sleepMaxwell='sync && sleep 15 && systemctl suspend -i & xset -display :0.0 dpms force off'
+#alias sleepMaxwell='sync && sleep 10 && systemctl suspend -i'
+#sleep 1 
 alias wakeMaxwell='pkill pavucontrol-qt ; pulseaudio -k ; sleep 40 ; pavucontrol-qt &'
 
 # ALIAS ----------------------------------------------------------------------- alias
@@ -227,13 +230,19 @@ alias libreOffice='/usr/lib/libreoffice/program/soffice.bin &'
 #export LD_RUN_PATH=/usr/local/lib
 
 # ----------------------------------------------------------------------------- emacs
-alias emnw='emacs26 -nw -fg black  -bg white1'
-alias ew='emacsclient -n'
+export ALTERNATE_EDITOR=""
+export EDITOR="emacsclient27 -t"                     # $EDITOR opens in terminal
+export VISUAL="emacsclient27 -c -s emcsSrvr"         # $VISUAL opens in GUI mode
+
+alias emacsServer='emacs27 --daemon=emcsSrvr -l ~/.emacs.d/init.el'
+alias emacsClient='emacsclient27 -c -s emcsSrvr &'
+
+#alias emnw='emacs26 -nw -fg black  -bg white1'
+#alias ew='emacsclient -n'
 #function emd () { emacsclient -n --eval "(ediff-files \"$1\" \"$2\")" }
-export EDITOR='emacs26 -nw'
+#export EDITOR='emacs26 -nw'
 #alias emacs='emacs26'
 alias emacs='emacs27 -l ~/.emacs.d/init.el'
-
 
 #------------------------------------------------------------------------------ cd stuff
 function cv   () { builtin cd "$@"; ls --color=auto --format=vertical --time-style=long-iso -lr; }
@@ -398,7 +407,7 @@ function utilFind () {
 
 alias gr=grep
 alias gi='grep -i'
-alias rg=~/ubin/,rgrep.py
+alias rg=~/ubin/rgrep.py
 
 function rgrep()  { echo "1=$1"
                     echo "2=$2"
