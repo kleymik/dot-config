@@ -43,9 +43,9 @@ export VIRTUAL_ENV_DISABLE_PROMPT=1
 export PS1="\e[0;36m[ \h:\u:\$\$ ]:[ \$(parse_pyvenv) ]:[ \t ]:[ \w ]:\e[m\n>"
 
 # ----------------------------------------------------------------------------- sleep and wake
-alias sleepMaxwell='sync && sleep 15 && systemctl suspend -i & xset -display :0.0 dpms force off'
 #alias sleepMaxwell='sync && sleep 15 && systemctl suspend -i & xset -display :0.0 dpms force off'
-#alias sleepMaxwell='sync && sleep 10 && systemctl suspend -i'
+#alias sleepMaxwell='sync && sleep 15 && systemctl suspend -i & xset -display :0.0 dpms force off'
+alias sleepMaxwell='sync && sleep 10 && systemctl suspend -i'
 #sleep 1 
 alias wakeMaxwell='pkill pavucontrol-qt ; pulseaudio -k ; sleep 40 ; pavucontrol-qt &'
 
@@ -105,6 +105,7 @@ alias kill_hard='kill -9'
 
 # MISC ------------------------------------------------------------------------ misc
 #alias py-ws2345='python -m SimpleHTTPServer 2345 &' # python2
+alias pythonDbg='python -m pudb'
 alias py-ws2345='python -m http.server 2345'         # python3 
 alias py-def-env='source ~kleyn/projects/pyvenvs/envD.D-py39-ml/bin/activate'
 alias py-jupyter='cd ~; jupyter notebook';           # ensure http server can see all folders
@@ -190,7 +191,10 @@ function gits()  { pwd;
                    git config branch.$(git rev-parse --abbrev-ref HEAD).description;
                    git branch -v;
                    git status -uno --ahead-behind;
+                   echo '';                                      
                    git log -n 10 --pretty=oneline --abbrev-commit  --no-merges --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(bold yellow)%d%C(reset)';
+                   echo '';                   
+                   git worktree list;
                    echo '';
                  }
 function gitsa() { echo $(git rev-parse --abbrev-ref HEAD);
@@ -407,7 +411,7 @@ function utilFind () {
 
 alias gr=grep
 alias gi='grep -i'
-alias rg=~/ubin/rgrep.py
+alias rg=~/ubin/,rgrep.py
 
 function rgrep()  { echo "1=$1"
                     echo "2=$2"
@@ -566,6 +570,7 @@ alias utilUsb='lsusb'
 alias utilHw='lshw  | grep product'
 alias utilCpu='lscpu | egrep "Model name|Socket|Thread|NUMA|CPU\(s\)"'
 alias utilGpu='glxinfo |grep -i -o "device|memory\|[0-9]\{1,12\} MB" |head -n 1'
+alias utilInfo='inxi -F'
 alias utilNet='ip a | grep inet'
 alias utilNetstat='netstat -tlnp'
 alias utilLsof='lsof -n -i'
@@ -624,6 +629,7 @@ echo "functions & aliases: al ---------------------------------------"
 al
 pwd
 
+ls -l ~/history/lastS*
 
 
 #------------------------------------------------------------------------------ docs/notes
