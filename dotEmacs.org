@@ -3776,6 +3776,34 @@ convenient prefix key map, for example `C-,`
 ;;(ido-mode t)
 ;;(windmove-default-keybindings 'shift)
 
+* end bit
+;(desktop-change-dir "/home/uri03204/myDocs/config")
+
+#+BEGIN_SRC emacs-lisp
+;(dired "~/")
+;(ztree-dir "/data/data/com.termux/files/home")
+(put 'narrow-to-region 'disabled nil)
+;;(server-start)
+(setq password-cache-expiry nil)
+(message "dotEmacs.org done")
+(set-cursor-color "gold") 
+;(switch-to-buffer "*Messages*")
+#+END_SRC
+
+;custom-set-variables and custom set faces in ~/.emacs.d/init.el
+
+#+STARTUP: fold
+
+
+
+
+
+
+
+
+
+
+
 * Faded
 
 ;;---- option2 parallel swap
