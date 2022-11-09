@@ -2915,62 +2915,59 @@ for flushing messages to *Message* buffer
 (defun set-debug-off()  (interactive) (progn (setq debug-on-error nil)  (message "emacs debug off")))
 #+end_src
 
-#+RESULTS:
-: set-debug-off
-
-;;-------------------------------------------------------------------- DEBUG
-;;Go to where your function is defined and type M-x edebug-defun,
-;;This will work the next time the function is called. You can check the docs[1]or just type ?.
-
-;; edebug-defun inside function definition  <- revert by re-evaluating the defun
-;; debug-on-entry
-;; (toggle-debug-on-error)
-;; toggle-debug-on-quit
-;; insert (debug)
-;;(setq debug-on-error t)
-;;(setq debug-on-error t)
-;;(setq debug-on-error nil)
-
-;; (global-set-key [S-f11]         'debug-function-on-entry)
-
-;; S     Stop: don't execute any more of the program, but wait for more Edebug commands (edebug-stop).
-;; <SPC> Step: stop at the next stop point encountered (edebug-step-mode).
-;; d     display stack
-;; n     Next: stop at the next stop point encountered after an expression (edebug-next-mode). Also see edebug-forward-sexp in Jumping.
-;; t     Trace: pause (normally one second) at each Edebug stop point (edebug-trace-mode).
-;; T     Rapid trace: update the display at each stop point, but don't actually pause (edebug-Trace-fast-mode).
-;; g     Go: run until the next breakpoint (edebug-go-mode). See Breakpoints.
-;; c     Continue: pause one second at each breakpoint, and then continue (edebug-continue-mode).
-;; C     Rapid continue: move point to each breakpoint, but don't pause (edebug-Continue-fast-mode).
-;; G     Go non-stop: ignore breakpoints (edebug-Go-nonstop-mode). You can still stop the program by typing S, or any editing command.
-;; ESC-: eval expr
-
-;; Edebug can record an execution trace, storing it in a buffer named *edebug-trace*. This is a log of function calls and returns, showing the function names and their arguments and values. To enable trace recording, set edebug-trace to a non-nil value.
-;; Making a trace buffer is not the same thing as using trace execution mode (see Edebug Execution Modes).
-;; When trace recording is enabled, each function entry and exit adds lines to the trace buffer. A function entry record consists of ‘::::{’, followed by the function name and argument values. A function exit record consists of ‘::::}’, followed by the function name and result of the function.
-;; The number of ‘:’s in an entry shows its recursion depth. You can use the braces in the trace buffer to find the matching beginning or end of function calls.
-;; You can customize trace recording for function entry and exit by redefining the functions edebug-print-trace-before and edebug-print-trace-after.
-;; — Macro: edebug-tracing string body...
-;; This macro requests additional trace information around the execution of the body forms. The argument string specifies text to put in the trace buffer, after the ‘{’ or ‘}’. All the arguments are evaluated, and edebug-tracing returns the value of the last form in body.
-;; — Function: edebug-trace format-string &rest format-args
-;; This function inserts text in the trace buffer. It computes the text with (apply 'format format-string format-args). It also appends a newline to separate entries.
-;; edebug-tracing and edebug-trace insert lines in the trace buffer whenever they are called, even if Edebug is not active. Adding text to the trace buffer also scrolls its window to show the last lines inserted.
-
-
-    (defmacro stop-here (fn)
-       "Call edebug here. FN is assumed to be a symbol of the function you are in."
-       `(if (consp (get ,fn 'edebug))
-           (edebug)))
-
-    (defun clear-edebug (fn-sym)
-      "Remove 'edebug property from FN-SYM, a function symbol."
-      (put fn-sym 'edebug nil))
-    ;; An example of use:
-    (defun fact (n)
-      (cond ((= n 0) )
-        ((= n 1) 1)
-        ((>  n 1) (progn (stop-here 'fact) (* n (fact (1- n)))))
-        (t nil)))
+: ;;-------------------------------------------------------------------- DEBUG
+: ;;Go to where your function is defined and type M-x edebug-defun,
+: ;;This will work the next time the function is called. You can check the docs[1]or just type ?.
+: 
+: ;; edebug-defun inside function definition  <- revert by re-evaluating the defun
+: ;; debug-on-entry
+: ;; (toggle-debug-on-error)
+: ;; toggle-debug-on-quit
+: ;; insert (debug)
+: ;;(setq debug-on-error t)
+: ;;(setq debug-on-error t)
+: ;;(setq debug-on-error nil)
+: 
+: ;; (global-set-key [S-f11]         'debug-function-on-entry)
+: 
+: ;; S     Stop: don't execute any more of the program, but wait for more Edebug commands (edebug-stop).
+: ;; <SPC> Step: stop at the next stop point encountered (edebug-step-mode).
+: ;; d     display stack
+: ;; n     Next: stop at the next stop point encountered after an expression (edebug-next-mode). Also see edebug-forward-sexp in Jumping.
+: ;; t     Trace: pause (normally one second) at each Edebug stop point (edebug-trace-mode).
+: ;; T     Rapid trace: update the display at each stop point, but don't actually pause (edebug-Trace-fast-mode).
+: ;; g     Go: run until the next breakpoint (edebug-go-mode). See Breakpoints.
+: ;; c     Continue: pause one second at each breakpoint, and then continue (edebug-continue-mode).
+: ;; C     Rapid continue: move point to each breakpoint, but don't pause (edebug-Continue-fast-mode).
+: ;; G     Go non-stop: ignore breakpoints (edebug-Go-nonstop-mode). You can still stop the program by typing S, or any editing command.
+: ;; ESC-: eval expr
+: 
+: ;; Edebug can record an execution trace, storing it in a buffer named *edebug-trace*. This is a log of function calls and returns, showing the function names and their arguments and values. To enable trace recording, set edebug-trace to a non-nil value.
+: ;; Making a trace buffer is not the same thing as using trace execution mode (see Edebug Execution Modes).
+: ;; When trace recording is enabled, each function entry and exit adds lines to the trace buffer. A function entry record consists of ‘::::{’, followed by the function name and argument values. A function exit record consists of ‘::::}’, followed by the function name and result of the function.
+: ;; The number of ‘:’s in an entry shows its recursion depth. You can use the braces in the trace buffer to find the matching beginning or end of function calls.
+: ;; You can customize trace recording for function entry and exit by redefining the functions edebug-print-trace-before and edebug-print-trace-after.
+: ;; — Macro: edebug-tracing string body...
+: ;; This macro requests additional trace information around the execution of the body forms. The argument string specifies text to put in the trace buffer, after the ‘{’ or ‘}’. All the arguments are evaluated, and edebug-tracing returns the value of the last form in body.
+: ;; — Function: edebug-trace format-string &rest format-args
+: ;; This function inserts text in the trace buffer. It computes the text with (apply 'format format-string format-args). It also appends a newline to separate entries.
+: ;; edebug-tracing and edebug-trace insert lines in the trace buffer whenever they are called, even if Edebug is not active. Adding text to the trace buffer also scrolls its window to show the last lines inserted.
+: 
+: 
+:     (defmacro stop-here (fn)
+:        "Call edebug here. FN is assumed to be a symbol of the function you are in."
+:        `(if (consp (get ,fn 'edebug))
+:            (edebug)))
+: 
+:     (defun clear-edebug (fn-sym)
+:       "Remove 'edebug property from FN-SYM, a function symbol."
+:       (put fn-sym 'edebug nil))
+:     ;; An example of use:
+:     (defun fact (n)
+:       (cond ((= n 0) )
+:         ((= n 1) 1)
+:         ((>  n 1) (progn (stop-here 'fact) (* n (fact (1- n)))))
+:         (t nil)))
 
 * ESHELL
 #+begin_src emacs-lisp
@@ -3166,619 +3163,620 @@ for flushing messages to *Message* buffer
 (message "-------------- Done: Eshell Section")
 #+end_src
 *** eshell arithmetic
-      $ (length "hi")  --> 2
-      $ length "hi"    --> 2   # ← Works since shell parser calls Lisp
-      $ length hi      --> 2   # ← Works since shell reads as string
-      $ (+ 1 3)        --> 4
-      $ + 1 3          --> 4   # ← Works since shell reads as number
-      $ * 3 (+ 1 2)    --> 9   # ← Shows both shell and lisp parsers
-      $ ls             --> README  pi.py  pi.rb  src  tests
-      $ length *       --> 5   # Globs return a list
-      $ length *.py    --> 1
-      $ touch 'and go.py'
-      $ ls *.py        --> and go.py  pi.py
-      $ echo *.py      --> ("and go.py" "pi.py")   # ← More clear that globs are lists
+: $ (length "hi")  --> 2
+: $ length "hi"    --> 2   # ← Works since shell parser calls Lisp
+: $ length hi      --> 2   # ← Works since shell reads as string
+: $ (+ 1 3)        --> 4
+: $ + 1 3          --> 4   # ← Works since shell reads as number
+: $ * 3 (+ 1 2)    --> 9   # ← Shows both shell and lisp parsers
+: $ ls             --> README  pi.py  pi.rb  src  tests
+: $ length *       --> 5   # Globs return a list
+: $ length *.py    --> 1
+: $ touch 'and go.py'
+: $ ls *.py        --> and go.py  pi.py
+: $ echo *.py      --> ("and go.py" "pi.py")   # ← More clear that globs are lists
 
 *** eshell redirection
-cat mylog.log >> #<buffer *scratch*>       into a buffer
- echo foo bar baz > #'myvar                into a variable
-Eshell reimplements the following pseu
-/dev/eshell     Prints the output interactively to Eshell.
-/dev/null       Sends the output to the NULL device.
-/dev/clip       Sends the output to the clipboard.
-/dev/kill       Sends the output to the kill ring.
+: cat mylog.log >> #<buffer *scratch*>       into a buffer
+:  echo foo bar baz > #'myvar                into a variable
+: Eshell reimplements the following pseu
+: /dev/eshell     Prints the output interactively to Eshell.
+: /dev/null       Sends the output to the NULL device.
+: /dev/clip       Sends the output to the clipboard.
+: /dev/kill       Sends the output to the kill ring.
 *** eshell for loops
-for f in web1 web2 { scp info.php $f:/var/www/html/oscmax/catalog }
-for f in {ls -1d *} {echo $f; svn up $f}
-for f in {find . -name '*.java'} {mv $f (replace-regexp-in-string "\\.java$" ".scala" f)}
+: for f in web1 web2 { scp info.php $f:/var/www/html/oscmax/catalog }
+: for f in {ls -1d *} {echo $f; svn up $f}
+: for f in {find . -name '*.java'} {mv $f (replace-regexp-in-string "\\.java$" ".scala" f)}
 
-# Those parens may also be curly braces. Paren for lisp, curly for subshell.
-# See how $f is used in curly brace but f is used in parens
+: Those parens may also be curly braces. Paren for lisp, curly for subshell.
+: See how $f is used in curly brace but f is used in parens
 
-for f in db1 db2 {mysqldump -d -uuser -ppwd (conc
-for f in *.xpm(:r)   {convert $f.xpm $f.png}
-for f in *.png(:r)   {echo $f.png $f.png}
-for f in *.xpm *.jpg {convert $f $f(:s/\..*$/.png/)}
-for f in *.xpm *.jpg {convert $f $f(:r:s/$/.png/)}
-for i in (let (lst)  (dotimes (i 1000) (setq lst (append lst (list i)))) lst) {cp original.txt $i.txt}
-for i in (number-sequence 1 1000) {cp original.txt $i.txt}
-
-:u upper case
-:gs/aaa/bbb/  replace
-:X  rot-12 cipher
-:o sort - order list
+: for f in db1 db2 {mysqldump -d -uuser -ppwd (conc
+: for f in *.xpm(:r)   {convert $f.xpm $f.png}
+: for f in *.png(:r)   {echo $f.png $f.png}
+: for f in *.xpm *.jpg {convert $f $f(:s/\..*$/.png/)}
+: for f in *.xpm *.jpg {convert $f $f(:r:s/$/.png/)}
+: for i in (let (lst)  (dotimes (i 1000) (setq lst (append lst (list i)))) lst) {cp original.txt $i.txt}
+: for i in (number-sequence 1 1000) {cp original.txt $i.txt}
+: 
+: :u upper case
+: :gs/aaa/bbb/  replace
+: :X  rot-12 cipher
+: :o sort - order list
 
 *** eshell variables
-$+    This variable always contains the current working directory.
-$-    This variable always contains the previous working directory (the current working directory from before the last cd command).
-$_    It refers to the last argument of the last command.
-$$    This is the result of the last command. In case of an external command, it is t or nil.
-$?    This variable contains the exit code of the last command (0 or 1 for Lisp functions, based on successful completion).
-
-$var             Expands to the value bound to var. This is the main way to use variables in command invocations.
-$"var"  $'var'   Expands to the value bound to var. This is useful to disambiguate the variable name when concatenating it with another value, such as ‘$"var"-suffix’.
-$#var            Expands to the length of the value bound to var. Raises an error if the value is not a sequence (see Sequences in The Emacs Lisp Reference Manual).
-$(lisp)          Expands to the result of evaluating the S-expression (lisp). On its own, this is identical to just (lisp), but with the $, it can be used in a string, such as ‘/some/path/$(lisp).txt’.
-${command}       Returns the output of command, which can be any valid Eshell command invocation, and may even contain expansions.
-$<command>       As with ‘${command}’, evaluates the Eshell command invocation command, but writes the output to a temporary file and returns the file name.
-$var[i]          Expands to the ith element of the value bound to var. If the value is a string, it will be split at whitespace to make it a list. Again, raises an error if the value is not a sequence.
-$var[: i]        As above, but now splitting occurs at the colon character.
-$var[: i j]      As above, but instead of returning just a string, it now returns a list of two strings. If the result is being interpolated into a larger string, this list will be flattened into one big string, with each element separated by a space.
-$var["\\\\" i]   Separate on backslash characters. Actually, the first argument – if it doesn’t have the form of a number, or a plain variable name – can be any regular expression. So to split on numbers, use ‘$var["[0-9]+" 10 20]’.
-$var[hello]      Calls assoc on var with "hello", expecting it to be an alist (see Association Lists in The Emacs Lisp Reference Manual).
-$#var[hello]     Returns the length of the cdr of the element of var whose car is equal to "hello".
+: $+    This variable always contains the current working directory.
+: $-    This variable always contains the previous working directory (the current working directory from before the last cd command).
+: $_    It refers to the last argument of the last command.
+: $$    This is the result of the last command. In case of an external command, it is t or nil.
+: $?    This variable contains the exit code of the last command (0 or 1 for Lisp functions, based on successful completion).
+: 
+: $var             Expands to the value bound to var. This is the main way to use variables in command invocations.
+: $"var"  $'var'   Expands to the value bound to var. This is useful to disambiguate the variable name when concatenating it with another value, such as ‘$"var"-suffix’.
+: $#var            Expands to the length of the value bound to var. Raises an error if the value is not a sequence (see Sequences in The Emacs Lisp Reference Manual).
+: $(lisp)          Expands to the result of evaluating the S-expression (lisp). On its own, this is identical to just (lisp), but with the $, it can be used in a string, such as ‘/some/path/$(lisp).txt’.
+: ${command}       Returns the output of command, which can be any valid Eshell command invocation, and may even contain expansions.
+: $<command>       As with ‘${command}’, evaluates the Eshell command invocation command, but writes the output to a temporary file and returns the file name.
+: $var[i]          Expands to the ith element of the value bound to var. If the value is a string, it will be split at whitespace to make it a list. Again, raises an error if the value is not a sequence.
+: $var[: i]        As above, but now splitting occurs at the colon character.
+: $var[: i j]      As above, but instead of returning just a string, it now returns a list of two strings. If the result is being interpolated into a larger string, this list will be flattened into one big string, with each element separated by a space.
+: $var["\\\\" i]   Separate on backslash characters. Actually, the first argument – if it doesn’t have the form of a number, or a plain variable name – can be any regular expression. So to split on numbers, use ‘$var["[0-9]+" 10 20]’.
+: $var[hello]      Calls assoc on var with "hello", expecting it to be an alist (see Association Lists in The Emacs Lisp Reference Manual).
+: $#var[hello]     Returns the length of the cdr of the element of var whose car is equal to "hello".
 
 *** eshell variable modifiers
- The options can be combined. For instance, 
-
-ls -l *(@U) list all symbolic links owned by your account:
-ls -l *(@^U)  list all symbolic links that you don’t own by prefixing the ^ symbol:
-
-:L 	lowercase
-:U 	uppercase
-:C 	capitalize
-:h 	dirname
-:t 	basename
-:e 	file extension
-:r 	strip file extension
-:q 	escape special characters
-:S 	split string at any whitespace character
-:S/PAT/ split string at each occurrence of /PAT/
-:E 	evaluate again
-
-Here is the list of modifiers for a list:
-:o 	sort alphabetically
-:O 	reverse sort alphabetically
-:u 	unique list (typically used after :o or :O)
-:R 	reverse the list
-:j 	join list members, separated by a space
-:j/PAT/ 	join list members, separated by PAT
-:i/PAT/ 	exclude all members not matching PAT
-:x/PAT/ 	exclude all members matching PAT
-:s/pat/match/ 	substitute PAT with MATCH
-:g/pat/match/ 	substitute PAT with MATCH for all occurrences
+:  The options can be combined. For instance, 
+: 
+: ls -l *(@U) list all symbolic links owned by your account:
+: ls -l *(@^U)  list all symbolic links that you don’t own by prefixing the ^ symbol:
+: 
+: :L 	lowercase
+: :U 	uppercase
+: :C 	capitalize
+: :h 	dirname
+: :t 	basename
+: :e 	file extension
+: :r 	strip file extension
+: :q 	escape special characters
+: :S 	split string at any whitespace character
+: :S/PAT/ split string at each occurrence of /PAT/
+: :E 	evaluate again
+: 
+: Here is the list of modifiers for a list:
+: :o 	sort alphabetically
+: :O 	reverse sort alphabetically
+: :u 	unique list (typically used after :o or :O)
+: :R 	reverse the list
+: :j 	join list members, separated by a space
+: :j/PAT/ 	join list members, separated by PAT
+: :i/PAT/ 	exclude all members not matching PAT
+: :x/PAT/ 	exclude all members matching PAT
+: :s/pat/match/ 	substitute PAT with MATCH
+: :g/pat/match/ 	substitute PAT with MATCH for all occurrences
 *** eshell aliasing
-;; nb use egrep (or *grep) rather than grep to avoid using emacs grep
-;; (add-to-list 'eshell-command-aliases-list (list "utilDf"      "watch -n 1 df -m"))
-;; find -maxdepth 1 -printf '%t %s %p\n'
-;; works: find ~/*/ \( -path ~/mySystems/firefoxOld -o -path ~/projects \) -prune -false -o -iname '*.sqlite'
-;; works: find ~/*/ -path ~/mySystems -prune -false -o -iname '*sql'   <- no fucking end-slash on directory path !!!!!!!!!
-;; aptitude doesn't echo into eshell buffer :(
 
-;; (add-to-list 'eshell-command-aliases-list (list "hgg"   "cat ~/history/commands/history* | grep -i $*"))
-;; (add-to-list 'eshell-command-aliases-list (list "hs"    "(setq es_hstFile (concat \"/home/kleyn/history/commands/history_eshell_\" (format-time-string \"%Y%m%d-%H%M\" (current-time)) \".lst\")); echo $eshell-history-file-name; (eshell-write-history); cp $eshell-history-file-name $es_hstFile; cat $es_hstFile"))
-;; (add-to-list 'eshell-command-aliases-list (list "hs"    "(setq es_hstFile (concat \"/home/kleyn/history/commands/history_eshell_\" (format-time-string \"%Y%m%d-%H%M\" (current-time)) \".lst\")); echo $es_hstFile; (eshell-write-history es_hstFile); cat $es_hstFile"))
-;; (add-to-list 'eshell-command-aliases-list (list "hs"    "(setq es_hstFile (concat \"/home/kleyn/history/commands/history_eshell_\" (format-time-string \"%Y%m%d-%H%M\" (current-time)) \".lst\")); echo $eshell-history-file-name; cp $eshell-history-file-name $es_hstFile; cat $es_hstFile"))
-;; (add-to-list 'eshell-command-aliases-list (list "hs"    "(setq es_hstFile (concat \"/home/kleyn/history/commands/history_eshell_\" (format-time-string \"%Y%m%d-%H%M\" (current-time)) \".lst\")); history > $es_hstFile; cat $es_hstFile;"))
-;; (add-to-list 'eshell-command-aliases-list (list "hs"    (concat "(setq es_hstFile " "/home/kleyn/history/commands/history_eshell_" (format-time-string "%Y%m%d-%H%M" (current-time)) ".lst)" "; history > $es_hstFile; cat $es_hstFile;")))
-;; (add-to-list 'eshell-command-aliases-list (list "hs"    "(setq es_hstFile (concat \"/home/kleyn/history/commands/history_eshell_\" (format-time-string \"%Y%m%d-%H%M\" (current-time)) \".lst\")); history > $es_hstFile; cat $es_hstFile;"))
-;; (add-to-list 'eshell-command-aliases-list (list "hs"    "(setq es_hstFile (concat \"~/history/commands/history_eshell_\" (format-time-string \"%Y%m%d-%H%M\" (current-time)) \".lst\")); history > $es_hstFile; cat $es_hstFile;"))
-;; https://emacs.stackexchange.com/questions/27849/how-can-i-setup-eshell-to-use-ivy-for-tab-completion
-;; (add-to-list 'eshell-command-aliases-list (list "l"     "stat --printf=%y\t%6s\t%-16n\n * | cut -b -16,36-"))
-
-(add-to-list 'eshell-command-aliases-list (list "doBackup"
-    (setq  (concat /data/data/com.termux/files/home/internalBackup/ (format-time-string \"%Y%m%d-%H%M\" (current-time)) \".lst\"))
-    find ~/        -name '.#-emacs*' -exec rm -v {} \;
-    find ~/MyDocs/ -name '.#-emacs*' -exec rm -v {} \;
-    mkdir -p $budir
-    cp -r $frootDir/MyDocs/aNotes   $budir
-    cp -r $frootDir/MyDocs/Personal $budir
-    cp -r $frootDir/MyDocs/projects $budir
-    cp -r $frootDir/dot             $budir
-    tar -czvf - $frootDir/gitio >   $budir/gitio.tgz
-    du -sm $frootDir/internalBackup/*
-)
-
-
-(eshell/alias "ff" "find-file $1")
-(eshell/alias "fw" "find-file-other-window $1")
-(eshell/alias "fr" "find-file-other-frame $1")
-
-(add-to-list 'eshell-command-aliases-list (list "rgrepy "python L:\\MyDocs\\ubin\\py\\rgrep.py"))
-(add-to-list 'eshell-command-aliases-list (list "rgrep" "echo \"1=$1\";
-                                                        "dosPath=$(cygpath -m $1)"
-
-echo "DOSPATH $dosPath";
-echo "2=$2"
-echo "3=$3"
-echo "grep --color=auto -ir --include=$2 $3 $1;"
-# echo "grep -e --color=auto -ir --include=$2 $3 $1;"  -e is different!!!!
-grep --color=auto -ir --include="$2" "$3" "$1" ; }
-
-(defalias 'open 'find-file)
-(defalias 'openo 'find-file-other-window)
-(defun eshell/gits ()   (find-file file))
-setq eshell-command-aliases-list (("gits" #("git status" 0 10 (escaped t)))))
-
-alias ll ls -l $*
-(setq ecal_copy (copy-list eshell-command-aliases-list))
-TBD fix $(git...) doesn't work in eshell
-
-eshell-command-result
-(setq foo (eshell-command-result "git rev-parse --abbrev-ref HEAD"))
-eshell-read-aliases-list
+: ;; nb use egrep (or *grep) rather than grep to avoid using emacs grep
+: ;; (add-to-list 'eshell-command-aliases-list (list "utilDf"      "watch -n 1 df -m"))
+: ;; find -maxdepth 1 -printf '%t %s %p\n'
+: ;; works: find ~/*/ \( -path ~/mySystems/firefoxOld -o -path ~/projects \) -prune -false -o -iname '*.sqlite'
+: ;; works: find ~/*/ -path ~/mySystems -prune -false -o -iname '*sql'   <- no fucking end-slash on directory path !!!!!!!!!
+: ;; aptitude doesn't echo into eshell buffer :(
+: 
+: ;; (add-to-list 'eshell-command-aliases-list (list "hgg"   "cat ~/history/commands/history* | grep -i $*"))
+: ;; (add-to-list 'eshell-command-aliases-list (list "hs"    "(setq es_hstFile (concat \"/home/kleyn/history/commands/history_eshell_\" (format-time-string \"%Y%m%d-%H%M\" (current-time)) \".lst\")); echo $eshell-history-file-name; (eshell-write-history); cp $eshell-history-file-name $es_hstFile; cat $es_hstFile"))
+: ;; (add-to-list 'eshell-command-aliases-list (list "hs"    "(setq es_hstFile (concat \"/home/kleyn/history/commands/history_eshell_\" (format-time-string \"%Y%m%d-%H%M\" (current-time)) \".lst\")); echo $es_hstFile; (eshell-write-history es_hstFile); cat $es_hstFile"))
+: ;; (add-to-list 'eshell-command-aliases-list (list "hs"    "(setq es_hstFile (concat \"/home/kleyn/history/commands/history_eshell_\" (format-time-string \"%Y%m%d-%H%M\" (current-time)) \".lst\")); echo $eshell-history-file-name; cp $eshell-history-file-name $es_hstFile; cat $es_hstFile"))
+: ;; (add-to-list 'eshell-command-aliases-list (list "hs"    "(setq es_hstFile (concat \"/home/kleyn/history/commands/history_eshell_\" (format-time-string \"%Y%m%d-%H%M\" (current-time)) \".lst\")); history > $es_hstFile; cat $es_hstFile;"))
+: ;; (add-to-list 'eshell-command-aliases-list (list "hs"    (concat "(setq es_hstFile " "/home/kleyn/history/commands/history_eshell_" (format-time-string "%Y%m%d-%H%M" (current-time)) ".lst)" "; history > $es_hstFile; cat $es_hstFile;")))
+: ;; (add-to-list 'eshell-command-aliases-list (list "hs"    "(setq es_hstFile (concat \"/home/kleyn/history/commands/history_eshell_\" (format-time-string \"%Y%m%d-%H%M\" (current-time)) \".lst\")); history > $es_hstFile; cat $es_hstFile;"))
+: ;; (add-to-list 'eshell-command-aliases-list (list "hs"    "(setq es_hstFile (concat \"~/history/commands/history_eshell_\" (format-time-string \"%Y%m%d-%H%M\" (current-time)) \".lst\")); history > $es_hstFile; cat $es_hstFile;"))
+: ;; https://emacs.stackexchange.com/questions/27849/how-can-i-setup-eshell-to-use-ivy-for-tab-completion
+: ;; (add-to-list 'eshell-command-aliases-list (list "l"     "stat --printf=%y\t%6s\t%-16n\n * | cut -b -16,36-"))
+: 
+: (add-to-list 'eshell-command-aliases-list (list "doBackup"
+:     (setq  (concat /data/data/com.termux/files/home/internalBackup/ (format-time-string \"%Y%m%d-%H%M\" (current-time)) \".lst\"))
+:     find ~/        -name '.#-emacs*' -exec rm -v {} \;
+:     find ~/MyDocs/ -name '.#-emacs*' -exec rm -v {} \;
+:     mkdir -p $budir
+:     cp -r $frootDir/MyDocs/aNotes   $budir
+:     cp -r $frootDir/MyDocs/Personal $budir
+:     cp -r $frootDir/MyDocs/projects $budir
+:     cp -r $frootDir/dot             $budir
+:     tar -czvf - $frootDir/gitio >   $budir/gitio.tgz
+:     du -sm $frootDir/internalBackup/*
+: )
+: 
+: 
+: (eshell/alias "ff" "find-file $1")
+: (eshell/alias "fw" "find-file-other-window $1")
+: (eshell/alias "fr" "find-file-other-frame $1")
+: 
+: (add-to-list 'eshell-command-aliases-list (list "rgrepy "python L:\\MyDocs\\ubin\\py\\rgrep.py"))
+: (add-to-list 'eshell-command-aliases-list (list "rgrep" "echo \"1=$1\";
+:                                                         "dosPath=$(cygpath -m $1)"
+: 
+: echo "DOSPATH $dosPath";
+: echo "2=$2"
+: echo "3=$3"
+: echo "grep --color=auto -ir --include=$2 $3 $1;"
+: # echo "grep -e --color=auto -ir --include=$2 $3 $1;"  -e is different!!!!
+: grep --color=auto -ir --include="$2" "$3" "$1" ; }
+: 
+: (defalias 'open 'find-file)
+: (defalias 'openo 'find-file-other-window)
+: (defun eshell/gits ()   (find-file file))
+: setq eshell-command-aliases-list (("gits" #("git status" 0 10 (escaped t)))))
+: 
+: alias ll ls -l $*
+: (setq ecal_copy (copy-list eshell-command-aliases-list))
+: TBD fix $(git...) doesn't work in eshell
+: 
+: eshell-command-result
+: (setq foo (eshell-command-result "git rev-parse --abbrev-ref HEAD"))
+: eshell-read-aliases-list
 
 *** eshell prompt
-;;(add-to-list 'eshell-command-aliases-list (list "h"     "history 30"))
-;; eshell-prompt-regexp "^[^:]*:: "
-;; (if (= (user-uid) 0) " :: " " :: ")
-;; (if (= (user-uid) 0) " \n:: " " \n:: ")))
-;;eshell-prompt-regexp "^::.*\n:: "
-;(setq eshell-prompt-function (lambda () (concat ":: "))
-;      eshell-prompt-regexp "^:: "
-;)
-
-
-
-prompt
-    ;; Change the default eshell prompt
-    (setq eshell-prompt-function
-          (lambda ()
-             (concat "[" (getenv "USER") "@" (getenv "HOSTNAME") "] "
-              "(" (format-time-string "%a %b %e %l:%M %p") ") "
-              (eshell/pwd) (if (= (user-uid) 0) " # " " $ "))))
-
- (defun ted-eshell-prompt ()
-
-  (defun eshell/less (&rest args)
-    "Invoke `view-file' on a file. \"less +42 foo\" will go to line 42 in
-    the buffer for foo."
-    (while args
-      (if (string-match "\\`\\+\\([0-9]+\\)\\'" (car args))
-          (let* ((line (string-to-number (match-string 1 (pop args))))
-                 (file (pop args)))
-            (tyler-eshell-view-file file)
-            (goto-line line))
-        (tyler-eshell-view-file (pop args)))))
+: ;;(add-to-list 'eshell-command-aliases-list (list "h"     "history 30"))
+: ;; eshell-prompt-regexp "^[^:]*:: "
+: ;; (if (= (user-uid) 0) " :: " " :: ")
+: ;; (if (= (user-uid) 0) " \n:: " " \n:: ")))
+: ;;eshell-prompt-regexp "^::.*\n:: "
+: ;(setq eshell-prompt-function (lambda () (concat ":: "))
+: ;      eshell-prompt-regexp "^:: "
+: ;)
+: 
+: 
+: 
+: prompt
+:     ;; Change the default eshell prompt
+:     (setq eshell-prompt-function
+:           (lambda ()
+:              (concat "[" (getenv "USER") "@" (getenv "HOSTNAME") "] "
+:               "(" (format-time-string "%a %b %e %l:%M %p") ") "
+:               (eshell/pwd) (if (= (user-uid) 0) " # " " $ "))))
+: 
+:  (defun ted-eshell-prompt ()
+: 
+:   (defun eshell/less (&rest args)
+:     "Invoke `view-file' on a file. \"less +42 foo\" will go to line 42 in
+:     the buffer for foo."
+:     (while args
+:       (if (string-match "\\`\\+\\([0-9]+\\)\\'" (car args))
+:           (let* ((line (string-to-number (match-string 1 (pop args))))
+:                  (file (pop args)))
+:             (tyler-eshell-view-file file)
+:             (goto-line line))
+:         (tyler-eshell-view-file (pop args)))))
 
 *** eshell keymap
-;(require 'helm-eshell)  ; use ivy
-;; (add-hook 'eshell-mode-hook '(lambda () (define-key eshell-mode-map (kbd "M-l")      'helm-eshell-history)))
-;; (add-hook 'eshell-mode-hook '(lambda () (define-key eshell-mode-map (kbd "C-<tab>")  (lambda () (interactive) (pcomplete-std-complete)))))
-;; (add-hook 'eshell-mode-hook '(lambda () (define-key eshell-mode-map (kbd "M-r")      'counsel-esh-history)))
-
-;;-------------------------------------------------------------------------------- eshell
-
-(emacs-pid)
-(setq eshell-prompt-regexp (concat "^20[0-9][0-9].*\n" (regexp-quote "$") ": "))
-(if (= (user-uid) 0) " \n#::" " \n$::"))))
-(setq eshell-prompt-regexp  "^\$:")
-(setq eshell-cmpl-cycle-completions nil)
-eshell-prompt-regexp (concat "^" (regexp-quote "$")
-
-(mapconcat 'identity '("a" "b" "c") ",")
-(mapconcat 'identity (reverse (butlast (reverse (list "home ""kleyn" "projects" )) 3)) "/")
-
-(add-to-list 'eshell-command-aliases-list (list "gitst"  "git rev-parse --abbrev-ref HEAD;
-                                                          git config branch.$(git rev-parse --abbrev-ref HEAD).description;
-                                                          git status -uno --ahead-behind;
-                                                          git log -n 10 --pretty=oneline --abbrev-commit --no-merges --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(bold yellow)%d%C(reset)';
-                                                          git branch -v;
-                                                          echo '';
-                                                          git stash;"))
-
-
-  (defalias 'eshell/more 'eshell/less)
+: ;(require 'helm-eshell)  ; use ivy
+: ;; (add-hook 'eshell-mode-hook '(lambda () (define-key eshell-mode-map (kbd "M-l")      'helm-eshell-history)))
+: ;; (add-hook 'eshell-mode-hook '(lambda () (define-key eshell-mode-map (kbd "C-<tab>")  (lambda () (interactive) (pcomplete-std-complete)))))
+: ;; (add-hook 'eshell-mode-hook '(lambda () (define-key eshell-mode-map (kbd "M-r")      'counsel-esh-history)))
+: 
+: ;;-------------------------------------------------------------------------------- eshell
+: 
+: (emacs-pid)
+: (setq eshell-prompt-regexp (concat "^20[0-9][0-9].*\n" (regexp-quote "$") ": "))
+: (if (= (user-uid) 0) " \n#::" " \n$::"))))
+: (setq eshell-prompt-regexp  "^\$:")
+: (setq eshell-cmpl-cycle-completions nil)
+: eshell-prompt-regexp (concat "^" (regexp-quote "$")
+: 
+: (mapconcat 'identity '("a" "b" "c") ",")
+: (mapconcat 'identity (reverse (butlast (reverse (list "home ""kleyn" "projects" )) 3)) "/")
+: 
+: (add-to-list 'eshell-command-aliases-list (list "gitst"  "git rev-parse --abbrev-ref HEAD;
+:                                                           git config branch.$(git rev-parse --abbrev-ref HEAD).description;
+:                                                           git status -uno --ahead-behind;
+:                                                           git log -n 10 --pretty=oneline --abbrev-commit --no-merges --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(bold yellow)%d%C(reset)';
+:                                                           git branch -v;
+:                                                           echo '';
+:                                                           git stash;"))
+: 
+: 
+:   (defalias 'eshell/more 'eshell/less)
 
 ** ESHELL TBD
 
-1.2 Code snippet (from emacswiki and other website)
-add below to your .emacs
-
-1.2.1 setting up environment related variable
-1:  (require 'eshell)
-2:  ;; setting up environment related variable in eshell
-3:  (setenv "JAVA_HOME" "/usr/local/java")
-4:  (setenv "CATALINA_HOME" "/var/lib/tomcat4")
-5:  (setenv "LC_ALL" "C")
-6:  (setenv "PATH" "/usr/local/java/bin:/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin:/home/gnmk/bin")
-7:  (setenv "LANG" "en_US.UTF8")
-8:  (setenv "EDITOR" "emacsclient")
-
-1.2.2 eshell history size and saving history while exit.
-1:  (setq eshell-history-size 20000)
-2:  (setq eshell-save-history-on-exit t)
-3:  (setq eshell-hist-ignoredups t)
-4:  (setq eshell-cmpl-cycle-completions nil)
-
-1.2.3 scroll to the bottom
-1:  (setq eshell-scroll-to-bottom-on-output t)
-2:  (setq eshell-scroll-show-maximum-output t)
-
-1.2.4 run top/ps from eshell, require term to be open
- 1:  (eval-after-load 'esh-opt
- 2:    '(progn
- 3:       (require 'em-cmpl)
- 4:       (require 'em-prompt)
- 5:       (require 'em-term)
- 6:       (add-hook 'eshell-mode-hook '(lambda () (define-key eshell-mode-map "\C-a" 'eshell-bol)))
- 8:       (add-to-list 'eshell-visual-commands "ssh")
- 9:       (add-to-list 'eshell-visual-commands "tail")
-10:       (add-to-list 'eshell-visual-commands "top")
-11:       (add-to-list 'eshell-command-completions-alist '("gunzip" "gz\\'"))
-13:       (add-to-list 'eshell-command-completions-alist '("tar" "\\(\\.tar|\\.tgz\\|\\.tar\\.gz\\)\\'"))
-15:       (add-to-list 'eshell-output-filter-functions 'eshell-handle-ansi-color)))
-
-1.2.6 eshell short and long prompt on request (from emacswiki)
- 1:  ;; Returns the short propmpt string for eshell
- 2:  (defun eshell-prompt-function-short ()
- 3:    "Makes a short eshell prompt to avoid moving out of the buffer
- 4:      window boundary"
- 5:    (let* ((pwd (eshell/pwd))
- 6:           (pwdlst (split-string pwd "/"))
- 7:           (rpwdlst (reverse pwdlst))
- 8:           (base (car rpwdlst)))
- 9:      (concat (if (string= base "")
-10:                  "/"
-11:                (if (cdr pwdlst) "<...> /" ""))
-12:              base
-13:              (if (= (user-uid) 0) " # " " $ "))))
-14:
-15:  ;; Returns the long prompt string for eshell
-16:  (defun eshell-prompt-function-long ()
-17:    "Makes a long standard eshell prompt"
-18:    (concat (format-time-string "%l:%M %p") "| "
-19:            (getenv "USER") "@" (getenv "HOSTNAME") ":"
-20:            (eshell/pwd) (if (= (user-uid) 0) " # " " $ ")))
-21:
-22:  (setq eshell-prompt-function
-23:        'eshell-prompt-function-long)
-24:
-25:  (defun eshell/sprompt ()
-26:    "Makes a short eshell prompt to avoid moving out of the buffer
-27:        window boundary (link to eshell-prompt-function-short)"
-28:    (setq eshell-prompt-function
-29:          'eshell-prompt-function-short))
-30:
-31:  (defun eshell/lprompt ()
-32:    "Makes a long standard eshell prompt (link to
-33:        eshell-prompt-function-long)"
-34:    (setq eshell-prompt-function
-35:          'eshell-prompt-function-long))
-
-(defun eshell/clear()        "clear the eshell buffer"  (interactive) (let ((inhibit-read-only t))  (erase-buffer)))
-(defun eshell/emacs(file)    "find-file alias"      (find-file file))
-(defun eshell/w3m(file)      "w3m-find-file alias"  (w3m-find-file file))
-(defun eshell/info()         "info alias"           (info))
-(defun eshell/einfo()        "Display emacs manual" (info-emacs-manual))
-(defun eshell/ll(&rest args) "ls -alh alias"        (eshell/ls "-alh" args))
-(defun eshell/la(&rest args) "ls -a alias"          (eshell/ls "-a" args))
-
-1.2.12 convert ansi color faces in eshell
- 1:  ;; This will transform ansi color to faces in Emacs shell!
- 2:  (ansi-color-for-comint-mode-on)
- 3:  (defun eshell-handle-ansi-color ()
- 4:    (ansi-color-apply-on-region eshell-last-output-start
- 5:                                eshell-last-output-end))
- 6:  (add-hook 'eshell-mode-hook
- 7:            '(lambda ()
- 8:               (add-to-list
- 9:                'eshell-output-filter-functions
-10:                'eshell-handle-ansi-color)))
-
-1.2.13 compile process in background
- 1:  ;;Here’s how to compile in the background, also by Kai.
- 2:  (defun eshell/ec (&rest args)
- 3:    "Use `compile' to do background makes."
- 4:    (if (eshell-interactive-output-p)
- 5:        (let ((compilation-process-setup-function
- 6:               (list 'lambda nil
- 7:                     (list 'setq 'process-environment
- 8:                           (list 'quote (eshell-copy-environment))))))
- 9:          (compile (eshell-flatten-and-stringify args))
-10:          (pop-to-buffer compilation-last-buffer))
-11:      (throw 'eshell-replace-command
-12:             (let ((l (eshell-stringify-list (eshell-flatten-list args))))
-13:               (eshell-parse-command (car l) (cdr l))))))
-14:  (put 'eshell/ec 'eshell-no-numeric-conversions t)
-
-Type ec <command> from eshll prompt will open another buffer with command output/status.
-(print foo) === echo $foo
-eshell-parse-command 'ls -l'
+: 1.2 Code snippet (from emacswiki and other website)
+: add below to your .emacs
+: 
+: 1.2.1 setting up environment related variable
+: 1:  (require 'eshell)
+: 2:  ;; setting up environment related variable in eshell
+: 3:  (setenv "JAVA_HOME" "/usr/local/java")
+: 4:  (setenv "CATALINA_HOME" "/var/lib/tomcat4")
+: 5:  (setenv "LC_ALL" "C")
+: 6:  (setenv "PATH" "/usr/local/java/bin:/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin:/home/gnmk/bin")
+: 7:  (setenv "LANG" "en_US.UTF8")
+: 8:  (setenv "EDITOR" "emacsclient")
+: 
+: 1.2.2 eshell history size and saving history while exit.
+: 1:  (setq eshell-history-size 20000)
+: 2:  (setq eshell-save-history-on-exit t)
+: 3:  (setq eshell-hist-ignoredups t)
+: 4:  (setq eshell-cmpl-cycle-completions nil)
+: 
+: 1.2.3 scroll to the bottom
+: 1:  (setq eshell-scroll-to-bottom-on-output t)
+: 2:  (setq eshell-scroll-show-maximum-output t)
+: 
+: 1.2.4 run top/ps from eshell, require term to be open
+:  1:  (eval-after-load 'esh-opt
+:  2:    '(progn
+:  3:       (require 'em-cmpl)
+:  4:       (require 'em-prompt)
+:  5:       (require 'em-term)
+:  6:       (add-hook 'eshell-mode-hook '(lambda () (define-key eshell-mode-map "\C-a" 'eshell-bol)))
+:  8:       (add-to-list 'eshell-visual-commands "ssh")
+:  9:       (add-to-list 'eshell-visual-commands "tail")
+: 10:       (add-to-list 'eshell-visual-commands "top")
+: 11:       (add-to-list 'eshell-command-completions-alist '("gunzip" "gz\\'"))
+: 13:       (add-to-list 'eshell-command-completions-alist '("tar" "\\(\\.tar|\\.tgz\\|\\.tar\\.gz\\)\\'"))
+: 15:       (add-to-list 'eshell-output-filter-functions 'eshell-handle-ansi-color)))
+: 
+: 1.2.6 eshell short and long prompt on request (from emacswiki)
+:  1:  ;; Returns the short propmpt string for eshell
+:  2:  (defun eshell-prompt-function-short ()
+:  3:    "Makes a short eshell prompt to avoid moving out of the buffer
+:  4:      window boundary"
+:  5:    (let* ((pwd (eshell/pwd))
+:  6:           (pwdlst (split-string pwd "/"))
+:  7:           (rpwdlst (reverse pwdlst))
+:  8:           (base (car rpwdlst)))
+:  9:      (concat (if (string= base "")
+: 10:                  "/"
+: 11:                (if (cdr pwdlst) "<...> /" ""))
+: 12:              base
+: 13:              (if (= (user-uid) 0) " # " " $ "))))
+: 14:
+: 15:  ;; Returns the long prompt string for eshell
+: 16:  (defun eshell-prompt-function-long ()
+: 17:    "Makes a long standard eshell prompt"
+: 18:    (concat (format-time-string "%l:%M %p") "| "
+: 19:            (getenv "USER") "@" (getenv "HOSTNAME") ":"
+: 20:            (eshell/pwd) (if (= (user-uid) 0) " # " " $ ")))
+: 21:
+: 22:  (setq eshell-prompt-function
+: 23:        'eshell-prompt-function-long)
+: 24:
+: 25:  (defun eshell/sprompt ()
+: 26:    "Makes a short eshell prompt to avoid moving out of the buffer
+: 27:        window boundary (link to eshell-prompt-function-short)"
+: 28:    (setq eshell-prompt-function
+: 29:          'eshell-prompt-function-short))
+: 30:
+: 31:  (defun eshell/lprompt ()
+: 32:    "Makes a long standard eshell prompt (link to
+: 33:        eshell-prompt-function-long)"
+: 34:    (setq eshell-prompt-function
+: 35:          'eshell-prompt-function-long))
+: 
+: (defun eshell/clear()        "clear the eshell buffer"  (interactive) (let ((inhibit-read-only t))  (erase-buffer)))
+: (defun eshell/emacs(file)    "find-file alias"      (find-file file))
+: (defun eshell/w3m(file)      "w3m-find-file alias"  (w3m-find-file file))
+: (defun eshell/info()         "info alias"           (info))
+: (defun eshell/einfo()        "Display emacs manual" (info-emacs-manual))
+: (defun eshell/ll(&rest args) "ls -alh alias"        (eshell/ls "-alh" args))
+: (defun eshell/la(&rest args) "ls -a alias"          (eshell/ls "-a" args))
+: 
+: 1.2.12 convert ansi color faces in eshell
+:  1:  ;; This will transform ansi color to faces in Emacs shell!
+:  2:  (ansi-color-for-comint-mode-on)
+:  3:  (defun eshell-handle-ansi-color ()
+:  4:    (ansi-color-apply-on-region eshell-last-output-start
+:  5:                                eshell-last-output-end))
+:  6:  (add-hook 'eshell-mode-hook
+:  7:            '(lambda ()
+:  8:               (add-to-list
+:  9:                'eshell-output-filter-functions
+: 10:                'eshell-handle-ansi-color)))
+: 
+: 1.2.13 compile process in background
+:  1:  ;;Here’s how to compile in the background, also by Kai.
+:  2:  (defun eshell/ec (&rest args)
+:  3:    "Use `compile' to do background makes."
+:  4:    (if (eshell-interactive-output-p)
+:  5:        (let ((compilation-process-setup-function
+:  6:               (list 'lambda nil
+:  7:                     (list 'setq 'process-environment
+:  8:                           (list 'quote (eshell-copy-environment))))))
+:  9:          (compile (eshell-flatten-and-stringify args))
+: 10:          (pop-to-buffer compilation-last-buffer))
+: 11:      (throw 'eshell-replace-command
+: 12:             (let ((l (eshell-stringify-list (eshell-flatten-list args))))
+: 13:               (eshell-parse-command (car l) (cdr l))))))
+: 14:  (put 'eshell/ec 'eshell-no-numeric-conversions t)
+: 
+: Type ec <command> from eshll prompt will open another buffer with command output/status.
+: (print foo) === echo $foo
+: eshell-parse-command 'ls -l'
 
 * Notes
-comments: *one* ";"
+: comments: *one* ";"
 ** Commands Quick Ref
-
-(dired  "/ssh:192.168.1.124#8022:/data/data/com.termux/files/home")                                            ; using  port
-cosmo -> /run/user/1000/52efffd273e1b33b/Android/data/com.termux/files
-(beginning-of-line)
-(end-of-line)
-(goto-char (mark-marker))
-(goto-char (pop-global-mark))
-(remove-hook 'html-mode-hook 'xah-html-mode-keys)                                                              ; removing a hook
-(server-start)
-(setq Buffer-menu-sort-column 6)
-(setq tab-stop-list '(60))
-(x-get-selection-value)
-(xclip-mode 1) for emacs in terminal , export kill-yank
-
-close  to close ^Q^]
-clone-indirect-buffer RET
-ediff-revision
-find-dired   calls unix find
-flush-lines
-go up C-c C-u
-increase/decrease font C-c kepad+ keypad-
-indent-to-column
-isearch-forward-regexp
-map-query-regexp-replace
-package-list-packages
-proced       to view processes
-read-kbd-macro
-rot13-region  (C-c C-r)
-set-buffer-file-coding-system unix <--format
-tail-mode     auto-revert-tail-mode (C-cr)
-telnet host port     to open
-vc-ediff
-
-------------------------------------------------------------------- defalias
-(defalias 'my-open-file   (kbd "C-a C-s / C-b C-s : C-x C-x ESC w C-x C-f C-a C-y DEL C-k RET")
-(defalias 'flipslash      (kbd "C-SPC C-e C-SPC ESC < ESC w C-x b *scratch* RET C-e RET C-y C-r SPC C-f C-SPC C-r total SPC use C-x C-x C-w ESC \ 2*DEL / C-a ESC \ ESC x replace-string / RET \ RET C-a"))
-(defalias 'make-org-tbl   (kbd "ESC x org-mode RET ESC < C-SPC ESC > C-c |"))
-(defalias 'see-logbooks   (kbd "C-x C-f ~/myDocs/logbook RET"))
-(defalias 'vc-ediff-frame (kbd "C-x 5 2 M-x vc-ediff RET y"))
+: 
+: (dired  "/ssh:192.168.1.124#8022:/data/data/com.termux/files/home")                                            ; using  port
+: cosmo -> /run/user/1000/52efffd273e1b33b/Android/data/com.termux/files
+: (beginning-of-line)
+: (end-of-line)
+: (goto-char (mark-marker))
+: (goto-char (pop-global-mark))
+: (remove-hook 'html-mode-hook 'xah-html-mode-keys)                                                              ; removing a hook
+: (server-start)
+: (setq Buffer-menu-sort-column 6)
+: (setq tab-stop-list '(60))
+: (x-get-selection-value)
+: (xclip-mode 1) for emacs in terminal , export kill-yank
+: 
+: close  to close ^Q^]
+: clone-indirect-buffer RET
+: ediff-revision
+: find-dired   calls unix find
+: flush-lines
+: go up C-c C-u
+: increase/decrease font C-c kepad+ keypad-
+: indent-to-column
+: isearch-forward-regexp
+: map-query-regexp-replace
+: package-list-packages
+: proced       to view processes
+: read-kbd-macro
+: rot13-region  (C-c C-r)
+: set-buffer-file-coding-system unix <--format
+: tail-mode     auto-revert-tail-mode (C-cr)
+: telnet host port     to open
+: vc-ediff
+: 
+: ------------------------------------------------------------------- defalias
+: (defalias 'my-open-file   (kbd "C-a C-s / C-b C-s : C-x C-x ESC w C-x C-f C-a C-y DEL C-k RET")
+: (defalias 'flipslash      (kbd "C-SPC C-e C-SPC ESC < ESC w C-x b *scratch* RET C-e RET C-y C-r SPC C-f C-SPC C-r total SPC use C-x C-x C-w ESC \ 2*DEL / C-a ESC \ ESC x replace-string / RET \ RET C-a"))
+: (defalias 'make-org-tbl   (kbd "ESC x org-mode RET ESC < C-SPC ESC > C-c |"))
+: (defalias 'see-logbooks   (kbd "C-x C-f ~/myDocs/logbook RET"))
+: (defalias 'vc-ediff-frame (kbd "C-x 5 2 M-x vc-ediff RET y"))
 
 ** Regexp
-
--------------------------------------------------------------- SAMPLE REPLACE REGEXP
-(string-to-number "22")
-(query-replace-regexp ":\\([0-9]+\\)" '(replace-eval-replacement concat ":" (replace-quote (1+ (string-to-number (match-string 1))))))
-(query-replace-regexp ":\\([0-9]+\\)" '(replace-eval-replacement concat ":" (replace-quote (1+ (string-to-number (match-string 1))))) nil nil nil nil nil)
-(query-replace-regexp ":\\([0-9]+\\)" '(replace-eval-replacement replace-quote (1+ (string-to-number (match-string 1)))))
-(query-replace-regexp ":\\([0-9]+\\)" '(replace-eval-replacement replace-quote (1+ (string-to-number (match-string 1)))) nil nil nil nil nil)
-(query-replace-regexp ":\\([0-9]+\\)" "\\\\,\(1+ 1\)")
-(query-replace-regexp ":\\([0-9]+\\)" "\\\\,\(1+ 1\)")
-
-(query-replace-regexp ":\([0-9]+\)" "\,\ (1+ \1))
-(replace-regexp "[0-9]" "\,(1+ \\#&)" nil (point-min) (point-max)) 
-(replace-regexp ":([0-9]+)" "\,(1+ \#&)" nil (point-min) (point-max)) 
-
-(replace-regexp "[[:alpha:]\.]+=" "" nil (region-beginning) (region-end))
-replace unprintable ""
-;(replace-string "\\(^- "")
-(replace-string "" "")
-(replace-string "" "")
-(replace-string "" "")
-(replace-regexp "0\.999999([0-9]+)[$,]" "" nil (point-min) (point-max))
-(replace-regexp "[ \t]+" " ")                                                                                  ; REPLACE mutli-space with single-space
-(replace-regexp "[ \t]+|" "_" )                                                                                ; space -> _
-(replace-regexp "[ \t]+" "|")                                                                                  ; space -> |
-(replace-regexp "'[ \t]+'" "|" )   ; space between quotes ->
-(goto-char (mark-marker))
-(replace-regexp "A" "B" nil (if (and transient-mark-mode mark-active) (region-beginning)) (if (and transient-mark-mode mark-active) (region-end)) nil)
-(replace-regexp "A" "B" nil (mark-marker) (point-max))
-(replace-regexp "(line [0-9]+)" "" nil (point-min) (point-max)) ; clear (line 62)
-(replace-regexp " [0-9][0-9]:[0-9][0-9]:[0-9][0-9]" "" nil (point-min) (point-max)) ; clear " HH:MM:SS"
-N.B. TBD drop last ","
-
-
-
-The elisp regular expression isn’t the easiest to understand, but this is what it matches:
-|------------+-------------------------------------------------------------------------|
-| Regex      | Explanation                                                             |
-|------------+-------------------------------------------------------------------------|
-| [^\\w]     | something that’s not a word                                             |
-| \\(        | start of a capture group (not matching)                                 |
-| :          | a colon                                                                 |
-| [^\n\r\t]+ | a string of 1 or more characters that doesn’t contain new-lines or tabs |
-| :          | a colon                                                                 |
-| \\)        | end of the capture group (not matching)                                 |
-| [^\\w]     | something that’s not a word                                             |
-|------------+-------------------------------------------------------------------------|
-
-
-regexp classes:
-‘[:ascii:]’    This matches any ASCII character (codes 0–127).
-‘[:alnum:]’    This matches any letter or digit. For multibyte characters, it matches characters whose Unicode ‘general-category’ property (see Character Properties) indicates they are alphabetic or decimal number characters.
-‘[:alpha:]’    This matches any letter. For multibyte characters, it matches characters whose Unicode ‘general-category’ property (see Character Properties) indicates they are alphabetic characters.
-‘[:blank:]’    This matches horizontal whitespace, as defined by Annex C of the Unicode Technical Standard #18. In particular, it matches spaces, tabs, and other characters whose Unicode ‘general-category’ property (see Character Properties) indicates they are spacing separators.
-‘[:cntrl:]’    This matches any character whose code is in the range 0–31.
-‘[:digit:]’    This matches ‘0’ through ‘9’. Thus, ‘[-+[:digit:]]’ matches any digit, as well as ‘+’ and ‘-’.
-‘[:graph:]’    This matches graphic characters—everything except whitespace, ASCII and non-ASCII control characters, surrogates, and codepoints unassigned by Unicode, as indicated by the Unicode ‘general-category’ property (see Character Properties).
-‘[:lower:]’    This matches any lower-case letter, as determined by the current case table (see Case Tables). If case-fold-search is non-nil, this also matches any upper-case letter.
-‘[:multibyte:]’This matches any multibyte character (see Text Representations).
-‘[:nonascii:]’ This matches any non-ASCII character.
-‘[:print:]’    This matches any printing character—either whitespace, or a graphic character matched by ‘[:graph:]’.
-‘[:punct:]’    This matches any punctuation character. (At present, for multibyte characters, it matches anything that has non-word syntax.)
-‘[:space:]’    This matches any character that has whitespace syntax (see Syntax Class Table).
-‘[:unibyte:]’  This matches any unibyte character (see Text Representations).
-‘[:upper:]’    This matches any upper-case letter, as determined by the current case table (see Case Tables). If case-fold-search is non-nil, this also matches any lower-case letter.
-‘[:word:]’     This matches any character that has word syntax (see Syntax Class Table).
-‘[:xdigit:]’   This matches the hexadecimal digits: ‘0’ through ‘9’, ‘a’ through ‘f’ and ‘A’ through ‘F’.
-
-;; (while (search-forward-regexp "^# \\+ pycharm=[^#]+#%% \\([^,}]+\\).*$" nil t)
-;; drop # and \n} cruft at end
-;;(replace-match (substring (match-string 1) 1 -4) t nil)
-;;(concat 'aaa' 'bbb')
-;;(message (concat "XXX" (substring (match-string 1) 0 -2) "XXX"))
-;;(replace-match (concat "XXX" (match-string 1) "XXX") t nil)))
-;;(substring "ABCDEF" 0 -1)
-;;(defun replace-thing ()
-;; (interactive)
-;; (goto-char 1)
-;;    (while (search-forward-regexp "\\([^\\)]+\\)" nil t)
-;;        (replace-match (upcase (match-string 1)) t nil)))
-;;
-;;
-;;"\\+ pycharm[^#]+\\(#[\w]+\\)"
-;;
-;;(defun replace-thing ()
-;;  (interactive)
-;;  (replace-regexp "\\+ pycharm[^#]+\\(#[\w]+\\)" "XX\\1XX"  nil (point-min) (point-max)))
-;;
-;;(defun replace-thing ()
-;;  (interactive)
-;;  (replace-regexp "\\(pycharm\\)" "X\\1X"  nil (point-min) (point-max)))
-;;
-;;(defun replace-thing ()
-;;  (interactive)
-;;  (replace-regexp "\(pycharm\)" "XX\1XX"  nil (point-min) (point-max))) 
-;;  (if (region-active-p)      ;;(replace-regexp "(pycharm)" "X\1X"  nil region-beginning) (region-end))
-;(defun replace-thing ()
-;  (interactive)
-;  (if (region-active-p)
-;      (replace-string "# \+ pycharm=[^#]+(#%%.+)}" "[[https://www.lds.org/scriptures/search?lang=eng&query=\1&x=0&y=0][\1]]"  nil (region-beginning) (region-end))
-;   ))
+: 
+: -------------------------------------------------------------- SAMPLE REPLACE REGEXP
+: (string-to-number "22")
+: (query-replace-regexp ":\\([0-9]+\\)" '(replace-eval-replacement concat ":" (replace-quote (1+ (string-to-number (match-string 1))))))
+: (query-replace-regexp ":\\([0-9]+\\)" '(replace-eval-replacement concat ":" (replace-quote (1+ (string-to-number (match-string 1))))) nil nil nil nil nil)
+: (query-replace-regexp ":\\([0-9]+\\)" '(replace-eval-replacement replace-quote (1+ (string-to-number (match-string 1)))))
+: (query-replace-regexp ":\\([0-9]+\\)" '(replace-eval-replacement replace-quote (1+ (string-to-number (match-string 1)))) nil nil nil nil nil)
+: (query-replace-regexp ":\\([0-9]+\\)" "\\\\,\(1+ 1\)")
+: (query-replace-regexp ":\\([0-9]+\\)" "\\\\,\(1+ 1\)")
+: 
+: (query-replace-regexp ":\([0-9]+\)" "\,\ (1+ \1))
+: (replace-regexp "[0-9]" "\,(1+ \\#&)" nil (point-min) (point-max)) 
+: (replace-regexp ":([0-9]+)" "\,(1+ \#&)" nil (point-min) (point-max)) 
+: 
+: (replace-regexp "[[:alpha:]\.]+=" "" nil (region-beginning) (region-end))
+: replace unprintable ""
+: ;(replace-string "\\(^- "")
+: (replace-string "" "")
+: (replace-string "" "")
+: (replace-string "" "")
+: (replace-regexp "0\.999999([0-9]+)[$,]" "" nil (point-min) (point-max))
+: (replace-regexp "[ \t]+" " ")                                                                                  ; REPLACE mutli-space with single-space
+: (replace-regexp "[ \t]+|" "_" )                                                                                ; space -> _
+: (replace-regexp "[ \t]+" "|")                                                                                  ; space -> |
+: (replace-regexp "'[ \t]+'" "|" )   ; space between quotes ->
+: (goto-char (mark-marker))
+: (replace-regexp "A" "B" nil (if (and transient-mark-mode mark-active) (region-beginning)) (if (and transient-mark-mode mark-active) (region-end)) nil)
+: (replace-regexp "A" "B" nil (mark-marker) (point-max))
+: (replace-regexp "(line [0-9]+)" "" nil (point-min) (point-max)) ; clear (line 62)
+: (replace-regexp " [0-9][0-9]:[0-9][0-9]:[0-9][0-9]" "" nil (point-min) (point-max)) ; clear " HH:MM:SS"
+: N.B. TBD drop last ","
+: 
+: 
+: 
+: The elisp regular expression isn’t the easiest to understand, but this is what it matches:
+: |------------+-------------------------------------------------------------------------|
+: | Regex      | Explanation                                                             |
+: |------------+-------------------------------------------------------------------------|
+: | [^\\w]     | something that’s not a word                                             |
+: | \\(        | start of a capture group (not matching)                                 |
+: | :          | a colon                                                                 |
+: | [^\n\r\t]+ | a string of 1 or more characters that doesn’t contain new-lines or tabs |
+: | :          | a colon                                                                 |
+: | \\)        | end of the capture group (not matching)                                 |
+: | [^\\w]     | something that’s not a word                                             |
+: |------------+-------------------------------------------------------------------------|
+: 
+: 
+: regexp classes:
+: ‘[:ascii:]’    This matches any ASCII character (codes 0–127).
+: ‘[:alnum:]’    This matches any letter or digit. For multibyte characters, it matches characters whose Unicode ‘general-category’ property (see Character Properties) indicates they are alphabetic or decimal number characters.
+: ‘[:alpha:]’    This matches any letter. For multibyte characters, it matches characters whose Unicode ‘general-category’ property (see Character Properties) indicates they are alphabetic characters.
+: ‘[:blank:]’    This matches horizontal whitespace, as defined by Annex C of the Unicode Technical Standard #18. In particular, it matches spaces, tabs, and other characters whose Unicode ‘general-category’ property (see Character Properties) indicates they are spacing separators.
+: ‘[:cntrl:]’    This matches any character whose code is in the range 0–31.
+: ‘[:digit:]’    This matches ‘0’ through ‘9’. Thus, ‘[-+[:digit:]]’ matches any digit, as well as ‘+’ and ‘-’.
+: ‘[:graph:]’    This matches graphic characters—everything except whitespace, ASCII and non-ASCII control characters, surrogates, and codepoints unassigned by Unicode, as indicated by the Unicode ‘general-category’ property (see Character Properties).
+: ‘[:lower:]’    This matches any lower-case letter, as determined by the current case table (see Case Tables). If case-fold-search is non-nil, this also matches any upper-case letter.
+: ‘[:multibyte:]’This matches any multibyte character (see Text Representations).
+: ‘[:nonascii:]’ This matches any non-ASCII character.
+: ‘[:print:]’    This matches any printing character—either whitespace, or a graphic character matched by ‘[:graph:]’.
+: ‘[:punct:]’    This matches any punctuation character. (At present, for multibyte characters, it matches anything that has non-word syntax.)
+: ‘[:space:]’    This matches any character that has whitespace syntax (see Syntax Class Table).
+: ‘[:unibyte:]’  This matches any unibyte character (see Text Representations).
+: ‘[:upper:]’    This matches any upper-case letter, as determined by the current case table (see Case Tables). If case-fold-search is non-nil, this also matches any lower-case letter.
+: ‘[:word:]’     This matches any character that has word syntax (see Syntax Class Table).
+: ‘[:xdigit:]’   This matches the hexadecimal digits: ‘0’ through ‘9’, ‘a’ through ‘f’ and ‘A’ through ‘F’.
+: 
+: ;; (while (search-forward-regexp "^# \\+ pycharm=[^#]+#%% \\([^,}]+\\).*$" nil t)
+: ;; drop # and \n} cruft at end
+: ;;(replace-match (substring (match-string 1) 1 -4) t nil)
+: ;;(concat 'aaa' 'bbb')
+: ;;(message (concat "XXX" (substring (match-string 1) 0 -2) "XXX"))
+: ;;(replace-match (concat "XXX" (match-string 1) "XXX") t nil)))
+: ;;(substring "ABCDEF" 0 -1)
+: ;;(defun replace-thing ()
+: ;; (interactive)
+: ;; (goto-char 1)
+: ;;    (while (search-forward-regexp "\\([^\\)]+\\)" nil t)
+: ;;        (replace-match (upcase (match-string 1)) t nil)))
+: ;;
+: ;;
+: ;;"\\+ pycharm[^#]+\\(#[\w]+\\)"
+: ;;
+: ;;(defun replace-thing ()
+: ;;  (interactive)
+: ;;  (replace-regexp "\\+ pycharm[^#]+\\(#[\w]+\\)" "XX\\1XX"  nil (point-min) (point-max)))
+: ;;
+: ;;(defun replace-thing ()
+: ;;  (interactive)
+: ;;  (replace-regexp "\\(pycharm\\)" "X\\1X"  nil (point-min) (point-max)))
+: ;;
+: ;;(defun replace-thing ()
+: ;;  (interactive)
+: ;;  (replace-regexp "\(pycharm\)" "XX\1XX"  nil (point-min) (point-max))) 
+: ;;  (if (region-active-p)      ;;(replace-regexp "(pycharm)" "X\1X"  nil region-beginning) (region-end))
+: ;(defun replace-thing ()
+: ;  (interactive)
+: ;  (if (region-active-p)
+: ;      (replace-string "# \+ pycharm=[^#]+(#%%.+)}" "[[https://www.lds.org/scriptures/search?lang=eng&query=\1&x=0&y=0][\1]]"  nil (region-beginning) (region-end))
+: ;   ))
 
 ** Modes
-;; ------------------------------------------------------------------- CSHARP Mode
-;(autload 'csharp-mode "/home/uri03204/myDocs/ulib/emacs/csharp-mode-0.8.5.elc" t)
-(autoload 'csharp-mode "csharp-mode" "Major mode for editing C# code." t)
-(defun csharp-mode-untabify ()
-  (if (string= (substring mode-name 0 2) "C#")
-     (save-excursion
-     (delete-trailing-whitespace)
-     (untabify (point-min) (point-max)))))
-(defun my-csharp-mode-fn ()
-  "function that runs when csharp-mode is initialized for a buffer."
-  (turn-on-auto-revert-mode)
-  (setq indent-tabs-mode nil)
-  (require 'flymake)
-  (setq flymake-mode nil)
-  ;;(add-hook 'write-contents-hooks 'csharp-mode-untabify nil t)
-  )
-  ;;      (require 'yasnippet)
-  ;;      (yas/minor-mode-on)
-  ;;      (require 'rfringe)
-(add-hook  'csharp-mode-hook 'my-csharp-mode-fn t)
-;;(add-hook 'csharp-mode-hook '(lambda () (add-hook 'write-contents-hooks 'csharp-mode-untabify nil t)))
-
-;;-------------------------------------------------------------------- Matlab Mode
-(require 'matlab)
-(setq matlab-indent-function t)
-(setq matlab-shell-command "matlab")
-;;(autoload 'matlab-mode "/home/kleyn/myDocs/ulib/emacs/matlab.elc" "Enter Matlab mode." t)
-;; User Level customizations:
-;;   (setq matlab-verify-on-save-flag nil) ; turn off auto-verify on save
-(defun my-matlab-mode-hook ()
-  (matlab-mode-hilit)                        ; Turn highlight on
-  (setq fill-column 276)             ; where auto-fill should wrap
-  (setq matlab-indent-function t)    ; if you want function bodies indented
-  (setq matlab-indent-level  2)         ; set matlab indentation
-  (set matlab-fill-code nil)
-  (setq indent-tabs-mode nil))
-(add-hook 'matlab-mode-hook 'my-matlab-mode-hook)
-
-;;-------------------------------------------------------------------- iedit Mode
- TBD (autoload 'iedit-mode "/home/uri03204/myDocs/ulib/emacs/iedit.elc" "Enter iedit mode" t)
-
-
-;;-------------------------------------------------------------------- ediff
-;; (setq ediff-shell "C:/cygwin/bin/mintty.exe")
-;;  (if (file-directory-p "c:/cygwin/bin")      (add-to-list 'exec-path "c:/cygwin/bin"))
-;;--------------------------------------------------------------------- Diff Stuff
-;; (diffview-current)
-
-
-;;-------------------------------------------------------------------- Switches
-
-;;-------------------------------------------------------------------- Magit
-;; (add-to-list 'magit-section-initial-visibility-alist '(stashes . hide))
-
-;; ;; ---------------------------------------------------------------- DOS Mode
-;; (autoload 'dos-mode "/home/uri03204/myDocs/ulib/emacs/dos.elc" "Enter DOS CMD mode." t)
-
-;; ------------------------------------------------------------------- Java
-;; TBD add hs-minor-mode for hide/show t
-;; TDB (add-hook  'java-mode-hook 'my-java-mode-hook t)
-;; ;(defun my-java-mode-hook ()
-;; ;  (hs-minor-mode)
-;; ;  (setq indent-tabs-mode nil))
+: ;; ------------------------------------------------------------------- CSHARP Mode
+: ;(autload 'csharp-mode "/home/uri03204/myDocs/ulib/emacs/csharp-mode-0.8.5.elc" t)
+: (autoload 'csharp-mode "csharp-mode" "Major mode for editing C# code." t)
+: (defun csharp-mode-untabify ()
+:   (if (string= (substring mode-name 0 2) "C#")
+:      (save-excursion
+:      (delete-trailing-whitespace)
+:      (untabify (point-min) (point-max)))))
+: (defun my-csharp-mode-fn ()
+:   "function that runs when csharp-mode is initialized for a buffer."
+:   (turn-on-auto-revert-mode)
+:   (setq indent-tabs-mode nil)
+:   (require 'flymake)
+:   (setq flymake-mode nil)
+:   ;;(add-hook 'write-contents-hooks 'csharp-mode-untabify nil t)
+:   )
+:   ;;      (require 'yasnippet)
+:   ;;      (yas/minor-mode-on)
+:   ;;      (require 'rfringe)
+: (add-hook  'csharp-mode-hook 'my-csharp-mode-fn t)
+: ;;(add-hook 'csharp-mode-hook '(lambda () (add-hook 'write-contents-hooks 'csharp-mode-untabify nil t)))
+: 
+: ;;-------------------------------------------------------------------- Matlab Mode
+: (require 'matlab)
+: (setq matlab-indent-function t)
+: (setq matlab-shell-command "matlab")
+: ;;(autoload 'matlab-mode "/home/kleyn/myDocs/ulib/emacs/matlab.elc" "Enter Matlab mode." t)
+: ;; User Level customizations:
+: ;;   (setq matlab-verify-on-save-flag nil) ; turn off auto-verify on save
+: (defun my-matlab-mode-hook ()
+:   (matlab-mode-hilit)                        ; Turn highlight on
+:   (setq fill-column 276)             ; where auto-fill should wrap
+:   (setq matlab-indent-function t)    ; if you want function bodies indented
+:   (setq matlab-indent-level  2)         ; set matlab indentation
+:   (set matlab-fill-code nil)
+:   (setq indent-tabs-mode nil))
+: (add-hook 'matlab-mode-hook 'my-matlab-mode-hook)
+: 
+: ;;-------------------------------------------------------------------- iedit Mode
+:  TBD (autoload 'iedit-mode "/home/uri03204/myDocs/ulib/emacs/iedit.elc" "Enter iedit mode" t)
+: 
+: 
+: ;;-------------------------------------------------------------------- ediff
+: ;; (setq ediff-shell "C:/cygwin/bin/mintty.exe")
+: ;;  (if (file-directory-p "c:/cygwin/bin")      (add-to-list 'exec-path "c:/cygwin/bin"))
+: ;;--------------------------------------------------------------------- Diff Stuff
+: ;; (diffview-current)
+: 
+: 
+: ;;-------------------------------------------------------------------- Switches
+: 
+: ;;-------------------------------------------------------------------- Magit
+: ;; (add-to-list 'magit-section-initial-visibility-alist '(stashes . hide))
+: 
+: ;; ;; ---------------------------------------------------------------- DOS Mode
+: ;; (autoload 'dos-mode "/home/uri03204/myDocs/ulib/emacs/dos.elc" "Enter DOS CMD mode." t)
+: 
+: ;; ------------------------------------------------------------------- Java
+: ;; TBD add hs-minor-mode for hide/show t
+: ;; TDB (add-hook  'java-mode-hook 'my-java-mode-hook t)
+: ;; ;(defun my-java-mode-hook ()
+: ;; ;  (hs-minor-mode)
+: ;; ;  (setq indent-tabs-mode nil))
 
 ** Misc
-(setq cur-syntax-table (syntax-table)) ; better to use "describe-syntax"
-undefine a funcion: (fmakunbound 'trysc-clear-all-whitespace-columns) 
-
-default-directory
-
-good fonts "Ubuntu Mono"
-
-Print message listing key sequences that invoke the command DEFINITION.
-Argument is a command definition, usually a symbol with a function definition.
-If INSERT (the prefix arg) is non-nil, insert the message in the buffer.
-
-TBD dired-find-file-otherwindow open a cygwin link by inspecting it
-
------------------------------------------------------------------------------- Org-Mode
-(print (cadr info) (get-buffer "*scratch*"))
-(write-region (cadr info) nil "L:/MyDocs/history/matlabCmds/org_cmd.m")
-(write-region (cadr info) nil "C:/MyDocs/grepHist/aaa_org_cmd.m"))
-(save-restriction (org-mark-subtree) (rot13-region (point) (mark))))
-
-find-dired  calls unix find
-Dired Listing Switches: Hide Value -ahl --time-style=long-iso
-of emacs.  It is advised to place bindings for these into a
-convenient prefix key map, for example `C-,`
-
--------------------------------------------------------------------- Key Bindings
-(global-set-key [f4]            'see-orglink-dired) ;;     'desktop-save)
-(define-key global-map "\C-co" 'org-capture)
-------------------------------------------------------------------------------
-
-; cleanMlLog
-;;[                     ;; self-insert-command
-;;3*C-k                 ;; kill-line
-(fset 'cleanMlLog [?\C-s ?\[ ?\C-q ?\C-h ?\C-a escape ?\C-k ?\C-k ?\C-k])
-
-;; -------------------------- new stuff
-;; ;; Save point position between sessions.
-;; (use-package saveplace)
-;; (setq-default save-place t)
-;; (setq save-place-file (expand-file-name "places" user-emacs-directory))
-
-;; ;; Fix empty pasteboard error.
-;; (setq save-interprogram-paste-before-kill nil)
-
-;; ;; Auto refresh buffers when edits occur outside emacs
-;; (global-auto-revert-mode 1)
-
-;; ;; Also auto refresh dired, but be quiet about it
-;; (setq global-auto-revert-non-file-buffers t)
-;; (setq auto-revert-verbose nil)
-
-;; ;; Show keystrokes in progress
-;; (setq echo-keystrokes 0.5)
-(global-subword-mode 1)
-;; from 'better-defaults.el'
-;; Allow clipboard from outside emacs
-;; (setq x-select-enable-clipboard t
-;;       x-select-enable-primary t
-;;       save-interprogram-paste-before-kill t
-;;       apropos-do-all t
-;;       mouse-yank-at-point t)
-
-;;------------------------------------------------------------------------------- ido Mode
-;; TBD
-;;(load-library "ido")
-;;(setq ido-enable-flex-matching t)
-;;(setq ido-everywhere t)
-;;(ido-mode 1)
-;;(ido-mode t)
-;;(windmove-default-keybindings 'shift)
+: (setq cur-syntax-table (syntax-table)) ; better to use "describe-syntax"
+: undefine a funcion: (fmakunbound 'trysc-clear-all-whitespace-columns) 
+: 
+: default-directory
+: 
+: good fonts "Ubuntu Mono"
+: 
+: Print message listing key sequences that invoke the command DEFINITION.
+: Argument is a command definition, usually a symbol with a function definition.
+: If INSERT (the prefix arg) is non-nil, insert the message in the buffer.
+: 
+: TBD dired-find-file-otherwindow open a cygwin link by inspecting it
+: 
+: ------------------------------------------------------------------------------ Org-Mode
+: (print (cadr info) (get-buffer "*scratch*"))
+: (write-region (cadr info) nil "L:/MyDocs/history/matlabCmds/org_cmd.m")
+: (write-region (cadr info) nil "C:/MyDocs/grepHist/aaa_org_cmd.m"))
+: (save-restriction (org-mark-subtree) (rot13-region (point) (mark))))
+: 
+: find-dired  calls unix find
+: Dired Listing Switches: Hide Value -ahl --time-style=long-iso
+: of emacs.  It is advised to place bindings for these into a
+: convenient prefix key map, for example `C-,`
+: 
+: -------------------------------------------------------------------- Key Bindings
+: (global-set-key [f4]            'see-orglink-dired) ;;     'desktop-save)
+: (define-key global-map "\C-co" 'org-capture)
+: ------------------------------------------------------------------------------
+: 
+: ; cleanMlLog
+: ;;[                     ;; self-insert-command
+: ;;3*C-k                 ;; kill-line
+: (fset 'cleanMlLog [?\C-s ?\[ ?\C-q ?\C-h ?\C-a escape ?\C-k ?\C-k ?\C-k])
+: 
+: ;; -------------------------- new stuff
+: ;; ;; Save point position between sessions.
+: ;; (use-package saveplace)
+: ;; (setq-default save-place t)
+: ;; (setq save-place-file (expand-file-name "places" user-emacs-directory))
+: 
+: ;; ;; Fix empty pasteboard error.
+: ;; (setq save-interprogram-paste-before-kill nil)
+: 
+: ;; ;; Auto refresh buffers when edits occur outside emacs
+: ;; (global-auto-revert-mode 1)
+: 
+: ;; ;; Also auto refresh dired, but be quiet about it
+: ;; (setq global-auto-revert-non-file-buffers t)
+: ;; (setq auto-revert-verbose nil)
+: 
+: ;; ;; Show keystrokes in progress
+: ;; (setq echo-keystrokes 0.5)
+: (global-subword-mode 1)
+: ;; from 'better-defaults.el'
+: ;; Allow clipboard from outside emacs
+: ;; (setq x-select-enable-clipboard t
+: ;;       x-select-enable-primary t
+: ;;       save-interprogram-paste-before-kill t
+: ;;       apropos-do-all t
+: ;;       mouse-yank-at-point t)
+: 
+: ;;------------------------------------------------------------------------------- ido Mode
+: ;; TBD
+: ;;(load-library "ido")
+: ;;(setq ido-enable-flex-matching t)
+: ;;(setq ido-everywhere t)
+: ;;(ido-mode 1)
+: ;;(ido-mode t)
+: ;;(windmove-default-keybindings 'shift)
 
 * end bit
-;(desktop-change-dir "/home/uri03204/myDocs/config")
+: ;(desktop-change-dir "/home/uri03204/myDocs/config")
 
 #+begin_src emacs-lisp
 ;(dired "~/")
@@ -3791,7 +3789,7 @@ convenient prefix key map, for example `C-,`
 ;(switch-to-buffer "*Messages*")
 #+end_src
 
-;custom-set-variables and custom set faces in ~/.emacs.d/init.el
+: ;custom-set-variables and custom set faces in ~/.emacs.d/init.el
 
 #+STARTUP: fold
 
