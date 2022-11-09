@@ -1472,17 +1472,107 @@ M-x clone-indirect-buffer RET
 (setq neo-window-width 55)
 (setq neo-force-change-root t)
 ;neotree-toggle
+#+end_src
+*** Window arrangements
+
+This first part controls the shells. It will force Emacs to place them at the bottom, with a window height of no more than 30% of the size of the frame.
+
+;; left, top, right, bottom
+(setq window-sides-slots '(1 0 1 0))
+                                     CONDITION                             ACTION                        A-LIST
+(add-to-list 'display-buffer-alist '("\\*e?shell\\*"                       display-buffer-in-direction   (direction . bottom) (window . root)  (window-height . 0.2)))
+(add-to-list 'display-buffer-alist `(,(rx (| "*compilation*" "*grep*"))    display-buffer-in-side-window (side . right) (slot . 0) (window-parameters . ((no-delete-other-windows . t)))  (window-width . 80)))
+(add-to-list 'display-buffer-alist `(,(rx (| "*xref*" "*grep*" "*Occur*")) display-buffer-reuse-window   (inhibit-same-window . nil)))
+(add-to-list 'display-buffer-alist `("^test[-_]"                           display-buffer-in-direction   (direction . right)))
+(setq         display-buffer-alist `(("\\*Occur\\*" display-buffer-in-side-window                        (side . left) (slot . 0) (window-width . fit-window-to-buffer)   (preserve-size . (t . nil))   (window-parameters . ((no-delete-other-windows . t)))))))
+
+ (setq fit-window-to-buffer-horizontally t)
+        (setq window-resize-pixelwise t)
+
+Controlling side windows is equally straight forward. I recommend you
+limit the number of side window slots – nil means infinite, and a
+positive number the maximum you’ll allow – as that means Emacs swaps
+out the buffer in that slot instead of creating a new entry. Great for
+situations where you have a handful of ephemeral things – compilation,
+test output, shell command output, etc. – that you want to share
+windows.
+
+I also set a window parameter, no-delete-other-windows, that prevents
+Emacs from destroying the side window when you type C-x 1. It also has
+a fixed size of 80.
 
 
-;;----------------------- subtree/sidebar
-(setq dired-sidebar-width 40)
+And don’t forget: you can type M-x window-toggle-side-windows to toggle them visible or hidden.
+
+This snippet places a buffer to the immediate right of the current window if the buffer name starts with test_ or test-.
+
+You probably don’t want that. I recommend you set this:
+;; Requires Emacs 27+
+(setq switch-to-buffer-obey-display-actions t)
+
+(window-tree)  = 
+   ((nil (0 0 371 101)
+    (t (0 0 54 101) #<window 64 on :~/.emacs.d/> #<window 66 on *:Buffers:*>) 
+    (nil (54 0 371 101) #<window 62 on dotEmacs.org> 
+    (t (213 0 371 101) #<window 68 on dotEmacs.org> #<window 70 on dotEmacs.org>)))
+    #<window 49 on  *Minibuf-0*>)
+
+display-buffer-alist = nil
+(current-window-configuration) = #<window-configuration>
+window-dedicated-p
+#+begin_src emacs-lisp
+
+(message "--------------Emacs Windows Section")
+(defun mp-toggle-window-dedication ()
+  "Toggles window dedication in the selected window."
+  (interactive)
+  (set-window-dedicated-p (selected-window)  (not (window-dedicated-p (selected-window)))))
+
+(setq dired-sidebar-width 50)
+(setq ibuffer-sidebar-width 50)
 (setq dired-subtree-line-prefix "  ")
 (setq dired-subtree-use-backgrounds nil)
+(add-to-list 'display-buffer-alist `("^:~/"             display-buffer-in-side-window (side . left) (slot . 0) (window-parameters . ((no-delete-other-windows . t))) (window-width . 50)))
+(add-to-list 'display-buffer-alist `(("\\*:Buffers:\\*" display-buffer-in-side-window (side . left) (slot . 1) (window-parameters . ((no-delete-other-windows . t))) (window-width . 50)  (preserve-size . (t . nil)))))
+
+(defun make-ide-windows ()
+  "Toggles window dedication in the selected window."
+  (interactive)
+
+  (let* ((dired-buffer (dired-sidebar-get-or-create-buffer "/home/kleyn/"))
+         (dired-window (get-buffer-window dired-buffer)))
+
+       (ibuffer-sidebar-show-sidebar)
+       (dired-sidebar-show-sidebar dired-buffer)    ;; dired and ibuffer on the left
+       (set-window-dedicated-p dired-window    t)
+       (setq window-size-fixed nil)
+  ;; window--make-major-side-window
+  (display-buffer-in-side-window (get-buffer "*Messages*") `((side . right) (window-width . 50)))  ;; messages on the right
+  (display-buffer-in-side-window (get-buffer "*eshell*")   `((side . bottom) (window-height . 10))))
+)
+
+;;----------------------- subtree/sidebar
+
 (defun sidebar-toggle ()
   "Toggle both `dired-sidebar' and `ibuffer-sidebar'."
   (interactive)
-  (dired-sidebar-toggle-sidebar)
+  ;;(dired-sidebar-toggle-sidebar "~/")
   (ibuffer-sidebar-toggle-sidebar))
+
+(defun dired-sidebar-show (dirname)  ;; TBD open in *current* window?
+  (interactive "D")
+  (let ((dired-buffer (dired-sidebar-get-or-create-buffer dirname)))
+    (dired-sidebar-show-sidebar dired-buffer)
+    (pop-to-buffer dired-buffer)
+    (ibuffer-sidebar-show-sidebar)
+    (setq window-size-fixed nil)))
+
+#+end_src
+
+hello 
+*** Dired stuff
+#+begin_src emacs-lisp
+; (dired-sidebar-toggle dirname)
 
 ;;(setq dired-use-ls-dired nil)
 (setq dired-dwim-target t)
