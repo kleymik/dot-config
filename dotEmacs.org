@@ -1168,23 +1168,6 @@ invoked by ~/.emacs.d/init.el
 (setq org-use-property-inheritance t)
 (defun org-collapse()     (interactive) (org-shifttab 0))
 
-;; also in org-table.el (defun org-table-transpose-table-at-point ()
-;(defun org-transpose-table-at-point ()
-;  "Transpose orgmode table at point, eliminate hlines."
-;  (interactive)
-;  (let ((contents (apply #'mapcar* #'list                       ;; <== LOB magic imported here
-;                         (remove-if-not 'listp (org-table-to-lisp)))))  ;; remove 'hline from listsignals error if not table
-;    (delete-region (org-table-begin) (org-table-end))
-;    (insert (mapconcat (lambda(x) (concat "| " (mapconcat 'identity x " | " ) "
-;  |\n" ))
-;                       contents
-;                       ""))
-;    (org-table-align))
-;  )
-
-;; --------- org-mode key bindings
-;(define-key global-map "\C-cl" 'org-store-link)
-;(define-key global-map "\C-ca" 'org-agenda)
 (progn
   (define-key org-mode-map (kbd "C-c C->")  'org-demote-subtree)
   (define-key org-mode-map (kbd "C-c d")    'org-demote-subtree)
@@ -1194,32 +1177,10 @@ invoked by ~/.emacs.d/init.el
 
   (define-key org-mode-map (kbd "<S-up>")   'scroll-one-line-down)
   (define-key org-mode-map (kbd "<S-down>") 'scroll-one-line-up)
-  ;(define-key org-mode-map (kbd "<C-up>")   'outline-up-heading)
-  ;(define-key org-mode-map (kbd "<C-home>") 'my-org-babel-prev)
-  ;(define-key org-mode-map (kbd "<C-end>")  'my-org-babel-next)
-  ;(define-key org-mode-map (kbd "C-c u")    'outline-up-heading)
 
   (define-key org-mode-map (kbd "C-c n")    'my-org-babel-execute-and-next)
   (define-key org-mode-map (kbd "C-c C-t")  'org-transpose-table-at-point)
 )
-;; needs ox.el = org-exporter.el
-;;(require 'ox-confluence)
-
-;;C-c c       (org-capture)          Call the command org-capture. Note that this key binding is global and not active by default: you need to install it. If you have templates defined see Capture templates, it will offer these templates for selection or use a new Org outline node as the default template. It will insert the template into the target file and switch to an indirect buffer narrowed to this new node. You may then insert the information you want.
-;;C-c C-c     (org-capture-finalize) Once you have finished entering information into the capture buffer, C-c C-c will return you to the window configuration before the capture process, so that you can resume your work without further distraction. When called with a prefix arg, finalize and then jump to the captured item.
-;;C-c C-w     (org-capture-refile)   Finalize the capture process by refiling (see Refile and copy) the note to a different place. Please realize that this is a normal refiling command that will be executed—so the cursor position at the moment you run this command is important. If you have inserted a tree with a parent and children, first move the cursor back to the parent. Any prefix argument given to this command will be passed on to the org-refile command.
-;;C-c C-k     (org-capture-kill)     Abort the capture process and return to the previous state.
-;;You can also call org-capture in a special way from the agenda, using the k c key combination. With this access, any timestamps inserted by the selected capture template will default to the cursor date in the agenda, rather than to the current date.
-;;To find the locations of the last stored capture, use org-capture with prefix commands:
-;;C-u C-c c                          Visit the target location of a capture template. You get to select the template in the usual way.
-;;C-u C-u C-c c                      Visit the last stored capture item in its buffer.
-
-;; You can also jump to the bookmark org-capture-last-stored, which
-;; will automatically be created unless you set org-capture-bookmark
-;; to nil.
-;; To insert the capture at point in an Org buffer, call org-capture
-;; with a C-0 prefix argument.
-;;
 
 (defun org-table-to-sql ()
   (interactive)
@@ -1244,7 +1205,7 @@ invoked by ~/.emacs.d/init.el
   (newline)
   (insert "VALUES")
   (newline)
-  )
+)
 
 ;;------------------------------------- org-mode crypt
 (defun rot-region(p1 p2)
@@ -1273,106 +1234,146 @@ invoked by ~/.emacs.d/init.el
 (add-hook 'org-mode-hook  'hide-ctrl-M)
 (message "-------------- Done: Org Mode")
 #+end_src
+
 *** notes
-;; ------------------------------------------------------ Org-Mode
-;; ;(define-key global-map "\C-cl" 'org-store-link)
-;; ;(define-key global-map "\C-ca" 'org-agenda)
-;; (defalias 'make-org-tbl  (kbd "ESC x org-mode RET ESC < C-SPC ESC > C-c |"))
-;; (setq org-default-notes-file "~/myDocs/logbook/notes.org")
-;; (setq org-cycle-include-plain-lists t);; (setq org-startup-folded nil)
-;; (defalias 'see-logbooks  (kbd "C-x C-f ~/myDocs/logbook RET"))
-;; (defun org-collapse()     (interactive) (org-shifttab 0))
-;;
+:  also in org-table.el (defun org-table-transpose-table-at-point ()
+: (defun org-transpose-table-at-point ()
+:   "Transpose orgmode table at point, eliminate hlines."
+:   (interactive)
+:   (let ((contents (apply #'mapcar* #'list                       ;; <== LOB magic imported here
+:                          (remove-if-not 'listp (org-table-to-lisp)))))  ;; remove 'hline from listsignals error if not table
+:     (delete-region (org-table-begin) (org-table-end))
+:     (insert (mapconcat (lambda(x) (concat "| " (mapconcat 'identity x " | " ) "
+:   |\n" ))
+:                        contents
+:                        ""))
+:     (org-table-align))
+:   )
+
+:  --------- org-mode key bindings
+: (define-key global-map "\C-cl" 'org-store-link)
+: (define-key global-map "\C-ca" 'org-agenda)
+
+
+  ;(define-key org-mode-map (kbd "<C-up>")   'outline-up-heading)
+  ;(define-key org-mode-map (kbd "<C-home>") 'my-org-babel-prev)
+  ;(define-key org-mode-map (kbd "<C-end>")  'my-org-babel-next)
+  ;(define-key org-mode-map (kbd "C-c u")    'outline-up-heading)
+
+:  needs ox.el = org-exporter.el
+: (require 'ox-confluence)
+
+: C-c c       (org-capture)          Call the command org-capture. Note that this key binding is global and not active by default: you need to install it. If you have templates defined see Capture templates, it will offer these templates for selection or use a new Org outline node as the default template. It will insert the template into the target file and switch to an indirect buffer narrowed to this new node. You may then insert the information you want.
+: C-c C-c     (org-capture-finalize) Once you have finished entering information into the capture buffer, C-c C-c will return you to the window configuration before the capture process, so that you can resume your work without further distraction. When called with a prefix arg, finalize and then jump to the captured item.
+: C-c C-w     (org-capture-refile)   Finalize the capture process by refiling (see Refile and copy) the note to a different place. Please realize that this is a normal refiling command that will be executed—so the cursor position at the moment you run this command is important. If you have inserted a tree with a parent and children, first move the cursor back to the parent. Any prefix argument given to this command will be passed on to the org-refile command.
+: C-c C-k     (org-capture-kill)     Abort the capture process and return to the previous state.
+: You can also call org-capture in a special way from the agenda, using the k c key combination. With this access, any timestamps inserted by the selected capture template will default to the cursor date in the agenda, rather than to the current date.
+: To find the locations of the last stored capture, use org-capture with prefix commands:
+: C-u C-c c                          Visit the target location of a capture template. You get to select the template in the usual way.
+: C-u C-u C-c c                      Visit the last stored capture item in its buffer.
+
+:  You can also jump to the bookmark org-capture-last-stored, which
+:  will automatically be created unless you set org-capture-bookmark
+:  to nil.
+:  To insert the capture at point in an Org buffer, call org-capture
+:  with a C-0 prefix argument.
+: 
+
+:  ------------------------------------------------------ Org-Mode
+:  ;(define-key global-map "\C-cl" 'org-store-link)
+:  ;(define-key global-map "\C-ca" 'org-agenda)
+:  (defalias 'make-org-tbl  (kbd "ESC x org-mode RET ESC < C-SPC ESC > C-c |"))
+:  (setq org-default-notes-file "~/myDocs/logbook/notes.org")
+:  (setq org-cycle-include-plain-lists t);; (setq org-startup-folded nil)
+:  (defalias 'see-logbooks  (kbd "C-x C-f ~/myDocs/logbook RET"))
+:  (defun org-collapse()     (interactive) (org-shifttab 0))
+: 
 
 *** faded
-;---------------------------------------- expand and collapse
-(defun org-advance ()
-  (interactive)
-  (when (buffer-narrowed-p)
-  (beginning-of-buffer)
-  (widen)
-  (org-forward-heading-same-level 1))
-  (org-narrow-to-subtree)
-  )
-
-(defun org-retreat ()
-  (interactive)
-  (when (buffer-narrowed-p)
-    (beginning-of-buffer)
-    (widen)
-    (org-backward-heading-same-level 1))
-    (org-narrow-to-subtree)
-    )
-
---------------;--------------------------------------------------------------------- org-confluence
-; needs ox.el = org-exporter.el
-(require 'ox-confluence)
-(require 'org-exp)
-(require 'org-export)
-(require 'org-confluence)
-
-;----------------------------------------------------------------------------------- org-trello
-;; NO: (add-to-list 'load-path "L:/MyDocs/ulib/emacs/org-trello-master/")
-;;its here: /home/kleynmi/l_C/cygwin64/home/kleynmi/.emacs.d/elpa/org-trello-0.8.1/org-trello.el:
-
-(require 'org-trello)
-;; load trello-key.el
-(add-to-list 'auto-mode-alist '("\\.trello$" . org-mode)) ;; org-trello major mode for all .trello files
-(add-hook 'org-mode-hook                                  ;; add a hook function to check if this is trello file
-          (lambda ()                                      ;; then activate the org-trello minor mode.
-            (let ((filename (buffer-file-name (current-buffer))))
-              (when (and filename (string= "trello" (file-name-extension filename)))
-              (org-trello-mode)))))
-
-(org-trello-install-key-and-token)
-(org-trello-install-board-metadata)
-(org-trello-update-board-metadata)
-(org-trello-sync-buffer t) ; sync of the entire buffer FROM trello.
-
-(setq board-name (read-from-minibuffer "Trello Board: ")
-
-(defun mk-init-keys-trello ()         ; read keys an register them via org-trello function
-   (load "~/.emacs.d/trello-key.el")
-   (orgtrello-controller--do-install-config-file my-trello-id my-trello-consumer-key my-trello-access-token 'do-ask-for-overwrite)
-)
-
-(defun mk-refresh-from-trello ()   ; sync the entire buffer FROM trello.
-   (interactive)
-   ;; (switch-to-buffer board-name)
-   ;; (buffer-mode "org-mode")
-   (org-trello-update-board-metadata)  (message "org-trello-update-board-metadata done")
-   (org-trello-sync-buffer t)    (message "org-trello-sync-buffer done");; t=> FROM TRELLO -TO-> FILE
-
-)
-
-(defun mk-get-from-trello ()   ; prompt for a board, then sync the buffer FROM trello.
-   (interactive)
-   (org-trello-install-board-metadata) (message "org-trello-install-board-metadata done") ;; only for a new board, prompts for board
-   (org-trello-update-board-metadata)  (message "org-trello-update-board-metadata done")
-   (org-trello-sync-buffer t)          (message "org-trello-sync-buffer done")  ;; t=> FROM TRELLO -TO-> FILE
-)
-
-;; (orgtrello-controller-do-sync-buffer-from-trello)
-;; org-trello-install-key-and-token
-;; (org-trello-update-board-metadata)
-;; (Org-trello-sync-buffer t)
-
-;;(org-trello-current-prefix-keybinding "C-c o" nil (org-trello))
-;; (progn
-;;   (require 'org)
-;;   (require 'org-trello-utils)
-;;   (require 'org-trello-log)
-;;   (require 'org-trello-hash)
-;;   (require 'dash)
-;;   (require 'org-trello))
+: ;---------------------------------------- expand and collapse
+: (defun org-advance ()
+:   (interactive)
+:   (when (buffer-narrowed-p)
+:   (beginning-of-buffer)
+:   (widen)
+:   (org-forward-heading-same-level 1))
+:   (org-narrow-to-subtree)
+:   )
+: 
+: (defun org-retreat ()
+:   (interactive)
+:   (when (buffer-narrowed-p)
+:     (beginning-of-buffer)
+:     (widen)
+:     (org-backward-heading-same-level 1))
+:     (org-narrow-to-subtree)
+:     )
+: 
+: --------------;--------------------------------------------------------------------- org-confluence
+: ; needs ox.el = org-exporter.el
+: (require 'ox-confluence)
+: (require 'org-exp)
+: (require 'org-export)
+: (require 'org-confluence)
+: 
+: ;----------------------------------------------------------------------------------- org-trello
+: ;; NO: (add-to-list 'load-path "L:/MyDocs/ulib/emacs/org-trello-master/")
+: ;;its here: /home/kleynmi/l_C/cygwin64/home/kleynmi/.emacs.d/elpa/org-trello-0.8.1/org-trello.el:
+: 
+: (require 'org-trello)
+: ;; load trello-key.el
+: (add-to-list 'auto-mode-alist '("\\.trello$" . org-mode)) ;; org-trello major mode for all .trello files
+: (add-hook 'org-mode-hook                                  ;; add a hook function to check if this is trello file
+:           (lambda ()                                      ;; then activate the org-trello minor mode.
+:             (let ((filename (buffer-file-name (current-buffer))))
+:               (when (and filename (string= "trello" (file-name-extension filename)))
+:               (org-trello-mode)))))
+: 
+: (org-trello-install-key-and-token)
+: (org-trello-install-board-metadata)
+: (org-trello-update-board-metadata)
+: (org-trello-sync-buffer t) ; sync of the entire buffer FROM trello.
+: 
+: (setq board-name (read-from-minibuffer "Trello Board: ")
+: 
+: (defun mk-init-keys-trello ()         ; read keys an register them via org-trello function
+:    (load "~/.emacs.d/trello-key.el")
+:    (orgtrello-controller--do-install-config-file my-trello-id my-trello-consumer-key my-trello-access-token 'do-ask-for-overwrite)
+: )
+: 
+: (defun mk-refresh-from-trello ()   ; sync the entire buffer FROM trello.
+:    (interactive)
+:    ;; (switch-to-buffer board-name)
+:    ;; (buffer-mode "org-mode")
+:    (org-trello-update-board-metadata)  (message "org-trello-update-board-metadata done")
+:    (org-trello-sync-buffer t)    (message "org-trello-sync-buffer done");; t=> FROM TRELLO -TO-> FILE
+: 
+: )
+: 
+: (defun mk-get-from-trello ()   ; prompt for a board, then sync the buffer FROM trello.
+:    (interactive)
+:    (org-trello-install-board-metadata) (message "org-trello-install-board-metadata done") ;; only for a new board, prompts for board
+:    (org-trello-update-board-metadata)  (message "org-trello-update-board-metadata done")
+:    (org-trello-sync-buffer t)          (message "org-trello-sync-buffer done")  ;; t=> FROM TRELLO -TO-> FILE
+: )
+: 
+: ;; (orgtrello-controller-do-sync-buffer-from-trello)
+: ;; org-trello-install-key-and-token
+: ;; (org-trello-update-board-metadata)
+: ;; (Org-trello-sync-buffer t)
+: 
+: ;;(org-trello-current-prefix-keybinding "C-c o" nil (org-trello))
+: ;; (progn
+: ;;   (require 'org)
+: ;;   (require 'org-trello-utils)
+: ;;   (require 'org-trello-log)
+: ;;   (require 'org-trello-hash)
+: ;;   (require 'dash)
+: ;;   (require 'org-trello))
 
 *** Org-Babel
 
 #+begin_src emacs-lisp
- ;(org-babel-do-load-languages
- ; 'org-babel-load-languages
- ; '((python . t)))
-
 (org-babel-do-load-languages 'org-babel-load-languages '((shell . t)
                                                           (matlab . t)
                                                           (python . t)
@@ -1381,8 +1382,6 @@ invoked by ~/.emacs.d/init.el
                                                           (dot . t)
                                                           (calc . t)
                                                           (jupyter . t)))   ; !!!!!!!! must be last !!! must be last !!!! for jupyter-python!!!!!!
- ;; (ipython . t)
- ;; (ein . t)
 
 (defun my-org-babel-execute-and-next ()
     (interactive)
@@ -1394,67 +1393,51 @@ invoked by ~/.emacs.d/init.el
 (message "-------------- Done: Org-Mode Section")
 #+end_src
 
-#+RESULTS:
-: -------------- Done: Org-Mode Section
+: (org-babel-do-load-languages
+:  'org-babel-load-languages
+:  '((python . t)))
+:  (ipython . t)
+:  (ein . t)
 
- ;;(require 'org-crypt)
- ;;(org-crypt-use-before-save-magic)
- ;;(setq org-tags-exclude-from-inheritance (quote ("crypt")))
- ;;(setq org-crypt-key nil)
- ;;
- ;;(defun crypt-region (p1 p2)
- ;;  "replace region with crypted"
- ;;  (interactive "r")
- ;;  (save-restriction
- ;;    (narrow-to-region p1 p2)
- ;;    (goto-char (point-min))
- ;;    (while (re-search-forward REGEXP nil t)
- ;;      (replace-match TO-STRING nil nil))
- ;;    )
- ;;  )
+: (require 'org-crypt)
+: (org-crypt-use-before-save-magic)
+: (setq org-tags-exclude-from-inheritance (quote ("crypt")))
+: (setq org-crypt-key nil)
+: 
+: (defun crypt-region (p1 p2)
+:   "replace region with crypted"
+:   (interactive "r")
+:   (save-restriction
+:     (narrow-to-region p1 p2)
+:     (goto-char (point-min))
+:     (while (re-search-forward REGEXP nil t)
+:       (replace-match TO-STRING nil nil))
+:     )
+:   )
 
- ;; active Babel languages
- ;(org-babel-do-load-languages
- ; 'org-babel-load-languages
- ; '((R . t)
- ;   (emacs-lisp . nil)
- ;   ))
+:  active Babel languages
+: (org-babel-do-load-languages
+:  'org-babel-load-languages
+:  '((R . t)
+:    (emacs-lisp . nil)
+:    ))
 
 ** Latex Mode
-;; (setq exec-path (append exec-path '("/usr/texbin"))) ; not needed
+:  (setq exec-path (append exec-path '("/usr/texbin"))) ; not needed
 
-;Org Mode can generate Portable Network Graphics (png) bitmaps from L
-;If you plan to edit LaTeX source code blocks separately, with C-c ', or want to control the size of pdf snippets,
+: Org Mode can generate Portable Network Graphics (png) bitmaps from L
+: If you plan to edit LaTeX source code blocks separately, with C-c ', or want to control the size of pdf snippets,
 
-;then it is highly recommended that AucTeX be installed, as well.
-; AucTeX is an extensible package for writing and formatting TeX
-; files. Assuming that AucTeX is installed properly, the following line
-;in .emacs will ensure that AucTeX is loaded.
-;(load "auctex.el" nil t t)
+: then it is highly recommended that AucTeX be installed, as well.
+:  AucTeX is an extensible package for writing and formatting TeX
+:  files. Assuming that AucTeX is installed properly, the following line
+: in .emacs will ensure that AucTeX is loaded.
+: (load "auctex.el" nil t t)
 
-;;Also highly recommended is RefTeX, a cross-reference, bibliography, glossary, and index manager initially written by the creator of Org Mode, Carsten Dominik. Add the following line to .emacs:
-;;(add-hook 'LaTeX-mode-hook 'turn-on-reftex)
+: Also highly recommended is RefTeX, a cross-reference, bibliography, glossary, and index manager initially written by the creator of Org Mode, Carsten Dominik. Add the following line to .emacs:
+: (add-hook 'LaTeX-mode-hook 'turn-on-reftex)
 
 ** Dired/Sidebar/filetree/neotree Mode/multi window
-
-
-(defconst dired-audio-files-extensions  '("mp3" "MP3" "ogg" "OGG" "flac" "FLAC" "wav" "WAV")  
-          "Dired Audio files extensions")
-(dired-rainbow-define audio "#329EE8" dired-audio-files-extensions)
-(defconst dired-video-files-extensions  '("vob" "VOB" "mkv" "MKV" "mpe" "mpg" "MPG" "mp4" "MP4" "ts" "TS" "m2ts" "M2TS" "avi" "AVI" "mov" "MOV" "wmv" "asf" "m2v" "m4v" "mpeg" "MPEG" "tp")
-          "Dired Video files extensions")
-(dired-rainbow-define video "#B3CCFF" dired-video-files-extensions)
-
-; (use-package dired-sidebar
-;   :bind (("C-x C-n" . dired-sidebar-toggle-sidebar))
-;   :ensure nil
-;   :commands (dired-sidebar-toggle-sidebar))
-
-;(use-package ibuffer-sidebar
-;  :bind (("C-x C-b" . ibuffer-sidebar-toggle-sidebar))
-;  :ensure nil
-;  :commands (ibuffer-sidebar-toggle-sidebar))
-
 #+begin_src emacs-lisp
 (defconst dired-pickle-extensions  '("pk")  "Dired pickle file extensions")
 (dired-rainbow-define audio "#329EE8" dired-pickle-extensions)
@@ -1465,53 +1448,27 @@ invoked by ~/.emacs.d/init.el
 (setq neo-force-change-root t)
 ;neotree-toggle
 #+end_src
+
+: (defconst dired-audio-files-extensions  '("mp3" "MP3" "ogg" "OGG" "flac" "FLAC" "wav" "WAV")  
+:           "Dired Audio files extensions")
+: (dired-rainbow-define audio "#329EE8" dired-audio-files-extensions)
+: (defconst dired-video-files-extensions  '("vob" "VOB" "mkv" "MKV" "mpe" "mpg" "MPG" "mp4" "MP4" "ts" "TS" "m2ts" "M2TS" "avi" "AVI" "mov" "MOV" "wmv" "asf" "m2v" "m4v" "mpeg" "MPEG" "tp")
+:           "Dired Video files extensions")
+: (dired-rainbow-define video "#B3CCFF" dired-video-files-extensions)
+: 
+: ; (use-package dired-sidebar
+: ;   :bind (("C-x C-n" . dired-sidebar-toggle-sidebar))
+: ;   :ensure nil
+: ;   :commands (dired-sidebar-toggle-sidebar))
+: 
+: ;(use-package ibuffer-sidebar
+: ;  :bind (("C-x C-b" . ibuffer-sidebar-toggle-sidebar))
+: ;  :ensure nil
+: ;  :commands (ibuffer-sidebar-toggle-sidebar))
+
+
 *** Window arrangements
 
-This first part controls the shells. It will force Emacs to place them at the bottom, with a window height of no more than 30% of the size of the frame.
-
-;; left, top, right, bottom
-(setq window-sides-slots '(1 0 1 0))
-                                     CONDITION                             ACTION                        A-LIST
-(add-to-list 'display-buffer-alist '("\\*e?shell\\*"                       display-buffer-in-direction   (direction . bottom) (window . root)  (window-height . 0.2)))
-(add-to-list 'display-buffer-alist `(,(rx (| "*compilation*" "*grep*"))    display-buffer-in-side-window (side . right) (slot . 0) (window-parameters . ((no-delete-other-windows . t)))  (window-width . 80)))
-(add-to-list 'display-buffer-alist `(,(rx (| "*xref*" "*grep*" "*Occur*")) display-buffer-reuse-window   (inhibit-same-window . nil)))
-(add-to-list 'display-buffer-alist `("^test[-_]"                           display-buffer-in-direction   (direction . right)))
-(setq         display-buffer-alist `(("\\*Occur\\*" display-buffer-in-side-window                        (side . left) (slot . 0) (window-width . fit-window-to-buffer)   (preserve-size . (t . nil))   (window-parameters . ((no-delete-other-windows . t)))))))
-
- (setq fit-window-to-buffer-horizontally t)
-        (setq window-resize-pixelwise t)
-
-Controlling side windows is equally straight forward. I recommend you
-limit the number of side window slots – nil means infinite, and a
-positive number the maximum you’ll allow – as that means Emacs swaps
-out the buffer in that slot instead of creating a new entry. Great for
-situations where you have a handful of ephemeral things – compilation,
-test output, shell command output, etc. – that you want to share
-windows.
-
-I also set a window parameter, no-delete-other-windows, that prevents
-Emacs from destroying the side window when you type C-x 1. It also has
-a fixed size of 80.
-
-
-And don’t forget: you can type M-x window-toggle-side-windows to toggle them visible or hidden.
-
-This snippet places a buffer to the immediate right of the current window if the buffer name starts with test_ or test-.
-
-You probably don’t want that. I recommend you set this:
-;; Requires Emacs 27+
-(setq switch-to-buffer-obey-display-actions t)
-
-(window-tree)  = 
-   ((nil (0 0 371 101)
-    (t (0 0 54 101) #<window 64 on :~/.emacs.d/> #<window 66 on *:Buffers:*>) 
-    (nil (54 0 371 101) #<window 62 on dotEmacs.org> 
-    (t (213 0 371 101) #<window 68 on dotEmacs.org> #<window 70 on dotEmacs.org>)))
-    #<window 49 on  *Minibuf-0*>)
-
-display-buffer-alist = nil
-(current-window-configuration) = #<window-configuration>
-window-dedicated-p
 #+begin_src emacs-lisp
 
 (message "--------------Emacs Windows Section")
@@ -1561,8 +1518,54 @@ window-dedicated-p
 
 #+end_src
 
-hello 
+: This first part controls the shells. It will force Emacs to place them at the bottom, with a window height of no more than 30% of the size of the frame.
+: 
+: ;; left, top, right, bottom
+: (setq window-sides-slots '(1 0 1 0))
+:                                      CONDITION                             ACTION                        A-LIST
+: (add-to-list 'display-buffer-alist '("\\*e?shell\\*"                       display-buffer-in-direction   (direction . bottom) (window . root)  (window-height . 0.2)))
+: (add-to-list 'display-buffer-alist `(,(rx (| "*compilation*" "*grep*"))    display-buffer-in-side-window (side . right) (slot . 0) (window-parameters . ((no-delete-other-windows . t)))  (window-width . 80)))
+: (add-to-list 'display-buffer-alist `(,(rx (| "*xref*" "*grep*" "*Occur*")) display-buffer-reuse-window   (inhibit-same-window . nil)))
+: (add-to-list 'display-buffer-alist `("^test[-_]"                           display-buffer-in-direction   (direction . right)))
+: (setq         display-buffer-alist `(("\\*Occur\\*" display-buffer-in-side-window                        (side . left) (slot . 0) (window-width . fit-window-to-buffer)   (preserve-size . (t . nil))   (window-parameters . ((no-delete-other-windows . t)))))))
+: 
+:  (setq fit-window-to-buffer-horizontally t)
+:         (setq window-resize-pixelwise t)
+: 
+: Controlling side windows is equally straight forward. I recommend you
+: limit the number of side window slots – nil means infinite, and a
+: positive number the maximum you’ll allow – as that means Emacs swaps
+: out the buffer in that slot instead of creating a new entry. Great for
+: situations where you have a handful of ephemeral things – compilation,
+: test output, shell command output, etc. – that you want to share
+: windows.
+: 
+: I also set a window parameter, no-delete-other-windows, that prevents
+: Emacs from destroying the side window when you type C-x 1. It also has
+: a fixed size of 80.
+: 
+: 
+: And don’t forget: you can type M-x window-toggle-side-windows to toggle them visible or hidden.
+: 
+: This snippet places a buffer to the immediate right of the current window if the buffer name starts with test_ or test-.
+: 
+: You probably don’t want that. I recommend you set this:
+: ;; Requires Emacs 27+
+: (setq switch-to-buffer-obey-display-actions t)
+: 
+: (window-tree)  = 
+:    ((nil (0 0 371 101)
+:     (t (0 0 54 101) #<window 64 on :~/.emacs.d/> #<window 66 on *:Buffers:*>) 
+:     (nil (54 0 371 101) #<window 62 on dotEmacs.org> 
+:     (t (213 0 371 101) #<window 68 on dotEmacs.org> #<window 70 on dotEmacs.org>)))
+:     #<window 49 on  *Minibuf-0*>)
+: 
+: display-buffer-alist = nil
+: (current-window-configuration) = #<window-configuration>
+: window-dedicated-p
+ 
 *** Dired stuff
+
 #+begin_src emacs-lisp
 ; (dired-sidebar-toggle dirname)
 
@@ -1765,119 +1768,121 @@ hello
 
 *** Dired/subtree funs
 
- (dired-utils-is-dir-p)
- (dired-utils-is-file-p)
- (dired-view-current)     ; was dired-display-file
- (define-key dired-mode-map "r" 'wdired-change-to-wdired-mode)
- (define-key dired-mode-map (kbd "K") 'dired-k)
- (define-key dired-mode-map (kbd "p")  'dired-subtree-only-this-file)
-       tbd: pick-off the path of the given file into clipboard
-       of emacs.  It is adviced to place bindings for these into a
-       convenient prefix key map, for example `C-,`
-
-  dired-subtree-remove
-  dired-subtree-revert
-  dired-subtree-narrow
-  dired-subtree-up
-  dired-subtree-down
-  dired-subtree-previous-sibling
-  dired-subtree-beginning
-  dired-subtree-end
-  dired-subtree-mark-subtree
-  dired-subtree-unmark-subtree
-  dired-subtree-only-this-file
-  dired-subtree-only-this-directory
-
- ;(add-hook 'ediff-mode-hook (lambda () (setq ediff-shell "C:/cygwin/bin/mintty.exe")))
- ;(add-hook 'ediff-load-hook (lambda () (setq ediff-shell "C:/cygwin/bin/mintty.exe")))
+:  (dired-utils-is-dir-p)
+:  (dired-utils-is-file-p)
+:  (dired-view-current)     ; was dired-display-file
+:  (define-key dired-mode-map "r" 'wdired-change-to-wdired-mode)
+:  (define-key dired-mode-map (kbd "K") 'dired-k)
+:  (define-key dired-mode-map (kbd "p")  'dired-subtree-only-this-file)
+:        tbd: pick-off the path of the given file into clipboard
+:        of emacs.  It is adviced to place bindings for these into a
+:        convenient prefix key map, for example `C-,`
+: 
+:   dired-subtree-remove
+:   dired-subtree-revert
+:   dired-subtree-narrow
+:   dired-subtree-up
+:   dired-subtree-down
+:   dired-subtree-previous-sibling
+:   dired-subtree-beginning
+:   dired-subtree-end
+:   dired-subtree-mark-subtree
+:   dired-subtree-unmark-subtree
+:   dired-subtree-only-this-file
+:   dired-subtree-only-this-directory
+: 
+:  ;(add-hook 'ediff-mode-hook (lambda () (setq ediff-shell "C:/cygwin/bin/mintty.exe")))
+:  ;(add-hook 'ediff-load-hook (lambda () (setq ediff-shell "C:/cygwin/bin/mintty.exe")))
 
 *** Dired Notes
- ;;(defalias 'dired-up (kbd "ESC < C-e C-r / NUL C-a ESC w C-x d C-a C-y C-k C-a ESC \\ C-e RET C-x b RET C-x k RET"))
- ;;(defalias 'dired-go-subdir-kbm (kbd "f C-x b RET C-x k RET"))
- ;; (define-key dired-mode-map [right] 'dired-go-subdir-kbm)
-
- ;;(defun w32-browser (doc) (w32-shell-execute 1 doc))
- ;;(eval-after-load "dired" '(define-key dired-mode-map [f3] (lambda ()
- ;;                                                             (interactive)
- ;;                                                             (w32-browser (dired-replace-in-string "/" "\\" (dired-replace-in-string "/cygdrive/C/" "C:\\" (dired-get-filename)))))))
-
- ;; (add-hook 'dired-mode-hook
- ;;           (lambda ()
- ;;             (setq-local ace-jump-search-filter
- ;;                         (lambda ()
- ;;                           (get-text-property (point) 'dired-filename)))))
-
- ;; when sorting in dired mode, move cursor back to top
+:  ;;(defalias 'dired-up (kbd "ESC < C-e C-r / NUL C-a ESC w C-x d C-a C-y C-k C-a ESC \\ C-e RET C-x b RET C-x k RET"))
+:  ;;(defalias 'dired-go-subdir-kbm (kbd "f C-x b RET C-x k RET"))
+:  ;; (define-key dired-mode-map [right] 'dired-go-subdir-kbm)
+: 
+:  ;;(defun w32-browser (doc) (w32-shell-execute 1 doc))
+:  ;;(eval-after-load "dired" '(define-key dired-mode-map [f3] (lambda ()
+:  ;;                                                             (interactive)
+:  ;;                                                             (w32-browser (dired-replace-in-string "/" "\\" (dired-replace-in-string "/cygdrive/C/" "C:\\" (dired-get-filename)))))))
+: 
+:  ;; (add-hook 'dired-mode-hook
+:  ;;           (lambda ()
+:  ;;             (setq-local ace-jump-search-filter
+:  ;;                         (lambda ()
+:  ;;                           (get-text-property (point) 'dired-filename)))))
+: 
+:  ;; when sorting in dired mode, move cursor back to top
 
 *** Tramp Notes
- ;; ----------------------------- Tramp
- (require 'tramp)
- ;;(setq tramp-default-method "ssh")
- (setq tramp-verbose 20)
- (setq tramp-remote-path '("/data/data/com.termux/files/usr/bin" "/data/data/com.termux/files/usr/bin/applets"))
- (add-to-list 'tramp-connection-properties (list (regexp-quote "192.168.1.161") "remote-shell" "sh"))
- ;(add-to-list 'tramp-remote-path 'tramp-own-remote-path)
- (add-to-list 'tramp-remote-path "/system/xbin")
- (add-to-list 'tramp-remote-process-environment "TMPDIR=$HOME")
- (add-to-list 'tramp-connection-properties (list (regexp-quote "android") "remote-shell" "sh"))
-
- ;; 5.17 Android shell setup hints
- ;; Tramp uses the adb method to access Android devices. Android devices provide a restricted shell access through an USB connection. The local host must have the adb program installed.
- ;; Usually, it is sufficient to open the file /adb::/. Then you can navigate in the filesystem via dired.
- ;; Alternatively, applications such as Termux or SSHDroid that run sshd process on the Android device can accept any ssh-based methods provided these settings are adjusted:
- ;;     sh must be specified for remote shell since Android devices do not provide /bin/sh. sh will then invoke whatever shell is installed on the device with this setting:
- ;;        (add-to-list 'tramp-connection-properties (list (regexp-quote "192.168.0.26") "remote-shell" "sh"))
- ;;     where ‘192.168.0.26’ is the Android device's IP address. (see Predefined connection information).
- ;;     Tramp requires preserving PATH environment variable from user settings. Android devices prefer /system/xbin path over /system/bin. Both of these are set as follows:
- ;;        (add-to-list 'tramp-remote-path 'tramp-own-remote-path)
- ;;        (add-to-list 'tramp-remote-path "/system/xbin")
- ;;     When the Android device is not ‘rooted’, specify a writable directory for temporary files:
- ;;        (add-to-list 'tramp-remote-process-environment "TMPDIR=$HOME")
- ;;     Open a remote connection with the command C-x C-f /ssh:192.168.0.26#2222: <RET>, where sshd is listening on port ‘2222’.
- ;;     To add a corresponding entry to the ~/.ssh/config file (recommended), use this:
- ;;               Host android
- ;;                    HostName 192.168.0.26
- ;;                    User root
- ;;                    Port 2222
- ;;     To use the host name ‘android’ instead of the IP address shown in the previous example, fix the connection properties as follows:
- ;;     (add-to-list 'tramp-connection-properties (list (regexp-quote "android") "remote-shell" "sh"))
- ;; Open a remote connection with a more concise command C-x C-f /ssh:android: <RET>.
+:  ;; ----------------------------- Tramp
+:  (require 'tramp)
+:  ;;(setq tramp-default-method "ssh")
+:  (setq tramp-verbose 20)
+:  (setq tramp-remote-path '("/data/data/com.termux/files/usr/bin" "/data/data/com.termux/files/usr/bin/applets"))
+:  (add-to-list 'tramp-connection-properties (list (regexp-quote "192.168.1.161") "remote-shell" "sh"))
+:  ;(add-to-list 'tramp-remote-path 'tramp-own-remote-path)
+:  (add-to-list 'tramp-remote-path "/system/xbin")
+:  (add-to-list 'tramp-remote-process-environment "TMPDIR=$HOME")
+:  (add-to-list 'tramp-connection-properties (list (regexp-quote "android") "remote-shell" "sh"))
+: 
+:  ;; 5.17 Android shell setup hints
+:  ;; Tramp uses the adb method to access Android devices. Android devices provide a restricted shell access through an USB connection. The local host must have the adb program installed.
+:  ;; Usually, it is sufficient to open the file /adb::/. Then you can navigate in the filesystem via dired.
+:  ;; Alternatively, applications such as Termux or SSHDroid that run sshd process on the Android device can accept any ssh-based methods provided these settings are adjusted:
+:  ;;     sh must be specified for remote shell since Android devices do not provide /bin/sh. sh will then invoke whatever shell is installed on the device with this setting:
+:  ;;        (add-to-list 'tramp-connection-properties (list (regexp-quote "192.168.0.26") "remote-shell" "sh"))
+:  ;;     where ‘192.168.0.26’ is the Android device's IP address. (see Predefined connection information).
+:  ;;     Tramp requires preserving PATH environment variable from user settings. Android devices prefer /system/xbin path over /system/bin. Both of these are set as follows:
+:  ;;        (add-to-list 'tramp-remote-path 'tramp-own-remote-path)
+:  ;;        (add-to-list 'tramp-remote-path "/system/xbin")
+:  ;;     When the Android device is not ‘rooted’, specify a writable directory for temporary files:
+:  ;;        (add-to-list 'tramp-remote-process-environment "TMPDIR=$HOME")
+:  ;;     Open a remote connection with the command C-x C-f /ssh:192.168.0.26#2222: <RET>, where sshd is listening on port ‘2222’.
+:  ;;     To add a corresponding entry to the ~/.ssh/config file (recommended), use this:
+:  ;;               Host android
+:  ;;                    HostName 192.168.0.26
+:  ;;                    User root
+:  ;;                    Port 2222
+:  ;;     To use the host name ‘android’ instead of the IP address shown in the previous example, fix the connection properties as follows:
+:  ;;     (add-to-list 'tramp-connection-properties (list (regexp-quote "android") "remote-shell" "sh"))
+:  ;; Open a remote connection with a more concise command C-x C-f /ssh:android: <RET>.
 
 *** faded
- ;; if it's a folder=>insert subdir  & move to first; elseif it's a file = >preview-in-other window and move to next, if it's previewed,....
- (defun my-subdired-dfs ()
-   (interactive)
-   (dired-subtree--is-expanded-p)
-   (dired-utils-is-dir-p)
-   (dired-utils-is-file-p)
-   (let ((sDpth (dired-subtree--get-depth (dired-subtree--get-ov))))
-     (if (eq sDpth 0)
-         (if (dired-utils-is-dir-p)
-             (dired-subtree-insert))
-         (dired-subtree-remove))))
 
- (defun my-subdired-dfs ()
-   (interactive)
-   (dired-utils-is-dir-p)
-   (dired-utils-is-file-p)
-   (let ((sDpth (dired-subtree--get-depth (dired-subtree--get-ov))))
-         (if (dired-utils-is-dir-p)
-             (if (dired-subtree--is-expanded-p)
-                 (dired-subtree-remove)
-                 (dired-subtree-insert)))))
- (define-key dired-mode-map [left]            'dired-up) ;; dired-up-directory
- (define-key dired-mode-map [left]            'dired-up-directory)
- (define-key dired-mode-map [right]           'dired-go-subdir-kbm)
- (define-key dired-mode-map (kbd "<S-down>")  'dired-subtree-next-sibling)
- (define-key dired-mode-map (kbd "<S-left>")  'dired-subtree-remove)
- (define-key dired-mode-map (kbd "<S-right>") 'dired-subtree-insert)
- (define-key dired-mode-map (kbd "<S-up>")    'dired-subtree-previous-sibling)
- (define-key dired-mode-map [right]           'dired-find-file-drop-prev-dired-buffer)
- (define-key dired-mode-map [left]            'dired-up-directory-drop-prev-dired-buffer)
- (define-key dired-mode-map (kbd "C-n")       'dired-next-line)
- (define-key dired-mode-map (kbd "C-p")       'dired-previous-line)
+:  ;; if it's a folder=>insert subdir  & move to first; elseif it's a file = >preview-in-other window and move to next, if it's previewed,....
+:  (defun my-subdired-dfs ()
+:    (interactive)
+:    (dired-subtree--is-expanded-p)
+:    (dired-utils-is-dir-p)
+:    (dired-utils-is-file-p)
+:    (let ((sDpth (dired-subtree--get-depth (dired-subtree--get-ov))))
+:      (if (eq sDpth 0)
+:          (if (dired-utils-is-dir-p)
+:              (dired-subtree-insert))
+:          (dired-subtree-remove))))
+: 
+:  (defun my-subdired-dfs ()
+:    (interactive)
+:    (dired-utils-is-dir-p)
+:    (dired-utils-is-file-p)
+:    (let ((sDpth (dired-subtree--get-depth (dired-subtree--get-ov))))
+:          (if (dired-utils-is-dir-p)
+:              (if (dired-subtree--is-expanded-p)
+:                  (dired-subtree-remove)
+:                  (dired-subtree-insert)))))
+:  (define-key dired-mode-map [left]            'dired-up) ;; dired-up-directory
+:  (define-key dired-mode-map [left]            'dired-up-directory)
+:  (define-key dired-mode-map [right]           'dired-go-subdir-kbm)
+:  (define-key dired-mode-map (kbd "<S-down>")  'dired-subtree-next-sibling)
+:  (define-key dired-mode-map (kbd "<S-left>")  'dired-subtree-remove)
+:  (define-key dired-mode-map (kbd "<S-right>") 'dired-subtree-insert)
+:  (define-key dired-mode-map (kbd "<S-up>")    'dired-subtree-previous-sibling)
+:  (define-key dired-mode-map [right]           'dired-find-file-drop-prev-dired-buffer)
+:  (define-key dired-mode-map [left]            'dired-up-directory-drop-prev-dired-buffer)
+:  (define-key dired-mode-map (kbd "C-n")       'dired-next-line)
+:  (define-key dired-mode-map (kbd "C-p")       'dired-previous-line)
 
-#+begin_src emacs-lisp
+** Magit
+#+begin_src emacs-lisp                            :REM magit
 (defun my-magit-mode-hook ()
   "Custom `magit-mode' behaviours."
   ;(setq-default x-stretch-cursor nil)
@@ -1887,9 +1892,10 @@ hello
  )
 (add-hook 'magit-mode-hook 'my-magit-mode-hook)
 #+end_src
- window-selection-change-functions
-; (remove-hook 'magit-mode-hook 'my-magit-mode-hook)
-; (setq magit-mode-hook nil)
+
+:  window-selection-change-functions
+: ; (remove-hook 'magit-mode-hook 'my-magit-mode-hook)
+: ; (setq magit-mode-hook nil)
 
 ** Markup Languages Modes
 #+begin_src emacs-lisp
@@ -2039,52 +2045,81 @@ hello
  (require 'ztree-dir)
 
 * Key Bindings
-** notes: may be useful
- M-0 w                       ;; dired copy path
- C-x C-v                     ;; find alternate file   -> then grab filepath
- /                           ;; self-insert-command
- :                           ;; self-insert-command
- ??                          ;; package-list-packages
- C-;                         ;; Highlight item for MULTIPLE edit
- C-a                         ;; move-beginning-of-line
- C-b                         ;; backward-char
- C-c C-b                     ;; associate ielm with buffer
- C-ci                        ;; indent-to-column
- C-h C-a                     ;; about-emacs
- C-h f                       ;; describe-function
- C-h F                       ;; Info-goto-emacs-command-node
- C-h w                       ;; command where-is (found in global-map) (where-is DEFINITION &optional INSERT)
- C-j                         ;; eval in scratch buffer ?
- C-k                         ;; kill-line
- C-q                         ;; unfill-paragraph
- C-s                         ;; isearch-forward
- C-x C-f                     ;; find-file
- C-u C-space or C-u C-@      ;; move back to previous positions (within buffer)
- C-x C-space or C-x C-@      ;; move back to previous positions (between buffers)
- C-x C-x                     ;; exchange-point-and-mark
- C-x RTN f unix RTN          ;; dos2unix
- C-x n n;                    ;; To REGION - Narrow
- C-x n w                     ;; To Region - Widen
- C-x r s r                   ;; Register "r" Copy region into  (copy-to-register).
- C-x r i r                   ;; Register "r" Insert text from  (insert-register).
- C-x r w w                   ;; Save winows config in register "w"
- C-x r j w                   ;; jump back (where <register> is a single character) to jump back to it.
- C-x M-:                     ;; like M-: but with the elisp expression already filled in for youo
- C-y                         ;; yank
- DEL                         ;; delete-backward-char
- ESC                         ;; ESC-prefix
- M-6 M-x                     ;; Buffer-menu-sort = sort by file name
- M-s h f                     ;; hi-lock-find-patterns           Searches for Hi-Lock patterns in the buffer to use.
- M-s h l                     ;; highlight-lines-matching-regexp Highlights all lines matching a regular expression
- M-s h p                     ;; highlight-phrase                Highlights everything matching a phrase
- M-s h r                     ;; highlight-regexp                Highlights everything matching a regular expression
- M-s h u                     ;; unhighlight-regexp              Deletes the highlighter under point
- M-s h w                     ;; hi-lock-write-interactive-patterns Inserts a list of Hi-Lock patterns into the buffer
- RET                         ;; newline
- w                           ;; self-insert-command
- command C-x z, then z again ;; repeat last
- complex command C-x ESC ESC ;; repeat last
+** keys notes: may be useful
 
+:  M-0 w                       ;; dired copy path
+:  C-x C-v                     ;; find alternate file   -> then grab filepath
+:  /                           ;; self-insert-command
+:  :                           ;; self-insert-command
+:  ??                          ;; package-list-packages
+:  C-;                         ;; Highlight item for MULTIPLE edit
+:  C-a                         ;; move-beginning-of-line
+:  C-b                         ;; backward-char
+:  C-c C-b                     ;; associate ielm with buffer
+:  C-ci                        ;; indent-to-column
+:  C-h C-a                     ;; about-emacs
+:  C-h f                       ;; describe-function
+:  C-h F                       ;; Info-goto-emacs-command-node
+:  C-h w                       ;; command where-is (found in global-map) (where-is DEFINITION &optional INSERT)
+:  C-j                         ;; eval in scratch buffer ?
+:  C-k                         ;; kill-line
+:  C-q                         ;; unfill-paragraph
+:  C-s                         ;; isearch-forward
+:  C-x C-f                     ;; find-file
+:  C-u C-space or C-u C-@      ;; move back to previous positions (within buffer)
+:  C-x C-space or C-x C-@      ;; move back to previous positions (between buffers)
+:  C-x C-x                     ;; exchange-point-and-mark
+:  C-x RTN f unix RTN          ;; dos2unix
+:  C-x n n;                    ;; To REGION - Narrow
+:  C-x n w                     ;; To Region - Widen
+:  C-x r s r                   ;; Register "r" Copy region into  (copy-to-register).
+:  C-x r i r                   ;; Register "r" Insert text from  (insert-register).
+:  C-x r w w                   ;; Save winows config in register "w"
+:  C-x r j w                   ;; jump back (where <register> is a single character) to jump back to it.
+:  C-x M-:                     ;; like M-: but with the elisp expression already filled in for youo
+:  C-y                         ;; yank
+:  DEL                         ;; delete-backward-char
+:  ESC                         ;; ESC-prefix
+:  M-6 M-x                     ;; Buffer-menu-sort = sort by file name
+:  M-s h f                     ;; hi-lock-find-patterns           Searches for Hi-Lock patterns in the buffer to use.
+:  M-s h l                     ;; highlight-lines-matching-regexp Highlights all lines matching a regular expression
+:  M-s h p                     ;; highlight-phrase                Highlights everything matching a phrase
+:  M-s h r                     ;; highlight-regexp                Highlights everything matching a regular expression
+:  M-s h u                     ;; unhighlight-regexp              Deletes the highlighter under point
+:  M-s h w                     ;; hi-lock-write-interactive-patterns Inserts a list of Hi-Lock patterns into the buffer
+:  RET                         ;; newline
+:  w                           ;; self-insert-command
+:  command C-x z, then z again ;; repeat last
+:  complex command C-x ESC ESC ;; repeat last
+
+** org-babel keys notes
+
+: C-down / C-up = next section / previous section in org-babel
+: org-goto
+: 
+:   C-c C-o     results in separate buffer
+:   C-c C-o     open link
+:   C-c C-x C-l (org-latex-preview)
+:   C-c C-x C-l show latex
+:   C-c C-v h   list keybings
+:   C-c C-v s   execute subtree
+:   C-c C-v C-b execute all
+:   C-c C-v z   show REPL
+:   C-c C-c     execute block
+:   C-c n       execute and next block
+:   C-c C-,     insert block
+:   C-up        up heading
+:   C-c C-f     forward heading
+:   C-c C-p     backward heading
+:   M-i         for function description
+:   C-M-i       babel completion-at-point
+:   M-Tab       org complete word at point
+:   C- '        edit block
+: 
+:  completion
+:    M-/
+:    M-TAB - orgmode
+:    M-i babel> complete-symbol
 ** Mousing
 #+begin_src emacs-lisp
 (global-set-key (kbd "s-x")         '(lambda () (interactive) (progn (set-mark-command 0))))   ; Super = windowframe key is  mod 4 see xmodmap cycle-buffer
@@ -2172,34 +2207,6 @@ hello
 
 (message "-------------- Done: Global Keys")
 #+end_src
-
-** org-babel keys notes
-C-down / C-up = next section / previous section in org-babel
-org-goto
-
-  C-c C-o     results in separate buffer
-  C-c C-o     open link
-  C-c C-x C-l (org-latex-preview)
-  C-c C-x C-l show latex
-  C-c C-v h   list keybings
-  C-c C-v s   execute subtree
-  C-c C-v C-b execute all
-  C-c C-v z   show REPL
-  C-c C-c     execute block
-  C-c n       execute and next block
-  C-c C-,     insert block
-  C-up        up heading
-  C-c C-f     forward heading
-  C-c C-p     backward heading
-  M-i         for function description
-  C-M-i       babel completion-at-point
-  M-Tab       org complete word at point
-  C- '        edit block
-
- completion
-   M-/
-   M-TAB - orgmode
-   M-i babel> complete-symbol
 
 ** Function Keys
 |------+-----------+-----------+------------+-----------------+---+------------------+----------------+----------+--------------+---+-------------+-------------+--------+--------------+------|
@@ -2348,20 +2355,20 @@ org-goto
 : -------------- Done: Function Keys
 
 ** ace-window keys
-(defvar aw-dispatch-alist
-  '((?x aw-delete-window "Delete Window")
-	(?m aw-swap-window "Swap Windows")
-	(?M aw-move-window "Move Window")
-	(?c aw-copy-window "Copy Window")
-	(?j aw-switch-buffer-in-window "Select Buffer")
-	(?n aw-flip-window)
-	(?u aw-switch-buffer-other-window "Switch Buffer Other Window")
-	(?c aw-split-window-fair "Split Fair Window")
-	(?v aw-split-window-vert "Split Vert Window")
-	(?b aw-split-window-horz "Split Horz Window")
-	(?o delete-other-windows "Delete Other Windows")
-	(?? aw-show-dispatch-help))
-  "List of actions for `aw-dispatch-default'.")
+: (defvar aw-dispatch-alist
+:   '((?x aw-delete-window "Delete Window")
+: 	(?m aw-swap-window "Swap Windows")
+: 	(?M aw-move-window "Move Window")
+: 	(?c aw-copy-window "Copy Window")
+: 	(?j aw-switch-buffer-in-window "Select Buffer")
+: 	(?n aw-flip-window)
+: 	(?u aw-switch-buffer-other-window "Switch Buffer Other Window")
+: 	(?c aw-split-window-fair "Split Fair Window")
+: 	(?v aw-split-window-vert "Split Vert Window")
+: 	(?b aw-split-window-horz "Split Horz Window")
+: 	(?o delete-other-windows "Delete Other Windows")
+: 	(?? aw-show-dispatch-help))
+:   "List of actions for `aw-dispatch-default'.")
 ** KeyPad Keys
 *** Midpad Global Key Bindings
 #+begin_src emacs-lisp
@@ -2393,12 +2400,12 @@ org-goto
 (message "-------------- Done: Midpad key bindings")
 #+end_src
 
-(global-set-key [M-up]          'kill-this-buffer-volatile) ;; kill-buffer
-(global-set-key [M-+]           'text-scale-increase)
-(global-set-key [C-down]        'windmove-down)        ;(global-set-key (kbd "C-c <down>")  'windmove-down);
-(global-set-key [C-left]        'windmove-left)        ;(global-set-key (kbd "C-c <left>")  'windmove-left)
-(global-set-key [C-right]       'windmove-right)       ;(global-set-key (kbd "C-c <right>") 'windmove-right)
-(global-set-key [C-up]          'windmove-up)          ;(global-set-key (kbd "C-c <up>")    'windmove-up)
+: (global-set-key [M-up]          'kill-this-buffer-volatile) ;; kill-buffer
+: (global-set-key [M-+]           'text-scale-increase)
+: (global-set-key [C-down]        'windmove-down)        ;(global-set-key (kbd "C-c <down>")  'windmove-down);
+: (global-set-key [C-left]        'windmove-left)        ;(global-set-key (kbd "C-c <left>")  'windmove-left)
+: (global-set-key [C-right]       'windmove-right)       ;(global-set-key (kbd "C-c <right>") 'windmove-right)
+: (global-set-key [C-up]          'windmove-up)          ;(global-set-key (kbd "C-c <up>")    'windmove-up)
 
 *** Keypad Maps
 :         |----------------+----------------+----------------+----------|        
