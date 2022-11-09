@@ -617,7 +617,6 @@ invoked by ~/.emacs.d/init.el
 :    foreach output-line
 :   
 
-
 * Settings
 #+begin_src emacs-lisp                               :REM Settings
 (message "-------------- Start: Settings")
@@ -865,26 +864,26 @@ invoked by ~/.emacs.d/init.el
 (setq show-paren-when-point-inside-paren t)
 (setq show-paren-when-point-in-periphery t)
 (message "-------------- Done: Highlighting")
-
-;; (require 'highlight-sexp)  - fails
-;; (add-hook 'lisp-mode-hook 'highlight-sexp-mode)
-;; (add-hook 'emacs-lisp-mode-hook 'highlight-sexp-mode)
-;;  hl-sexp-background-color
-;;   - hl-sexp-foreground-color
-;;   - hl-sexp-face
-;;  Enable `highlight-sexps-mode'
-;; (list-colors-display)
-;; (set-face-background hl-line-face "gray50")
-;; (set-face-background 'show-paren-match  "#888888")
-;; (face-foreground 'show-paren-match)
-;; (setq  hl-line-range-function 'nil)
-;; (setq  hl-line-range-function 'hl-short-range)
-;; (defun hl-short-range () (cons (- (point) 5) (+ (point 1)))
-;; (require 'cursor-flash)
-;; (cursor-flash-mode 1)
-;; (setq cursor-flash-interval 0.10)
-
 #+end_src
+
+: (require 'highlight-sexp)  - fails
+: (add-hook 'lisp-mode-hook 'highlight-sexp-mode)
+: (add-hook 'emacs-lisp-mode-hook 'highlight-sexp-mode)
+:  hl-sexp-background-color
+:   - hl-sexp-foreground-color
+:   - hl-sexp-face
+:  Enable `highlight-sexps-mode'
+: (list-colors-display)
+: (set-face-background hl-line-face "gray50")
+: (set-face-background 'show-paren-match  "#888888")
+: (face-foreground 'show-paren-match)
+: (setq  hl-line-range-function 'nil)
+: (setq  hl-line-range-function 'hl-short-range)
+: (defun hl-short-range () (cons (- (point) 5) (+ (point 1)))
+: (require 'cursor-flash)
+: (cursor-flash-mode 1)
+: (setq cursor-flash-interval 0.10)
+
 ** Web Proxy
 : -------------------------------------------------------------------- WEB PROXY
 :  (setq url-proxy-services '(("no_proxy" . "work\\.com")
@@ -898,7 +897,7 @@ invoked by ~/.emacs.d/init.el
 :      (list (list "proxy.com:8080" (cons "Input your LDAP UID !" (base64-encode-string "LOGIN:PASSWORD")))))
 
 ** Themes
-: default theme: tango-dark or solarized
+: default theme: tango-dark: or solarized
 : tango-dark: good theme in init.el:  '(custom-enabled-themes (quote (tango-dark)))
 : (add-to-list 'custom-theme-load-path "~/.emacs.d/themes/")
 : Now copy your theme's '.el' file to your .emacs.d/themes/ directory. A
@@ -934,67 +933,67 @@ invoked by ~/.emacs.d/init.el
 
 ;;(add-to-list 'auto-mode-alist '("\\.cs$"      . csharp-mode)  )
 ;;(setq auto-mode-alist   (append '(("\\.cs$" . csharp-mode)) auto-mode-alist))
-;;(insert (format "%s" auto-mode-alist)) ( (\.m\' . matlab-mode) ("\\.m\\'" . octave-mode))
-;;                                         (\.py$ . python-mode)
-;;                                         (\.te?xt\' . text-mode)
-;;                                         (\.c\' . c-mode) (\.h\' . c-mode)
-;;                                         (\.scm\' . scheme-mode) (\.lsp\' . lisp-mode) (\.ml\' . lisp-mode)
-;;                                         (\.f\' . fortran-mode) (\.F\' . fortran-mode) (\.for\' . fortran-mode)
-;;                                         (\.p\' . pascal-mode) (\.pas\' . pascal-mode)
-;;                                         (\.ad[abs]\' . ada-mode)
-;;                                         (\.\([pP]\([Llm]\|erl\)\|al\)\' . perl-mode)
-;;                                         (\.s?html?\' . html-mode)
-;;                                         (\.cc\' . c++-mode) (\.hh\' . c++-mode) (\.hpp\' . c++-mode) (\.C\' . c++-mode) (\.H\' . c++-mode) (\.cpp\' . c++-mode) (\.cxx\' . c++-mode) (\.hxx\' . c++-mode) (\.c\+\+\' . c++-mode) (\.h\+\+\' . c++-mode)
-;;                                         (\.m\' . objc-mode)
-;;                                         (\.java\' . java-mode)
-;;                                         (\.mk\' . makefile-mode) (\(M\|m\|GNUm\)akefile\(\.in\)?\' . makefile-mode) (\.am\' . makefile-mode)
-;;                                         (\.texinfo\' . texinfo-mode) (\.te?xi\' . texinfo-mode)
-;;                                         (\.s\' . asm-mode) (\.S\' . asm-mode) (\.asm\' . asm-mode)
-;;                                         (ChangeLog\' . change-log-mode) (change\.log\' . change-log-mode) (changelo\' . change-log-mode) (ChangeLog\.[0-9]+\' . change-log-mode) (changelog\' . change-log-mode) (changelog\.[0-9]+\' . change-log-mode)
-;;                                         (\$CHANGE_LOG\$\.TXT . change-log-mode)
-;;                                         (\.scm\.[0-9]*\' . scheme-mode)
-;;                                         (\.[ck]?sh\'\|\.shar\'\|/\.z?profile\' . sh-mode) (\(/\|\`\)\.\(bash_profile\|z?login\|bash_login\|z?logout\)\' . sh-mode) (\(/\|\`\)\.\(bash_logout\|shrc\|[kz]shrc\|bashrc\|t?cshrc\|esrc\)\' . sh-mode) (\(/\|\`\)\.\([kz]shenv\|xinitrc\|startxrc\|xsession\)\' . sh-mode) (\.m?spec\' . sh-mode)
-;;                                         (\.mm\' . nroff-mode) (\.me\' . nroff-mode) (\.ms\' . nroff-mode) (\.man\' . nroff-mode)
-;;                                         (\.\(u?lpc\|pike\|pmod\)\' . pike-mode)
-;;                                         (\.TeX\' . tex-mode) (\.tex\' . tex-mode)
-;;                                         (\.ltx\' . latex-mode) (\.sty\' . latex-mode) (\.cls\' . latex-mode) (\.clo\' . latex-mode) (\.bbl\' . latex-mode) (\.bib\' . bibtex-mode)
-;;                                         (\.sql\' . sql-mode)
-;;                                         (\.m4\' . m4-mode) (\.mc\' . m4-mode)
-;;                                         (\.mf\' . metafont-mode) (\.mp\' . metapost-mode)
-;;                                         (\.vhdl?\' . vhdl-mode)
-;;                                         (\.article\' . text-mode) (\.letter\' . text-mode) (\`/tmp/Re . text-mode) (/Message[0-9]*\' . text-mode) (\`/tmp/fol/ . text-mode)
-;;                                         (\.tcl\' . tcl-mode) (\.exp\' . tcl-mode) (\.itcl\' . tcl-mode) (\.itk\' . tcl-mode)
-;;                                         (\.icn\' . icon-mode)
-;;                                         (\.sim\' . simula-mode) (\.mss\' . scribe-mode)
-;;                                         (\.f90\' . f90-mode)
-;;                                         (\.indent\.pro\' . fundamental-mode)
-;;                                         (\.pro\' . idlwave-mode)
-;;                                         (\.awk\' . awk-mode)
-;;                                         (\.prolog\' . prolog-mode)
-;;                                         (\.tar\' . tar-mode)
-;;                                         (\.\(arc\|zip\|lzh\|zoo\|jar\)\' . archive-mode) (\.\(ARC\|ZIP\|LZH\|ZOO\|JAR\)\' . archive-mode)
-;;                                         (/drafts/[0-9]+\' . mh-letter-mode)
-;;                                         (\.zone\' . zone-mode)
-;;                                         (\.y\' . c-mode) (\.lex\' . c-mode)
-;;                                         (\.oak\' . scheme-mode)
-;;                                         (\.sgml?\' . sgml-mode) (\.xml\' . sgml-mode) (\.dtd\' . sgml-mode)
-;;                                         (\.ds\(ss\)?l\' . dsssl-mode)
-;;                                         (\.idl\' . idl-mode)
-;;                                         ([]>:/\]\..*emacs\' . emacs-lisp-mode) (\`\..*emacs\' . emacs-lisp-mode) ([:/]_emacs\' . emacs-lisp-mode) (\.el\' . emacs-lisp-mode)
-;;                                         (/crontab\.X*[0-9]+\' . shell-script-mode)
-;;                                         (\.\(asn\|mib\|smi\)\' . snmp-mode)
-;;                                         (\.\(as\|mi\|sm\)2\' . snmpv2-mode)
-;;                                         (\.\(diffs?\|patch\|rej\)\' . diff-mode) (\.\(dif\|pat\)\' . diff-mode)
-;;                                         (\.[eE]?[pP][sS]\' . ps-mode)
-;;                                         (configure\.\(ac\|in\)\' . autoconf-mode)
-;;                                         (BROWSE\' . ebrowse-tree-mode) (\.ebrowse\' . ebrowse-tree-mode)
-;;                                         (#\*mail\* . mail-mode)
-;;                                         (\.~?[0-9]+\.[0-9][-.0-9]*~?\' ignore t)
-;;                                         (\.[1-9]\' . nroff-mode) (\.g\' . antlr-mode))
+;;(insert (format "%s" auto-mode-alist))
+;;   ( (\.m\' . matlab-mode) ("\\.m\\'" . octave-mode))
+;;     (\.py$ . python-mode)
+;;     (\.te?xt\' . text-mode)
+;;     (\.c\' . c-mode) (\.h\' . c-mode)
+;;     (\.scm\' . scheme-mode) (\.lsp\' . lisp-mode) (\.ml\' . lisp-mode)
+;;     (\.f\' . fortran-mode) (\.F\' . fortran-mode) (\.for\' . fortran-mode)
+;;     (\.p\' . pascal-mode) (\.pas\' . pascal-mode)
+;;     (\.ad[abs]\' . ada-mode)
+;;     (\.\([pP]\([Llm]\|erl\)\|al\)\' . perl-mode)
+;;     (\.s?html?\' . html-mode)
+;;     (\.cc\' . c++-mode) (\.hh\' . c++-mode) (\.hpp\' . c++-mode) (\.C\' . c++-mode) (\.H\' . c++-mode) (\.cpp\' . c++-mode) (\.cxx\' . c++-mode) (\.hxx\' . c++-mode) (\.c\+\+\' . c++-mode) (\.h\+\+\' . c++-mode)
+;;     (\.m\' . objc-mode)
+;;     (\.java\' . java-mode)
+;;     (\.mk\' . makefile-mode) (\(M\|m\|GNUm\)akefile\(\.in\)?\' . makefile-mode) (\.am\' . makefile-mode)
+;;     (\.texinfo\' . texinfo-mode) (\.te?xi\' . texinfo-mode)
+;;     (\.s\' . asm-mode) (\.S\' . asm-mode) (\.asm\' . asm-mode)
+;;     (ChangeLog\' . change-log-mode) (change\.log\' . change-log-mode) (changelo\' . change-log-mode) (ChangeLog\.[0-9]+\' . change-log-mode) (changelog\' . change-log-mode) (changelog\.[0-9]+\' . change-log-mode)
+;;     (\$CHANGE_LOG\$\.TXT . change-log-mode)
+;;     (\.scm\.[0-9]*\' . scheme-mode)
+;;     (\.[ck]?sh\'\|\.shar\'\|/\.z?profile\' . sh-mode) (\(/\|\`\)\.\(bash_profile\|z?login\|bash_login\|z?logout\)\' . sh-mode) (\(/\|\`\)\.\(bash_logout\|shrc\|[kz]shrc\|bashrc\|t?cshrc\|esrc\)\' . sh-mode) (\(/\|\`\)\.\([kz]shenv\|xinitrc\|startxrc\|xsession\)\' . sh-mode) (\.m?spec\' . sh-mode)
+;;     (\.mm\' . nroff-mode) (\.me\' . nroff-mode) (\.ms\' . nroff-mode) (\.man\' . nroff-mode)
+;;     (\.\(u?lpc\|pike\|pmod\)\' . pike-mode)
+;;     (\.TeX\' . tex-mode) (\.tex\' . tex-mode)
+;;     (\.ltx\' . latex-mode) (\.sty\' . latex-mode) (\.cls\' . latex-mode) (\.clo\' . latex-mode) (\.bbl\' . latex-mode) (\.bib\' . bibtex-mode)
+;;     (\.sql\' . sql-mode)
+;;     (\.m4\' . m4-mode) (\.mc\' . m4-mode)
+;;     (\.mf\' . metafont-mode) (\.mp\' . metapost-mode)
+;;     (\.vhdl?\' . vhdl-mode)
+;;     (\.article\' . text-mode) (\.letter\' . text-mode) (\`/tmp/Re . text-mode) (/Message[0-9]*\' . text-mode) (\`/tmp/fol/ . text-mode)
+;;     (\.tcl\' . tcl-mode) (\.exp\' . tcl-mode) (\.itcl\' . tcl-mode) (\.itk\' . tcl-mode)
+;;     (\.icn\' . icon-mode)
+;;     (\.sim\' . simula-mode) (\.mss\' . scribe-mode)
+;;     (\.f90\' . f90-mode)
+;;     (\.indent\.pro\' . fundamental-mode)
+;;     (\.pro\' . idlwave-mode)
+;;     (\.awk\' . awk-mode)
+;;     (\.prolog\' . prolog-mode)
+;;     (\.tar\' . tar-mode)
+;;     (\.\(arc\|zip\|lzh\|zoo\|jar\)\' . archive-mode) (\.\(ARC\|ZIP\|LZH\|ZOO\|JAR\)\' . archive-mode)
+;;     (/drafts/[0-9]+\' . mh-letter-mode)
+;;     (\.zone\' . zone-mode)
+;;     (\.y\' . c-mode) (\.lex\' . c-mode)
+;;     (\.oak\' . scheme-mode)
+;;     (\.sgml?\' . sgml-mode) (\.xml\' . sgml-mode) (\.dtd\' . sgml-mode)
+;;     (\.ds\(ss\)?l\' . dsssl-mode)
+;;     (\.idl\' . idl-mode)
+;;     ([]>:/\]\..*emacs\' . emacs-lisp-mode) (\`\..*emacs\' . emacs-lisp-mode) ([:/]_emacs\' . emacs-lisp-mode) (\.el\' . emacs-lisp-mode)
+;;     (/crontab\.X*[0-9]+\' . shell-script-mode)
+;;     (\.\(asn\|mib\|smi\)\' . snmp-mode)
+;;     (\.\(as\|mi\|sm\)2\' . snmpv2-mode)
+;;     (\.\(diffs?\|patch\|rej\)\' . diff-mode) (\.\(dif\|pat\)\' . diff-mode)
+;;     (\.[eE]?[pP][sS]\' . ps-mode)
+;;     (configure\.\(ac\|in\)\' . autoconf-mode)
+;;     (BROWSE\' . ebrowse-tree-mode) (\.ebrowse\' . ebrowse-tree-mode)
+;;     (#\*mail\* . mail-mode)
+;;     (\.~?[0-9]+\.[0-9][-.0-9]*~?\' ignore t)
+;;     (\.[1-9]\' . nroff-mode) (\.g\' . antlr-mode))
 
 (message "-------------- Done: Modes Assoc List")
 #+end_src
-
 * Modes Section
 ** Python Mode
 #+begin_src emacs-lisp                            :REM Python Mode
@@ -1045,32 +1044,33 @@ invoked by ~/.emacs.d/init.el
 
 (message "-------------- Done: Python Mode Section")
 #+end_src
-; (insert "from util import dbg_toolbag as t; t.brk()")
-;; (insert "from see import see; import ipdb; ipdb.set_trace(context=15) # breakpoint()")
-;; (newline-and-indent)
-;; (end-of-line)
-;; (open-line)
 
-;(add-hook 'python-mode-hook
-;  #'(lambda ()
-;      (define-key python-mode-map "\C-m" 'newline-and-indent)))
-;(add-hook 'python-mode-hook
-;                 (lambda ()
-;                       (setq-default indent-tabs-mode t)
-;                       (setq-default tab-width 4)
-;                       (setq-default python-indent 4)))
- ; python-mode treepad navigation
- ; (define-key org-mode-map [kp-6]    'org-cycle)
- ; <remap> <backward-sentence>     python-nav-backward-block
- ; <remap> <backward-up-list>      python-nav-backward-up-list
- ; <remap> <forward-sentence>      python-nav-forward-block  python-nav-beginning-block
+: (insert "from util import dbg_toolbag as t; t.brk()")
+: (insert "from see import see; import ipdb; ipdb.set_trace(context=15) # breakpoint()")
+: (newline-and-indent)
+: (end-of-line)
+: (open-line)
 
- ; yafolding-go-parent-element
+: (add-hook 'python-mode-hook
+:  #'(lambda ()
+:      (define-key python-mode-map "\C-m" 'newline-and-indent)))
+: (add-hook 'python-mode-hook
+:                 (lambda ()
+:                       (setq-default indent-tabs-mode t)
+:                       (setq-default tab-width 4)
+:                       (setq-default python-indent 4)))
+: python-mode treepad navigation
+: (define-key org-mode-map [kp-6]    'org-cycle)
+: <remap> <backward-sentence>     python-nav-backward-block
+: <remap> <backward-up-list>      python-nav-backward-up-list
+: <remap> <forward-sentence>      python-nav-forward-block  python-nav-beginning-block
 
- ; TDB (global-set-key [kp-6]          'yafolding-toggle-element)
+: yafolding-go-parent-element
+
+: TDB (global-set-key [kp-6]          'yafolding-toggle-element)
 
 ** Ivy/Counsel Mode
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp                            :REM Ivy/Counsel
 (ivy-mode 1)                                         ; M-i to insert and modify
 (counsel-mode 1)
 (define-key ivy-minibuffer-map (kbd "<up>")   'previous-line-or-history-element)
@@ -1104,46 +1104,46 @@ invoked by ~/.emacs.d/init.el
 (message "-------------- Done: Ivy/Counsel Done")
 #+end_src
 
-;;(helm-mode 0)
-;; swiper
-;; (global-set-key "\C-s" 'swiper)
+: (helm-mode 0)
+:  swiper
+:  (global-set-key "\C-s" 'swiper)
 
-;;(global-set-key (kbd "C-s") 'swiper-isearch)
-;(global-set-key (kbd "<f1> f") 'counsel-describe-function)
-;(global-set-key (kbd "<f1> v") 'counsel-describe-variable)
-;(global-set-key (kbd "<f1> l") 'counsel-find-library)
-;(global-set-key (kbd "<f2> i") 'counsel-info-lookup-symbol)
-;(global-set-key (kbd "<f2> u") 'counsel-unicode-char)
-;(global-set-key (kbd "<f2> j") 'counsel-set-variable)
-;;(global-set-key (kbd "C-c v") 'ivy-push-view)
-;;(global-set-key (kbd "C-c V") 'ivy-pop-view)
+: (global-set-key (kbd "C-s") 'swiper-isearch)
+: (global-set-key (kbd "<f1> f") 'counsel-describe-function)
+: (global-set-key (kbd "<f1> v") 'counsel-describe-variable)
+: (global-set-key (kbd "<f1> l") 'counsel-find-library)
+: (global-set-key (kbd "<f2> i") 'counsel-info-lookup-symbol)
+: (global-set-key (kbd "<f2> u") 'counsel-unicode-char)
+: (global-set-key (kbd "<f2> j") 'counsel-set-variable)
+: (global-set-key (kbd "C-c v") 'ivy-push-view)
+: (global-set-key (kbd "C-c V") 'ivy-pop-view)
 
-;;Ivy-based interface to shell and system tools
-;;(global-set-key (kbd "C-c c") 'counsel-compile)
-;;(global-set-key (kbd "C-c g") 'counsel-git)
-;;(global-set-key (kbd "C-c j") 'counsel-git-grep)
-;;(global-set-key (kbd "C-c L") 'counsel-git-log)
-;;(global-set-key (kbd "C-c k") 'counsel-rg)
-;;(global-set-key (kbd "C-c m") 'counsel-linux-app)
-;;(global-set-key (kbd "C-c n") 'counsel-fzf)
-;;(global-set-key (kbd "C-x l") 'counsel-locate)
-;;(global-set-key (kbd "C-c J") 'counsel-file-jump)
-;;(global-set-key (kbd "C-S-o") 'counsel-rhythmbox)
-;;(global-set-key (kbd "C-c w") 'counsel-wmctrl)
+: Ivy-based interface to shell and system tools
+: (global-set-key (kbd "C-c c") 'counsel-compile)
+: (global-set-key (kbd "C-c g") 'counsel-git)
+: (global-set-key (kbd "C-c j") 'counsel-git-grep)
+: (global-set-key (kbd "C-c L") 'counsel-git-log)
+: (global-set-key (kbd "C-c k") 'counsel-rg)
+: (global-set-key (kbd "C-c m") 'counsel-linux-app)
+: (global-set-key (kbd "C-c n") 'counsel-fzf)
+: (global-set-key (kbd "C-x l") 'counsel-locate)
+: (global-set-key (kbd "C-c J") 'counsel-file-jump)
+: (global-set-key (kbd "C-S-o") 'counsel-rhythmbox)
+: (global-set-key (kbd "C-c w") 'counsel-wmctrl)
 
-;;Ivy-resume and other commands
-;;ivy-resume resumes the last Ivy-based completion.
-;;(global-set-key (kbd "C-c C-r") 'ivy-resume)
-;;(global-set-key (kbd "C-c b") 'counsel-bookmark)
-;;(global-set-key (kbd "C-c d") 'counsel-descbinds)
-;;(global-set-key (kbd "C-c g") 'counsel-git)
-;;(global-set-key (kbd "C-c o") 'counsel-outline)
-;;(global-set-key (kbd "C-c t") 'counsel-load-theme)
-;;(global-set-key (kbd "C-c F") 'counsel-org-file)
-;;(global-set-key "\C-." 'pop-global-mark)
-;;(global-set-key [M-SPC] 'pop-global-mark)
-;;(global-set-key [S-right] 'forward-word)
-;;(global-set-key [remap eval-expression] 'pp-eval-expression)
+: Ivy-resume and other commands
+: ivy-resume resumes the last Ivy-based completion.
+: (global-set-key (kbd "C-c C-r") 'ivy-resume)
+: (global-set-key (kbd "C-c b") 'counsel-bookmark)
+: (global-set-key (kbd "C-c d") 'counsel-descbinds)
+: (global-set-key (kbd "C-c g") 'counsel-git)
+: (global-set-key (kbd "C-c o") 'counsel-outline)
+: (global-set-key (kbd "C-c t") 'counsel-load-theme)
+: (global-set-key (kbd "C-c F") 'counsel-org-file)
+: (global-set-key "\C-." 'pop-global-mark)
+: (global-set-key [M-SPC] 'pop-global-mark)
+: (global-set-key [S-right] 'forward-word)
+: (global-set-key [remap eval-expression] 'pp-eval-expression)
 
 ** Org Mode
 #+begin_src emacs-lisp
