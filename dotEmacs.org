@@ -1,19 +1,17 @@
   *Emacs Initialisation*
 
-
 invoked by ~/.emacs.d/init.el
  (package-initialize)
  (org-babel-load-file "~/.emacs.d/dotEmacs.org)
 
 
 * Packages
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 
 (setq load-path (append load-path '("~/ulib/emacs/")))
 (setq load-path (append load-path '("~/ulib/emacs/dired-hacks")))
 
-(require 'package)
-;(setq package-archives ())
+(require 'package)                                                                          ; (setq package-archives ())
 (add-to-list 'package-archives '("melpa"   . "https://melpa.org/packages/")         t)
 (add-to-list 'package-archives '("mlpstbl" . "https://stable.melpa.org/packages/")  t)
 (add-to-list 'package-archives '("elpaorg" . "https://elpa.gnu.org/packages/")      t)
@@ -28,7 +26,7 @@ invoked by ~/.emacs.d/init.el
 (require 'uniquify)
 (require 'ob)
 (require 'regexp-opt)
-(require 'em-alias)           ; for eshell
+(require 'em-alias)          ; for eshell
 ; (require 'diffview)        ; make patch files look like ediff
 
 ; ----------------------- dired etc
@@ -38,9 +36,9 @@ invoked by ~/.emacs.d/init.el
 (require 'dired-subtree)
 (require 'dired-sidebar)
 (require 'dired-rainbow)
-;(require 'neotree)
-;(require 'dired-lis)
-;(require 'dired-k)
+; (require 'neotree)
+; (require 'dired-lis)
+; (require 'dired-k)
 ; (require 'all-the-icons-dired-mode)
 ; (load "all-the-icons-dired.el")
 ; (add-hook 'dired-mode-hook 'all-the-icons-dired-mode)
@@ -59,22 +57,19 @@ invoked by ~/.emacs.d/init.el
 (setq Org-Reveal-root "file:///home/kleyn/ulib/reveal.js-master/js/reveal.js")
 (setq Org-Reveal-title-slide nil)
 (require 'orgtbl-join)
-;(load-file "orgtbl-join.el")
-;(load-file "org-insert-dblock.el") ;; optional, extends C-c C-c i
+; (load-file "orgtbl-join.el")
+; (load-file "org-insert-dblock.el") ;; optional, extends C-c C-c i
 
 ; ---------jupyter / ipython / emacs
 (require 'jupyter)
 (require 'pyvenv) ; M-x: pyvenv-activate RET <path-to-venv>
 ; org<->python deprecated
-;(add-hook 'org-babel-after-execute-hook 'org-display-inline-images 'append)
+; (add-hook 'org-babel-after-execute-hook 'org-display-inline-images 'append)
 ; ein - better to use emacs-ipython-notebook?
 ; failed
 (require 'zmq)
 (require 'calc)
 
-;(require 'cursor-flash)
-;(cursor-flash-mode 1)
-;(setq cursor-flash-interval 0.10)
 
 ;; --------- deprecated
 ; (require 'cl)                 ; for transpose
@@ -88,7 +83,7 @@ invoked by ~/.emacs.d/init.el
 ; (require 'ein-subpackages)
 
 (message "-------------- Done: Packages")
-#+END_SRC
+#+end_src
 * Function Definitions
 #+begin_src emacs-lisp
 (message "-------------- Start: Handy Function Definitions")
@@ -588,83 +583,46 @@ invoked by ~/.emacs.d/init.el
       (insert (format " = %S" value)))  ;; TBD format based on datatype or use C-u C-x C-e
 )
 
-; Notes:
-; Normally, this function truncates long output according to the value
-; of the variables `eval-expression-print-length' and
-; `eval-expression-print-level'.  With a prefix argument of zero,
-; however, there is no such truncation.  Such a prefix argument
-; lso causes integers to be printed in several additional formats
-; (octal, hexadecimal, and character).
-
-; -------------------------------------------------------------------------------- cuts
-; (delete-char 1)            (insert "I")                                                                      ; mark the source
-; (setq src-end (search-forward-regexp ".+(\)|;;;)" (line-end-position) nil))                                  ; (forward-sexp) doesn't work
-
-; (message "new-string %i XX%sXX" (length new-string) new-string)
-; (insert new-string)     
-; (setq new-string (concat "" resStr "  " (substring  reg-selection (+ (length ";= ") (length resStr)))))
-; (message "delete result region =XX%sXX" (buffer-substring-no-properties (region-beginning) (region-end)))
-; (delete-region (- (region-beginning) 2) (region-end))                                                        ; delete region and replace with result
-; (setq reg-selection (buffer-substring-no-properties (region-beginning) (region-end)))
-
-; (mapc (lambda (x) (message "Found rails %s" x)) rectangle-as-list)
-; (message rectangle-as-list)
-
-; (copy-rectangle-as-kill START END)
-; reg-search-back for "^;-sexps-;;;;;"
-; reg-seach on same line for ;-rails-;
-; foreach rail-col in rails:
-;    find input line
-;    find-eval value on this line
-;    foreach output-line
-;   
-
 (message "-------------- Done: Treesycalc")
 #+end_src
 
+: Notes:
+: Normally, this function truncates long output according to the value
+: of the variables `eval-expression-print-length' and
+: `eval-expression-print-level'.  With a prefix argument of zero,
+: however, there is no such truncation.  Such a prefix argument
+: lso causes integers to be printed in several additional formats
+: (octal, hexadecimal, and character).
+
+: -------------------------------------------------------------------------------- cuts
+: (delete-char 1)            (insert "I")                                                                      ; mark the source
+: (setq src-end (search-forward-regexp ".+(\)|;;;)" (line-end-position) nil))                                  ; (forward-sexp) doesn't work
+
+: (message "new-string %i XX%sXX" (length new-string) new-string)
+: (insert new-string)     
+: (setq new-string (concat "" resStr "  " (substring  reg-selection (+ (length ";= ") (length resStr)))))
+: (message "delete result region =XX%sXX" (buffer-substring-no-properties (region-beginning) (region-end)))
+: (delete-region (- (region-beginning) 2) (region-end))                                                        ; delete region and replace with result
+: (setq reg-selection (buffer-substring-no-properties (region-beginning) (region-end)))
+
+: (mapc (lambda (x) (message "Found rails %s" x)) rectangle-as-list)
+: (message rectangle-as-list)
+
+: (copy-rectangle-as-kill START END)
+: reg-search-back for "^;-sexps-;;;;;"
+: reg-seach on same line for ;-rails-;
+: foreach rail-col in rails:
+:    find input line
+:    find-eval value on this line
+:    foreach output-line
+:   
+
+
 * Settings
-default theme: tango-dark or solarized
-** Highlighting/Cursor Visibility
-; ------------------------------------- highlighting
-(require 'highlight-sexp)  - fails
-(add-hook 'lisp-mode-hook 'highlight-sexp-mode)
-(add-hook 'emacs-lisp-mode-hook 'highlight-sexp-mode)
- hl-sexp-background-color
-  - hl-sexp-foreground-color
-  - hl-sexp-face
- Enable `highlight-sexps-mode'
-
-(list-colors-display)
-#+begin_src emacs-lisp
-(message "-------------- Start: Highlighting")
-;(set-face-background hl-line-face "gray50")
-(setq-default x-stretch-cursor t)  ; switch to nil for magit (setq-default x-stretch-cursor nil)
-(blink-cursor-mode 0)
-(set-cursor-color "orange red")  ; also at end of init.el, after theming 
-(setq cursor-type 'box)
-
-(global-hl-line-mode 1) ; (global-hl-line-mode 0) to turn off
-;(setq  hl-line-range-function 'nil)
-;(setq  hl-line-range-function 'hl-short-range)
-;(defun hl-short-range () (cons (- (point) 5) (+ (point 1)))
-
-;(face-foreground 'show-paren-match)
-(set-face-background 'show-paren-match  "#777777")
-;(set-face-background 'show-paren-match  "#888888")
-(set-face-attribute  'show-paren-match nil :weight 'bold :underline nil :overline nil :slant 'normal) 
-(show-paren-mode 1)
-(setq show-paren-style 'expression)          ; or parenthesis of mixed
-(setq show-paren-when-point-inside-paren t)
-(setq show-paren-when-point-in-periphery t)
-(message "-------------- Done: Highlighting")
-#+end_src
-
-
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp                               :REM Settings
 (message "-------------- Start: Settings")
-(setq calendar-week-start-day 1) ; set....mark to get count of days
-
-(delete-selection-mode 0) ; don't delete selection with next char
+(setq calendar-week-start-day 1)             ; set....mark to get count of days
+(delete-selection-mode 0)                    ; don't delete selection with next char
 (fset 'yes-or-no-p 'y-or-n-p)
 (setq bell-volume 0)
 (setq case-fold-search t)
@@ -686,16 +644,16 @@ default theme: tango-dark or solarized
 (setq use-dialog-box nil)
 (setq use-file-dialog nil)
 (setq visible-bell t)
-(setq-default frame-title-format "%f")  ;;(setq-default frame-title-format "%b %p %p(%f)")
+(setq-default frame-title-format "%f")    ; (setq-default frame-title-format "%b %p %p(%f)")
 (setq-default line-spacing 0.06)
 (setq-default indent-tabs-mode nil)
 (setq ivy-height 10)
 
 (tool-bar-mode -1)
 (setq-default frame-title-format "%f")
-(transient-mark-mode t)  ;;(setq-default frame-title-format "%b %p %p(%f)")
+(transient-mark-mode t)                   ; (setq-default frame-title-format "%b %p %p(%f)")
 
-(setq require-final-newline nil) ;; means don't add newline
+(setq require-final-newline nil)         ; means don't add newline
 
 ;; ----------------------------------------------- Show keystrokes in progress
 (setq echo-keystrokes 0.1)
@@ -805,8 +763,7 @@ default theme: tango-dark or solarized
    (define-key ibuffer-mode-map [kp-3]        'next-line)
    (message "in ibuffer"))
 
-(add-hook 'ibuffer-mode-hook 'my-ibuffer-hooks)   ; (lambda ()                        ;; no need to quote the lambda, but try to avoid using them as hooks
-
+(add-hook 'ibuffer-mode-hook 'my-ibuffer-hooks)   ; (lambda () ;; no need to quote the lambda, but try to avoid using them as hooks
 
 (setq ibuffer-formats
       '((mark modified read-only locked " "
@@ -823,7 +780,7 @@ default theme: tango-dark or solarized
 
 ;; --------------------------------------------- Custom Variables go in ~/emacs.d/init.el
 (setq default-truncate-lines t)
-(setq tab-width 4)  ;;(setq tab-width 2)
+(setq tab-width 4)                              ; (setq tab-width 2)
 
 ;; --------------------------------------------- TAGS
 ;; !! run find with absolute path
@@ -843,78 +800,114 @@ default theme: tango-dark or solarized
 ;; lso causes integers to be printed in several additional formats
 ;; (octal, hexadecimal, and character).
 (message "-------------- Done: Settings")
-#+END_SRC
 
-;(defun my-dired-mode-buffer-p (buf)
-;   "Non-nil if buffer BUF is in `dired-mode'."
-;   (with-current-buffer buf
-;     (derived-mode-p 'dired-mode)))
+;; (defun my-dired-mode-buffer-p (buf)
+;;    "Non-nil if buffer BUF is in `dired-mode'."
+;;    (with-current-buffer buf
+;;      (derived-mode-p 'dired-mode)))
+;; 
+;; (defvar ibuffer-never-show-predicates '())
+;; (with-eval-after-load "ibuffer" (add-to-list 'ibuffer-never-show-predicates #'my-dired-mode-buffer-p))
+;; 
+;; ------------------------------------------------------ new stuff
+;; ;; Save point position between sessions.
+;; (use-package saveplace)
+;; (setq-default save-place t)
+;; (setq save-place-file (expand-file-name "places" user-emacs-directory))
+;; 
+;; ;; Fix empty pasteboard error.
+;; (setq save-interprogram-paste-before-kill nil)
+;; 
+;; ------------------------------------------------------ Colour
+;; (set-background-color "black")
+;; (set-background-color "darkgrey")
+;; (set-background-color "bisque")
+;; (set-background-color "bisque2")
+;; (set-background-color "bisque3")
+;; (set-face-background 'default "green3")
+;; (set-face-background 'default "lightyellow2")
+;; (set-face-background 'default "palevioletred")
+;; (set-face-background 'default "lightblue")
+;; (set-face-background 'default "paleturquoise")
+;; (set-face-background 'default "lightblue")
+;; 
+;; (global-hl-line-mode 0) ; (global-hl-line-unhighlight) (global-hl-line-highlight)
+;; (global-mark-ring-max 50)
+;; 
+;; (setq set-mark-command-repeat-pop 1) ;;-- needs emacs version 22
+;; (setq hscroll-margin 30)
+;; (setq hscroll-step 20) ;; # 0
+;; (setq header-line-format mode-line-format)
+;; (global-mark-ring-max 50)
+;; (global-set-key "\C-." 'pop-global-mark)
+;; (global-set-key [M-SPC] 'pop-global-mark)
+;; (global-set-key [S-right] 'forward-word)
+;; (global-set-key [remap eval-expression] 'pp-eval-expression)
+;; (setq mark-ring-max 50)
+;; (setq set-mark-command-repeat-pop 1) - needs emacs version 22
+;; (setq-default frame-title-format "%b %p %p(%f)")
+;; (setq-default line-spacing 0.06)
+;; M-x clone-indirect-buffer RET
 
-;(defvar ibuffer-never-show-predicates '())
-;(with-eval-after-load "ibuffer" (add-to-list 'ibuffer-never-show-predicates #'my-dired-mode-buffer-p))
+#+end_src
+** Highlighting/Cursor Visibility
+#+begin_src emacs-lisp                               :REM highlighting
+(message "-------------- Start: Highlighting")
+(setq-default x-stretch-cursor t)                    ; switch to nil for magit (setq-default x-stretch-cursor nil)
+(blink-cursor-mode 0)
+(set-cursor-color "orange red")                      ; also at end of init.el, after theming 
+(setq cursor-type 'box)
+(global-hl-line-mode 1)                              ; (global-hl-line-mode 0) to turn off
+(set-face-background 'show-paren-match  "#777777")
+(set-face-attribute  'show-paren-match nil :weight 'bold :underline nil :overline nil :slant 'normal) 
+(show-paren-mode 1)
+(setq show-paren-style 'expression)                  ; or parenthesis of mixed
+(setq show-paren-when-point-inside-paren t)
+(setq show-paren-when-point-in-periphery t)
+(message "-------------- Done: Highlighting")
 
------------------------------------------------------- new stuff
-;; Save point position between sessions.
-(use-package saveplace)
-(setq-default save-place t)
-(setq save-place-file (expand-file-name "places" user-emacs-directory))
+;; (require 'highlight-sexp)  - fails
+;; (add-hook 'lisp-mode-hook 'highlight-sexp-mode)
+;; (add-hook 'emacs-lisp-mode-hook 'highlight-sexp-mode)
+;;  hl-sexp-background-color
+;;   - hl-sexp-foreground-color
+;;   - hl-sexp-face
+;;  Enable `highlight-sexps-mode'
+;; (list-colors-display)
+;; (set-face-background hl-line-face "gray50")
+;; (set-face-background 'show-paren-match  "#888888")
+;; (face-foreground 'show-paren-match)
+;; (setq  hl-line-range-function 'nil)
+;; (setq  hl-line-range-function 'hl-short-range)
+;; (defun hl-short-range () (cons (- (point) 5) (+ (point 1)))
+;; (require 'cursor-flash)
+;; (cursor-flash-mode 1)
+;; (setq cursor-flash-interval 0.10)
 
-;; Fix empty pasteboard error.
-(setq save-interprogram-paste-before-kill nil)
-
------------------------------------------------------- Colour
-(set-background-color "black")
-(set-background-color "darkgrey")
-(set-background-color "bisque")
-(set-background-color "bisque2")
-(set-background-color "bisque3")
-(set-face-background 'default "green3")
-(set-face-background 'default "lightyellow2")
-(set-face-background 'default "palevioletred")
-(set-face-background 'default "lightblue")
-(set-face-background 'default "paleturquoise")
-(set-face-background 'default "lightblue")
-
-(global-hl-line-mode 0) ; (global-hl-line-unhighlight) (global-hl-line-highlight)
-(global-mark-ring-max 50)
-
-(setq set-mark-command-repeat-pop 1) ;;-- needs emacs version 22
-(setq hscroll-margin 30)
-(setq hscroll-step 20) ;; # 0
-(setq header-line-format mode-line-format)
-(global-mark-ring-max 50)
-(global-set-key "\C-." 'pop-global-mark)
-(global-set-key [M-SPC] 'pop-global-mark)
-(global-set-key [S-right] 'forward-word)
-(global-set-key [remap eval-expression] 'pp-eval-expression)
-(setq mark-ring-max 50)
-(setq set-mark-command-repeat-pop 1) - needs emacs version 22
-(setq-default frame-title-format "%b %p %p(%f)")
-(setq-default line-spacing 0.06)
-M-x clone-indirect-buffer RET
-
+#+end_src
 ** Web Proxy
-;;-------------------------------------------------------------------- WEB PROXY
-(setq url-proxy-services '(("no_proxy" . "work\\.com")
-                            ("http" . "proxy.work.com:911")))
-(setq url-proxy-services
-   '(("no_proxy" . "^\\(localhost\\|10.*\\)")
-     ("http" . "proxy.com:8080")
-     ("https" . "proxy.com:8080")))
-
-(setq url-http-proxy-basic-auth-storage
-    (list (list "proxy.com:8080" (cons "Input your LDAP UID !" (base64-encode-string "LOGIN:PASSWORD")))))
+: -------------------------------------------------------------------- WEB PROXY
+:  (setq url-proxy-services '(("no_proxy" . "work\\.com")
+:                              ("http" . "proxy.work.com:911")))
+:  (setq url-proxy-services
+:     '(("no_proxy" . "^\\(localhost\\|10.*\\)")
+:       ("http" . "proxy.com:8080")
+:       ("https" . "proxy.com:8080")))
+:  
+:  (setq url-http-proxy-basic-auth-storage
+:      (list (list "proxy.com:8080" (cons "Input your LDAP UID !" (base64-encode-string "LOGIN:PASSWORD")))))
 
 ** Themes
-; tango-dark: good theme in init.el:  '(custom-enabled-themes (quote (tango-dark)))
-; (add-to-list 'custom-theme-load-path "~/.emacs.d/themes/")
-; Now copy your theme's '.el' file to your .emacs.d/themes/ directory. A
-; good place to find custom themes is here: emacsthemes.com
-; Now load your custom theme by typing the following:
-; M-x customize-themes ;;;now press return
+: default theme: tango-dark or solarized
+: tango-dark: good theme in init.el:  '(custom-enabled-themes (quote (tango-dark)))
+: (add-to-list 'custom-theme-load-path "~/.emacs.d/themes/")
+: Now copy your theme's '.el' file to your .emacs.d/themes/ directory. A
+: good place to find custom themes is here: emacsthemes.com
+: Now load your custom theme by typing the following:
+: M-x customize-themes ;;;now press return
 
 * Modes Assoc List
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 ;;--------------------------------------------------------- Language Modes
 (add-to-list 'auto-mode-alist '("\\.sas\\'"   . sas-mode)     )
 (add-to-list 'auto-mode-alist '("\\.m\\'"     . octave-mode)  )
@@ -1000,21 +993,11 @@ M-x clone-indirect-buffer RET
 ;;                                         (\.[1-9]\' . nroff-mode) (\.g\' . antlr-mode))
 
 (message "-------------- Done: Modes Assoc List")
-#+END_SRC
+#+end_src
 
 * Modes Section
 ** Python Mode
-#+BEGIN_SRC emacs-lisp
-
-;; ------------------------------------------- Python Mode
-;(add-hook 'python-mode-hook
-;  #'(lambda ()
-;      (define-key python-mode-map "\C-m" 'newline-and-indent)))
-;(add-hook 'python-mode-hook
-;                 (lambda ()
-;                       (setq-default indent-tabs-mode t)
-;                       (setq-default tab-width 4)
-;                       (setq-default python-indent 4)))
+#+begin_src emacs-lisp                            :REM Python Mode
 (defun my-python-hook ()
    (setq indent-tabs-mode nil)
    (setq tab-width 4)
@@ -1027,16 +1010,6 @@ M-x clone-indirect-buffer RET
 )
 
 (add-hook 'python-mode-hook 'my-python-hook)
-
- ; python-mode treepad navigation
- ; (define-key org-mode-map [kp-6]    'org-cycle)
- ; <remap> <backward-sentence>     python-nav-backward-block
- ; <remap> <backward-up-list>      python-nav-backward-up-list
- ; <remap> <forward-sentence>      python-nav-forward-block  python-nav-beginning-block
-
- ; yafolding-go-parent-element
-
- ; TDB (global-set-key [kp-6]          'yafolding-toggle-element)
 
 (defun insertcodePyCodeSnippet ()
   (interactive)
@@ -1057,14 +1030,10 @@ M-x clone-indirect-buffer RET
                       (insert "breakpoint()")
                       (newline)
                       (indent-according-to-mode)
-                      (previous-line)))))))
+                      (previous-line))))))
+)
 
-;; (insert "from util import dbg_toolbag as t; t.brk()")
-;; (insert "from see import see; import ipdb; ipdb.set_trace(context=15) # breakpoint()")
-;; (newline-and-indent)
-;; (end-of-line)
-;; (open-line)
-
+;
 ;; this location is "~/.pudb-bp" in older versions of pudb
 (setq pudb-bp-file (expand-file-name "~/.config/pudb/saved-breakpoints-3.9"))
 (defun pudb-add-breakpoint ()
@@ -1075,15 +1044,34 @@ M-x clone-indirect-buffer RET
 ;(define-key py-mode-map (kbd "C-c C-t") 'pudb-add-breakpoint)
 
 (message "-------------- Done: Python Mode Section")
-#+END_SRC
+#+end_src
+; (insert "from util import dbg_toolbag as t; t.brk()")
+;; (insert "from see import see; import ipdb; ipdb.set_trace(context=15) # breakpoint()")
+;; (newline-and-indent)
+;; (end-of-line)
+;; (open-line)
+
+;(add-hook 'python-mode-hook
+;  #'(lambda ()
+;      (define-key python-mode-map "\C-m" 'newline-and-indent)))
+;(add-hook 'python-mode-hook
+;                 (lambda ()
+;                       (setq-default indent-tabs-mode t)
+;                       (setq-default tab-width 4)
+;                       (setq-default python-indent 4)))
+ ; python-mode treepad navigation
+ ; (define-key org-mode-map [kp-6]    'org-cycle)
+ ; <remap> <backward-sentence>     python-nav-backward-block
+ ; <remap> <backward-up-list>      python-nav-backward-up-list
+ ; <remap> <forward-sentence>      python-nav-forward-block  python-nav-beginning-block
+
+ ; yafolding-go-parent-element
+
+ ; TDB (global-set-key [kp-6]          'yafolding-toggle-element)
 
 ** Ivy/Counsel Mode
-#+BEGIN_SRC emacs-lisp
-
-;;(helm-mode 0)
-;; swiper
-;; (global-set-key "\C-s" 'swiper)
-(ivy-mode 1)  ; M-i to insert and modify
+#+begin_src emacs-lisp
+(ivy-mode 1)                                         ; M-i to insert and modify
 (counsel-mode 1)
 (define-key ivy-minibuffer-map (kbd "<up>")   'previous-line-or-history-element)
 (define-key ivy-minibuffer-map (kbd "<down>") 'next-line-or-history-element)
@@ -1110,11 +1098,15 @@ M-x clone-indirect-buffer RET
                'counsel-find-file-fallback-command--enable-ivy)
   (ivy-mode t))
 
-;;Ivy-based interface to standard commands
-(global-set-key (kbd "M-x") 'counsel-M-x)
+
+(global-set-key (kbd "M-x") 'counsel-M-x)            ; Ivy-based interface to standard commands
 (global-set-key (kbd "M-y") 'counsel-yank-pop)
 (message "-------------- Done: Ivy/Counsel Done")
-#+END_SRC
+#+end_src
+
+;;(helm-mode 0)
+;; swiper
+;; (global-set-key "\C-s" 'swiper)
 
 ;;(global-set-key (kbd "C-s") 'swiper-isearch)
 ;(global-set-key (kbd "<f1> f") 'counsel-describe-function)
@@ -1154,7 +1146,7 @@ M-x clone-indirect-buffer RET
 ;;(global-set-key [remap eval-expression] 'pp-eval-expression)
 
 ** Org Mode
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (setq org-confirm-babel-evaluate nil)    ;; no-confirm
 (with-eval-after-load 'org (add-hook 'org-babel-after-execute-hook 'org-redisplay-inline-images))
 (defun org-export-get-reference (a b) nil)
@@ -1280,7 +1272,7 @@ M-x clone-indirect-buffer RET
 ;; org-mode hooks
 (add-hook 'org-mode-hook  'hide-ctrl-M)
 (message "-------------- Done: Org Mode")
-#+END_SRC
+#+end_src
 *** notes
 ;; ------------------------------------------------------ Org-Mode
 ;; ;(define-key global-map "\C-cl" 'org-store-link)
@@ -1376,7 +1368,7 @@ M-x clone-indirect-buffer RET
 
 *** Org-Babel
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
  ;(org-babel-do-load-languages
  ; 'org-babel-load-languages
  ; '((python . t)))
@@ -1400,7 +1392,7 @@ M-x clone-indirect-buffer RET
 )
 
 (message "-------------- Done: Org-Mode Section")
-#+END_SRC
+#+end_src
 
 #+RESULTS:
 : -------------- Done: Org-Mode Section
@@ -1885,7 +1877,7 @@ hello
  (define-key dired-mode-map (kbd "C-n")       'dired-next-line)
  (define-key dired-mode-map (kbd "C-p")       'dired-previous-line)
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (defun my-magit-mode-hook ()
   "Custom `magit-mode' behaviours."
   ;(setq-default x-stretch-cursor nil)
@@ -1900,7 +1892,7 @@ hello
 ; (setq magit-mode-hook nil)
 
 ** Markup Languages Modes
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
  ;;------------------------------------------------------------------------------ XML
  ;;{{{ XML
 
@@ -2005,7 +1997,7 @@ hello
  ;; (require 'cl)
  ;;
  (message "-------------- Done: Markup Languages Section")
-#+END_SRC
+#+end_src
 
  ;-------------------------------------------------------------------------------- Ace jump
  ;;
@@ -2094,7 +2086,7 @@ hello
  complex command C-x ESC ESC ;; repeat last
 
 ** Mousing
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (global-set-key (kbd "s-x")         '(lambda () (interactive) (progn (set-mark-command 0))))   ; Super = windowframe key is  mod 4 see xmodmap cycle-buffer
 (global-set-key (kbd "<S-mouse-4>") 'cycle-buffer-permissive)
 (global-set-key (kbd "<S-mouse-5>") 'cycle-buffer-permissive-backward)
@@ -2105,10 +2097,10 @@ hello
 (global-set-key (kbd "<M-mouse-4>") 'selective-display-level-incr)
 (global-set-key (kbd "<M-mouse-5>") 'selective-display-level-decr)
 (message "-------------- Done: Mousing")
-#+END_SRC
+#+end_src
 
 ** Global Keys
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 ; 20211215_15:09:19 ordered by order on QWERTY keyboard
 ;;  (global-set-key "\C-q"          'quoted-insert)  ; for resetting, already default
 
@@ -2179,7 +2171,7 @@ hello
 ;(lambda (x) (interactive) (grx-repl t))
 
 (message "-------------- Done: Global Keys")
-#+END_SRC
+#+end_src
 
 ** org-babel keys notes
 C-down / C-up = next section / previous section in org-babel
@@ -2225,7 +2217,7 @@ org-goto
 /dev/sdc3 8af 109G Cinamon 20.2 ; Brother MFC-J480DW 192.168.78
 /dev/sdc3 1f3 114G Uma     20.2 
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 
 (defun f1()                (interactive)  (eshell))
 (defun sf2()               (interactive)  (find-file "/data/data/com.termux/files/home/org/access.org"))
@@ -2350,7 +2342,7 @@ org-goto
 ;; (global-set-key [f4]      '(lambda () (interactive)  (dired-sidebar-cmd "~/")))
 ;; (global-set-key [C-f4]    'dired-omit-mode)
 
-#+END_SRC
+#+end_src
 
 #+RESULTS:
 : -------------- Done: Function Keys
@@ -2890,7 +2882,7 @@ TBD dired-sidebar-mode-map
 * Hooks
 for python -made named function so remove-hook can be used
 for flushing messages to *Message* buffer
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 
 (defun message-buffer-goto-end-of-buffer (&rest args)
   (let* ((win (get-buffer-window "*Messages*"))
@@ -2907,7 +2899,7 @@ for flushing messages to *Message* buffer
 ;       (untabify (point-min) (point-max)))
 (add-hook 'write-file-hooks 'py-clean-file)
 
-#+END_SRC
+#+end_src
 * Debugging
 #+begin_src emacs-lisp
 (defun set-debug-on()   (interactive) (progn (setq debug-on-error t)    (message "emacs debug on")))
@@ -2972,7 +2964,7 @@ for flushing messages to *Message* buffer
         (t nil)))
 
 * ESHELL
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (require 'ansi-color)
 
 (setq eshell-prefer-lisp-functions nil)
@@ -3163,7 +3155,7 @@ for flushing messages to *Message* buffer
 
 
 (message "-------------- Done: Eshell Section")
-#+END_SRC
+#+end_src
 *** eshell arithmetic
       $ (length "hi")  --> 2
       $ length "hi"    --> 2   # ← Works since shell parser calls Lisp
@@ -3779,7 +3771,7 @@ convenient prefix key map, for example `C-,`
 * end bit
 ;(desktop-change-dir "/home/uri03204/myDocs/config")
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 ;(dired "~/")
 ;(ztree-dir "/data/data/com.termux/files/home")
 (put 'narrow-to-region 'disabled nil)
@@ -3788,18 +3780,11 @@ convenient prefix key map, for example `C-,`
 (message "dotEmacs.org done")
 (set-cursor-color "gold") 
 ;(switch-to-buffer "*Messages*")
-#+END_SRC
+#+end_src
 
 ;custom-set-variables and custom set faces in ~/.emacs.d/init.el
 
 #+STARTUP: fold
-
-
-
-
-
-
-
 
 
 
