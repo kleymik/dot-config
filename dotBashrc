@@ -102,6 +102,7 @@ alias kill_hup='kill -1'
 alias kill_int='kill -2'
 alias kill_term='kill -15'
 alias kill_hard='kill -9'
+alias killplasma='killall plasmashell; kstart5 plasmashell; exit'
 
 # MISC ------------------------------------------------------------------------ misc
 #alias py-ws2345='python -m SimpleHTTPServer 2345 &' # python2
