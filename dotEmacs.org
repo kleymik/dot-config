@@ -979,6 +979,48 @@ invoked by ~/.emacs.d/init.el
 (message "-------------- Done: Modes Assoc List")
 #+end_src
 * Modes Section
+** Chat GPT (pending)
+  ;;; Chat GPT
+  ;; 0) gpt.el
+  ;;  (require 'gpt)
+  ;;  (progn
+  ;;    (setq gpt-openai-key "***REMOVED***")
+  ;;    (setq gpt-openai-engine "text-davinci-003")
+  ;;    ;;(setq gpt-openai-engine "gpt-3.5-turbo")
+  ;;    (setq gpt-openai-use-chat-api t)
+  ;;    (global-set-key [s-f1] 'gpt-dwim))
+
+
+  ;;  (setq gpt-openai-org "org-5p...Y")  ;; NOT SET
+  ;;  (setq gpt-openai-max-tokens 2000)
+  ;;  (setq gpt-openai-temperature 0)
+
+  ;; 1) gptel
+  ;;  (require 'gptel)
+  ;;  (setq gptel-api-key "***REMOVED***")
+  ;;  (gptel)
+  ;;  put in .authinfo?
+  ;;  (defun gpgo ()
+  ;;   (interactive)
+  ;;   (gptel "gsess1" gptel-api-key))
+
+  ;; 2)
+  ;(require 'chatgpt)
+  ;(setq openai-key "***REMOVED***")
+
+  ;; 3)
+  ;;(require 'ob-chatgpt-shell)
+  ;;(ob-chatgpt-shell-setup)
+  ;; (use-package chatgpt-shell
+  ;; :ensure t
+  ;; :custom
+  ;; ((chatgpt-shell-openai-key
+  ;;   (lambda ()
+  ;;     (auth-source-pass-get 'secret "openai-key")))))
+
+  ; Info symbol lookup
+  ; While editing Elisp files, you can use C-h S (info-lookup-symbol) to look up Elisp symbols in the relevant Info manuals (see (emacs) Info Lookup). To enable the same for Dash symbols, use the command dash-register-info-lookup. It can be called directly when needed, or automatically from your user-init-file. For example:
+
 ** Python Mode
 #+begin_src emacs-lisp                            :REM Python Mode
 (defun my-python-hook ()
