@@ -411,8 +411,8 @@ function utilFind () {
 # explict path './media'.
 
 
-alias gr=grep
-alias gi='grep -i'
+alias gr='egrep -i'
+alias gv='egrep -iv'
 alias rg=~/ubin/,rgrep.py
 
 function rgrep()  { echo "1=$1"
