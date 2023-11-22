@@ -1022,6 +1022,12 @@ invoked by ~/.emacs.d/init.el
   ; While editing Elisp files, you can use C-h S (info-lookup-symbol) to look up Elisp symbols in the relevant Info manuals (see (emacs) Info Lookup). To enable the same for Dash symbols, use the command dash-register-info-lookup. It can be called directly when needed, or automatically from your user-init-file. For example:
 
 ** Python Mode
+
+#+begin_src emacs-lisp                               :REM Python Shell (ipython)
+  (setq python-shell-interpreter "ipython"
+        python-shell-interpreter-args "-i --simple-prompt --InteractiveShell.display_page=True")
+#+end_src
+
 #+begin_src emacs-lisp                            :REM Python Mode
 (defun my-python-hook ()
    (setq indent-tabs-mode nil)
@@ -2061,6 +2067,27 @@ invoked by ~/.emacs.d/init.el
  (message "-------------- Done: Markup Languages Section")
 #+end_src
 
+* Hooks
+for python -made named function so remove-hook can be used
+for flushing messages to *Message* buffer
+#+begin_src emacs-lisp
+
+(defun message-buffer-goto-end-of-buffer (&rest args)
+  (let* ((win (get-buffer-window "*Messages*"))
+         (buf (and win (window-buffer win))))
+    (and win (not (equal (current-buffer) buf))
+         (set-window-point
+          win (with-current-buffer buf (point-max))))))
+
+(advice-add 'message :after 'message-buffer-goto-end-of-buffer)
+
+(defun py-clean-file()
+  (if (and (equal major-mode 'python-mode) (not indent-tabs-mode))
+      (delete-trailing-whitespace (point-min) (point-max))))
+;       (untabify (point-min) (point-max)))
+(add-hook 'write-file-hooks 'py-clean-file)
+
+#+end_src
 * Key Bindings
 ** keys notes: may be useful
 
@@ -3035,27 +3062,6 @@ invoked by ~/.emacs.d/init.el
 : ;; (global-set-key  "\C-xv-" 'tfs/delete)
 : ;; (global-set-key  "\C-xvc" 'tfs/changeset)
 : 
-* Hooks
-for python -made named function so remove-hook can be used
-for flushing messages to *Message* buffer
-#+begin_src emacs-lisp
-
-(defun message-buffer-goto-end-of-buffer (&rest args)
-  (let* ((win (get-buffer-window "*Messages*"))
-         (buf (and win (window-buffer win))))
-    (and win (not (equal (current-buffer) buf))
-         (set-window-point
-          win (with-current-buffer buf (point-max))))))
-
-(advice-add 'message :after 'message-buffer-goto-end-of-buffer)
-
-(defun py-clean-file()
-  (if (and (equal major-mode 'python-mode) (not indent-tabs-mode))
-      (delete-trailing-whitespace (point-min) (point-max))))
-;       (untabify (point-min) (point-max)))
-(add-hook 'write-file-hooks 'py-clean-file)
-
-#+end_src
 * Debugging
 #+begin_src emacs-lisp
 (defun set-debug-on()   (interactive) (progn (setq debug-on-error t)    (message "emacs debug on")))
