@@ -1150,6 +1150,13 @@ invoked by ~/.emacs.d/init.el
                        (auto-mode . emacs)
                        ))
 (setq org-use-property-inheritance t)
+
+   (setq org-format-latex-options (plist-put org-format-latex-options :foreground "Black"))
+   (setq org-format-latex-options (plist-put org-format-latex-options :background "White"))
+   (setq org-format-latex-options (plist-put org-format-latex-options :scale 1.5))
+   (setq org-format-latex-options (plist-put org-format-latex-options :scale 1.5))
+
+
 (defun org-collapse()     (interactive) (org-shifttab 0))
 
 (progn
@@ -1427,6 +1434,19 @@ invoked by ~/.emacs.d/init.el
 
 : Also highly recommended is RefTeX, a cross-reference, bibliography, glossary, and index manager initially written by the creator of Org Mode, Carsten Dominik. Add the following line to .emacs:
 : (add-hook 'LaTeX-mode-hook 'turn-on-reftex)
+
+;; Latex White Background
+#+begin_src emacs-lisp                                           :REM white background this works! 20230707_16:13:33
+  (setq org-format-latex-options (plist-put org-format-latex-options :background "White"))
+  (setq org-format-latex-options (plist-put org-format-latex-options :foreground "blue"))
+  (setq org-preview-latex-default-process 'dvisvgm)
+  (setq org-preview-latex-process-alist '((dvisvgm :programs ("latex" "dvisvgm") :description "dvisvgm : convert dvi to svg" :message "you need to install the programs latex and dvisvgm." :image-input-type "dvi" :image-output-type "svg" :image-size-adjust (1.7 . 1.5) :latex-compiler ("latex -interaction nonstopmode -output-directory %o %f") :image-converter ("dvisvgm %f -n -b min -c %S -o %O"))))
+  ;; (seq-doseq (e org-preview-latex-process-alist) (princ (format "======%s\n:" e) (current-buffer)))
+  (cdr (car org-preview-latex-process-alist))
+#+end_src
+
+
+;; : (:programs (latex dvisvgm) :description dvisvgm : convert dvi to svg :message you need to install the programs latex and dvisvgm. :image-input-type dvi :image-output-type svg :image-size-adjust (1.7 . 1.5) :latex-compiler (latex -interaction nonstopmode -output-directory %o %f) :image-converter (dvisvgm %f -n -b min -c %S -o %O))
 
 ** Dired/Sidebar/filetree/neotree Mode/multi window
 #+begin_src emacs-lisp
