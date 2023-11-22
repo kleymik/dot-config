@@ -4,7 +4,6 @@ invoked by ~/.emacs.d/init.el
  (package-initialize)
  (org-babel-load-file "~/.emacs.d/dotEmacs.org)
 
-
 * Packages
 #+begin_src emacs-lisp
 
@@ -12,6 +11,7 @@ invoked by ~/.emacs.d/init.el
 (setq load-path (append load-path '("~/ulib/emacs/dired-hacks")))
 
 (require 'package)                                                                          ; (setq package-archives ())
+  (add-to-list 'package-archives '("jcs-elpa" . "https://jcs-emacs.github.io/jcs-elpa/packages/") t)
 (add-to-list 'package-archives '("melpa"   . "https://melpa.org/packages/")         t)
 (add-to-list 'package-archives '("mlpstbl" . "https://stable.melpa.org/packages/")  t)
 (add-to-list 'package-archives '("elpaorg" . "https://elpa.gnu.org/packages/")      t)
@@ -30,13 +30,14 @@ invoked by ~/.emacs.d/init.el
 ; (require 'diffview)        ; make patch files look like ediff
 
 ; ----------------------- dired etc
-
 (require 'dired-x)
 (require 'wdired)
 (require 'dired-subtree)
 (require 'dired-sidebar)
 (require 'dired-rainbow)
-; (require 'neotree)
+  (require 'neotree)
+  (require 'treemacs)
+  (require 'tree-inspector)
 ; (require 'dired-lis)
 ; (require 'dired-k)
 ; (require 'all-the-icons-dired-mode)
@@ -45,7 +46,7 @@ invoked by ~/.emacs.d/init.el
 ; (require 'filetree) ; doesn't do selective expansion
 ; dired-sidebar-theme
 
-(load-library "vigenere")
+  (load-library "vigenere")                       ; no longer needed
 (require 'yafolding)          ; (require 'origami)
 
 ;; --------- org mode and babel
@@ -70,20 +71,25 @@ invoked by ~/.emacs.d/init.el
 (require 'zmq)
 (require 'calc)
 
-
-;; --------- deprecated
-; (require 'cl)                 ; for transpose
-; (require 'org-eww)
-; (require 's)
-; (require 'f)
-; (require 'dash)
-; (require 'ob-ipython)
-; (require 'ein)
-; (require 'ein-notebook)
-; (require 'ein-subpackages)
+  ; dash 
+  (require' dash)
+  (global-dash-fontify-mode)
+  (with-eval-after-load 'info-look  (dash-register-info-lookup))
 
 (message "-------------- Done: Packages")
 #+end_src
+
+**  deprecated
+:  (require 'cl)                 ; for transpose
+:  (require 'org-eww)
+:  (require 's)
+:  (require 'f)
+:  (require 'dash)
+:  (require 'ob-ipython)
+:  (require 'ein)
+:  (require 'ein-notebook)
+:  (require 'ein-subpackages)
+
 * Function Definitions
 #+begin_src emacs-lisp
 (message "-------------- Start: Handy Function Definitions")
