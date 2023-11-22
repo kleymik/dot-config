@@ -1561,9 +1561,36 @@ invoked by ~/.emacs.d/init.el
 : ;  :commands (ibuffer-sidebar-toggle-sidebar))
 
 
+*** Diff 2 from dired
+#+begin_src emacs-lisp
+;; -*- lexical-binding: t -*-
+(defun ora-ediff-files ()
+  (interactive)
+  (let ((files (dired-get-marked-files))
+        (wnd (current-window-configuration)))
+    (if (<= (length files) 2)
+        (let ((file1 (car files))
+              (file2 (if (cdr files)
+                         (cadr files)
+                       (read-file-name
+                        "file: "
+                        (dired-dwim-target-directory)))))
+          (if (file-newer-than-file-p file1 file2)
+              (ediff-files file2 file1)
+            (ediff-files file1 file2))
+          (add-hook 'ediff-after-quit-hook-internal
+                    (lambda ()
+                      (setq ediff-after-quit-hook-internal nil)
+                      (set-window-configuration wnd))))
+      (error "no more than 2 files should be marked"))))
+#+end_src
+
+#+RESULTS:
+: ora-ediff-files
+
 *** Window arrangements
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp     :REM Window Arrangements
 
 (message "--------------Emacs Windows Section")
 (defun mp-toggle-window-dedication ()
@@ -1845,6 +1872,7 @@ invoked by ~/.emacs.d/init.el
   (define-key dired-mode-map (kbd "t")         'dired-omit-mode)
   (define-key dired-mode-map (kbd "c")         'dired-ediff-git)      ;; compare to last version with ediff
   (define-key dired-mode-map (kbd "e")         'dired-cd-eshell)      ;; was dired-subtree-only-this-file
+    (define-key dired-mode-map (kbd "E")         'ora-ediff-files)
   (define-key dired-mode-map (kbd "p")         'dired-paste-to-yank-buffer)
   (define-key dired-mode-map (kbd ",")         'dired-sort-toggle-or-edit) ;; to match sidebar-mode
   (define-key dired-mode-map [M-down]          'dired-view-next)      ;; was dired-previous-line
@@ -1977,6 +2005,7 @@ invoked by ~/.emacs.d/init.el
 :  (define-key dired-mode-map [left]            'dired-up-directory-drop-prev-dired-buffer)
 :  (define-key dired-mode-map (kbd "C-n")       'dired-next-line)
 :  (define-key dired-mode-map (kbd "C-p")       'dired-previous-line)
+
 
 ** Image Dired
 
