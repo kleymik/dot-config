@@ -130,6 +130,8 @@ function rg_nxs () { # $1 = dir; remember to module load nexus
 # ------------------------------------------------------------------------------ eclipse
 alias kepler='/dls_sw/apps/eclipse/eclipse432_linux64_20140725/eclipse'
 
+#print calendar
+#pcal -b all  -P a4 -F 1 -S 2023 > ~/cal_2023.ps
 
 # ------------------------------------------------------------------------------ module
 # module avail - list of modules available and their respective directory path
