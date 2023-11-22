@@ -115,6 +115,7 @@ invoked by ~/.emacs.d/init.el
       (insert flippedWord)))
 )
 
+  ;;---------------------------------------------------- region read/write
 (defun make-region-read-only (start end)
   (interactive "*r")
   (let ((inhibit-read-only t))
@@ -204,7 +205,6 @@ invoked by ~/.emacs.d/init.el
     (fill-paragraph nil))
 )
 
-;;-------------------------------------------------------------------- unjustify
 (defun unjustify-paragraph ()
   (interactive)
   (let ((fill-column (point-max)))
@@ -504,8 +504,9 @@ invoked by ~/.emacs.d/init.el
    (message "with url %s in browser" url)
    (when url (browse-url-firefox url)))
 )
+
 ;; ------------------------------------------------------------------- Selective Display
-;; tweaked for treesycalc
+  ;; tweaked for grex-calc
 (progn
   (setq selective-display-lev 0)
   (setq selective-display-inc 1)
@@ -549,7 +550,7 @@ invoked by ~/.emacs.d/init.el
       (replace-match (concat "#%% " (substring cruft 0 -3)) t nil)
       (message (concat "#%%%% " (substring cruft 0 -3) "-XXX"))))
 
-;;))                                                                                                           ; drop # and \n} cruft at end
+                                                                                          ; drop # and \n} cruft at end
 
 (message "-------------- Done: Handy Function Definitions")
 #+end_src
@@ -559,7 +560,7 @@ invoked by ~/.emacs.d/init.el
 
 ; ------------------------------------------------------------------- Eval Elisp
 (defun my-eval-defun ()
-  "can't get real one to work inside org-mode"
+  "can't get real one to work inside org-mode??"
   (interactive)
   (let ((defun-start-regex "^(defun "))
      (re-search-backward defun-start-regex)                                                                    ; search up to get the defun
@@ -571,8 +572,14 @@ invoked by ~/.emacs.d/init.el
 (defun eval-and-insert ()
   "Eval expression and insert value after the expression"c
   (interactive)
-  (pp-eval-expression (preceding-sexp))
-  ;(eval-print-last-sexp 0)
+  (pp-eval-expression (preceding-sexp))                                                   ; (eval-print-last-sexp 0)
+)
+
+(defun eval-next-sexp ()
+    (interactive)
+    (forward-sexp)
+    (eval-last-sexp nil)
+    (backward-sexp)
 )
 
 (defun my-eval-string (string)
@@ -584,9 +591,18 @@ invoked by ~/.emacs.d/init.el
 
 (defun my-insert-last-sexp ()
     (interactive)
-    (let ((value (eval (preceding-sexp))))
-      ;;(kill-sexp -1)
-      (insert (format " = %S" value)))  ;; TBD format based on datatype or use C-u C-x C-e
+    (let ((value (eval (preceding-sexp))))                                                ;;(kill-sexp -1)
+      (insert (my-format-val value)))                                                     ;; TBD format based on datatype or use C-u C-x C-e
+)
+
+(defun my-format-val (val)
+  (cond ((floatp   val) (format " = %.3f" val))                                           ; type-of
+        ((integerp val) (format " = %i"   val))
+        ((stringp  val) (format " = %S"   val))
+        ((listp    val) (format " = %S"   val))
+        ((arrayp   val) (format " = %S"   val))
+        ((vectorp  val) (format " = %S"   val))
+        (t              (format " = %S"   val)))
 )
 
 (message "-------------- Done: Treesycalc")
@@ -660,6 +676,7 @@ invoked by ~/.emacs.d/init.el
 
 (setq require-final-newline nil)         ; means don't add newline
 
+
 ;; ----------------------------------------------- Show keystrokes in progress
 (setq echo-keystrokes 0.1)
 ;;------------------------------------------------ buffer reverting
@@ -696,8 +713,8 @@ invoked by ~/.emacs.d/init.el
 ;;    say "no" to save-desktop?
 ;;    say "yes" to steal from PID?
 ;; (desktop-change-dir "/home/uri03204/myDocs/config")
-;(desktop-save-mode 1)  ; desktop-revert desktop-change-dir
-;(setq desktop-path '("/home/kleyn/config/desktop"))
+;;(desktop-save-mode 1)  ; desktop-revert desktop-change-dir
+;;(setq desktop-path '("/home/kleyn/config/desktop"))
 
 ;; Automatically save and restore sessions
 (setq desktop-dirname             "~/config/desktop/"
@@ -814,45 +831,6 @@ invoked by ~/.emacs.d/init.el
 ;; (defvar ibuffer-never-show-predicates '())
 ;; (with-eval-after-load "ibuffer" (add-to-list 'ibuffer-never-show-predicates #'my-dired-mode-buffer-p))
 ;; 
-;; ------------------------------------------------------ new stuff
-;; ;; Save point position between sessions.
-;; (use-package saveplace)
-;; (setq-default save-place t)
-;; (setq save-place-file (expand-file-name "places" user-emacs-directory))
-;; 
-;; ;; Fix empty pasteboard error.
-;; (setq save-interprogram-paste-before-kill nil)
-;; 
-;; ------------------------------------------------------ Colour
-;; (set-background-color "black")
-;; (set-background-color "darkgrey")
-;; (set-background-color "bisque")
-;; (set-background-color "bisque2")
-;; (set-background-color "bisque3")
-;; (set-face-background 'default "green3")
-;; (set-face-background 'default "lightyellow2")
-;; (set-face-background 'default "palevioletred")
-;; (set-face-background 'default "lightblue")
-;; (set-face-background 'default "paleturquoise")
-;; (set-face-background 'default "lightblue")
-;; 
-;; (global-hl-line-mode 0) ; (global-hl-line-unhighlight) (global-hl-line-highlight)
-;; (global-mark-ring-max 50)
-;; 
-;; (setq set-mark-command-repeat-pop 1) ;;-- needs emacs version 22
-;; (setq hscroll-margin 30)
-;; (setq hscroll-step 20) ;; # 0
-;; (setq header-line-format mode-line-format)
-;; (global-mark-ring-max 50)
-;; (global-set-key "\C-." 'pop-global-mark)
-;; (global-set-key [M-SPC] 'pop-global-mark)
-;; (global-set-key [S-right] 'forward-word)
-;; (global-set-key [remap eval-expression] 'pp-eval-expression)
-;; (setq mark-ring-max 50)
-;; (setq set-mark-command-repeat-pop 1) - needs emacs version 22
-;; (setq-default frame-title-format "%b %p %p(%f)")
-;; (setq-default line-spacing 0.06)
-;; M-x clone-indirect-buffer RET
 
 #+end_src
 ** Highlighting/Cursor Visibility
@@ -1175,17 +1153,24 @@ invoked by ~/.emacs.d/init.el
 (defun org-collapse()     (interactive) (org-shifttab 0))
 
 (progn
-  (define-key org-mode-map (kbd "C-c C->")  'org-demote-subtree)
-  (define-key org-mode-map (kbd "C-c d")    'org-demote-subtree)
+     (define-key org-mode-map (kbd "C-c C->")  #'org-demote-subtree)
+     (define-key org-mode-map (kbd "C-c d")    #'org-demote-subtree)
 
-  (define-key org-mode-map (kbd "C-c C-<")  'org-promote-subtree)
-  (define-key org-mode-map (kbd "C-c p")    'org-promote-subtree)
+     (define-key org-mode-map (kbd "C-c C-<")  #'org-promote-subtree)
+     (define-key org-mode-map (kbd "C-c p")    #'org-promote-subtree)
 
-  (define-key org-mode-map (kbd "<S-up>")   'scroll-one-line-down)
-  (define-key org-mode-map (kbd "<S-down>") 'scroll-one-line-up)
+     (define-key org-mode-map (kbd "<S-up>")   #'scroll-one-line-down)
+     (define-key org-mode-map (kbd "<S-down>") #'scroll-one-line-up)
 
-  (define-key org-mode-map (kbd "C-c n")    'my-org-babel-execute-and-next)
-  (define-key org-mode-map (kbd "C-c C-t")  'org-transpose-table-at-point)
+     (define-key org-mode-map (kbd "C-c n")    #'my-org-babel-execute-and-next)
+     (define-key org-mode-map (kbd "C-c C-t")  #'org-transpose-table-at-point)
+     (define-key org-mode-map (kbd "C-c v")    #'my-org-display-inline-image-at-point)
+
+     ;; (define-key org-mode-map (kbd "TAB") 'my-org-fold-src-results)
+
+     ;(define-key org-mode-map (kbd "<f9> n") 'my-next-image)
+     ;(define-key org-mode-map (kbd "<f9> p") 'my-prev-image)
+     ;(define-key org-mode-map (kbd "<f9> i") 'my-insert-current-image-path)
 )
 
 (defun org-table-to-sql ()
@@ -1213,7 +1198,7 @@ invoked by ~/.emacs.d/init.el
   (newline)
 )
 
-;;------------------------------------- org-mode crypt
+   ;; -------------------------------------------------------------------- org-mode crypt
 (defun rot-region(p1 p2)
   (interactive "r")
    (org-mark-subtree)
@@ -2089,7 +2074,7 @@ invoked by ~/.emacs.d/init.el
 :    M-i babel> complete-symbol
 ** Mousing
 #+begin_src emacs-lisp
-(global-set-key (kbd "s-x")         '(lambda () (interactive) (progn (set-mark-command 0))))   ; Super = windowframe key is  mod 4 see xmodmap cycle-buffer
+(global-set-key (kbd "s-x")         #'(lambda () (interactive) (progn (set-mark-command 0))))   ; Super = windowframe key is  mod 4 see xmodmap cycle-buffer
 (global-set-key (kbd "<S-mouse-4>") 'cycle-buffer-permissive)
 (global-set-key (kbd "<S-mouse-5>") 'cycle-buffer-permissive-backward)
 
@@ -2245,7 +2230,7 @@ invoked by ~/.emacs.d/init.el
 
 (global-set-key [f5]       'ergoemacs-open-in-external-app)    ;; bookmark-menu-list',
 (global-set-key [C-f5]     'ffap)
-(global-set-key [S-f5]     '(lambda () (interactive)  (let ((fpth (thing-at-point 'filename t))) (kill-new fpth) (message fpth))))  ; copy file path at point
+(global-set-key [S-f5]     #'(lambda () (interactive)  (let ((fpth (thing-at-point 'filename t))) (kill-new fpth) (message fpth))))  ; copy file path at point
 (global-set-key [M-f5]     'filepath-on-clipboard)
 (global-set-key [s-f5]     'dired-paste-to-yank-buffer)
 
@@ -2254,7 +2239,7 @@ invoked by ~/.emacs.d/init.el
 (global-set-key [C-f6]     'toggle-window-split)
 (global-set-key [S-f6]     'bool-flip-do-flip)
 (global-set-key [M-f6]     'grexc-update-sexp-result)
-(global-set-key [s-f6]     '(lambda () (interactive)  (let* ((currWord (thing-at-point 'symbol t))
+(global-set-key [s-f6]     #'(lambda () (interactive)  (let* ((currWord (thing-at-point 'symbol t))
                                                              (currWordVal (symbol-value (intern currWord))))
                                                           (switch-to-buffer "*scratch*")
                                                           (goto-char (point-min))                                              ;; (print currWordVal  (get-buffer "*scratch*"))
@@ -2267,18 +2252,18 @@ invoked by ~/.emacs.d/init.el
 (global-set-key [s-f7]     'org-table-toggle-coordinate-overlays)
 
 
-(global-set-key [f8]       '(lambda () (interactive) (org-babel-execute-src-block)))
-(global-set-key [C-f8]     '(lambda () (interactive) (my-org-babel-execute-and-next)))
-(global-set-key [S-f8]     '(lambda () (interactive) (org-babel-execute-subtree)))
-(global-set-key [M-f8]     '(lambda () (interactive) (org-latex-preview)))
-(global-set-key [s-f8]     '(lambda () (interactive) (org-babel-switch-to-session)))
+(global-set-key [f8]       #'(lambda () (interactive) (org-babel-execute-src-block)))
+(global-set-key [C-f8]     #'(lambda () (interactive) (my-org-babel-execute-and-next)))
+(global-set-key [S-f8]     #'(lambda () (interactive) (org-babel-execute-subtree)))
+(global-set-key [M-f8]     #'(lambda () (interactive) (org-latex-preview)))
+(global-set-key [s-f8]     #'(lambda () (interactive) (org-babel-switch-to-session)))
 
 
 (global-set-key [f9]       'kmacro-start-macro)                ;; 'ielm)  ;; open file under cursor
 (global-set-key [C-f9]     'kmacro-end-and-call-macro)         ;; see-shell-output)
 (global-set-key [S-f9]     'kmacro-end-macro)
-(global-set-key [M-f9]     '(lambda () (interactive) (recenter-top-bottom  0)))
-(global-set-key [s-f9]     '(lambda () (interactive) (recenter-top-bottom 50)))
+(global-set-key [M-f9]     #'(lambda () (interactive) (recenter-top-bottom  0)))
+(global-set-key [s-f9]     #'(lambda () (interactive) (recenter-top-bottom 50)))
 
 
 (global-set-key [f10]      'yafolding-toggle-element)
@@ -2481,7 +2466,7 @@ invoked by ~/.emacs.d/init.el
 #+begin_src emacs-lisp                       :REM Keypad Global Key Bindings
 (progn 
   (global-set-key [S-kp-prior]        'scroll-one-line-down)                                 ;; = S-kp9
-  (global-set-key [S-kp-right]        '(lambda () (interactive) (recenter-top-bottom '(t)))) ;; = S-kp6
+  (global-set-key [S-kp-right]        #'(lambda () (interactive) (recenter-top-bottom '(t))))   ;; = S-kp6
   (global-set-key [S-kp-next]         'scroll-one-line-up)                                   ;; = S-kp3
 )
 #+end_src
@@ -2517,7 +2502,7 @@ invoked by ~/.emacs.d/init.el
   ;(define-key dired-sidebar-mode-map [kp-8]      'dired-previous-line)
   ;(define-key dired-sidebar-mode-map [kp-2]      'dired-next-line)
 
-  (define-key dired-sidebar-mode-map [kp-4]        '(lambda () (interactive)                                        ;; keep
+  (define-key dired-sidebar-mode-map [kp-4]        #'(lambda () (interactive)                                        ;; keep
                                                        (message (format "%d %d" (line-number-at-pos) (dired-subtree--get-depth (dired-subtree--get-ov))))
                                                        (if (= (dired-subtree--get-depth (dired-subtree--get-ov)) 0)
                                                           (dired-sidebar-up-directory)
@@ -2529,12 +2514,12 @@ invoked by ~/.emacs.d/init.el
 
   (define-key dired-sidebar-mode-map [kp-6]        'dired-sidebar-find-file)
   ;(define-key dired-sidebar-mode-map [kp-3]       '(lambda () (interactive) (dired-subtree-cycle 4)))
-  (define-key dired-sidebar-mode-map [C-kp-6]      '(lambda () (interactive) ;; first child, open if needed
+  (define-key dired-sidebar-mode-map [C-kp-6]       #'(lambda () (interactive) ;; first child, open if needed
                                                        (if (not (dired-subtree--is-expanded-p)) (dired-sidebar-subtree-toggle))
                                                        (dired-next-line 1)))                                       ;; dired-sidebar-find-file
 
-  (define-key dired-sidebar-mode-map [kp-subtract] '(lambda () (interactive) (dired-sidebar-subtree-toggle) (dired-next-lne)))
-  (define-key dired-sidebar-mode-map [kp-0]         '(lambda () (interactive) (ergoemacs-open-in-external-app)))
+  (define-key dired-sidebar-mode-map [kp-subtract]  #'(lambda () (interactive) (dired-sidebar-subtree-toggle) (dired-next-lne)))
+  (define-key dired-sidebar-mode-map [kp-0]         #'(lambda () (interactive) (ergoemacs-open-in-external-app)))
 
   ;(define-key dired-sidebar-mode-map [C-kp-5]      'dired-sidebar-up-directory) now subsumed in kp-5
 )
@@ -2645,7 +2630,7 @@ invoked by ~/.emacs.d/init.el
 (progn
   (define-key org-mode-map [kp-4]                  'my-org-uplevel)   ;  '(lambda () (interactive)  (outline-up-heading 2)))
 
-  (define-key org-mode-map [kp-multiply]           '(lambda () (interactive)  (org-backward-heading-same-level 6)))
+  (define-key org-mode-map [kp-multiply]           #'(lambda () (interactive)  (org-backward-heading-same-level 6)))
 
   (define-key org-mode-map [kp-8]                  'org-backward-heading-same-level)
   (define-key org-mode-map [kp-5]                  'my-org-cycle-or-fold)
@@ -2656,7 +2641,7 @@ invoked by ~/.emacs.d/init.el
   (define-key org-mode-map [kp-6]                  'my-org-dft)                                                  ;; tbd show contents of leaf
   (define-key org-mode-map [kp-3]                  'next-line)                                                     ;; tbd show contents of leaf
 
-  (define-key org-mode-map [kp-decimal]            '(lambda () (interactive)  (org-forward-heading-same-level 6)))
+  (define-key org-mode-map [kp-decimal]            #'(lambda () (interactive)  (org-forward-heading-same-level 6)))
 
   (define-key org-mode-map [kp-7]                  'my-org-babel-prev)
   (define-key org-mode-map [kp-1]                  'my-org-babel-next)
@@ -3164,9 +3149,8 @@ for flushing messages to *Message* buffer
 
 
 (eshell)
-
-
 (message "-------------- Done: Eshell Section")
+
 #+end_src
 *** eshell arithmetic
 : $ (length "hi")  --> 2
@@ -3781,7 +3765,7 @@ for flushing messages to *Message* buffer
 : ;;(ido-mode t)
 : ;;(windmove-default-keybindings 'shift)
 
-* end bit
+* End bit
 : ;(desktop-change-dir "/home/uri03204/myDocs/config")
 
 #+begin_src emacs-lisp
@@ -3801,8 +3785,47 @@ for flushing messages to *Message* buffer
 
 
 
-
 * Faded
+;; ------------------------------------------------------ new stuff
+;; ;; Save point position between sessions.
+;; (use-package saveplace)
+;; (setq-default save-place t)
+;; (setq save-place-file (expand-file-name "places" user-emacs-directory))
+;; 
+;; ;; Fix empty pasteboard error.
+;; (setq save-interprogram-paste-before-kill nil)
+;; 
+;; ------------------------------------------------------ Colour
+;; (set-background-color "black")
+;; (set-background-color "darkgrey")
+;; (set-background-color "bisque")
+;; (set-background-color "bisque2")
+;; (set-background-color "bisque3")
+;; (set-face-background 'default "green3")
+;; (set-face-background 'default "lightyellow2")
+;; (set-face-background 'default "palevioletred")
+;; (set-face-background 'default "lightblue")
+;; (set-face-background 'default "paleturquoise")
+;; (set-face-background 'default "lightblue")
+;; 
+;; (global-hl-line-mode 0) ; (global-hl-line-unhighlight) (global-hl-line-highlight)
+;; (global-mark-ring-max 50)
+;; 
+;; (setq set-mark-command-repeat-pop 1) ;;-- needs emacs version 22
+;; (setq hscroll-margin 30)
+;; (setq hscroll-step 20) ;; # 0
+;; (setq header-line-format mode-line-format)
+;; (global-mark-ring-max 50)
+;; (global-set-key "\C-." 'pop-global-mark)
+;; (global-set-key [M-SPC] 'pop-global-mark)
+;; (global-set-key [S-right] 'forward-word)
+;; (global-set-key [remap eval-expression] 'pp-eval-expression)
+;; (setq mark-ring-max 50)
+;; (setq set-mark-command-repeat-pop 1) - needs emacs version 22
+;; (setq-default frame-title-format "%b %p %p(%f)")
+;; (setq-default line-spacing 0.06)
+;; M-x clone-indirect-buffer RET
+
 : 
 : ;;---- option2 parallel swap
 : ;(defun parallel-swap (plist &optional start end)  ;; (require 'cl)
