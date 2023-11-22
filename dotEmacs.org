@@ -642,14 +642,15 @@ invoked by ~/.emacs.d/init.el
 * Settings
 #+begin_src emacs-lisp                               :REM Settings
 (message "-------------- Start: Settings")
+;;(setq epa-file-select-keys "nope")                                                      ; don't ask about assymmetric key?
+(setq epa-pinentry-mode 'loopback)                                                        ; don't pop up a gui
 (setq calendar-week-start-day 1)             ; set....mark to get count of days
 (delete-selection-mode 0)                    ; don't delete selection with next char
 (fset 'yes-or-no-p 'y-or-n-p)
 (setq bell-volume 0)
 (setq case-fold-search t)
 (setq column-number-mode t)
-(setq default-truncate-lines t)
-(set-default 'truncate-lines t)
+(setq default-truncate-lines t)   (setq-default truncate-lines t)
 (setq truncate-partial-width-windows t)
 (setq display-time-day-and-date t) (display-time)
 (setq font-lock-maximum-decoration t) ;; 3
@@ -669,9 +670,8 @@ invoked by ~/.emacs.d/init.el
 (setq-default line-spacing 0.06)
 (setq-default indent-tabs-mode nil)
 (setq ivy-height 10)
-
-(tool-bar-mode -1)
 (setq-default frame-title-format "%f")
+(tool-bar-mode -1)
 (transient-mark-mode t)                   ; (setq-default frame-title-format "%b %p %p(%f)")
 
 (setq require-final-newline nil)         ; means don't add newline
@@ -725,8 +725,8 @@ invoked by ~/.emacs.d/init.el
       desktop-files-not-to-save   "^$" ;reload tramp paths
       desktop-load-locked-desktop t
       desktop-auto-save-timeout   300
-      desktop-restore-frames      nil)
-(desktop-save-mode 1)
+      desktop-restore-frames      t)
+(desktop-save-mode 0)
 ;; ----------------------------------------------- Backup location
 
 ;;  /data/data/com.termux/files/home/storage/external/backups
@@ -1547,11 +1547,13 @@ invoked by ~/.emacs.d/init.el
        (ibuffer-sidebar-show-sidebar)
        (dired-sidebar-show-sidebar dired-buffer)    ;; dired and ibuffer on the left
        (set-window-dedicated-p dired-window    t)
-       (setq window-size-fixed nil)
-  ;; window--make-major-side-window
-  (display-buffer-in-side-window (get-buffer "*Messages*") `((side . right) (window-width . 50)))  ;; messages on the right
-  (display-buffer-in-side-window (get-buffer "*eshell*")   `((side . bottom) (window-height . 10))))
+       (setq window-size-fixed nil))
 )
+  ;; window--make-major-side-window
+  ;; (display-buffer-in-side-window (get-buffer "*Messages*") `((side . right) (window-width . 50)))  ;; messages on the right
+  ;; (display-buffer-in-side-window (get-buffer "*eshell*")   `((side . bottom) (window-height . 10))))
+
+
 
 ;;----------------------- subtree/sidebar
 
@@ -2243,8 +2245,9 @@ invoked by ~/.emacs.d/init.el
 
 #+begin_src emacs-lisp
 
+;; for termux
 (defun f1()                (interactive)  (eshell))
-(defun sf2()               (interactive)  (find-file "/data/data/com.termux/files/home/org/access.org"))
+(defun sf2()               (interactive)  (find-file "/data/data/com.termux/files/home/org/access.org.gpg"))
 (defun cf2()               (interactive)  (find-file "/data/data/com.termux/files/home/MyDocs/aNotes/org/doAndDone.org"))
 (defun sf3()               (interactive)  (find-file "/data/data/com.termux/files/home/dot/dotBashrc"))                                  
 (defun cf3()               (interactive)  (find-file "/data/data/com.termux/files/home/.emacs.d/dotEmacs.org"))                          
@@ -2440,6 +2443,17 @@ invoked by ~/.emacs.d/init.el
 
 (global-set-key [S-down]        'scroll-one-line-up)
 (global-set-key [S-up]          'scroll-one-line-down)
+    (if nil           ;;; Scrolling.  iscroll-mode better?
+      ;; Good speed and allow scrolling through large images (pixel-scroll).
+      ;; Note: Scroll lags when point must be moved but increasing the number
+      ;;       of lines that point moves in pixel-scroll.el ruins large image
+      ;;       scrolling. So unfortunately I think we'll just have to live with
+      ;;       this.
+      (pixel-scroll-mode)
+      (setq pixel-dead-time 0) ; Never go back to the old scrolling behaviour.
+      (setq pixel-resolution-fine-flag t) ; Scroll by number of pixels instead of lines (t = frame-char-height pixels).
+      (setq mouse-wheel-scroll-amount '(1)) ; Distance in pixel-resolution to scroll each mouse wheel event.
+      (setq mouse-wheel-progressive-speed nil)) ; Progressive speed is too fast for me
 
 (global-set-key [C-insert]      'clipboard-kill-ring-save)
 (global-set-key [S-insert]      'clipboard-yank)
@@ -2590,6 +2604,10 @@ invoked by ~/.emacs.d/init.el
       (key-rename-project (treemacs--find-keybind #'treemacs-rename-project 12))
 
 *** KeyPad Bindings
+
+
+#+RESULTS:
+: treemacs-goto-parent-node
 
 #+begin_src emacs-lisp                       :REM Keypad Global Key Bindings
 (progn 
@@ -3044,6 +3062,9 @@ for flushing messages to *Message* buffer
 (defun set-debug-off()  (interactive) (progn (setq debug-on-error nil)  (message "emacs debug off")))
 #+end_src
 
+#+RESULTS:
+: set-debug-off
+
 : ;;-------------------------------------------------------------------- DEBUG
 : ;;Go to where your function is defined and type M-x edebug-defun,
 : ;;This will work the next time the function is called. You can check the docs[1]or just type ?.
@@ -3122,6 +3143,7 @@ for flushing messages to *Message* buffer
                                         "|" (propertize (substring dts 8) 'face `(:foreground "green"))       ;; "|" (car (last (split-string (getenv "VIRTUAL_ENV") "/")))         
                                         "|" (propertize (substring (pwd) 10) 'face `(:foreground "green"))                                                                          
                                         "\n:: ")))                                                                                                                                  
+
 (setq eshell-prompt-regexp "^:: ")
 
 ;; !? changing Ctrl- up/down here doesn't override default - up & down comen history
@@ -3683,6 +3705,9 @@ for flushing messages to *Message* buffer
 : (defalias 'vc-ediff-frame (kbd "C-x 5 2 M-x vc-ediff RET y"))
 
 ** Regexp
+
+(replace-regexp "[0-9]" "\,(1+ \\#&)" nil (point-min) (point-max)) 
+(query-replace-regexp "\\([0-9]+\\),\\([0-9]+\\)" "\\1\\2")  !!! replace commas in numbers!!!
 : 
 : -------------------------------------------------------------- SAMPLE REPLACE REGEXP
 : (string-to-number "22")
@@ -3932,6 +3957,7 @@ for flushing messages to *Message* buffer
 (message "dotEmacs.org done")
 (set-cursor-color "gold") 
 ;(switch-to-buffer "*Messages*")
+;(desktop-read)
 #+end_src
 
 : ;custom-set-variables and custom set faces in ~/.emacs.d/init.el
