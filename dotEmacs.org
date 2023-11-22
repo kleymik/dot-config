@@ -3131,8 +3131,9 @@ for flushing messages to *Message* buffer
 : 
 * Debugging
 #+begin_src emacs-lisp
-(defun set-debug-on()   (interactive) (progn (setq debug-on-error t)    (message "emacs debug on")))
-(defun set-debug-off()  (interactive) (progn (setq debug-on-error nil)  (message "emacs debug off")))
+(defun set-debug-on()   (interactive) (progn (setq edebug-on-error t)    (message "emacs edebug on-error")))
+(defun set-debug-off()  (interactive) (progn (setq edebug-on-error nil)  (message "emacs edebug on-error off")))
+(setq edebug-print-level 2) ; usually 50
 #+end_src
 
 #+RESULTS:
