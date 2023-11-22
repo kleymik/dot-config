@@ -237,18 +237,16 @@ alias libreOffice='/usr/lib/libreoffice/program/soffice.bin &'
 
 # ----------------------------------------------------------------------------- emacs
 export ALTERNATE_EDITOR=""
-export EDITOR="emacsclient27 -t"                     # $EDITOR opens in terminal
-export VISUAL="emacsclient27 -c -s emcsSrvr"         # $VISUAL opens in GUI mode
+export EDITOR="emacsclient28 -t"                     # $EDITOR opens in terminal
+export VISUAL="emacsclient28 -c -s emcsSrvr"         # $VISUAL opens in GUI mode
 
-alias emacsServer='emacs27 --daemon=emcsSrvr -l ~/.emacs.d/init.el'
-alias emacsClient='emacsclient27 -c -s emcsSrvr &'
+alias emacsServer='emacs28 --daemon=emcsSrvr -l ~/.emacs.d/init.el'
+alias emacsClient='emacsclient28 -c -s emcsSrvr &'
 
 #alias emnw='emacs26 -nw -fg black  -bg white1'
 #alias ew='emacsclient -n'
 #function emd () { emacsclient -n --eval "(ediff-files \"$1\" \"$2\")" }
 #export EDITOR='emacs26 -nw'
-#alias emacs='emacs26'
-alias emacs='emacs27 -l ~/.emacs.d/init.el'
 
 #------------------------------------------------------------------------------ cd stuff
 function cv   () { builtin cd "$@"; ls --color=auto --format=vertical --time-style=long-iso -lr; }
