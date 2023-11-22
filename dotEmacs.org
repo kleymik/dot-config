@@ -1943,6 +1943,38 @@ invoked by ~/.emacs.d/init.el
 :  (define-key dired-mode-map (kbd "C-n")       'dired-next-line)
 :  (define-key dired-mode-map (kbd "C-p")       'dired-previous-line)
 
+** Image Dired
+
+
+#+begin_src emacs-lisp
+  (setq image-dired-thumb-size 300)
+  
+  (defun my-next-image ()
+    (interactive)
+    (save-excursion 
+      (with-current-buffer "*image-dired*"
+        (image-dired-forward-image)
+        (image-dired-display-thumbnail-original-image))))
+
+  (defun my-prev-image ()
+    (interactive)
+    (save-excursion 
+      (with-current-buffer "*image-dired*"
+        (image-dired-backward-image)
+        (image-dired-display-thumbnail-original-image))))
+
+  (defun my-insert-current-image-path ()
+    (interactive)
+    (insert
+     (concat
+      "[["
+      (save-excursion
+        (with-current-buffer "*image-dired*"
+          (image-dired-original-file-name)))
+      "]]")))
+#+end_src
+
+
 ** Magit
 #+begin_src emacs-lisp                            :REM magit
 (defun my-magit-mode-hook ()
@@ -2263,7 +2295,7 @@ for flushing messages to *Message* buffer
 | CTRL | *bash*    | mySystems | hist dir   | ibuffer         | X | open @point file | window flip    | transp   | exec & next  | X | macro-go    | tog all     | sel v+ | edebug fun   | CTRL |
 | SHFT | *python*  | bigNotes  | hist wkly  | dired ~/        | X | clip @point file | bool-flip      | export   | exec subtree | X | macro-end   | open all    | sel v- | debug-on     | SHFT |
 |------+-----------+-----------+------------+-----------------+---+------------------+----------------+----------+--------------+---+-------------+-------------+--------+--------------+------|
-| ALT  | mark-back | jupyClips | dotEmacs   | dired projects/ | X | clip currnt file | insrt TreeCalc | cnvrt    | latex?       | X | center top  | yafold mode |        | debug-off    | ALT  |
+| ALT  | mark-back | jupyClips | dotEmacs   | dired projects/ | X | clip currnt file | insrt TreeCalc | coords   | latex?       | X | center top  | yafold mode |        | debug-off    | ALT  |
 | SUPR | chatGPT   | access    | dotBashrc  | dired repos/    | X | clip dired  file | print var      | recalc   | session      | X | center mid  | ya discover |        | tog py break | SUPR |
 |------+-----------+-----------+------------+-----------------+---+------------------+----------------+----------+--------------+---+-------------+-------------+--------+--------------+------|
 , dired change sort ; list-command-history ; then do C-x M-: to see what lisp form ; SUPR \ delete-whitespace-forward ; M-& run async ; M-x term ; M-i jupyter info inspect at point ; 
