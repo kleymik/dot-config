@@ -581,6 +581,7 @@ alias utilFuns='declare -F'
 alias utilPstree='ps -ef --forest'
 alias utilDf='watch -n 1 df -m'
 alias utilAllPkgs='dpkg -l | cut -b 5-80'
+alias utilLogs='tail -f /var/log/{kern.log,syslog,dmesg,faillog,Xorg.0.log,auth.log}'
 
 
 # audio of new device
