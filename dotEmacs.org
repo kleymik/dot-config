@@ -1276,7 +1276,42 @@ invoked by ~/.emacs.d/init.el
    (when (equal (nth 0 info) "sql")    (write-region (cadr info) nil "//lon0302/dfs/DATA/MULTI_ASSET/MAQS/dataCollection/FI/LOCAL/USR/MK/vc/rs1/SSI.scratch/notebooks/SQL_QUERY_CMD.sql")))
 )
 
-;; org-mode hooks
+  ;; ---------------------------------------------------------------------- org-mode pictures
+  (defun my-org-display-inline-image-at-point ()
+   (interactive)
+   (let* ((context (org-element-context (org-element-at-point)))
+          (type (org-element-type context))
+          (beg  (plist-get (cadr context) :begin))
+          (end  (plist-get (cadr context) :end)))
+      (when (eq type 'link)
+         (org-display-inline-images nil nil beg end))))
+
+  ;; --------------------------------------------------------------------- toggle both program and results, sort of
+  ;; from gpt 20230908_16:12:12
+  (defun my-org-tab-first-hook ()
+     "Fold both `#+begin_src` and `#+RESULTS` when TAB is pressed on `#+begin_src` line."
+      (when (looking-at "^#\\+begin_src")
+       (org-hide-block-toggle-maybe)
+       (save-excursion
+         (org-next-block 1)
+         (org-hide-block-toggle-maybe))))
+  (add-hook 'org-tab-first-hook 'my-org-tab-first-hook)
+
+  (defun my-org-fold-src-results () ;; checking folding state
+     "Fold or unfold both #+begin_src and #+RESULTS sections."
+     (interactive)
+     (save-excursion
+       (when (re-search-backward "^#\\+RESULTS:" nil t)
+         (let ((results-block-start (point))
+               (results-block-end (org-end-of-subtree))
+               (results-folded (org-invisible-p)))
+           (org-hide-block-toggle-maybe)
+           (when (re-search-backward "^#\\+begin_src" nil t)
+           (let ((src-block-folded (org-invisible-p)))
+              (org-hide-block-toggle-maybe)
+              (when (or results-folded src-block-folded)
+              (org-flag-region results-block-start results-block-end t))))))))
+
 (add-hook 'org-mode-hook  'hide-ctrl-M)
 (message "-------------- Done: Org Mode")
 #+end_src
