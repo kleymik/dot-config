@@ -984,7 +984,7 @@ invoked by ~/.emacs.d/init.el
   ;; 0) gpt.el
   ;;  (require 'gpt)
   ;;  (progn
-  ;;    (setq gpt-openai-key "***REMOVED***")
+  ;;    (setq gpt-openai-key "pw")
   ;;    (setq gpt-openai-engine "text-davinci-003")
   ;;    ;;(setq gpt-openai-engine "gpt-3.5-turbo")
   ;;    (setq gpt-openai-use-chat-api t)
@@ -997,7 +997,7 @@ invoked by ~/.emacs.d/init.el
 
   ;; 1) gptel
   ;;  (require 'gptel)
-  ;;  (setq gptel-api-key "***REMOVED***")
+  ;;  (setq gptel-api-key "pw")
   ;;  (gptel)
   ;;  put in .authinfo?
   ;;  (defun gpgo ()
@@ -1006,7 +1006,7 @@ invoked by ~/.emacs.d/init.el
 
   ;; 2)
   ;(require 'chatgpt)
-  ;(setq openai-key "***REMOVED***")
+  ;(setq openai-key "pw")
 
   ;; 3)
   ;;(require 'ob-chatgpt-shell)
