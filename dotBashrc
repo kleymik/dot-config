@@ -632,7 +632,12 @@ al
 pwd
 
 ls -l ~/history/lastS*
-
+df -h | sort | grep /dev/sd 
+du -sm ~/stromatolite/* | sort -n
+echo -n "NextCloud number of folders (1385) :"
+du ~/stromatolite/ | wc -l
+echo -n "NextCloud number of files(29480) :"
+find ~/stromatolite/ | wc -l
 
 #------------------------------------------------------------------------------ docs/notes
 # edit a given function in situ
