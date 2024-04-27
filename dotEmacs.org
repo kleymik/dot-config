@@ -1,4 +1,4 @@
-  *Emacs Initialisation*
+    *Emacs Initialisation*
 
 invoked by: ~/.emacs.d/init.el
  (package-initialize)
@@ -92,14 +92,32 @@ invoked by: ~/.emacs.d/init.el
 :  (require 'ein-subpackages)
 
 * Function Definitions
-#+begin_src emacs-lisp
-  (message "-------------- Start: Handy Function Definitions")
-  
-  (defun overwrite-yank ()
-    (interactive)
-    (delete-char (length (current-kill 0)))
-    (yank)
-  )
+#+begin_src emacs-lisp                            :REM Function Definitions
+(message "-------------- Start: Handy Function Definitions")
+
+(defvar xah-show-kill-ring-separator nil "A line divider for `xah-show-kill-ring'.")
+(setq xah-show-kill-ring-separator "\n\n===========================================================================\n\n")
+(defun xah-show-kill-ring ()
+  "Insert all `kill-ring' content in a new buffer named *copy history*.
+   URL `http://xahlee.info/emacs/emacs/emacs_show_kill_ring.html'
+   Version 2019-12-02 2021-07-03"
+  (interactive)
+  (let (($buf (get-buffer-create "*copy history*"))  ; (generate-new-buffer "*copy history*")
+        (inhibit-read-only t))
+    (progn
+      (switch-to-buffer $buf)
+      (funcall 'fundamental-mode)
+      (mapc
+       (lambda (x)
+         (insert x xah-show-kill-ring-separator ))
+       kill-ring))
+    (goto-char (point-min))))
+
+(defun overwrite-yank ()
+  (interactive)
+  (delete-char (length (current-kill 0)))
+  (yank)
+)
 
   (defun bool-flip-do-flip ()
     (interactive)
@@ -145,18 +163,6 @@ invoked by: ~/.emacs.d/init.el
   )
 
   ;;---------------------------------------------------- Other
-  (defun filepath-on-clipboard ()
-    "Put the current file name on the clipboard"
-    (interactive)
-   (let ((filename (if (memq major-mode '(dired-mode dired-sidebar-mode)) 
-                        default-directory
-                      (buffer-file-name))))
-      (when filename
-        (with-temp-buffer
-          (insert filename)
-          (clipboard-kill-region (point-min) (point-max)))
-        (message filename)))
-  )
 
   (defun hide-ctrl-M ()
     "Hides the disturbing carriage return '^M' showing up in files containing mixed UNIX and DOS line endings."
@@ -463,31 +469,18 @@ invoked by: ~/.emacs.d/init.el
   (defun ergoemacs-open-in-external-app ()
     "Open the current file or dired marked files in external app."
     (interactive)
-    (let* ((myFileList (if (memq major-mode '(dired-mode dired-sidebar-mode))
+    (let ((myFileList (if (memq major-mode '(dired-mode dired-sidebar-mode))
                          (dired-get-marked-files)
-                         (list (buffer-file-name))))
-           (doIt (if (<= (length myFileList) 5) 
+                         (list (buffer-file-name)))))
+      (when (if (<= (length myFileList) 5)
                     t 
-                    (y-or-n-p "Open more than 5 files?"))))
-      (when doIt
-        (cond
-
-         ((string-equal system-type "gnu/linux")
-             (dolist (fPath myFileList)
-                (if (string-match ".url$" fPath)
-                    (open-url-file fPath)
-                    (let ((process-connection-type nil)) 
-                       (start-process "" nil "xdg-open" fPath)))))
-
-         ((string-equal system-type "window-nt")
-          (dolist (fPath myFileList)
-              (w32-shell-execute "open" (replace-regexp-in-string "/" "\\" fPath t t))))
-
-         ((string-equal system-type "cygwin")
-          (dolist (fPath myFileList)
-               (message (concat "cygstart.exe " fPath))
-               (shell-command (concat "cygstart.exe " fPath)))))))
-  )
+                    (y-or-n-p "Open more than 5 files?"))
+        (dolist (fPath myFileList)
+          (if (string-match ".url$" fPath)
+              (open-url-file fPath)
+            (let ((process-connection-type nil)) 
+              (start-process "" nil "xdg-open" (expand-file-name fPath)))))))
+    )
 
 
   (defun open-url-file (filePath)
