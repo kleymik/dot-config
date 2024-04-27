@@ -1448,6 +1448,132 @@ invoked by: ~/.emacs.d/init.el
 
 *** Org-Babel
 
+#+begin_src emacs-lisp                     :REM org navigation functions
+(defun my-org-cycle-or-fold ()
+  "use language-folding if in code block, otherwise usual org-cycle"
+  (interactive)
+  (if (string-equal "emacs-lisp" (nth 0 (org-babel-get-src-block-info))) ;;(org-in-src-block) 
+      (yafolding-toggle-element)
+      (org-cycle))
+)
+
+(defun my-org-toggle-subtree ()
+  "try to emulate dired 2-cycle rather than TAB 3-cycle"
+  (interactive)
+  (message "--------------Enter")
+  (let ((oeap (org-element-at-point))                       ; (setq oeap-lv (org-element-property :level oeap))
+        (oec (org-element-context)))                        ; (setq oec-lv  (org-element-property :level oec))
+     (if (eq curr-command last-command)
+         (progn (org-show-entry)
+               (org-show-children))
+        (org-hide-block-toggle nil)))         ; i.e. hide src block
+)
+
+(defun my-org-babel-next ()
+   (interactive)
+   (setq case-fold-search t)
+   (beginning-of-line)
+   (forward-char 3)
+   (re-search-forward "^#.begin_src\\|^#.results:" nil t nil)
+   (beginning-of-line)
+   (recenter '(t))
+)
+
+(defun my-org-babel-prev ()
+   (interactive)
+   (setq case-fold-search t)
+   (beginning-of-line)
+   (backward-char 1)
+   (re-search-backward "^#.begin_src\\|^#.results:" nil t nil)
+   (beginning-of-line)
+   (recenter-top-bottom 50)
+)
+
+(defun my-org-dft ()
+   "depth-first traversal for org/babel mode"
+   (interactive)
+   (message "--------------Enter")
+   (setq oeap (org-element-at-point))                        ; (setq oeap-lv (org-element-property :level oeap))
+   (setq oec (org-element-context))                          ; (setq oec-lv  (org-element-property :level oec))
+   ;(setq curLine (buffer-substring-no-properties (line-beginning-position) (line-end-position)))
+   ;(message (concat "XXX" curLine "XXX"))
+   (message (concat "my-org-dft:BEFORE:" (prin1-to-string (org-element-type oeap)) "  " (prin1-to-string (org-element-type oec))))
+   (cond ((eq (org-element-type oeap) 'headline)
+             (progn (org-show-entry)
+                   (org-show-children)
+                   (next-line)))
+         ((eq (org-element-type oeap) 'src-block)
+             (if (looking-at "^#\\+END_SRC")                 ; have come to end of
+                (progn (message "Looking at end_src")
+                       (org-hide-block-toggle nil)          ; i.e. hide src block
+                       (next-line))
+                (progn (org-hide-block-toggle 'off)         ; i.e. show src block
+                       (next-line))))
+         ((or (eq (org-element-type oeap) 'example-block) (looking-at "^#\\+RESULTS:")) ;; (eq (org-element-type oeap) 'fixed-width)
+             (progn (message "Looking at example or RESULT")
+                   (org-babel-hide-result-toggle 'off)      ; i.e. show block
+                   (next-line)))
+         ((eq (org-element-type oeap) 'example-block)
+             (if (looking-at "^#\\+END_EXAMPLE")             ; have come to end of  example
+                (progn (message "Looking at end_example")
+                       (org-hide-block-toggle nil)          ; i.e. hide src block
+                       (next-line))
+                (progn (message "Looking at example")
+                       (org-hide-block-toggle 'off)         ; (org-babel-hide-result-toggle 'off)   ;; i.e. show block
+                       (next-line))))
+         ((memq (org-element-type oeap) '(paragraph fixed-width)) ; otherwise: move down a line
+             (progn (if (looking-at "^\\s-*$")
+                        (progn (message "This Line is empty")
+                               (message (prin1-to-string oeap)
+                               (goto-char (org-element-property :begin oeap))
+                               (org-babel-hide-result-toggle nil)
+                               (next-line)))) ; close result section
+                     (next-line)))
+                           
+         (t
+            (progn (message "my-org-dft:got here")
+                   (next-line))))
+
+   (message (concat "my-org-dft:AFTER:" (prin1-to-string (org-element-type oeap)) "  " (prin1-to-string (org-element-type oec))))
+)
+
+(defun my-org-uplevel ()
+   "go up a level for org and babel mode"
+   (interactive)
+   (message "--------------Enter")
+   (setq oeap (org-element-at-point))                      ; (setq oeap-lv (org-element-property :level oeap))
+   (setq oec (org-element-context))                        ; (setq oec-lv  (org-element-property :level oec))
+   (message (concat "my-org-uplevel:BEFORE:" (prin1-to-string (org-element-type oeap)) "  " (prin1-to-string (org-element-type oec))))
+
+   (cond ((or (memq (org-element-type oeap) '(headline table))
+              (looking-at "^#\\+begin_"))
+          (progn (message "heading, table")
+                 (org-up-element)))
+         ((eq (org-element-type oeap) 'src-block)
+          (progn (message "code block")
+                 (org-babel-goto-src-block-head)))
+         ((eq (org-element-type oeap) 'example-block)
+          (progn (org-babel-hide-result-toggle 'off)   ;; i.e. show block
+                 (next-line)))
+        ((and (eq (org-element-type oeap) 'fixed-width) (looking-at "^#\\+RESULTS:"))
+         (progn (org-babel-hide-result-toggle 'off)   ;; i.e. show block
+                (next-line)))
+        ((memq (org-element-type oeap) '(paragraph fixed-width)) ; otherwise: move down a line
+         (progn 
+           (message "hello1")
+           (org-up-element)
+           ))
+        ((eq (org-element-type oeap) 'table-row) ; otherwise: move down a line
+         (while (progn 
+                    (message "in table row")
+                    (previous-line)
+                    (equal (org-element-type (org-element-at-point)) 'table-row))))
+        (t
+         (progn (message "my-org-uplevel:got here"))))
+)
+  ;(message (concat "my-org-uplevel:AFTER:" (prin1-to-string (org-element-type oeap)) "  " (prin1-to-string (org-element-type oec))))
+#+end_src
+
 #+begin_src emacs-lisp
 (org-babel-do-load-languages 'org-babel-load-languages '((shell . t)
                                                           (matlab . t)
