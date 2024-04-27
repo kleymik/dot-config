@@ -1,11 +1,11 @@
   *Emacs Initialisation*
 
-invoked by ~/.emacs.d/init.el
+invoked by: ~/.emacs.d/init.el
  (package-initialize)
  (org-babel-load-file "~/.emacs.d/dotEmacs.org)
 
 * Packages
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp                            :REM packages
 
   (setq load-path (append load-path '("~/ulib/emacs/")))
   (setq load-path (append load-path '("~/ulib/emacs/dired-hacks")))
@@ -17,27 +17,24 @@ invoked by ~/.emacs.d/init.el
   (add-to-list 'package-archives '("elpaorg"  . "https://elpa.gnu.org/packages/")        t)
   (add-to-list 'package-archives '("org"      . "https://orgmode.org/elpa/")             t)
 
-  ; (add-to-list 'package-archives '("mlpamlk" . "https://melpa.milkbox.net/packages/") t)
-  ; Added by Package.el.  This must come before configurations of
-  ; installed packages.  Don't delete this line.  If you don't want it,
-  ; just comment it out by adding a semicolon to the start of the line.
-  ; You may delete these explanatory comments.
+  (require 'simpleclip) 
+  (simpleclip-mode 1)
 
   (require 'uniquify)
   (require 'ob)
   (require 'regexp-opt)
   (require 'em-alias)                             ; for eshell
   ; (require 'diffview)                           ; make patch files look like ediff
-
   ; ----------------------- dired etc
   (require 'dired-x)
   (require 'wdired)
   (require 'dired-subtree)
   (require 'dired-sidebar)
   (require 'dired-rainbow)
-  (require 'neotree)
+  ;(require 'neotree)
   (require 'treemacs)
-  (require 'tree-inspector)
+  (require 'eww)
+  ;; (require 'tree-inspector) under dev ind grex-calc
   ; (require 'dired-lis)
   ; (require 'dired-k)
   ; (require 'all-the-icons-dired-mode)
@@ -73,6 +70,11 @@ invoked by ~/.emacs.d/init.el
 
   ; dash 
   (require' dash)
+  (require 'paredit)
+  (require 'paredit-menu)
+  (eval-after-load "paredit.el"  '(require 'paredit-menu))
+
+
   (global-dash-fontify-mode)
   (with-eval-after-load 'info-look  (dash-register-info-lookup))
 
@@ -81,7 +83,6 @@ invoked by ~/.emacs.d/init.el
 
 **  deprecated
 :  (require 'cl)                 ; for transpose
-:  (require 'org-eww)
 :  (require 's)
 :  (require 'f)
 :  (require 'dash)
@@ -130,7 +131,6 @@ invoked by ~/.emacs.d/init.el
 
   (defun set-region-writeable ()
     "Removes the read-only text property from the marked region.
-
     Use `set-region-read-only' to set this property."
     ;; See https://stackoverflow.com/questions/7410125
     (interactive)
@@ -555,7 +555,7 @@ invoked by ~/.emacs.d/init.el
   (message "-------------- Done: Handy Function Definitions")
 #+end_src
 ** Eval Elisp
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp                            :REM Eval Elisp
 (load-library "grex-calc")
 
 ; ------------------------------------------------------------------- Eval Elisp
@@ -570,7 +570,7 @@ invoked by ~/.emacs.d/init.el
 )
 
 (defun eval-and-insert ()
-  "Eval expression and insert value after the expression"c
+  "Eval expression and insert value after the expression"
   (interactive)
   (pp-eval-expression (preceding-sexp))                                                   ; (eval-print-last-sexp 0)
 )
@@ -587,7 +587,7 @@ invoked by ~/.emacs.d/init.el
   (eval (car (read-from-string string)))
 )
 
-; TBD format based on datatype or use C-u C-x C-e
+ ;; TBD format based on datatype or use C-u C-x C-e
 
 (defun my-insert-last-sexp ()
     (interactive)
@@ -640,7 +640,7 @@ invoked by ~/.emacs.d/init.el
 :   
 
 * Settings
-#+begin_src emacs-lisp                               :REM Settings
+#+begin_src emacs-lisp                            :REM Settings
 (message "-------------- Start: Settings")
 ;;(setq epa-file-select-keys "nope")                                                      ; don't ask about assymmetric key?
 (setq epa-pinentry-mode 'loopback)                                                        ; don't pop up a gui
@@ -669,8 +669,8 @@ invoked by ~/.emacs.d/init.el
 (setq-default frame-title-format "%f")                                                    ; (setq-default frame-title-format "%b %p %p(%f)")
 (setq-default line-spacing 0.06)
 (setq-default indent-tabs-mode nil)
+(setq electric-indent-mode nil)  ; 20240325_14:02:59
 (setq ivy-height 10)
-(setq-default frame-title-format "%f")
 (tool-bar-mode -1)
 (transient-mark-mode t)                                                                   ; (setq-default frame-title-format "%b %p %p(%f)")
 
@@ -735,8 +735,8 @@ invoked by ~/.emacs.d/init.el
         (setq backup-directory-alist          `((".*" . , "/data/data/com.termux/files/home/internalBackup/emacs")))
         (setq auto-save-file-name-transforms  `((".*" ,   "/data/data/com.termux/files/home/internalBackup/emacs" t))))
       (progn ; maxwell
-       (setq backup-directory-alist          `((".*" . , "/home/kleyn/history/emacsBackups")))
-       (setq auto-save-file-name-transforms  `((".*" ,   "/home/kleyn/history/emacsBackups" t)))))
+       (setq backup-directory-alist           `((".*" . , "/home/kleyn/history/emacsBackups")))
+       (setq auto-save-file-name-transforms   `((".*" ,   "/home/kleyn/history/emacsBackups" t)))))
 
 (message (concat "-------------- Done: backup-directory-alist" (format "%s" backup-directory-alist)))
 
@@ -834,7 +834,7 @@ invoked by ~/.emacs.d/init.el
 
 #+end_src
 ** Highlighting/Cursor Visibility
-#+begin_src emacs-lisp                               :REM highlighting
+#+begin_src emacs-lisp                            :REM highlighting
 (message "-------------- Start: Highlighting")
 (setq-default x-stretch-cursor t)                    ; switch to nil for magit (setq-default x-stretch-cursor nil)
 (blink-cursor-mode 0)
@@ -1023,7 +1023,7 @@ invoked by ~/.emacs.d/init.el
 
 ** Python Mode
 
-#+begin_src emacs-lisp                               :REM Python Shell (ipython)
+#+begin_src emacs-lisp                            :REM Python Shell (ipython)
   (setq python-shell-interpreter "ipython"
         python-shell-interpreter-args "-i --simple-prompt --InteractiveShell.display_page=True")
 #+end_src
@@ -1178,17 +1178,18 @@ invoked by ~/.emacs.d/init.el
 : (global-set-key [remap eval-expression] 'pp-eval-expression)
 
 ** Org Mode
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp                            :REM org-mode
    (setq org-confirm-babel-evaluate nil)    ;; no-confirm
    (with-eval-after-load 'org (add-hook 'org-babel-after-execute-hook 'org-redisplay-inline-images))
    (defun org-export-get-reference (a b) nil)
-   (custom-theme-set-faces 'user `(org-level-2 ((t (:foreground "yellow")))))
+   (custom-theme-set-faces 'user `(org-level-2 ((t (:foreground "Salmon1")))))
    (font-lock-add-keywords 'org-mode '(("\\(:REM .+$\\)" 1 font-lock-preprocessor-face prepend)) 'append)   ; Highlight REMark in babel segment +begin_src header
-
+   ; org-src-lang-modes
    (setq org-default-notes-file "~/myDocs/logbook/notes.org")
    (setq org-cycle-include-plain-lists t)
    (setq org-startup-folded nil)
    (setq org-src-fontify-natively t)
+   ;;(setq org-checkbox-bullets '("J" "X"))  ;; Doesn't work ??J=done and X=tbd 20240326_11:55:41 
    (setq org-list-allow-alphabetical t)
    (setq org-file-apps '( ("\\.xlsx\\'"    . w2-browser)
                           ("\\.mm\\'"      . default)
@@ -1278,11 +1279,11 @@ invoked by ~/.emacs.d/init.el
 
   ;; ---------------------------------------------------------------------- org-mode pictures
   (defun my-org-display-inline-image-at-point ()
-   (interactive)
-   (let* ((context (org-element-context (org-element-at-point)))
-          (type (org-element-type context))
-          (beg  (plist-get (cadr context) :begin))
-          (end  (plist-get (cadr context) :end)))
+    (interactive)
+    (let* ((context (org-element-context (org-element-at-point)))
+           (type (org-element-type context))
+           (beg  (plist-get (cadr context) :begin))
+           (end  (plist-get (cadr context) :end)))
       (when (eq type 'link)
          (org-display-inline-images nil nil beg end))))
 
@@ -1535,12 +1536,6 @@ invoked by ~/.emacs.d/init.el
 #+begin_src emacs-lisp
 (defconst dired-pickle-extensions  '("pk")  "Dired pickle file extensions")
 (dired-rainbow-define audio "#329EE8" dired-pickle-extensions)
-;;----------------------- neotree
-(setq neo-smart-open nil)
-(setq neo-autorefresh nil)
-(setq neo-window-width 55)
-(setq neo-force-change-root t)
-;neotree-toggle
 #+end_src
 
 : (defconst dired-audio-files-extensions  '("mp3" "MP3" "ogg" "OGG" "flac" "FLAC" "wav" "WAV")  
@@ -1584,6 +1579,52 @@ invoked by ~/.emacs.d/init.el
                       (set-window-configuration wnd))))
       (error "no more than 2 files should be marked"))))
 #+end_src
+;; My ediff customizations
+
+(defun dired-ediff-marked-files ()
+  "Compare two marked files in Dired with ediff."
+  (interactive)
+  (let ((marked-files (dired-get-marked-files)))
+    (unless (= (length marked-files) 2)
+      (error "You need to mark exactly two files to compare"))
+    (ediff-files (car marked-files) (cadr marked-files))))
+
+;; Compare marked files using =
+(with-eval-after-load 'dired
+  (define-key dired-mode-map "=" nil)
+  (define-key dired-mode-map "=" 'dired-ediff-marked-files))
+
+;; Ignore whitespace while comparing files
+(setq ediff-diff-options "-w")
+
+;; Split windows vertically
+(setq ediff-split-window-function 'split-window-horizontally)
+
+;; Restore window configuration after ediff exits
+(defvar my-ediff-bwin-config nil "Window configuration before ediff.")
+(defcustom my-ediff-bwin-reg ?b
+  "*Register to be set up to hold `my-ediff-bwin-config'
+        configuration.")
+
+(defun my-ediff-bsh ()
+  "Function to be called before any buffers or window setup for
+        ediff."
+  (setq my-ediff-bwin-config (current-window-configuration))
+  (when (characterp my-ediff-bwin-reg)
+    (set-register my-ediff-bwin-reg
+                  (list my-ediff-bwin-config (point-marker)))))
+
+(defun my-ediff-qh ()
+  "Function to be called when ediff quits."
+  (when my-ediff-bwin-config
+    (set-window-configuration my-ediff-bwin-config)))
+
+(add-hook 'ediff-before-setup-hook 'my-ediff-bsh)
+(add-hook 'ediff-quit-hook 'my-ediff-qh)
+
+
+
+
 
 #+RESULTS:
 : ora-ediff-files
@@ -1690,205 +1731,245 @@ invoked by ~/.emacs.d/init.el
 *** Dired stuff
 
 #+begin_src emacs-lisp
-  ; (dired-sidebar-toggle dirname)
+; (dired-sidebar-toggle dirname)
 
-  ;;(setq dired-use-ls-dired nil)
-  (setq dired-dwim-target t)
+;;(setq dired-use-ls-dired nil)
+(setq dired-dwim-target t)
 
-  ;; dired-listing-switches  = "-al"
-  ;; M-x customize-variable RET dired-listing-switches RET
-  ;; Dired Listing Switches: Hide Value -ahl --time-style=long-iso
-  ;;  State: SET for current session only.
-  (setq dired-listing-switches "-aoht --time-style=long-iso --group-directories-first") ;; list most recent first (setq dired-listing-switches "-aBhl  ")
-  ;; (setq dired-omit-files "^\\..*$")
+;; dired-listing-switches  = "-al"
+;; M-x customize-variable RET dired-listing-switches RET
+;; Dired Listing Switches: Hide Value -ahl --time-style=long-iso
+;;  State: SET for current session only.
+(setq dired-listing-switches "-aoht --time-style=long-iso --group-directories-first") ;; list most recent first (setq dired-listing-switches "-aBhl  ")
+;; (setq dired-omit-files "^\\..*$")
 
-  ;;(use-package dired-x :config
-  ;;  (progn
-  ;;    (setq dired-omit-verbose nil)
-  ;;    (add-hook 'dired-mode-hook #'dired-omit-mode)
-  ;;    (setq dired-omit-files (concat dired-omit-files "\\|^.DS_STORE$\\|^.projectile$"))))
+;;(use-package dired-x :config
+;;  (progn
+;;    (setq dired-omit-verbose nil)
+;;    (add-hook 'dired-mode-hook #'dired-omit-mode)
+;;    (setq dired-omit-files (concat dired-omit-files "\\|^.DS_STORE$\\|^.projectile$"))))
 
-  ;;(org-babel-load-file "~/.emacs.d/dotEmacs.org")
-  ;;(org-babel-load-file (expand-file-name "~/.emacs.d/dotEmacs.org"))
+;;(org-babel-load-file "~/.emacs.d/dotEmacs.org")
+;;(org-babel-load-file (expand-file-name "~/.emacs.d/dotEmacs.org"))
 
-  ;; This isn't nearly as drastic as what you're looking for, but it is possible to customize how Emacs calls ls in dired-mode.
-  ;; I used it to omit the group ID of files with the -o option, saving some horizontal screen real estate.
+;; This isn't nearly as drastic as what you're looking for, but it is possible to customize how Emacs calls ls in dired-mode.
+;; I used it to omit the group ID of files with the -o option, saving some horizontal screen real estate.
 
-  (defun my-dired-load-hook ()
-      (autoload 'wdired-change-to-wdired-mode "wdired")
-      (setq dired-no-confirm '(revert-subdirs)))
-      ;; Set dired-x global variables here.  For example:
-      ;; (setq dired-guess-shell-gnutar "gtar")
-      ;; (setq dired-x-hands-off-my-keys nil)
-      ;; (setq dired-omit-files "^\\.?#\\|^\\.$\\|^\\.\\.$") ; <- from inside emacs?
-      ;; (setq dired-omit-files "^#\\|^\\.$|\\.\\.$")
-      ;; (setq dired-omit-files "^\\|^\\..*$")
-      ;; (setq dired-omit-files "^\\..*$")
-      ; ;(setq dired-omit-extensions '(".asv" "~" ".o" ".pyc" ".class"))
-  (add-hook 'dired-load-hook 'my-dired-load-hook)
+(defun my-dired-load-hook ()
+    (autoload 'wdired-change-to-wdired-mode "wdired")
+    (setq dired-no-confirm '(revert-subdirs)))
+    ;; Set dired-x global variables here.  For example:
+    ;; (setq dired-guess-shell-gnutar "gtar")
+    ;; (setq dired-x-hands-off-my-keys nil)
+    ;; (setq dired-omit-files "^\\.?#\\|^\\.$\\|^\\.\\.$") ; <- from inside emacs?
+    ;; (setq dired-omit-files "^#\\|^\\.$|\\.\\.$")
+    ;; (setq dired-omit-files "^\\|^\\..*$")
+    ;; (setq dired-omit-files "^\\..*$")
+    ; ;(setq dired-omit-extensions '(".asv" "~" ".o" ".pyc" ".class"))
+(add-hook 'dired-load-hook 'my-dired-load-hook)
 
-  (defun my-dired-mode-hook ()
-      ;; Set dired-x buffer-local variables here.  For example:
-      (dired-omit-mode 1)
-      (setq dired-omit-verbose nil)
-      (setq dired-omit-files-p t)
-      (setq dired-omit-files "^\\..*$")
-      (setq dired-omit-extensions '(".asv" "~" ".o" ".pyc" ".class"))
-      (toggle-truncate-lines 1)
-      (setq dired-no-confirm '(revert-subdirs)))
+(defun my-dired-mode-hook ()
+    ;; Set dired-x buffer-local variables here.  For example:
+    (dired-omit-mode 1)
+    (setq dired-omit-verbose nil)
+    (setq dired-omit-files-p t)
+    (setq dired-omit-files "^\\..*$")
+    (setq dired-omit-extensions '(".asv" "~" ".o" ".pyc" ".class" ".elc"))
+    (toggle-truncate-lines 1)
+    (setq dired-no-confirm '(revert-subdirs)))
 
-  (add-hook 'dired-mode-hook 'my-dired-mode-hook)             ;(setq dired-mode-hook nil)
+(add-hook 'dired-mode-hook 'my-dired-mode-hook)             ;(setq dired-mode-hook nil)
 
-  (defadvice dired-sort-toggle-or-edit (after dired-sort-to-top activate)
-     "Move to beginning of buffer (instead of keeping point on the current file)."
-     (goto-char (point-min))
-     (forward-line 3))
+(defadvice dired-sort-toggle-or-edit (after dired-sort-to-top activate)
+   "Move to beginning of buffer (instead of keeping point on the current file)."
+   (goto-char (point-min))
+   (forward-line 3))
 
-  (defun dired-find-file-drop-prev-dired-buffer (&optional arg)
-    (interactive)
-    (setq oldBuff (buffer-name))  ;; returns current buffer
-    (dired-find-file)
-    (setq newBuff (buffer-name))  ;; returns current buffer  ;;(switch-to-prev-buffer)
-    (kill-buffer oldBuff)
-    (message (format "dired switched DOWN from %s to %s" oldBuff newBuff))
+(defun dired-find-file-drop-prev-dired-buffer (&optional arg)
+  (interactive)
+  (setq oldBuff (buffer-name))  ;; returns current buffer
+  (dired-find-file)
+  (setq newBuff (buffer-name))  ;; returns current buffer  ;;(switch-to-prev-buffer)
+  (kill-buffer oldBuff)
+  (message (format "dired switched DOWN from %s to %s" oldBuff newBuff))
+)
+
+(defun dired-up-directory-drop-prev-dired-buffer (&optional arg)
+  (interactive)
+  (setq oldBuff (buffer-name))  ;; returns current buffer
+  (dired-up-directory)
+  (setq newBuff (buffer-name))  ;; returns current buffer  ;; (switch-to-prev-buffer)
+  (kill-buffer oldBuff)
+  (message (format "dired switched UP from %s -> %s"  oldBuff newBuff))
+)
+
+(defun dired-ediff-git (&optional arg)
+  (interactive)
+  (setq ffn (dired-get-filename))
+  (setq fn  (dired-get-filename "no-dir"))
+  (setq-default fill-column     200)
+  (ediff-revision fn)
+  ;;(dired-rename-file ffn (concat "//lon0302/dfs/DATA/MULTI_ASSET/MAQS/dataCollection/FI/LOCAL/ARCHIVE/OLD/" fn))
+  ;; dired-rename-file (file newname ok-if-already-exists)
   )
 
-  (defun dired-up-directory-drop-prev-dired-buffer (&optional arg)
-    (interactive)
-    (setq oldBuff (buffer-name))  ;; returns current buffer
-    (dired-up-directory)
-    (setq newBuff (buffer-name))  ;; returns current buffer  ;; (switch-to-prev-buffer)
-    (kill-buffer oldBuff)
-    (message (format "dired switched UP from %s -> %s"  oldBuff newBuff))
+(defun dired-move-to-old (&optional arg)
+  (interactive)
+  (setq curDrdBuff (current-buffer))
+  (setq ffn (dired-get-filename))
+  (setq fn  (dired-get-filename "no-dir"))
+  (switch-to-buffer "*Scratch*")
+  (insert "hello dired-move-to-old") (newline)
+  (insert ffn)  (newline)
+  (insert fn)   (newline)
+  (insert "bye dired-move-to-old")  (newline)
+  (rename-file ffn (concat "~/itemLog/" fn))
+  (switch-to-buffer curDrdBuff)
+  (revert-buffer)
+  ;;(dired-rename-file ffn (concat "//lon0302/dfs/DATA/MULTI_ASSET/MAQS/dataCollection/FI/LOCAL/ARCHIVE/OLD/" fn))
+  ;;dired-rename-file (file newname ok-if-already-exists)
   )
 
-  (defun dired-ediff-git (&optional arg)
-    (interactive)
-    (setq ffn (dired-get-filename))
-    (setq fn  (dired-get-filename "no-dir"))
-    (setq-default fill-column     200)
-    (ediff-revision fn)
-    ;;(dired-rename-file ffn (concat "//lon0302/dfs/DATA/MULTI_ASSET/MAQS/dataCollection/FI/LOCAL/ARCHIVE/OLD/" fn))
-    ;; dired-rename-file (file newname ok-if-already-exists)
-    )
-
-  (defun dired-move-to-old (&optional arg)
-    (interactive)
-    (setq curDrdBuff (current-buffer))
-    (setq ffn (dired-get-filename))
-    (setq fn  (dired-get-filename "no-dir"))
-    (switch-to-buffer "*Scratch*")
-    (insert "hello dired-move-to-old") (newline)
-    (insert ffn)  (newline)
-    (insert fn)   (newline)
-    (insert "bye dired-move-to-old")  (newline)
-    (rename-file ffn (concat "~/itemLog/" fn))
-    (switch-to-buffer curDrdBuff)
-    (revert-buffer)
-    ;;(dired-rename-file ffn (concat "//lon0302/dfs/DATA/MULTI_ASSET/MAQS/dataCollection/FI/LOCAL/ARCHIVE/OLD/" fn))
-    ;;dired-rename-file (file newname ok-if-already-exists)
-    )
-
-  (defun dired-cd-eshell (&optional arg)
-    "Move down one line and view the current file in another window."
-    (interactive)
-    (setq ffn (dired-get-filename))
-    (message (concat "ffn" ffn))
-    (switch-to-buffer "*eshell*")
-    (goto-char (point-max))
-    ;; (sb)  ;; re-apply eshell aliases
-    (insert (concat "cd " (file-name-directory ffn) "; ll" ))
-    )
-
-  (defun dired-paste-to-yank-buffer (&optional arg)
-    "Move down one line and view the current file in another window."
-    (interactive)
-    (setq ffn (dired-get-filename))
-    (message ffn)
-    (kill-append (dired-get-filename) nil)
-    )
-
-  ;;------------------------------------ dired peek at file contents
-  (defun dired-view-next ()
-    "Move down one line and view the current file in another window."
-    (interactive)
-    (dired-next-line 1)
-    (dired-view-current)
-    ;(other-window 1)
-    ;(switch-to-buffer (previous-buffer))
-    )
-
-  (defun dired-view-previous ()
-    "Move up one line and view the current file in another window."
-    (interactive)
-    (dired-previous-line 1)
-    (dired-view-current)
-    ;(other-window 1)
-    ;(switch-to-buffer (previous-buffer))
-    )
-
-  (defun dired-view-current ()
-    "View the current file in another window (possibly newly created)."
-    (interactive)
-    (if (not (window-parent))
-        (split-window nil nil t))                         ; create a new window -right side if necessary
-    (let ((file (dired-get-file-for-visit))
-          (dbuffer (current-buffer)))
-      (other-window 1)                                    ; switch to the other window
-      (unless (equal dbuffer (current-buffer))            ; don't kill the dired buffer
-        (if (or view-mode (memq major-mode '(dired-mode dired-sidebar-mode))) ; only if in view- or dired-mode
-            (kill-buffer)))                               ; ... kill it
-      (let ((filebuffer (get-file-buffer file)))
-        (if filebuffer                                    ; does a buffer already look at the file
-            (switch-to-buffer filebuffer)                 ; simply switch
-          (view-file file))                               ; ... view it
-        (other-window -1)
-        (get-file-buffer file)))                          ; give the attention back to the dired buffer
-     )
-
-  ;; ensure "." and ".." are skipped
-  (defvar subdired-listing-switches "-oht --time-style=long-iso --group-directories-first"  "omit -a relative to dired-listing-switches")
-  ; redefine dired-subtree--readin with subdired-listing-switches
-  (defun dired-subtree--readin (dir-name)
-    "Read in the directory.
-     Return a string suitable for insertion in `dired' buffer."
-    (with-temp-buffer
-      (insert-directory dir-name subdired-listing-switches nil t)
-      (delete-char -1)
-      (goto-char (point-min))
-      (kill-line 1)
-      (insert "  ")
-      (while (= (forward-line) 0)
-        (insert "  "))
-      (delete-char -2)
-      (buffer-string))
-    )
-
-  (progn
-    (define-key dired-mode-map (kbd "TAB")       'dired-sidebar-subtree-toggle)
-    (define-key dired-mode-map "J"               'dired-move-to-old) ; junk
-    (define-key dired-mode-map "O"               'ergoemacs-open-in-external-app)  
-    (define-key dired-mode-map (kbd "r")         'wdired-change-to-wdired-mode)
-    (define-key dired-mode-map (kbd "t")         'dired-omit-mode)
-    (define-key dired-mode-map (kbd "c")         'dired-ediff-git)      ;; compare to last version with ediff
-    (define-key dired-mode-map (kbd "e")         'dired-cd-eshell)      ;; was dired-subtree-only-this-file
-    (define-key dired-mode-map (kbd "E")         'ora-ediff-files)
-    (define-key dired-mode-map (kbd "p")         'dired-paste-to-yank-buffer)
-    (define-key dired-mode-map (kbd ",")         'dired-sort-toggle-or-edit) ;; to match sidebar-mode
-    (define-key dired-mode-map [M-down]          'dired-view-next)      ;; was dired-previous-line
-    (define-key dired-mode-map [M-up]            'dired-view-previous)  ;; was dired-next-line
+(defun dired-cd-eshell (&optional arg)
+  "Move down one line and view the current file in another window."
+  (interactive)
+  (setq ffn (dired-get-filename))
+  (message (concat "ffn" ffn))
+  (switch-to-buffer "*eshell*")
+  (goto-char (point-max))
+  ;; (sb)  ;; re-apply eshell aliases
+  (insert (concat "cd " (file-name-directory ffn) "; ll" ))
   )
 
-  (defvar dired-subtree-last-previewed-buffer nil  "record which previous preview buffer to delete")
-  (make-variable-buffer-local 'dired-subtree-last-previewed-buffer)
+(defun dired-paste-to-yank-buffer (&optional arg)
+  "Move down one line and view the current file in another window."
+  (interactive)
+  (setq ffn (dired-get-filename))
+  (message ffn)
+  (kill-append (dired-get-filename) nil)
+  )
+
+;;------------------------------------ dired peek at file contents
+(defun dired-view-next ()
+  "Move down one line and view the current file in another window."
+  (interactive)
+  (dired-next-line 1)
+  (dired-view-current)
+  ;(other-window 1)
+  ;(switch-to-buffer (previous-buffer))
+  )
+
+(defun dired-view-previous ()
+  "Move up one line and view the current file in another window."
+  (interactive)
+  (dired-previous-line 1)
+  (dired-view-current)
+  ;(other-window 1)
+  ;(switch-to-buffer (previous-buffer))
+  )
+
+(defun dired-view-current ()
+  "View the current file in another window (possibly newly created)."
+  (interactive)
+  (if (not (window-parent))
+      (split-window nil nil t))                         ; create a new window -right side if necessary
+  (let ((file (dired-get-file-for-visit))
+        (dbuffer (current-buffer)))
+    (other-window 1)                                    ; switch to the other window
+    (unless (equal dbuffer (current-buffer))            ; don't kill the dired buffer
+      (if (or view-mode (memq major-mode '(dired-mode dired-sidebar-mode))) ; only if in view- or dired-mode
+          (kill-buffer)))                               ; ... kill it
+    (let ((filebuffer (get-file-buffer file)))
+      (if filebuffer                                    ; does a buffer already look at the file
+          (switch-to-buffer filebuffer)                 ; simply switch
+        (view-file file))                               ; ... view it
+      (other-window -1)
+      (get-file-buffer file)))                          ; give the attention back to the dired buffer
+   )
+
+;; ensure "." and ".." are skipped
+(defvar subdired-listing-switches "-oht --time-style=long-iso --group-directories-first"  "omit -a relative to dired-listing-switches")
+; redefine dired-subtree--readin with subdired-listing-switches
+(defun dired-subtree--readin (dir-name)
+  "Read in the directory.
+   Return a string suitable for insertion in `dired' buffer."
+  (with-temp-buffer
+    (insert-directory dir-name subdired-listing-switches nil t)
+    (delete-char -1)
+    (goto-char (point-min))
+    (kill-line 1)
+    (insert "  ")
+    (while (= (forward-line) 0)
+      (insert "  "))
+    (delete-char -2)
+    (buffer-string))
+  )
+
+;; (defun read-file (file-path)
+;;   "Read the contents of a file and return it as a string."
+;;   (with-temp-buffer
+;;     (insert-file-contents file-path)
+;;     (buffer-string)))
+
+(defun get-in-file-url (file-path)
+  "Parse .url file and return value of URL= entry"
+   (with-temp-buffer
+     (message (concat "file-path:" file-path))
+     (insert-file-contents file-path)
+     (let (result)
+        (goto-char (point-min))
+        (while (re-search-forward "^\\([^#;][^=]*\\)=\\(.*\\)$" nil t)
+         (message (concat "match = " (match-string 1) (match-string 2)))
+         (when (string= "URL" (upcase (match-string 1)))
+          (setq result (match-string 2))))
+      result)))
+
+(defun my-eww-open-file ()
+  (interactive)
+  (let ((curDrdBuff (current-buffer))
+         (ufn (dired-get-filename))
+        url)
+     (message (concat "ufn:" ufn))
+     (cond ((string-equal "URL" (upcase (file-name-extension ufn)))
+             (setq url (get-in-file-url ufn))
+             (message (concat "url:" url))
+             (eww url))
+           ((string-equal "HTML" (upcase (file-name-extension ufn)))  ;; tbd find the embedded url
+             (setq url (get-in-file-url ufn)) ;; extend function to ".html" files
+             (message (concat "url:" url))
+             (eww url))
+           ((string-equal "WEBLOC" (upcase (file-name-extension ufn)))  ;; tbd find the embedded url
+             (setq url (get-in-file-url ufn)) ;; extend function to ".html" files
+             (message (concat "url:" url))
+             (eww url)))))
+
+(progn
+  (define-key dired-mode-map (kbd "TAB")       'dired-sidebar-subtree-toggle)
+  (define-key dired-mode-map "J"               'dired-move-to-old) ; junk
+  (define-key dired-mode-map "O"               'ergoemacs-open-in-external-app)  
+  (define-key dired-mode-map (kbd "r")         'wdired-change-to-wdired-mode)
+  (define-key dired-mode-map (kbd "t")         'my-dired-subtree-toggle)
+  (define-key dired-mode-map (kbd "w")         'my-eww-open-file)
+  (define-key dired-mode-map (kbd "T")         'dired-omit-mode)
+  (define-key dired-mode-map (kbd "c")         'dired-ediff-git)      ;; compare to last version with ediff
+  (define-key dired-mode-map (kbd "e")         'dired-cd-eshell)      ;; was dired-subtree-only-this-file
+  (define-key dired-mode-map (kbd "=")         'ora-ediff-files)
+  ;; (define-key dired-mode-map (kbd "p")         'dired-paste-to-yank-buffer)
+  (define-key dired-mode-map (kbd ",")         'dired-sort-toggle-or-edit) ;; to match sidebar-mode
+  (define-key dired-mode-map [M-down]          'dired-view-next)      ;; was dired-previous-line
+  (define-key dired-mode-map [M-up]            'dired-view-previous)  ;; was dired-next-line
+)
+
+(defvar dired-subtree-last-previewed-buffer nil  "record which previous preview buffer to delete")
+(make-variable-buffer-local 'dired-subtree-last-previewed-buffer)
 
 
-  ;;--------------------------------- Tramp
-  ;;(setq tramp-default-method "ssh")
-  (setq tramp-verbose 10)
-  ;; /adb::/path/to/file.
+;;--------------------------------- Tramp
+;;(setq tramp-default-method "ssh")
+(setq tramp-verbose 10)
+;; /adb::/path/to/file.
 
-  (message "-------------- Done: Dired Section")
+(message "-------------- Done: Dired Section")
 #+end_src
 
 *** Dired/subtree funs
@@ -2006,11 +2087,9 @@ invoked by ~/.emacs.d/init.el
 :  (define-key dired-mode-map (kbd "C-n")       'dired-next-line)
 :  (define-key dired-mode-map (kbd "C-p")       'dired-previous-line)
 
-
 ** Image Dired
 
-
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp                            :REM image-dired
   (setq image-dired-thumb-size 300)
   
   (defun my-next-image ()
@@ -2037,7 +2116,6 @@ invoked by ~/.emacs.d/init.el
           (image-dired-original-file-name)))
       "]]")))
 #+end_src
-
 
 ** Magit
 #+begin_src emacs-lisp                            :REM magit
@@ -2333,8 +2411,9 @@ for flushing messages to *Message* buffer
   (global-set-key (kbd "C-x c")      'filepath-on-clipboard)
   (global-set-key (kbd "C-x b")      'ivy-switch-buffer)                                  ; was switch-to-buffer
   (global-set-key (kbd "C-x C-b")   #'(lambda () (interactive) (ibuffer "home") (ibuffer-switch-to-saved-filter-groups "home")))  ; (global-set-key (kbd "C-x C-b") 'my-list-buffers)
+  (global-set-key (kbd "C-x C-a")   #'pop-to-mark-command)  ; (global-set-key (kbd "C-x C-b") 'my-list-buffers)  
 
-  
+
   (global-set-key (kbd "s-\\")       'delete-whitespace-right)
   (global-set-key (kbd "C-z")        'undo)                                               ; replace-string
   (global-set-key (kbd "C-.")        'repeat)
@@ -2356,7 +2435,7 @@ for flushing messages to *Message* buffer
 |------+-----------+-----------+------------+-----------------+---+------------------+----------------+----------+--------------+---+-------------+-------------+--------+--------------+------|
 |      | *eshell*  | doAndDone | hist emacs | sidebar         | X | app-open    file | tog truncate   | sort     | exec block   | X | macro-start | tog node    | sel v0 | eval defun   |      |
 |------+-----------+-----------+------------+-----------------+---+------------------+----------------+----------+--------------+---+-------------+-------------+--------+--------------+------|
-| CTRL | *bash*    | mySystems | hist dir   | ibuffer         | X | open @point file | window flip    | transp   | exec & next  | X | macro-go    | tog all     | sel v+ | edebug fun   | CTRL |
+| CTRL | *bash*    | ToDoList  | hist dir   | ibuffer         | X | open @point file | window flip    | transp   | exec & next  | X | macro-go    | tog all     | sel v+ | edebug fun   | CTRL |
 | SHFT | *python*  | bigNotes  | hist wkly  | dired ~/        | X | clip @point file | bool-flip      | export   | exec subtree | X | macro-end   | open all    | sel v- | debug-on     | SHFT |
 |------+-----------+-----------+------------+-----------------+---+------------------+----------------+----------+--------------+---+-------------+-------------+--------+--------------+------|
 | ALT  | mark-back | jupyClips | dotEmacs   | dired projects/ | X | clip currnt file | insrt TreeCalc | coords   | latex?       | X | center top  | yafold mode |        | debug-off    | ALT  |
@@ -2728,15 +2807,11 @@ for flushing messages to *Message* buffer
  
 *** KeyPad Bindings
 
-
-#+RESULTS:
-: treemacs-goto-parent-node
-
-#+begin_src emacs-lisp                       :REM Keypad Global Key Bindings
+#+begin_src emacs-lisp                     :REM Keypad Global Key Bindings
 (progn 
-  (global-set-key [S-kp-prior]        'scroll-one-line-down)                                    ;; = S-kp9
-  (global-set-key [S-kp-right]        #'(lambda () (interactive) (recenter-top-bottom '(t))))   ;; = S-kp6
-  (global-set-key [S-kp-next]         'scroll-one-line-up)                                      ;; = S-kp3
+  (global-set-key [S-kp-prior]        #'scroll-one-line-down)                                    ;; = S-kp9
+  (global-set-key [S-kp-right]        #'(lambda () (interactive) (recenter-top-bottom '(t))))    ;; = S-kp6
+  (global-set-key [S-kp-next]         #'scroll-one-line-up)                                      ;; = S-kp3
 )
 #+end_src
 
@@ -2775,9 +2850,10 @@ for flushing messages to *Message* buffer
 (defun opn-f (f &optional arg) 
   (message "xdg-open %s" f)
   (let ((process-connection-type nil)) 
-     (start-process "" nil "xdg-open" f)))
+     (start-process "" nil "xdg-open" (expand-file-name f))))
 #+end_src
-#+begin_src emacs-lisp                       :REM TreeNavPad keys for dired modes 
+
+#+begin_src emacs-lisp                     :REM TreeNavPad keys for dired modes 
 ;(dired-sidebar-subtree-toggle)
 ;(setq dired-subtree-cycle-depth 5) = 5
 
@@ -2822,7 +2898,8 @@ for flushing messages to *Message* buffer
   ;(define-key dired-mode-map [kp-decimal]          '(lambda () (interactive)  (my-dired-subtree-next-sibling-n 7)))              ;; moveto nth sibling, and open
 )
 #+end_src
-#+begin_src emacs-lisp                       :REM dired navigation functions
+
+#+begin_src emacs-lisp                     :REM dired navigation functions
 (defun my-subdired-dft ()
   "depth-first traversal for dired-subtree"
   (interactive)
@@ -2872,16 +2949,17 @@ for flushing messages to *Message* buffer
   (dotimes (i n) (dired-subtree-prev-sibling))
 )
 #+end_src
-#+begin_src emacs-lisp                       :REM TreeNavPad keys for emacs-lisp mode
+
+#+begin_src emacs-lisp                     :REM TreeNavPad keys for emacs-lisp mode
 (progn
 
-  (define-key emacs-lisp-mode-map [kp-4]     'backward-up-list)                                                     ;; Move to parent. move to the beginning of outer paren pair ; outline-up-heading
+  (define-key emacs-lisp-mode-map [kp-4]   #'backward-up-list)                                                     ;; Move to parent. move to the beginning of outer paren pair ; outline-up-heading
 
-  (define-key emacs-lisp-mode-map [kp-8]     'backward-sexp)                                                        ;; Move to previous sibling. move to the beginning of previous sexp unit ; org-backward-heading-same-level
-  (define-key emacs-lisp-mode-map [kp-5]     'yafolding-toggle-element)
-  (define-key emacs-lisp-mode-map [kp-2]     'forward-sexp)                                                         ;; Move to next sibling.     move to the end of next sexp unit  ; org-forward-heading-same-level
+  (define-key emacs-lisp-mode-map [kp-8]   #'backward-sexp)                                                        ;; Move to previous sibling. move to the beginning of previous sexp unit ; org-backward-heading-same-level
+  (define-key emacs-lisp-mode-map [kp-5]   #'yafolding-toggle-element)
+  (define-key emacs-lisp-mode-map [kp-2]   #'forward-sexp)                                                         ;; Move to next sibling.     move to the end of next sexp unit  ; org-forward-heading-same-level
 
-  (define-key emacs-lisp-mode-map [kp-6]     'down-list)                                                            ;; Move to first child.      move into the beginning of first inner paren pair ; my-org-dft; tbd show contents of leaf
+  (define-key emacs-lisp-mode-map [kp-6]   #'down-list)                                                            ;; Move to first child.      move into the beginning of first inner paren pair ; my-org-dft; tbd show contents of leaf
 
   ; (define-key emacs-lisp-mode-map [kp-4]          'my-elisp-sexp-grandparent)                                     ;; Move to grandparent.
   ; (define-key emacs-lisp-mode-map [kp-multiply]   '(lambda () (interactive)  (my-elisp-backsexp-n 6)))
@@ -2909,25 +2987,26 @@ for flushing messages to *Message* buffer
 
 (message "-------------- Done: KeyPad Section")
 #+end_src
-#+begin_src emacs-lisp                       :REM TreeNavPad keys for org-mode
+
+#+begin_src emacs-lisp                     :REM TreeNavPad keys for org-mode
 (progn
-  (define-key org-mode-map [kp-4]                  'my-org-uplevel)   ;  '(lambda () (interactive)  (outline-up-heading 2)))
+  (define-key org-mode-map [kp-4]          #'my-org-uplevel)   ;  '(lambda () (interactive)  (outline-up-heading 2)))
 
-  (define-key org-mode-map [kp-multiply]           #'(lambda () (interactive)  (org-backward-heading-same-level 6)))
+  (define-key org-mode-map [kp-multiply]   #'(lambda () (interactive)  (org-backward-heading-same-level 6)))
 
-  (define-key org-mode-map [kp-8]                  'org-backward-heading-same-level)
-  (define-key org-mode-map [kp-5]                  'my-org-cycle-or-fold)
-  (define-key org-mode-map [kp-2]                  'org-forward-heading-same-level)                                ;; tbd fix: not if in body of heading
+  (define-key org-mode-map [kp-8]          #'org-backward-heading-same-level)
+  (define-key org-mode-map [kp-5]          #'my-org-cycle-or-fold)
+  (define-key org-mode-map [kp-2]          #'org-forward-heading-same-level)                                ;; tbd fix: not if in body of heading
 
 
-  (define-key org-mode-map [kp-9]                  'previous-line)                                                  ;; tbd show contents of leaf
-  (define-key org-mode-map [kp-6]                  'my-org-dft)                                                  ;; tbd show contents of leaf
-  (define-key org-mode-map [kp-3]                  'next-line)                                                     ;; tbd show contents of leaf
+  (define-key org-mode-map [kp-9]          #'previous-line)                                                  ;; tbd show contents of leaf
+  (define-key org-mode-map [kp-6]          #'my-org-dft)                                                  ;; tbd show contents of leaf
+  (define-key org-mode-map [kp-3]          #'next-line)                                                     ;; tbd show contents of leaf
 
-  (define-key org-mode-map [kp-decimal]            #'(lambda () (interactive)  (org-forward-heading-same-level 6)))
+  (define-key org-mode-map [kp-decimal]    #'(lambda () (interactive)  (org-forward-heading-same-level 6)))
 
-  (define-key org-mode-map [kp-7]                  'my-org-babel-prev)
-  (define-key org-mode-map [kp-1]                  'my-org-babel-next)
+  (define-key org-mode-map [kp-7]          #'my-org-babel-prev)
+  (define-key org-mode-map [kp-1]          #'my-org-babel-next)
 
   ;;(define-key org-mode-map [M-home]                'org-collapse)
 )
@@ -3253,10 +3332,9 @@ for flushing messages to *Message* buffer
 (add-hook 'eshell-mode-hook #'(lambda () (define-key eshell-mode-map (kbd "C-<tab>")  'pcomplete-std-complete)))
 (add-hook 'eshell-mode-hook #'(lambda () (define-key eshell-mode-map (kbd "C-a")      'eshell-prompt-bol)))
 
-
 (defun eshell-handle-ansi-color ()
-      (ansi-color-apply-on-region eshell-last-output-start
-                                  eshell-last-output-end))
+   (ansi-color-apply-on-region eshell-last-output-start eshell-last-output-end))
+
 (add-to-list 'eshell-output-filter-functions 'eshell-handle-ansi-color)
 
 (defun eshell-colors ()
@@ -3365,7 +3443,7 @@ for flushing messages to *Message* buffer
   (add-to-list 'eshell-command-aliases-list (list "utilCpu"     "lscpu | egrep 'Model name|Socket|Thread|NUMA|CPU(s)'"))
   (add-to-list 'eshell-command-aliases-list (list "utilGpu"     "glxinfo | egrep -i  'memory:|renderer' " ))
   (add-to-list 'eshell-command-aliases-list (list "utilUsb"     "lsusb"))
- 
+
   (add-to-list 'eshell-command-aliases-list (list "remNfsEuler"  "sudo mount.cifs -o username=kleyn,uid=1000,gid=1000 //192.168.1.177/Users/kleyn ~/Euler"))
 
   (eshell-printn "------- eshell-command-aliases-list")
@@ -4032,7 +4110,7 @@ for flushing messages to *Message* buffer
 : ;; (setq echo-keystrokes 0.5)
 : (global-subword-mode 1)
 : ;; from 'better-defaults.el'
-: ;; Allow clipboard from outside emacs
+: ;; Allow clipboard from outside emacsselect-enable-clipboard
 : ;; (setq x-select-enable-clipboard t
 : ;;       x-select-enable-primary t
 : ;;       save-interprogram-paste-before-kill t
