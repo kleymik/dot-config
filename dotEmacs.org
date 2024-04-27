@@ -1960,13 +1960,17 @@ invoked by: ~/.emacs.d/init.el
   (insert (concat "cd " (file-name-directory ffn) "; ll" ))
   )
 
-(defun dired-paste-to-yank-buffer (&optional arg)
-  "Move down one line and view the current file in another window."
+(defun filepath-to-clipboard-and-killring ()
+  "Put the current file name on the clipboard AND the  killring"
   (interactive)
-  (setq ffn (dired-get-filename))
-  (message ffn)
-  (kill-append (dired-get-filename) nil)
-  )
+ (let ((filename (if (memq major-mode '(dired-mode dired-sidebar-mode))
+                     (dired-get-filename)
+                    (buffer-file-name))))
+    (when filename
+      (simpleclip-set-contents filename)
+      (kill-new filename)        
+      (message filename)))
+)
 
 ;;------------------------------------ dired peek at file contents
 (defun dired-view-next ()
