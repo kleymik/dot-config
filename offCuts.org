@@ -185,6 +185,24 @@
   ;; (global-set-key [f4]      '(lambda () (interactive)  (dired-sidebar-cmd "~/")))
   ;; (global-set-key [C-f4]    'dired-omit-mode)
 
+(progn ;; neotree treepad navigation                                                             ; (neotree-dir <path>)
+  (define-key neotree-mode-map [kp-4]        'neotree-select-up-node)                            ; (define-key neotree-mode-map [kp-8]      back same level  'neotree-previous-line)
+
+  ;(define-key neotree-mode-map [kp-8]       'neotree-??-prev-sib)
+  (define-key neotree-mode-map [kp-5]        (neotree-make-executor :dir-fn  'neo-open-dir))
+  ;(define-key neotree-mode-map [kp-2]       'neotree-??-next-)
+
+  (define-key neotree-mode-map [kp-9]        'neotree-previous-line)
+  (define-key neotree-mode-map [kp-6]        'neotree-change-root)                               ; see: "click changes root"
+  (define-key neotree-mode-map [kp-3]        'neotree-next-line)
+
+  (define-key neotree-mode-map [kp-add]      (neotree-make-executor :file-fn 'neotree-quick-look ; tbd and move down one, deleting the other buffer
+                                                                    :dir-fn  'neo-open-dired))
+
+  (define-key neotree-mode-map [kp-0]        (neotree-make-executor :dir-fn  'neo-open-dired))
+  (define-key neotree-mode-map "O"           (neotree-make-executor :file-fn 'opn-f))            ; (define-key neotree-mode-map "O"          (neotree-make-executor :file-fn 'ergoemacs-open-in-external-app))
+)
+
 ** ace-window keys
 : (defvar aw-dispatch-alist
 :   '((?x aw-delete-window "Delete Window")

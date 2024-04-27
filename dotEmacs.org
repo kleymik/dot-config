@@ -1,3 +1,4 @@
+
     *Emacs Initialisation*
 
 invoked by: ~/.emacs.d/init.el
@@ -3138,6 +3139,7 @@ for flushing messages to *Message* buffer
 
 ;--------------------------------------------------- functions for key binds
 #+end_src
+
 #+begin_src emacs-lisp                       :REM org navigation functions
 (defun my-org-cycle-or-fold ()
   "use language-folding if in code block, otherwise usual org-cycle"
@@ -4027,11 +4029,18 @@ for flushing messages to *Message* buffer
 : (defalias 'vc-ediff-frame (kbd "C-x 5 2 M-x vc-ediff RET y"))
 
 ** Regexp
-
-(replace-regexp "[0-9]" "\,(1+ \\#&)" nil (point-min) (point-max)) 
-(query-replace-regexp "\\([0-9]+\\),\\([0-9]+\\)" "\\1\\2")  !!! replace commas in numbers!!!
-: 
+: (replace-regexp "[0-9]" "\,(1+ \\#&)" nil (point-min) (point-max)) 
+: (query-replace-regexp "\\([0-9]+\\),\\([0-9]+\\)" "\\1\\2")  !!! replace commas in numbers!!!
+: replace floating point number with lower precision padding with white space
+: (query-replace-regexp "\\([0-9]+\.[0-9][0-9]\\)\\([0-9]*\\)" '(replace-eval-replacement concat (match-string 1)   (make-string (length (match-string 2)) ? ) )) ;;; "? "=space!
+:
+: (query-replace-regexp "\\([0-9]+\.[0-9][0-9]\\)\\([0-9]*\\)" '(replace-eval-replacement concat ":" (replace-quote (concat   (match-string 2)  (number-to-string (length (match-string 1)))))))
+: (query-replace-regexp "\\([0-9]+\.[0-9][0-9]\\)\\([0-9]*\\)" '(replace-eval-replacement concat "" (replace-quote (concat   (match-string 2)  (number-to-string (length (match-string 1))))) ":"))
+: (query-replace-regexp "\\([0-9]+\.[0-9][0-9]\\)\\([0-9]*\\)" '(replace-eval-replacement concat (match-string 1) (make-string 3 ?X) (match-string 2) (replace-quote (concat   (match-string 2)  (number-to-string (length (match-string 1))))) ":"))
+: (query-replace-regexp "\\([0-9]+\.[0-9][0-9]\\)\\([0-9]*\\)" '(replace-eval-replacement concat (match-string 1)   (make-string (length (match-string 2)) ? ) )) ;;; ?space!
 : -------------------------------------------------------------- SAMPLE REPLACE REGEXP
+: (query-replace-regexp "\([0-9]+\.[0-9][0-9]\)[0-9]*" "\))
+: (query-replace-regexp "\\([0-9]+\\)" '(replace-eval-replacement concat ":" (replace-quote (1+ (string-to-number (match-string 1))))))
 : (string-to-number "22")
 : (query-replace-regexp ":\\([0-9]+\\)" '(replace-eval-replacement concat ":" (replace-quote (1+ (string-to-number (match-string 1))))))
 : (query-replace-regexp ":\\([0-9]+\\)" '(replace-eval-replacement concat ":" (replace-quote (1+ (string-to-number (match-string 1))))) nil nil nil nil nil)
