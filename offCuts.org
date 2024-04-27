@@ -1,0 +1,355 @@
+
+* Packages
+
+**  deprecated
+: (require 'neotree)
+:  (require 'cl)                 ; for transpose
+:  (require 'org-eww)
+:  (require 's)
+:  (require 'f)
+:  (require 'dash)
+:  (require 'ob-ipython)
+:  (require 'ein)
+:  (require 'ein-notebook)
+:  (require 'ein-subpackages)
+
+
+
+* Functions
+
+
+;; (with-current-buffer (current-buffer)  (proto-swap "bar" "foo"))
+
+;(w32-shell-execute "open" )
+
+: Notes:
+: Normally, this function truncates long output according to the value
+: of the variables `eval-expression-print-length' and
+: `eval-expression-print-level'.  With a prefix argument of zero,
+: however, there is no such truncation.  Such a prefix argument
+: lso causes integers to be printed in several additional formats
+: (octal, hexadecimal, and character).
+
+: -------------------------------------------------------------------------------- cuts
+: (delete-char 1)            (insert "I")                                                                      ; mark the source
+: (setq src-end (search-forward-regexp ".+(\)|;;;)" (line-end-position) nil))                                  ; (forward-sexp) doesn't work
+
+: (message "new-string %i XX%sXX" (length new-string) new-string)
+: (insert new-string)     
+: (setq new-string (concat "" resStr "  " (substring  reg-selection (+ (length ";= ") (length resStr)))))
+: (message "delete result region =XX%sXX" (buffer-substring-no-properties (region-beginning) (region-end)))
+: (delete-region (- (region-beginning) 2) (region-end))                                                        ; delete region and replace with result
+: (setq reg-selection (buffer-substring-no-properties (region-beginning) (region-end)))
+
+: (mapc (lambda (x) (message "Found rails %s" x)) rectangle-as-list)
+: (message rectangle-as-list)
+
+: (copy-rectangle-as-kill START END)
+: reg-search-back for "^;-sexps-;;;;;"
+: reg-seach on same line for ;-rails-;
+: foreach rail-col in rails:
+:    find input line
+:    find-eval value on this line
+:    foreach output-line
+:   
+
+;; ------------------------------------------------------------------- save/restore window config
+(defvar window-snapshots '())
+
+(defun save-window-snapshot (&optional key)
+  "Save the current window configuration into `window-snapshots` alist."
+  (interactive)
+  (let ((key (if key key (read-string "Enter a name for the snapshot: "))))
+    (setf (alist-get key window-snapshots) (current-window-configuration))
+    (message "%s window snapshot saved!" key))
+)
+
+(defun get-window-snapshot (key)
+  "Given a KEY return the saved value in `window-snapshots` alist."
+  (let ((value (assoc key window-snapshots)))
+    (cdr value))
+)
+
+(defun restore-window-snapshot ()
+  "Restore a window snapshot from the window-snapshots alist."
+  (interactive)
+  (let* ((snapshot-name (completing-read "Choose snapshot: " (mapcar #'car window-snapshots)))
+         (snapshot (get-window-snapshot snapshot-name)))
+    (if snapshot
+        (set-window-configuration snapshot)
+      (message "Snapshot %s not found" snapshot-name)))
+)
+
+
+* Modes
+
+  ; treemacs-display-current-project-exclusively
+  ; treemacs-project-follow-mode
+  ; treemacs-project-follow-mode
+  ; (treemacs-select-directory)
+
+:  (dired-utils-is-dir-p)
+:  (dired-utils-is-file-p)
+:  (dired-view-current)     ; was dired-display-file
+:  (define-key dired-mode-map "r" 'wdired-change-to-wdired-mode)
+:  (define-key dired-mode-map (kbd "K") 'dired-k)
+:  (define-key dired-mode-map (kbd "p")  'dired-subtree-only-this-file)
+:        tbd: pick-off the path of the given file into clipboard
+:        of emacs.  It is adviced to place bindings for these into a
+:        convenient prefix key map, for example `C-,`
+: 
+:   dired-subtree-remove
+:   dired-subtree-revert
+:   dired-subtree-narrow
+:   dired-subtree-up
+:   dired-subtree-down
+:   dired-subtree-previous-sibling
+:   dired-subtree-beginning
+:   dired-subtree-end
+:   dired-subtree-mark-subtree
+:   dired-subtree-unmark-subtree
+:   dired-subtree-only-this-file
+:   dired-subtree-only-this-directory
+: 
+:  ;(add-hook 'ediff-mode-hook (lambda () (setq ediff-shell "C:/cygwin/bin/mintty.exe")))
+:  ;(add-hook 'ediff-load-hook (lambda () (setq ediff-shell "C:/cygwin/bin/mintty.exe")))
+
+
+* Settings
+;;(setq epa-file-select-keys "nope")                                                      ; don't ask about assymmetric key?
+
+;; ---------------------------------------------- Save Session as Desktop
+; use desktop-read to restore kill the lock file
+;;  use desktop-change-dir to /home/uri03204/.emacs.d/desktop to get it back
+;;    say "no" to save-desktop?
+;;    say "yes" to steal from PID?
+;;(desktop-change-dir "/home/uri03204/myDocs/config")
+;;(desktop-save-mode 1)  ; desktop-revert desktop-change-dir
+;;(setq desktop-path '("/home/kleyn/config/desktop"))
+
+
+;; Automatically save and restore sessidons
+;(setq desktop-dirname             "~/config/desktop/"
+;      desktop-base-file-name      "emacs.desktop"
+;      desktop-base-lock-name      "lock"
+;      desktop-path                (list desktop-dirname)
+;      desktop-save                t
+;      desktop-files-not-to-save   "^$" ;reload tramp paths
+;      desktop-load-locked-desktop t
+;      desktop-auto-save-timeout   300
+;      desktop-restore-frames      t)
+;(desktop-save-mode 0)
+
+
+;; (defun my-dired-mode-buffer-p (buf)
+;;    "Non-nil if buffer BUF is in `dired-mode'."
+;;    (with-current-buffer buf
+;;      (derived-mode-p 'dired-mode)))
+;; 
+;; (defvar ibuffer-never-show-predicates '())
+;; (with-eval-after-load "ibuffer" (add-to-list 'ibuffer-never-show-predicates #'my-dired-mode-buffer-p))
+;; 
+
+: (require 'highlight-sexp)  - fails
+: (add-hook 'lisp-mode-hook 'highlight-sexp-mode)
+: (add-hook 'emacs-lisp-mode-hook 'highlight-sexp-mode)
+:  hl-sexp-background-color
+:   - hl-sexp-foreground-color
+:   - hl-sexp-face
+:  Enable `highlight-sexps-mode'
+: (list-colors-display)
+: (set-face-background hl-line-face "gray50")
+: (set-face-background 'show-paren-match  "#888888")
+: (face-foreground 'show-paren-match)
+: (setq  hl-line-range-function 'nil)
+: (setq  hl-line-range-function 'hl-short-range)
+: (defun hl-short-range () (cons (- (point) 5) (+ (point 1)))
+: (require 'cursor-flash)
+: (cursor-flash-mode 1)
+: (setq cursor-flash-interval 0.10)
+
+
+
+* Key Bindings
+
+
+  ;;'ielm) ;; open file under cursor ;;(global-set-key [M-f9] 'my-insert-last-sexp) ;; insert result
+  ;; (global-set-key [M-f2]  'buffer-menu-sort-by-filename)
+  ;; (global-set-key [M-f10]  'see-shell-output)                 ;; 
+  ;; (global-set-key [M-f7]    'show-hist)                       ;; (global-set-key [S-f7] 'buffer-menu-sort-by-filename)
+  ;; (global-set-key [C-f4]    '(lambda () (interactive)  (dired-sidebar-switch-to-dir (file-name-directory (buffer-file-name)))))
+  ;; (global-set-key [S-f4]    '(lambda () (interactive) (dired "~/projects/repos" nil)))
+  ;; (global-set-key [S-f3]    'org-save-code-block)
+  ;; dired-sidebar-switch-to-dir 
+  ;; (global-set-key [f4]      'neotree-toggle)
+  ;; (global-set-key [f4]      '(lambda () (interactive)  (dired-sidebar-cmd "~/")))
+  ;; (global-set-key [C-f4]    'dired-omit-mode)
+
+** ace-window keys
+: (defvar aw-dispatch-alist
+:   '((?x aw-delete-window "Delete Window")
+: 	(?m aw-swap-window "Swap Windows")
+: 	(?M aw-move-window "Move Window")
+: 	(?c aw-copy-window "Copy Window")
+: 	(?j aw-switch-buffer-in-window "Select Buffer")
+: 	(?n aw-flip-window)
+: 	(?u aw-switch-buffer-other-window "Switch Buffer Other Window")
+: 	(?c aw-split-window-fair "Split Fair Window")
+: 	(?v aw-split-window-vert "Split Vert Window")
+: 	(?b aw-split-window-horz "Split Horz Window")
+: 	(?o delete-other-windows "Delete Other Windows")
+: 	(?? aw-show-dispatch-help))
+:   "List of actions for `aw-dispatch-default'.")
+
+
+:  ;-------------------------------------------------------------------------------- Ace jump
+:  ;;
+:  ;; ace jump mode major function
+:  ;;
+:  ;;(add-to-list 'load-path "/full/path/where/ace-jump-mode.el/in/")
+:  (autoload
+:    'ace-jump-mode
+:    "ace-jump-mode"
+:    "Emacs quick move minor mode"
+:    t)
+:  ;; you can select the key you prefer to
+:  ;(define-key global-map (kbd "C-c SPC") 'ace-jump-mode)
+: 
+:  ;; ;;
+:  ;; ;; enable a more powerful jump back function from ace jump mode
+:  ;; ;;
+:  ;; (autoload
+:  ;;   'ace-jump-mode-pop-mark
+:  ;;   "ace-jump-mode"
+:  ;;   "Ace jump back:-)"
+:  ;;   t)
+:  ;; (eval-after-load "ace-jump-mode"
+:  ;;   '(ace-jump-mode-enable-mark-sync))
+:  ;; (define-key global-map (kbd "C-x SPC") 'ace-jump-mode-pop-mark)
+: 
+:  ;-------------------------------------------------------------------------------- ZeeTree
+:  (add-to-list 'load-path "/home/kleyn/ulib/emacs/ztree-master")
+:   ;(push (substitute-in-file-name "path-to-ztree-directory") load-path)
+:   (require 'ztree-diff)
+:   (require 'ztree-dir)
+:   ;local binf to tab (ztree-perform-action)
+:   ;Call the ztree-diff interactive function: M-x ztree-diff
+: 
+: 
+:  ;;-------------------------------------------------------------------------------- ztree
+:  (setq load-path (append load-path '("/home/uri03204/ulib/emacs/ztree-master"))) ;; (insert (format "%s" load-path))
+:  (require 'ztree-diff)
+:  (require 'ztree-dir)
+
+** other
+
+: TBD dired-sidebar-mode-map
+: (dired-sidebar-subtree-toggle)
+: (defvar dired-sidebar-mode-map
+:   (let ((map (make-sparse-keymap)))
+:     (define-key map (kbd "TAB") 'dired-sidebar-subtree-toggle)
+:     (define-key map [tab] 'dired-sidebar-subtree-toggle)
+:     (define-key map (kbd "C-m") 'dired-sidebar-find-file)
+:     (define-key map (kbd "RET") 'dired-sidebar-find-file)
+:     (define-key map (kbd "<return>") 'dired-sidebar-find-file)
+:     (define-key map "^" 'dired-sidebar-up-directory)
+:     (define-key map "-" 'dired-sidebar-up-directory)
+:     (define-key map (kbd "C-o") 'dired-sidebar-find-file-alt)
+:     (define-key map [mouse-2] 'dired-sidebar-mouse-subtree-cycle-or-find-file)
+:     map)
+:   "Keymap used for symbol `dired-sidebar-mode'.")
+: 
+: ;; (define-key emacs-lisp-mode-map [kp-8]        'my-org-babel-prev)
+: ;; (define-key emacs-lisp-mode-map [kp-2]        'my-org-babel-next)
+: ;; (define-key emacs-lisp-mode-map [M-home]      'org-collapse)
+: ;; (define-key emacs-lisp-mode-map [kp-subtract] 'kill-this-buffer-volatile)
+: ;; (define-key emacs-lisp-mode-map [kp-divide]   'toggle-window-split)
+: 
+: 
+: 
+:  (define-key global-map "\C-co"  'org-capture)
+:  (global-set-key "\C-!"          'shell-command) TBD
+:  (global-set-key "\C-Q"          'unfill-paragraph)
+:  (global-set-key "\C-q"          'quoted-insert)
+:  (global-set-key "\C-r"         #'(lambda () (interactive)  (eval (car command-history))))
+:  (global-set-key "\C-xi"         'eval-print-last-sexp) ; ielm
+:  (global-set-key (kbd "C-.")     'repeat)
+:  (global-set-key [(next)]        'cycle-buffer)
+:  (global-set-key [(prior)]       'cycle-buffer-backward)
+:  (global-set-key [C-insert]      'clipboard-kill-ring-save)
+:  (global-set-key [C-kp-insert]   'kill-ring-save)
+:  (global-set-key [M-+]           'text-scale-increase)
+:  (global-set-key [M--]           'text-scale-decrease)  ;; with a C-0 prefix argument.
+:  (global-set-key [M-f8]          'vigenere-encrypt-buffer)
+:  (global-set-key [M-return]      'ffap)  ;; open file under cursor
+:  (global-set-key [M-up]          'kill-this-buffer-volatile) ;; kill-buffer
+:  (global-set-key [M-up]          'other-window)
+:  (global-set-key [S-M-kp-down]   'sgml-fold-subelement)   ; M-kp ... conflicts with workspace navigation:
+:  (global-set-key [S-M-kp-end]    'sgml-fold-element)      ; fold everything below current element
+:  (global-set-key [S-M-kp-next]   'sgml-unfold-element)
+:  (global-set-key [S-f7]          'buffer-menu-sort-by-filename)
+:  (global-set-key [S-f8]          'dired-omit-mode)
+:  (global-set-key [S-insert]      'clipboard-yank)
+:  (global-set-key [S-kp-4]        'selective-display-level-decr)
+:  (global-set-key [S-kp-5]        'selective-display-level-zero)
+:  (global-set-key [S-kp-6]        'selective-display-level-incr)
+:  (global-set-key [S-kp-insert]   'yank)
+:  (global-set-key [end]           'kill-this-buffer-volatile)
+:  (global-set-key [f10]           'see-shell-output) 
+:  (global-set-key [f11]           'hs-show-block)
+:  (global-set-key [f12]           'hs-hide-block)
+:  (global-set-key [f5]            'ffap) ; bookmark-bmenu-list
+:  (global-set-key [f6]            'ergoemacs-open-in-external-app)
+:  (global-set-key [f7]            'my-list-buffers)
+:  (global-set-key [f8]            'vigenere-decrypt-buffer)
+:  (global-set-key [f8]            'ztree-dir)
+:  (global-set-key [f9]            'ielm)  ;; open file under cursor
+: 
+:  (global-unset-key (kbd "C-q"))
+: 
+: ;;------------------------------------------------------------------------------ TFS Version Control
+: ;; ;; 1. Place `tfs.el' in your `load-path'.
+: ;; ;; 2. In your .emacs file:
+: ;; (require 'tfs)
+: ;; (setq tfs/tf-exe  "C:\\TF.exe")
+: ;; (setq tfs/tf-exe  "C:\\Program Files \(x86\)\\TF.exe")
+: ;; ;;(setq tfs/tf-exe  "C:\\Program\ Files\ \(x86\)\\Microsoft Visual Studio 12.0\\Common7\\IDE\\tf.exe")
+: ;; ;;(setq tfs/tf-exe  "C:\\Program Files\ \(x86\)\\Microsoft\ Visual\ Studio\ 12.0\\Common7\\IDE\\TF.exe")
+: ;; (setq tfs/login "/login:snd\\kleynmi,password")
+: ;; ;; 3. also in your .emacs file:
+: ;; ;;      set local or global key bindings for tfs commands.  like so:
+: 
+: ;; (global-set-key  "\C-xvo" 'tfs/checkout)
+: ;; (global-set-key  "\C-xvi" 'tfs/checkin)
+: ;; (global-set-key  "\C-xvp" 'tfs/properties)
+: ;; (global-set-key  "\C-xvg" 'tfs/get)
+: ;; (global-set-key  "\C-xvh" 'tfs/history)
+: ;; (global-set-key  "\C-xvu" 'tfs/undo)
+: ;; (global-set-key  "\C-xvd" 'tfs/diff)
+: ;; (global-set-key  "\C-xvs" 'tfs/status)
+: ;; (global-set-key  "\C-xva" 'tfs/annotate)
+: ;; (global-set-key  "\C-xvw" 'tfs/workitem)
+: ;; (global-set-key  "\C-xv+" 'tfs/add)
+: ;; (global-set-key  "\C-xv-" 'tfs/delete)
+: ;; (global-set-key  "\C-xvc" 'tfs/changeset)
+: 
+
+* window and buffer incantations
+
+; re-re-ensure treemacs is top left and ibuffer bottom left
+;(let ((topLftWin (window-at  2 2))
+;      (botLftWin (window-at  2 (- (frame-height) 2))))
+;    (set-window-buffer topLftWin  (window-buffer (treemacs-get-local-window)))
+;    (set-window-buffer botLftWin "*Ibuffer*"))
+;(set-window-buffer (split-window (select-window (treemacs-get-local-window)) 30 'below) "*Ibuffer*")
+;(select-window (treemacs-get-local-window))
+;(split-window (select-window (treemacs-get-local-window)) nil 'above)
+;(set-window-buffer (split-window (select-window (treemacs-get-local-window)) nil 'below) (get-buffer "*Ibuffer*"))
+
+
+;(eshell)
+;(set-window-buffer (split-window (select-window (get-buffer-window "*eshell*")) 200 'right) "*Messages*")
+
+;(split-window-horizontally 100)
+
+;(split-window-vertically) 
