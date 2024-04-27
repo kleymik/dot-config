@@ -2941,37 +2941,33 @@ for flushing messages to *Message* buffer
 )
 #+end_src
 
-#+begin_src emacs-lisp                       :REM TreeNavPad keys for treemacs
-(progn     ;; in treemacs chaging root only works when you have one "project" (i.e folder tree root)
-  (define-key treemacs-mode-map [kp-4]        #'treemacs-root-up)                      ;; works!
-  (define-key treemacs-mode-map [kp-6]        #'treemacs-root-down)                             ;; works?
-  (define-key treemacs-mode-map [kp-8]        #'treemacs-previous-neighbour)                    ;; move #2=ps
-  (define-key treemacs-mode-map [kp-5]        #'treemacs-TAB-action)
-  (define-key treemacs-mode-map [kp-2]        #'treemacs-next-neighbour)                        ;; move #8=ns                           
+
+#+begin_src emacs-lisp                     :REM TreeNavPad keys for paredit
+(progn     ;; paredit commands, are already smart, e..g if at then of the sexpresion, move past the closing paren and go forward in the enclosing sexpr, like depth-first search 
+  (define-key paredit-mode-map [kp-4]      #'paredit-backward-up)
+
+  (define-key paredit-mode-map [kp-8]      #'paredit-backward)                    
+  ;;(define-key paredit-mode-map [kp-5]    #'paredit-TAB-action) ;; ?? elide/fold?
+  (define-key paredit-mode-map [kp-2]      #'paredit-forward)                        ;; move #8=ns                           
+
+  (define-key paredit-mode-map [kp-6]      #'paredit-forward-down)                             ;; works?
 )
 #+end_src
 
-#+RESULTS:
-: treemacs-TAB-action
+#+begin_src emacs-lisp                       :REM TreeNavPad keys for treemacs
+(progn     ;; in treemacs chaging root only works when you have one "project" (i.e folder tree root)
+  (define-key treemacs-mode-map [kp-4]        #'treemacs-root-up)                      ;; works!
 
-#+begin_src emacs-lisp                       :REM TreeNavPad keys for neotree
-(progn ;; neotree treepad navigation                                                             ; (neotree-dir <path>)
-  (define-key neotree-mode-map [kp-4]        'neotree-select-up-node)                            ; (define-key neotree-mode-map [kp-8]      back same level  'neotree-previous-line)
+  (define-key treemacs-mode-map [kp-8]        #'treemacs-previous-neighbour)                    ;; move #2=ps
+  (define-key treemacs-mode-map [kp-5]        #'treemacs-TAB-action)
+  (define-key treemacs-mode-map [kp-2]        #'treemacs-next-neighbour)                        ;; move #8=ns                           
 
-  ;(define-key neotree-mode-map [kp-8]       'neotree-??-prev-sib)
-  (define-key neotree-mode-map [kp-5]        (neotree-make-executor :dir-fn  'neo-open-dir))
-  ;(define-key neotree-mode-map [kp-2]       'neotree-??-next-)
+  (define-key treemacs-mode-map [kp-6]        #'treemacs-root-down)                             ;; works?
 
-  (define-key neotree-mode-map [kp-9]        'neotree-previous-line)
-  (define-key neotree-mode-map [kp-6]        'neotree-change-root)                               ; see: "click changes root"
-  (define-key neotree-mode-map [kp-3]        'neotree-next-line)
-
-  (define-key neotree-mode-map [kp-add]      (neotree-make-executor :file-fn 'neotree-quick-look ; tbd and move down one, deleting the other buffer
-                                                                    :dir-fn  'neo-open-dired))
-
-  (define-key neotree-mode-map [kp-0]        (neotree-make-executor :dir-fn  'neo-open-dired))
-  (define-key neotree-mode-map "O"           (neotree-make-executor :file-fn 'opn-f))            ; (define-key neotree-mode-map "O"          (neotree-make-executor :file-fn 'ergoemacs-open-in-external-app))
 )
+#+end_src
+
+#+begin_src emacs-lisp                     :REM TreeNavPad keys for neotree
 
 (defun opn-f (f &optional arg) 
   (message "xdg-open %s" f)
