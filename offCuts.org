@@ -1,4 +1,50 @@
 
+ ;; if it's a folder=>insert subdir  & move to first; elseif it's a file = >preview-in-other window and move to next, if it's previewed,....
+ (defun my-subdired-dfs ()
+   (interactive)
+   (dired-subtree--is-expanded-p)
+   (dired-utils-is-dir-p)
+   (dired-utils-is-file-p)
+   (let ((sDpth (dired-subtree--get-depth (dired-subtree--get-ov))))
+     (if (eq sDpth 0)
+         (if (dired-utils-is-dir-p)
+             (dired-subtree-insert))
+         (dired-subtree-remove))))
+
+
+* deprecated desktop stuff 
+
+;; ---------------------------------------------- Save Session as Desktop
+;;  use desktop-change-dir to /home/uri03204/.emacs.d/desktop to get it back
+;;    say "no" to save-desktop?
+;;    say "yes" to steal from PID?
+;; (desktop-save-mode 1)  ; desktop-revert desktop-change-dir
+;; (desktop-change-dir "/home/uri03204/myDocs/config")
+(setq desktop-path '("/home/kleyn/config/desktop"))
+;; (setq desktop-auto-save-timeout 300)
+
+
+;; ---------------------------------------------- Save Session as Desktop
+; use desktop-read to restore kill the lock file
+;;  use desktop-change-dir to /home/uri03204/.emacs.d/desktop to get it back
+;;    say "no" to save-desktop?
+;;    say "yes" to steal from PID?
+;;(desktop-change-dir "/home/uri03204/myDocs/config")
+;;(desktop-save-mode 1)  ; desktop-revert desktop-change-dir
+;;(setq desktop-path '("/home/kleyn/config/desktop"))
+
+;; Automatically save and restore sessions
+(setq desktop-dirname             "~/config/desktop/"
+      desktop-base-file-name      "emacs.desktop"
+      desktop-base-lock-name      "lock"
+      desktop-path                (list desktop-dirname)
+      desktop-save                t
+      desktop-files-not-to-save   "^$" ;reload tramp paths
+      desktop-load-locked-desktop t
+      desktop-auto-save-timeout   300
+      desktop-restore-frames      t)
+(desktop-save-mode 0)
+
 * Packages
 
 **  deprecated
@@ -17,6 +63,11 @@
 
 * Functions
 
+(defun mk-new-buffer ()
+  (interactive)
+  (switch-to-buffer (generate-new-buffer (make-temp-name "foo")))
+  (clipboard-yank)
+)
 
 ;; (with-current-buffer (current-buffer)  (proto-swap "bar" "foo"))
 
@@ -113,6 +164,50 @@
 : 
 :  ;(add-hook 'ediff-mode-hook (lambda () (setq ediff-shell "C:/cygwin/bin/mintty.exe")))
 :  ;(add-hook 'ediff-load-hook (lambda () (setq ediff-shell "C:/cygwin/bin/mintty.exe")))
+
+** drop sidebar, rather use treemacs
+(progn                                       ;; dired-sidebar treepad navigation
+  ;(define-key dired-sidebar-mode-map [kp-8]      'dired-previous-line)
+  ;(define-key dired-sidebar-mode-map [kp-2]      'dired-next-line)
+
+  (define-key dired-sidebar-mode-map [kp-4]        '(lambda () (interactive)                                        ;; keep
+                                                       (message (format "%d %d" (line-number-at-pos) (dired-subtree--get-depth (dired-subtree--get-ov))))
+                                                       (if (= (dired-subtree--get-depth (dired-subtree--get-ov)) 0)
+                                                          (dired-sidebar-up-directory)
+                                                          (dired-subtree-up))))
+
+  (define-key dired-sidebar-mode-map [kp-8]        'dired-subtree-previous-sibling)                                 ;; move #2=ps
+  (define-key dired-sidebar-mode-map [kp-5]        'dired-sidebar-subtree-toggle) 
+  (define-key dired-sidebar-mode-map [kp-2]        'dired-subtree-next-sibling)                                     ;; move #8=ns                           
+
+  (define-key dired-sidebar-mode-map [kp-6]        'dired-sidebar-find-file)
+  ;(define-key dired-sidebar-mode-map [kp-3]       '(lambda () (interactive) (dired-subtree-cycle 4)))
+  (define-key dired-sidebar-mode-map [C-kp-6]      '(lambda () (interactive) ;; first child, open if needed
+                                                       (if (not (dired-subtree--is-expanded-p)) (dired-sidebar-subtree-toggle))
+                                                       (dired-next-line 1)))                                       ;; dired-sidebar-find-file
+
+  (define-key dired-sidebar-mode-map [kp-subtract] '(lambda () (interactive) (dired-sidebar-subtree-toggle) (dired-next-lne)))
+  (define-key dired-sidebar-mode-map [kp-0]         '(lambda () (interactive) (ergoemacs-open-in-external-app)))
+
+  ;(define-key dired-sidebar-mode-map [C-kp-5]      'dired-sidebar-up-directory) now subsumed in kp-5
+)
+
+
+;;----------------------- subtree/sidebar
+
+(defun sidebar-toggle ()
+  "Toggle both `dired-sidebar' and `ibuffer-sidebar'."
+  (interactive)
+  ;;(dired-sidebar-toggle-sidebar "~/")
+  (ibuffer-sidebar-toggle-sidebar))
+
+(defun dired-sidebar-show (dirname)  ;; TBD open in *current* window?
+  (interactive "D")
+  (let ((dired-buffer (dired-sidebar-get-or-create-buffer dirname)))
+    (dired-sidebar-show-sidebar dired-buffer)
+    (pop-to-buffer dired-buffer)
+    (ibuffer-sidebar-show-sidebar)
+    (setq window-size-fixed nil)))
 
 
 * Settings
