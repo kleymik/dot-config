@@ -10,6 +10,7 @@ invoked by: ~/.emacs.d/init.el
 (setq cur-syntax-table (syntax-table)) ; better to use "describe-syntax"
 undefine a funcion: ;(fmakunbound 'trysc-clear-all-whitespace-columns) 
 default-directory
+
 good fonts "Ubuntu Mono"
 
 Print message listing key sequences that invoke the command DEFINITION.
@@ -17,7 +18,6 @@ Argument is a command definition, usually a symbol with a function definition.
 If INSERT (the prefix arg) is non-nil, insert the message in the buffer.
 
 TBD dired-find-file-otherwindow open a cygwin link by inspecting it
-
 ------------------------------------------------------------------------------ Org-Mode
 (print (cadr info) (get-buffer "*scratch*"))
 (write-region (cadr info) nil "L:/MyDocs/history/matlabCmds/org_cmd.m")
@@ -29,10 +29,6 @@ Dired Listing Switches: Hide Value -ahl --time-style=long-iso
 of emacs.  It is advised to place bindings for these into a
 convenient prefix key map, for example `C-,`
 
--------------------------------------------------------------------- Key Bindings
-(global-set-key [f4]            'see-orglink-dired) ;;     'desktop-save)
-(define-key global-map "\C-co" 'org-capture)
-------------------------------------------------------------------------------
 
 * Packages
 #+begin_src emacs-lisp                            :REM packages
@@ -73,7 +69,7 @@ convenient prefix key map, for example `C-,`
 ;; (require 'filetree) ; doesn't do selective expansion
 ;; dired-sidebar-theme
 
-; (load-library "vigenere")                       ; no longer needed
+; (load-library "vigenere")                     ; no longer needed
 (require 'yafolding)                            ; (require 'origami)
 
 ;; --------- org mode and babel
@@ -113,9 +109,33 @@ convenient prefix key map, for example `C-,`
 (message "-------------- Done: Packages")
 #+end_src
 
+
 * Function Definitions
 #+begin_src emacs-lisp                            :REM Function Definitions
 (message "-------------- Start: Handy Function Definitions")
+
+(defun move-line (n)
+  "Move the current line up or down by N lines."
+  (interactive "p")
+  (setq col (current-column))
+  (beginning-of-line) (setq start (point))
+  (end-of-line) (forward-char) (setq end (point))
+  (let ((line-text (delete-and-extract-region start end)))
+    (forward-line n)
+    (insert line-text)
+    ;; restore point to original column in moved line
+    (forward-line -1)
+    (forward-char col)))
+
+(defun move-line-up (n)
+  "Move the current line up by N lines."
+  (interactive "p")
+  (move-line (if (null n) -1 (- n))))
+
+(defun move-line-down (n)
+  "Move the current line down by N lines."
+  (interactive "p")
+  (move-line (if (null n) 1 n)))
 
 (defvar xah-show-kill-ring-separator nil "A line divider for `xah-show-kill-ring'.")
 (setq xah-show-kill-ring-separator "\n\n===========================================================================\n\n")
@@ -561,7 +581,7 @@ convenient prefix key map, for example `C-,`
 (message "-------------- Done: Handy Function Definitions")
 #+end_src
 
-** Function Definitions - TreesyCalc & Evale Elisp
+** Function Definitions - GrexCalc & Eval Elisp
 #+begin_src emacs-lisp                            :REM Eval Elisp
 (load-library "grex-calc")
 
@@ -646,6 +666,7 @@ convenient prefix key map, for example `C-,`
 (message "-------------- Done: Treesycalc")
 #+end_src
 
+
 * Settings
 
 ** Highlighting/Cursor Visibility
@@ -664,7 +685,7 @@ convenient prefix key map, for example `C-,`
 (message "-------------- Start: Highlighting")
 (setq-default x-stretch-cursor t)                    ; switch to nil for magit (setq-default x-stretch-cursor nil)
 (blink-cursor-mode 0)
-(set-cursor-color "orange red")                      ; also at end of init.el, after theming 
+(set-cursor-color "gold") 
 (setq cursor-type 'box)
 (global-hl-line-mode 1)                              ; (global-hl-line-mode 0) to turn off
 (set-face-background 'show-paren-match  "#777777")
@@ -763,7 +784,6 @@ convenient prefix key map, for example `C-,`
 (savehist-mode 1)
 ; list-command-history-filter TBD filter out kill-buffer
 ; (list-command-history)
-(global-set-key "\C-s" 'isearch-forward)
 ;; (xclip-mode 1) for emacs in terminal , export kill-yank
 
 ;; ----------------------------------------------- Backup location
@@ -926,6 +946,7 @@ M-x clone-indirect-buffer RET
 : Now load your custom theme by typing the following:
 : M-x customize-themes ;;;now press return
 
+
 * Modes Assoc List
 #+begin_src emacs-lisp
 ;;--------------------------------------------------------- Language Modes
@@ -1015,8 +1036,9 @@ M-x clone-indirect-buffer RET
 
 (message "-------------- Done: Modes Assoc List")
 #+end_src
-* Modes Section
 
+
+* Modes Section
 ** Chat GPT (pending)
 ;;; Chat GPT
 ;; 0) gpt.el
@@ -1086,40 +1108,11 @@ M-x clone-indirect-buffer RET
 ;;       apropos-do-all t
 ;;       mouse-yank-at-point t)
 
-
 ** Python Mode
-
-#+begin_src emacs-lisp                            :REM Python Shell (ipython)
-  (setq python-shell-interpreter "ipython"
+#+begin_src emacs-lisp   
+;  Python Shell (ipython)
+  (setq python-shell-interpreter "ipython" 
         python-shell-interpreter-args "-i --simple-prompt --InteractiveShell.display_page=True")
-#+end_src
-
-
-#+begin_src emacs-lisp
-
-;; ------------------------------------------- Python Mode
-;(add-hook 'python-mode-hook
-;  #'(lambda ()
-;      (define-key python-mode-map "\C-m" 'newline-and-indent)))
-;(add-hook 'python-mode-hook
-;                 (lambda ()
-;                       (setq-default indent-tabs-mode t)
-;                       (setq-default tab-width 4)
-;                       (setq-default python-indent 4)))
-(defun my-python-hook ()
-   (setq indent-tabs-mode nil)
-   (setq tab-width 4)
-   (setq python-indent 4)
-   (toggle-truncate-lines 1) ;; deprecated? ->   (setq default-truncate-lines t)
-   (progn
-     (define-key python-mode-map [kp-9] 'python-nav-backward-block)
-     (define-key python-mode-map [kp-6] 'yafolding-toggle-element)
-     (define-key python-mode-map [kp-3] 'python-nav-forward-block)
-     (define-key python-mode-map (kbd "C-c <")   'selective-display-level-decr)
-     (define-key python-mode-map (kbd "C-c >")   'selective-display-level-incr))
-)
-
-(add-hook 'python-mode-hook 'my-python-hook)
 
 (defun insertcodePyCodeSnippet ()
   (interactive)
@@ -1152,6 +1145,21 @@ M-x clone-indirect-buffer RET
     (concat "b " (file-truename buffer-file-name) ":" (nth 1 (split-string (what-line))) "\n") ; - needs non-symlinked path of source file
     nil pudb-bp-file))
 ;(define-key py-mode-map (kbd "C-c C-t") 'pudb-add-breakpoint)
+
+(defun my-python-hook ()
+   (setq indent-tabs-mode nil)
+   (setq tab-width 4)
+   (setq python-indent 4)
+   (toggle-truncate-lines 1) ;; deprecated? ->   (setq default-truncate-lines t)
+   (progn
+     (define-key python-mode-map [kp-9] 'python-nav-backward-block)
+     (define-key python-mode-map [kp-6] 'yafolding-toggle-element)
+     (define-key python-mode-map [kp-3] 'python-nav-forward-block)
+     (define-key python-mode-map (kbd "C-c <")   'selective-display-level-decr)
+     (define-key python-mode-map (kbd "C-c >")   'selective-display-level-incr))
+)
+(add-hook 'python-mode-hook 'my-python-hook)
+;(add-hook 'python-mode-hook;  #'(lambda () (define-key python-mode-map "\C-m" 'newline-and-indent)))
 
 (message "-------------- Done: Python Mode Section")
 #+end_src
@@ -1209,8 +1217,6 @@ M-x clone-indirect-buffer RET
   (remove-hook 'minibuffer-setup-hook 'counsel-find-file-fallback-command--enable-ivy)
   (ivy-mode t))
 
-(global-set-key (kbd "M-x") 'counsel-M-x)            ; Ivy-based interface to standard commands
-(global-set-key (kbd "M-y") 'counsel-yank-pop)
 (message "-------------- Done: Ivy/Counsel Done")
 #+end_src
 
@@ -1787,7 +1793,6 @@ M-x clone-indirect-buffer RET
 : (current-window-configuration) = #<window-configuration>
 : window-dedicated-p
 
-
 ** Dired Stuff
 
 
@@ -2248,6 +2253,39 @@ M-x clone-indirect-buffer RET
     "]]")))
 #+end_src
 
+** Treemacs
+; treemacs-display-current-project-exclusively
+; treemacs-project-follow-mode
+; treemacs-project-follow-mode
+; (treemacs-select-directory)
+
+:      (key-root-up        (treemacs--find-keybind #'treemacs-root-up))
+:      (key-root-down      (treemacs--find-keybind #'treemacs-root-down))
+:      (key-next-line      (treemacs--find-keybind #'treemacs-next-line))
+:      (key-prev-line      (treemacs--find-keybind #'treemacs-previous-line))
+:      (key-next-neighbour (treemacs--find-keybind #'treemacs-next-neighbour))
+:      (key-prev-neighbour (treemacs--find-keybind #'treemacs-previous-neighbour))
+:      (key-goto-parent    (treemacs--find-keybind #'treemacs-goto-parent-node))
+:      (key-down-next-w    (treemacs--find-keybind #'treemacs-next-line-other-window))
+:      (key-up-next-w      (treemacs--find-keybind #'treemacs-previous-line-other-window))
+:      (key-ret            (treemacs--find-keybind #'treemacs-RET-action))
+:      (key-open           (treemacs--find-keybind #'treemacs-visit-node-no-split))
+:      (key-open-ace       (treemacs--find-keybind #'treemacs-visit-node-ace))
+:      (key-open-ext       (treemacs--find-keybind #'treemacs-visit-node-in-external-application))
+:      (key-open-mru       (treemacs--find-keybind #'treemacs-visit-node-in-most-recently-used-window))
+:      (key-open-close     (treemacs--find-keybind #'treemacs-visit-node-close-treemacs))
+:      (key-close-above    (treemacs--find-keybind #'treemacs-collapse-parent-node))
+:      (key-follow-mode    (treemacs--find-keybind #'treemacs-follow-mode))
+:      (key-header-mode    (treemacs--find-keybind #'treemacs-indicate-top-scroll-mode))
+:      (key-fringe-mode    (treemacs--find-keybind #'treemacs-fringe-indicator-mode))
+:      (key-fwatch-mode    (treemacs--find-keybind #'treemacs-filewatch-mode))
+:      (key-commit-diff    (treemacs--find-keybind #'treemacs-git-commit-diff-mode))
+:      (key-git-mode       (treemacs--find-keybind #'treemacs-git-mode))
+:      (key-show-dotfiles  (treemacs--find-keybind #'treemacs-toggle-show-dotfiles))
+:      (key-indent-guide   (treemacs--find-keybind #'treemacs-indent-guide-mode))
+:      (key-toggle-width   (treemacs--find-keybind #'treemacs-toggle-fixed-width))
+:      (key-rename-project (treemacs--find-keybind #'treemacs-rename-project 12))
+
 ** Magit
 #+begin_src emacs-lisp                            :REM magit
 (defun my-magit-mode-hook ()
@@ -2372,6 +2410,7 @@ M-x clone-indirect-buffer RET
  (message "-------------- Done: Markup Languages Section")
 #+end_src
 
+
 * Hooks
 for python -made named function so remove-hook can be used
 for flushing messages to *Message* buffer
@@ -2393,6 +2432,7 @@ for flushing messages to *Message* buffer
 (add-hook 'write-file-hooks 'py-clean-file)
 
 #+end_src
+
 * Key Bindings
 ** keys notes: may be useful
 
@@ -2441,7 +2481,7 @@ for flushing messages to *Message* buffer
 :  command C-x z, then z again ;; repeat last
 :  complex command C-x ESC ESC ;; repeat last
 
-** org-babel keys notes
+** keys notes: org-babel
 
 : C-down / C-up = next section / previous section in org-babel
 : org-goto
@@ -2485,6 +2525,16 @@ for flushing messages to *Message* buffer
 
 ** Global Keys
 #+begin_src emacs-lisp
+(global-set-key (kbd "M-x") 'counsel-M-x)            ; Ivy-based interface to standard commands
+(global-set-key (kbd "M-y") 'counsel-yank-pop)
+(global-set-key "\C-s" 'isearch-forward)
+(global-set-key "\C-s" 'isearch-forward)
+
+;(global-set-key [f4]             'see-orglink-dired) ;;     'desktop-save)
+;(define-set-key "\C-co"          'org-capture)
+;(global-set-key (kbd "M-<up>")   'move-line-up)
+;(global-set-key (kbd "M-<down>") 'move-line-down)
+
 ; 20211215_15:09:19 ordered by order on QWERTY keyboard
 ;;  (global-set-key "\C-q"          'quoted-insert)  ; for resetting, already default
 
@@ -2704,7 +2754,6 @@ org-goto
 (message "-------------- Done: Function Keys")
 #+end_src
 
-
 ** KeyPad Keys
 
 *** Midpad Global Key Bindings
@@ -2823,33 +2872,7 @@ org-goto
  |   |      | search breadth first                |       |       |                                         |                                     |                                              |                            |                                                        |                        |   |      |                |       |
  |---+------+-------------------------------------+-------+-------+-----------------------------------------+-------------------------------------+----------------------------------------------+----------------------------+--------------------------------------------------------+------------------------+---+------+----------------+-------|
 
-      (key-root-up        (treemacs--find-keybind #'treemacs-root-up))
-      (key-root-down      (treemacs--find-keybind #'treemacs-root-down))
-      (key-next-line      (treemacs--find-keybind #'treemacs-next-line))
-      (key-prev-line      (treemacs--find-keybind #'treemacs-previous-line))
-      (key-next-neighbour (treemacs--find-keybind #'treemacs-next-neighbour))
-      (key-prev-neighbour (treemacs--find-keybind #'treemacs-previous-neighbour))
-      (key-goto-parent    (treemacs--find-keybind #'treemacs-goto-parent-node))
-      (key-down-next-w    (treemacs--find-keybind #'treemacs-next-line-other-window))
-      (key-up-next-w      (treemacs--find-keybind #'treemacs-previous-line-other-window))
-      (key-ret            (treemacs--find-keybind #'treemacs-RET-action))
-      (key-open           (treemacs--find-keybind #'treemacs-visit-node-no-split))
-      (key-open-ace       (treemacs--find-keybind #'treemacs-visit-node-ace))
-      (key-open-ext       (treemacs--find-keybind #'treemacs-visit-node-in-external-application))
-      (key-open-mru       (treemacs--find-keybind #'treemacs-visit-node-in-most-recently-used-window))
-      (key-open-close     (treemacs--find-keybind #'treemacs-visit-node-close-treemacs))
-      (key-close-above    (treemacs--find-keybind #'treemacs-collapse-parent-node))
-      (key-follow-mode    (treemacs--find-keybind #'treemacs-follow-mode))
-      (key-header-mode    (treemacs--find-keybind #'treemacs-indicate-top-scroll-mode))
-      (key-fringe-mode    (treemacs--find-keybind #'treemacs-fringe-indicator-mode))
-      (key-fwatch-mode    (treemacs--find-keybind #'treemacs-filewatch-mode))
-      (key-commit-diff    (treemacs--find-keybind #'treemacs-git-commit-diff-mode))
-      (key-git-mode       (treemacs--find-keybind #'treemacs-git-mode))
-      (key-show-dotfiles  (treemacs--find-keybind #'treemacs-toggle-show-dotfiles))
-      (key-indent-guide   (treemacs--find-keybind #'treemacs-indent-guide-mode))
-      (key-toggle-width   (treemacs--find-keybind #'treemacs-toggle-fixed-width))
-      (key-rename-project (treemacs--find-keybind #'treemacs-rename-project 12))
- 
+
 *** KeyPad Bindings
 
 #+begin_src emacs-lisp                     :REM Keypad Global Key Bindings
@@ -3236,6 +3259,7 @@ org-goto
 :         ((= n 1) 1)
 :         ((>  n 1) (progn (stop-here 'fact) (* n (fact (1- n)))))
 :         (t nil)))
+
 
 * ESHELL
 
@@ -3870,6 +3894,7 @@ org-goto
 : (print foo) === echo $foo
 : eshell-parse-command 'ls -l'
 
+
 * Notes
 : comments: *one* ";"
 ** Commands Quick Ref
@@ -3928,13 +3953,14 @@ org-goto
     (while (search-forward-regexp "^# \\+ pycharm=[^#]+#%%\\([^,}]+\\).*$" nil t)
       (setq cruft (match-string 1))
       (replace-match (concat "#%% " (substring cruft 0 -3)) t nil)
-      (message (concat "#%%%% " (substring cruft 0 -3) "-XXX"))))
+      (message (concat "#%%%% " (substring cruft 0 -3) "-XXX")))
+)
 
 ;;))                                                                                                           ; drop # and \n} cruft at end
 
 
 #+END_SRC
--------------------------------------------------------------- SAMPLE REPLACE REGEXP
+:-------------------------------------------------------------- SAMPLE REPLACE REGEXP
 
 : (replace-regexp "[0-9]" "\,(1+ \\#&)" nil (point-min) (point-max)) 
 : (query-replace-regexp "\\([0-9]+\\),\\([0-9]+\\)" "\\1\\2")  !!! replace commas in numbers!!!
@@ -4196,17 +4222,12 @@ org-goto
 :         (tyler-eshell-view-file (pop args)))))
 :   (defalias 'eshell/more 'eshell/less)
 
-* End bit
 
-  ; treemacs-display-current-project-exclusively
-  ; treemacs-project-follow-mode
-  ; treemacs-project-follow-mode
-  ; (treemacs-select-directory)
+* End bit - Initialize Windows
 
 #+begin_src emacs-lisp
 (put 'narrow-to-region 'disabled nil)
 (setq password-cache-expiry nil)
-(set-cursor-color "gold") 
 
 ;; weird and wacky incantations to get desired layout of uncooperative buffers and windows
 
@@ -4214,7 +4235,7 @@ org-goto
   (set-frame-size (selected-frame) 350 110)     ; chars? NOT commutative!!!!!!
   (set-frame-position (selected-frame) 600 100) ; pixels?
 
-  (ibuffer) ; (set-window-dedicated-p (selected-window)  t)
+  (ibuffer) ; 
   (setq treemacs-show-cursor t)
   (setq treemacs-display-in-side-window nil)
   (setq treemacs-width-is-initially-locked nil)
@@ -4233,6 +4254,11 @@ org-goto
   (let ((topRghtWin (window-at (- (frame-width) 2)  2)))
        (set-window-buffer topRghtWin (find-file-noselect "/home/kleyn/stromatolite/priv/aNotes/ToDoList.org"))
       (window-resize topRghtWin -50 t))
+
+     (set-window-dedicated-p (get-buffer-window "*Ibuffer*")  t)
+     (set-window-dedicated-p (get-buffer-window "*eshell*")  t)
+     (set-window-dedicated-p (get-buffer-window "*Messages*")  t)
+     (set-window-dedicated-p (get-buffer-window "ToDoList.org")  t)
 )
 
 (message "dotEmacs.org done")
@@ -4243,9 +4269,6 @@ org-goto
 (ztree-dir "/data/data/com.termux/files/home")
 (server-start)
 (setq password-cache-expiry nil)
-(set-cursor-color "gold") 
-(switch-to-buffer "*Messages*")
-(desktop-read)
 ;custom-set-variables and custom set faces in ~/.emacs.d/init.el
 
 #+STARTUP: fold
