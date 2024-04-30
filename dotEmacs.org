@@ -5,6 +5,35 @@ invoked by: ~/.emacs.d/init.el
  (package-initialize)
  (org-babel-load-file "~/.emacs.d/dotEmacs.org)
 
+* New Stuff/Notes
+
+(setq cur-syntax-table (syntax-table)) ; better to use "describe-syntax"
+undefine a funcion: ;(fmakunbound 'trysc-clear-all-whitespace-columns) 
+default-directory
+good fonts "Ubuntu Mono"
+
+Print message listing key sequences that invoke the command DEFINITION.
+Argument is a command definition, usually a symbol with a function definition.
+If INSERT (the prefix arg) is non-nil, insert the message in the buffer.
+
+TBD dired-find-file-otherwindow open a cygwin link by inspecting it
+
+------------------------------------------------------------------------------ Org-Mode
+(print (cadr info) (get-buffer "*scratch*"))
+(write-region (cadr info) nil "L:/MyDocs/history/matlabCmds/org_cmd.m")
+(write-region (cadr info) nil "C:/MyDocs/grepHist/aaa_org_cmd.m"))
+(save-restriction (org-mark-subtree) (rot13-region (point) (mark))))
+
+find-dired  calls unix find
+Dired Listing Switches: Hide Value -ahl --time-style=long-iso
+of emacs.  It is advised to place bindings for these into a
+convenient prefix key map, for example `C-,`
+
+-------------------------------------------------------------------- Key Bindings
+(global-set-key [f4]            'see-orglink-dired) ;;     'desktop-save)
+(define-key global-map "\C-co" 'org-capture)
+------------------------------------------------------------------------------
+
 * Packages
 #+begin_src emacs-lisp                            :REM packages
 
@@ -14,14 +43,14 @@ invoked by: ~/.emacs.d/init.el
 (setq load-path (append load-path '("~/ulib/emacs/dired-hacks")))
 
 (require 'package)                                                                     ; (setq package-archives ())
-(add-to-list 'package-archives '("jcs-elpa" . "https://jcs-emacs.github.io/jcs-elpa/packages/") t)
+;;(add-to-list 'package-archives '("mlpamlk" . "https://melpa.milkbox.net/packages/") t)  ;; Added by Package.el.  This must come before configurations of installed packages.  Don't delete this line.  
 (add-to-list 'package-archives '("melpa"    . "https://melpa.org/packages/")           t)
 (add-to-list 'package-archives '("mlpstbl"  . "https://stable.melpa.org/packages/")    t)
 (add-to-list 'package-archives '("elpaorg"  . "https://elpa.gnu.org/packages/")        t)
 (add-to-list 'package-archives '("org"      . "https://orgmode.org/elpa/")             t)
+(add-to-list 'package-archives '("jcs-elpa" . "https://jcs-emacs.github.io/jcs-elpa/packages/") t)
 
 (require 'simpleclip) 
-
 (require 'uniquify)
 (require 'ob)
 (require 'regexp-opt)
@@ -35,14 +64,14 @@ invoked by: ~/.emacs.d/init.el
 (require 'dired-rainbow)
 (require 'treemacs)
 (require 'eww)
-; (require 'tree-inspector) under dev ind grex-calc
-; (require 'dired-lis)
-; (require 'dired-k)
-; (require 'all-the-icons-dired-mode)
-; (load "all-the-icons-dired.el")
-; (add-hook 'dired-mode-hook 'all-the-icons-dired-mode)
-; (require 'filetree) ; doesn't do selective expansion
-; dired-sidebar-theme
+;; (require 'tree-inspector) under dev ind grex-calc
+;; (require 'dired-lis)
+;; (require 'dired-k)
+;; (require 'all-the-icons-dired-mode)
+;; (load "all-the-icons-dired.el")
+;; (add-hook 'dired-mode-hook 'all-the-icons-dired-mode)
+;; (require 'filetree) ; doesn't do selective expansion
+;; dired-sidebar-theme
 
 ; (load-library "vigenere")                       ; no longer needed
 (require 'yafolding)                            ; (require 'origami)
@@ -59,6 +88,9 @@ invoked by: ~/.emacs.d/init.el
 ; ---------jupyter / ipython / emacs
 (require 'jupyter)
 (require 'pyvenv) ; M-x: pyvenv-activate RET <path-to-venv>
+(setq org-confirm-babel-evaluate nil)    ;; no-confirm
+(with-eval-after-load 'org (add-hook 'org-babel-after-execute-hook 'org-redisplay-inline-images))
+; (defun org-export-get-reference (a b) nil)
 ; org<->python deprecated
 ; (add-hook 'org-babel-after-execute-hook 'org-display-inline-images 'append)
 ; ein - better to use emacs-ipython-notebook?
@@ -70,6 +102,10 @@ invoked by: ~/.emacs.d/init.el
 (require' dash)
 (require 'paredit)
 (require 'paredit-menu)  (eval-after-load "paredit.el"  '(require 'paredit-menu))
+
+;(require 'cursor-flash)
+;(cursor-flash-mode 1)
+;(setq cursor-flash-interval 0.10)
 
 (global-dash-fontify-mode)
 (with-eval-after-load 'info-look  (dash-register-info-lookup))
@@ -188,16 +224,9 @@ invoked by: ~/.emacs.d/init.el
 )
 
 ;; ------------------------------------------------------------------- unfill-paragraph
-;;; Stefan Monnier <foo at acm.org>. It is the opposite of
-;;; fill-paragraph. Takes a multi-line paragraph and makes
-;;; it into a single line of text.
+;;; Stefan Monnier <foo at acm.org>. It is the opposite of fill-paragraph. 
+;;; Takes a multi-line paragraph and makes; it into a single line of text.
 (defun unfill-paragraph ()
-  (interactive)
-  (let ((fill-column (point-max)))
-    (fill-paragraph nil))
-)
-
-(defun unjustify-paragraph ()
   (interactive)
   (let ((fill-column (point-max)))
     (fill-paragraph nil))
@@ -357,6 +386,7 @@ invoked by: ~/.emacs.d/init.el
         (goto-char (match-end 0)))))
 )
 
+;; (with-current-buffer (current-buffer)  (proto-swap "bar" "foo"))
 
 
 (defun uniq-lines (beg end)
@@ -531,7 +561,7 @@ invoked by: ~/.emacs.d/init.el
 (message "-------------- Done: Handy Function Definitions")
 #+end_src
 
-** Eval Elisp
+** Function Definitions - TreesyCalc & Evale Elisp
 #+begin_src emacs-lisp                            :REM Eval Elisp
 (load-library "grex-calc")
 
@@ -582,10 +612,70 @@ invoked by: ~/.emacs.d/init.el
         (t              (format " = %S"   val)))
 )
 
+; Notes:
+; Normally, this function truncates long output according to the value
+; of the variables `eval-expression-print-length' and
+; `eval-expression-print-level'.  With a prefix argument of zero,
+; however, there is no such truncation.  Such a prefix argument
+; lso causes integers to be printed in several additional formats
+; (octal, hexadecimal, and character).
+
+; -------------------------------------------------------------------------------- cuts
+; (delete-char 1)            (insert "I")                                                                      ; mark the source
+; (setq src-end (search-forward-regexp ".+(\)|;;;)" (line-end-position) nil))                                  ; (forward-sexp) doesn't work
+
+; (message "new-string %i XX%sXX" (length new-string) new-string)
+; (insert new-string)     
+; (setq new-string (concat "" resStr "  " (substring  reg-selection (+ (length ";= ") (length resStr)))))
+; (message "delete result region =XX%sXX" (buffer-substring-no-properties (region-beginning) (region-end)))
+; (delete-region (- (region-beginning) 2) (region-end))                                                        ; delete region and replace with result
+; (setq reg-selection (buffer-substring-no-properties (region-beginning) (region-end)))
+
+;(mapc (lambda (x) (message "Found rails %s" x)) rectangle-as-list)
+;(message rectangle-as-list)
+
+;(copy-rectangle-as-kill START END)
+; reg-search-back for "^;-sexps-;;;;;"
+; reg-seach on same line for ;-rails-;
+; foreach rail-col in rails:
+;    find input line
+;    find-eval value on this line
+;    foreach output-line
+;   
+
 (message "-------------- Done: Treesycalc")
 #+end_src
 
 * Settings
+
+** Highlighting/Cursor Visibility
+; ------------------------------------- highlighting
+(require 'highlight-sexp)  - fails
+(add-hook 'lisp-mode-hook 'highlight-sexp-mode)
+(add-hook 'emacs-lisp-mode-hook 'highlight-sexp-mode)
+ hl-sexp-background-color
+  - hl-sexp-foreground-color
+  - hl-sexp-face
+ Enable `highlight-sexps-mode'
+
+(list-colors-display)
+#+begin_src emacs-lisp
+
+(message "-------------- Start: Highlighting")
+(setq-default x-stretch-cursor t)                    ; switch to nil for magit (setq-default x-stretch-cursor nil)
+(blink-cursor-mode 0)
+(set-cursor-color "orange red")                      ; also at end of init.el, after theming 
+(setq cursor-type 'box)
+(global-hl-line-mode 1)                              ; (global-hl-line-mode 0) to turn off
+(set-face-background 'show-paren-match  "#777777")
+(set-face-attribute  'show-paren-match nil :weight 'bold :underline nil :overline nil :slant 'normal) 
+(show-paren-mode 1)
+(setq show-paren-style 'expression)                  ; or parenthesis of mixed
+(setq show-paren-when-point-inside-paren t)
+(setq show-paren-when-point-in-periphery t)
+(message "-------------- Done: Highlighting")
+#+end_src
+
 #+begin_src emacs-lisp                            :REM Settings
 (message "-------------- Start: Settings")
 ;;(setq epa-file-select-keys "nope")                                                      ; don't ask about assymmetric key?
@@ -618,9 +708,9 @@ invoked by: ~/.emacs.d/init.el
 (setq electric-indent-mode nil)                                                           ; 20240325_14:02:59
 (setq ivy-height 10)
 (tool-bar-mode -1)
-(transient-mark-mode t)                                                                   ; (setq-default frame-title-format "%b %p %p(%f)")
-(setq require-final-newline nil)                                                          ; means don't add newline
+(transient-mark-mode t) 
 
+;; (setq require-final-newline nil) ;; means don't add newline
 
 ;; ----------------------------------------------- Show keystrokes in progress
 (setq echo-keystrokes 0.1)
@@ -639,28 +729,6 @@ invoked by: ~/.emacs.d/init.el
 ;; (setq select-enable-primary t)
 ;; (setq mouse-drag-copy-region t)
 
-(global-subword-mode 1)
-;; from 'better-defaults.el'
-;; Allow clipboard from outside emacs
-;; (setq x-select-enable-clipboard t
-;;       x-select-enable-primary t
-;;       save-interprogram-paste-before-kill t
-;;       apropos-do-all t
-;;       mouse-yank-at-point t)
-(simpleclip-mode 1) ; requires simpleclip
-
-(defun filepath-on-clipboard ()
-  "Put the current file name on the clipboard"
-  (interactive)
- (let ((filename (if (memq major-mode '(dired-mode dired-sidebar-mode)) 
-                      default-directory
-                    (buffer-file-name))))
-    (when filename
-      (with-temp-buffer
-        (insert filename)
-        (clipboard-kill-region (point-min) (point-max)))
-      (message filename)))
-)
 
 ;; (xclip-mode 1) for emacs in terminal , export kill-yank
 
@@ -675,6 +743,15 @@ invoked by: ~/.emacs.d/init.el
       (kill-new filename)        
       (message filename)))
 )
+
+(global-subword-mode 1)
+;; from 'better-defaults.el'
+;; Allow clipboard from outside emacs
+;; (setq x-select-enable-clipboard t
+;;       x-select-enable-primary t
+;;       save-interprogram-paste-before-kill t
+;;       apropos-do-all t
+;;       mouse-yank-at-point t)
 
 ;; ----------------------------------------------- Shell
 (setq shell-file-name "bash")
@@ -780,24 +857,53 @@ invoked by: ~/.emacs.d/init.el
 
 #+end_src
 
-** Highlighting/Cursor Visibility
-#+begin_src emacs-lisp                            :REM highlighting
-(message "-------------- Start: Highlighting")
-(setq-default x-stretch-cursor t)                    ; switch to nil for magit (setq-default x-stretch-cursor nil)
-(blink-cursor-mode 0)
-(set-cursor-color "orange red")                      ; also at end of init.el, after theming 
-(setq cursor-type 'box)
-(global-hl-line-mode 1)                              ; (global-hl-line-mode 0) to turn off
-(set-face-background 'show-paren-match  "#777777")
-(set-face-attribute  'show-paren-match nil :weight 'bold :underline nil :overline nil :slant 'normal) 
-(show-paren-mode 1)
-(setq show-paren-style 'expression)                  ; or parenthesis of mixed
-(setq show-paren-when-point-inside-paren t)
-(setq show-paren-when-point-in-periphery t)
-(message "-------------- Done: Highlighting")
-#+end_src
+;(defun my-dired-mode-buffer-p (buf)
+;   "Non-nil if buffer BUF is in `dired-mode'."
+;   (with-current-buffer buf
+;     (derived-mode-p 'dired-mode)))
 
+;(defvar ibuffer-never-show-predicates '())
+;(with-eval-after-load "ibuffer" (add-to-list 'ibuffer-never-show-predicates #'my-dired-mode-buffer-p))
 
+------------------------------------------------------ new stuff
+;; Save point position between sessions.
+(use-package saveplace)
+(setq-default save-place t)
+(setq save-place-file (expand-file-name "places" user-emacs-directory))
+
+;; Fix empty pasteboard error.
+(setq save-interprogram-paste-before-kill nil)
+
+------------------------------------------------------ Colour
+(set-background-color "black")
+(set-background-color "darkgrey")
+(set-background-color "bisque")
+(set-background-color "bisque2")
+(set-background-color "bisque3")
+(set-face-background 'default "green3")
+(set-face-background 'default "lightyellow2")
+(set-face-background 'default "palevioletred")
+(set-face-background 'default "lightblue")
+(set-face-background 'default "paleturquoise")
+(set-face-background 'default "lightblue")
+
+(global-hl-line-mode 0) ; (global-hl-line-unhighlight) (global-hl-line-highlight)
+(global-mark-ring-max 50)
+
+(setq set-mark-command-repeat-pop 1) ;;-- needs emacs version 22
+(setq hscroll-margin 30)
+(setq hscroll-step 20) ;; # 0
+(setq header-line-format mode-line-format)
+(global-mark-ring-max 50)
+(global-set-key "\C-." 'pop-global-mark)
+(global-set-key [M-SPC] 'pop-global-mark)
+(global-set-key [S-right] 'forward-word)
+(global-set-key [remap eval-expression] 'pp-eval-expression)
+(setq mark-ring-max 50)
+(setq set-mark-command-repeat-pop 1) - needs emacs version 22
+(setq-default frame-title-format "%b %p %p(%f)")
+(setq-default line-spacing 0.06)
+M-x clone-indirect-buffer RET
 
 ** Web Proxy
 : -------------------------------------------------------------------- WEB PROXY
@@ -953,6 +1059,34 @@ invoked by: ~/.emacs.d/init.el
 ; Info symbol lookup
 ; While editing Elisp files, you can use C-h S (info-lookup-symbol) to look up Elisp symbols in the relevant Info manuals (see (emacs) Info Lookup). To enable the same for Dash symbols, use the command dash-register-info-lookup. It can be called directly when needed, or automatically from your user-init-file. For example:
 
+;; -------------------------- new stuff
+;; ;; Save point position between sessions.
+;; (use-package saveplace)
+;; (setq-default save-place t)
+;; (setq save-place-file (expand-file-name "places" user-emacs-directory))
+
+;; ;; Fix empty pasteboard error.
+;; (setq save-interprogram-paste-before-kill nil)
+
+;; ;; Auto refresh buffers when edits occur outside emacs
+;; (global-auto-revert-mode 1)
+
+;; ;; Also auto refresh dired, but be quiet about it
+;; (setq global-auto-revert-non-file-buffers t)
+;; (setq auto-revert-verbose nil)
+
+;; ;; Show keystrokes in progress
+;; (setq echo-keystrokes 0.5)
+(global-subword-mode 1)
+;; from 'better-defaults.el'
+;; Allow clipboard from outside emacs
+;; (setq x-select-enable-clipboard t
+;;       x-select-enable-primary t
+;;       save-interprogram-paste-before-kill t
+;;       apropos-do-all t
+;;       mouse-yank-at-point t)
+
+
 ** Python Mode
 
 #+begin_src emacs-lisp                            :REM Python Shell (ipython)
@@ -960,7 +1094,18 @@ invoked by: ~/.emacs.d/init.el
         python-shell-interpreter-args "-i --simple-prompt --InteractiveShell.display_page=True")
 #+end_src
 
-#+begin_src emacs-lisp                            :REM Python Mode
+
+#+begin_src emacs-lisp
+
+;; ------------------------------------------- Python Mode
+;(add-hook 'python-mode-hook
+;  #'(lambda ()
+;      (define-key python-mode-map "\C-m" 'newline-and-indent)))
+;(add-hook 'python-mode-hook
+;                 (lambda ()
+;                       (setq-default indent-tabs-mode t)
+;                       (setq-default tab-width 4)
+;                       (setq-default python-indent 4)))
 (defun my-python-hook ()
    (setq indent-tabs-mode nil)
    (setq tab-width 4)
@@ -969,7 +1114,9 @@ invoked by: ~/.emacs.d/init.el
    (progn
      (define-key python-mode-map [kp-9] 'python-nav-backward-block)
      (define-key python-mode-map [kp-6] 'yafolding-toggle-element)
-     (define-key python-mode-map [kp-3] 'python-nav-forward-block))
+     (define-key python-mode-map [kp-3] 'python-nav-forward-block)
+     (define-key python-mode-map (kbd "C-c <")   'selective-display-level-decr)
+     (define-key python-mode-map (kbd "C-c >")   'selective-display-level-incr))
 )
 
 (add-hook 'python-mode-hook 'my-python-hook)
@@ -1035,7 +1182,8 @@ invoked by: ~/.emacs.d/init.el
 
 ** Ivy/Counsel Mode
 #+begin_src emacs-lisp                            :REM Ivy/Counsel
-(ivy-mode 1)                                         ; M-i to insert and modify
+
+(ivy-mode 1)  ; M-i to insert and modify
 (counsel-mode 1)
 (define-key ivy-minibuffer-map (kbd "<up>")   'previous-line-or-history-element)
 (define-key ivy-minibuffer-map (kbd "<down>") 'next-line-or-history-element)
@@ -1137,6 +1285,23 @@ invoked by: ~/.emacs.d/init.el
 
 (defun org-collapse()     (interactive) (org-shifttab 0))
 
+;; also in org-table.el (defun org-table-transpose-table-at-point ()
+;(defun org-transpose-table-at-point ()
+;  "Transpose orgmode table at point, eliminate hlines."
+;  (interactive)
+;  (let ((contents (apply #'mapcar* #'list                       ;; <== LOB magic imported here
+;                         (remove-if-not 'listp (org-table-to-lisp)))))  ;; remove 'hline from listsignals error if not table
+;    (delete-region (org-table-begin) (org-table-end))
+;    (insert (mapconcat (lambda(x) (concat "| " (mapconcat 'identity x " | " ) "
+;  |\n" ))
+;                       contents
+;                       ""))
+;    (org-table-align))
+;  )
+
+;; --------- org-mode key bindings
+;(define-key global-map "\C-cl" 'org-store-link)
+;(define-key global-map "\C-ca" 'org-agenda)
 (progn
   (define-key org-mode-map (kbd "C-c C->")  #'org-demote-subtree)
   (define-key org-mode-map (kbd "C-c d")    #'org-demote-subtree)
@@ -1146,6 +1311,11 @@ invoked by: ~/.emacs.d/init.el
 
   (define-key org-mode-map (kbd "<S-up>")   #'scroll-one-line-down)
   (define-key org-mode-map (kbd "<S-down>") #'scroll-one-line-up)
+
+  ;(define-key org-mode-map (kbd "<C-up>")   #'outline-up-heading)
+  ;(define-key org-mode-map (kbd "<C-home>") #'my-org-babel-prev)
+  ;(define-key org-mode-map (kbd "<C-end>")  #'my-org-babel-next)
+  ;(define-key org-mode-map (kbd "C-c u")    #'outline-up-heading)
 
   (define-key org-mode-map (kbd "C-c n")    #'my-org-babel-execute-and-next)
   (define-key org-mode-map (kbd "C-c C-t")  #'org-transpose-table-at-point)
@@ -1157,6 +1327,24 @@ invoked by: ~/.emacs.d/init.el
   ;(define-key org-mode-map (kbd "<f9> p") 'my-prev-image)
   ;(define-key org-mode-map (kbd "<f9> i") 'my-insert-current-image-path)
 )
+;; needs ox.el = org-exporter.el
+;;(require 'ox-confluence)
+
+;;C-c c       (org-capture)          Call the command org-capture. Note that this key binding is global and not active by default: you need to install it. If you have templates defined see Capture templates, it will offer these templates for selection or use a new Org outline node as the default template. It will insert the template into the target file and switch to an indirect buffer narrowed to this new node. You may then insert the information you want.
+;;C-c C-c     (org-capture-finalize) Once you have finished entering information into the capture buffer, C-c C-c will return you to the window configuration before the capture process, so that you can resume your work without further distraction. When called with a prefix arg, finalize and then jump to the captured item.
+;;C-c C-w     (org-capture-refile)   Finalize the capture process by refiling (see Refile and copy) the note to a different place. Please realize that this is a normal refiling command that will be executed—so the cursor position at the moment you run this command is important. If you have inserted a tree with a parent and children, first move the cursor back to the parent. Any prefix argument given to this command will be passed on to the org-refile command.
+;;C-c C-k     (org-capture-kill)     Abort the capture process and return to the previous state.
+;;You can also call org-capture in a special way from the agenda, using the k c key combination. With this access, any timestamps inserted by the selected capture template will default to the cursor date in the agenda, rather than to the current date.
+;;To find the locations of the last stored capture, use org-capture with prefix commands:
+;;C-u C-c c                          Visit the target location of a capture template. You get to select the template in the usual way.
+;;C-u C-u C-c c                      Visit the last stored capture item in its buffer.
+
+;; You can also jump to the bookmark org-capture-last-stored, which
+;; will automatically be created unless you set org-capture-bookmark
+;; to nil.
+;; To insert the capture at point in an Org buffer, call org-capture
+;; with a C-0 prefix argument.
+;;
 
 (defun org-table-to-sql ()
   (interactive)
@@ -1300,91 +1488,11 @@ invoked by: ~/.emacs.d/init.el
 :  (defun org-collapse()     (interactive) (org-shifttab 0))
 : 
 
-*** faded
-: ;---------------------------------------- expand and collapse
-: (defun org-advance ()
-:   (interactive)
-:   (when (buffer-narrowed-p)
-:   (beginning-of-buffer)
-:   (widen)
-:   (org-forward-heading-same-level 1))
-:   (org-narrow-to-subtree)
-:   )
-: 
-: (defun org-retreat ()
-:   (interactive)
-:   (when (buffer-narrowed-p)
-:     (beginning-of-buffer)
-:     (widen)
-:     (org-backward-heading-same-level 1))
-:     (org-narrow-to-subtree)
-:     )
-: 
-: --------------;--------------------------------------------------------------------- org-confluence
-: ; needs ox.el = org-exporter.el
-: (require 'ox-confluence)
-: (require 'org-exp)
-: (require 'org-export)
-: (require 'org-confluence)
-: 
-: ;----------------------------------------------------------------------------------- org-trello
-: ;; NO: (add-to-list 'load-path "L:/MyDocs/ulib/emacs/org-trello-master/")
-: ;;its here: /home/kleynmi/l_C/cygwin64/home/kleynmi/.emacs.d/elpa/org-trello-0.8.1/org-trello.el:
-: 
-: (require 'org-trello)
-: ;; load trello-key.el
-: (add-to-list 'auto-mode-alist '("\\.trello$" . org-mode)) ;; org-trello major mode for all .trello files
-: (add-hook 'org-mode-hook                                  ;; add a hook function to check if this is trello file
-:           (lambda ()                                      ;; then activate the org-trello minor mode.
-:             (let ((filename (buffer-file-name (current-buffer))))
-:               (when (and filename (string= "trello" (file-name-extension filename)))
-:               (org-trello-mode)))))
-: 
-: (org-trello-install-key-and-token)
-: (org-trello-install-board-metadata)
-: (org-trello-update-board-metadata)
-: (org-trello-sync-buffer t) ; sync of the entire buffer FROM trello.
-: 
-: (setq board-name (read-from-minibuffer "Trello Board: ")
-: 
-: (defun mk-init-keys-trello ()         ; read keys an register them via org-trello function
-:    (load "~/.emacs.d/trello-key.el")
-:    (orgtrello-controller--do-install-config-file my-trello-id my-trello-consumer-key my-trello-access-token 'do-ask-for-overwrite)
-: )
-: 
-: (defun mk-refresh-from-trello ()   ; sync the entire buffer FROM trello.
-:    (interactive)
-:    ;; (switch-to-buffer board-name)
-:    ;; (buffer-mode "org-mode")
-:    (org-trello-update-board-metadata)  (message "org-trello-update-board-metadata done")
-:    (org-trello-sync-buffer t)    (message "org-trello-sync-buffer done");; t=> FROM TRELLO -TO-> FILE
-: 
-: )
-: 
-: (defun mk-get-from-trello ()   ; prompt for a board, then sync the buffer FROM trello.
-:    (interactive)
-:    (org-trello-install-board-metadata) (message "org-trello-install-board-metadata done") ;; only for a new board, prompts for board
-:    (org-trello-update-board-metadata)  (message "org-trello-update-board-metadata done")
-:    (org-trello-sync-buffer t)          (message "org-trello-sync-buffer done")  ;; t=> FROM TRELLO -TO-> FILE
-: )
-: 
-: ;; (orgtrello-controller-do-sync-buffer-from-trello)
-: ;; org-trello-install-key-and-token
-: ;; (org-trello-update-board-metadata)
-: ;; (Org-trello-sync-buffer t)
-: 
-: ;;(org-trello-current-prefix-keybinding "C-c o" nil (org-trello))
-: ;; (progn
-: ;;   (require 'org)
-: ;;   (require 'org-trello-utils)
-: ;;   (require 'org-trello-log)
-: ;;   (require 'org-trello-hash)
-: ;;   (require 'dash)
-: ;;   (require 'org-trello))
 
 *** Org-Babel
 
 #+begin_src emacs-lisp                     :REM org navigation functions
+
 (defun my-org-cycle-or-fold ()
   "use language-folding if in code block, otherwise usual org-cycle"
   (interactive)
@@ -1508,6 +1616,7 @@ invoked by: ~/.emacs.d/init.el
          (progn (message "my-org-uplevel:got here"))))
 )
   ;(message (concat "my-org-uplevel:AFTER:" (prin1-to-string (org-element-type oeap)) "  " (prin1-to-string (org-element-type oec))))
+
 #+end_src
 
 #+begin_src emacs-lisp
@@ -1519,6 +1628,8 @@ invoked by: ~/.emacs.d/init.el
                                                           (dot . t)
                                                           (calc . t)
                                                           (jupyter . t)))   ; !!!!!!!! must be last !!! must be last !!!! for jupyter-python!!!!!!
+ ;; (ipython . t)
+ ;; (ein . t)
 
 (defun my-org-babel-execute-and-next ()
     (interactive)
@@ -1665,12 +1776,6 @@ invoked by: ~/.emacs.d/init.el
 (add-hook 'ediff-quit-hook 'my-ediff-qh)
 
 
-
-
-
-#+RESULTS:
-: ora-ediff-files
-
 *** Window arrangements
 
 #+begin_src emacs-lisp     :REM Window Arrangements
@@ -1683,33 +1788,16 @@ invoked by: ~/.emacs.d/init.el
   (let ((ded (set-window-dedicated-p (selected-window)  (not (window-dedicated-p (selected-window))))))
      (message (format "Window %s dedication = %s" (selected-window) ded))))
 
-(setq dired-sidebar-width 50)
-(setq ibuffer-sidebar-width 50)
+;;----------------------- subtree
 (setq dired-subtree-line-prefix "  ")
 (setq dired-subtree-use-backgrounds nil)
 (add-to-list 'display-buffer-alist `("^:~/"             display-buffer-in-side-window (side . left) (slot . 0) (window-parameters . ((no-delete-other-windows . t))) (window-width . 50)))
 (add-to-list 'display-buffer-alist `(("\\*:Buffers:\\*" display-buffer-in-side-window (side . left) (slot . 1) (window-parameters . ((no-delete-other-windows . t))) (window-width . 50)  (preserve-size . (t . nil)))))
 
-(defun make-ide-windows ()
-  "Toggles window dedication in the selected window."
-  (interactive)
-
-  (let* ((dired-buffer (dired-sidebar-get-or-create-buffer "/home/kleyn/"))
-         (dired-window (get-buffer-window dired-buffer)))
-
-       (ibuffer-sidebar-show-sidebar)
-       (dired-sidebar-show-sidebar dired-buffer)    ;; dired and ibuffer on the left
-       (set-window-dedicated-p dired-window    t)
-       (setq window-size-fixed nil))
-)
-  ;; window--make-major-side-window
-  ;; (display-buffer-in-side-window (get-buffer "*Messages*") `((side . right) (window-width . 50)))  ;; messages on the right
-  ;; (display-buffer-in-side-window (get-buffer "*eshell*")   `((side . bottom) (window-height . 10))))
-
-
-
-
 #+end_src
+
+;; Also highly recommended is RefTeX, a cross-reference, bibliography, glossary, and index manager initially written by the creator of Org Mode, Carsten Dominik. Add the following line to .emacs:
+;; (add-hook 'LaTeX-mode-hook 'turn-on-reftex)
 
 : This first part controls the shells. It will force Emacs to place them at the bottom, with a window height of no more than 30% of the size of the frame.
 : 
@@ -1756,11 +1844,38 @@ invoked by: ~/.emacs.d/init.el
 : display-buffer-alist = nil
 : (current-window-configuration) = #<window-configuration>
 : window-dedicated-p
- 
-*** Dired stuff
+
+** Dired Stuff
+
+(defconst dired-audio-files-extensions  '("mp3" "MP3" "ogg" "OGG" "flac" "FLAC" "wav" "WAV")  
+          "Dired Audio files extensions")
+(dired-rainbow-define audio "#329EE8" dired-audio-files-extensions)
+(defconst dired-video-files-extensions  '("vob" "VOB" "mkv" "MKV" "mpe" "mpg" "MPG" "mp4" "MP4" "ts" "TS" "m2ts" "M2TS" "avi" "AVI" "mov" "MOV" "wmv" "asf" "m2v" "m4v" "mpeg" "MPEG" "tp")
+          "Dired Video files extensions")
+(dired-rainbow-define video "#B3CCFF" dired-video-files-extensions)
 
 #+begin_src emacs-lisp
-; (dired-sidebar-toggle dirname)
+
+;; Hide file ownership/permissions by default
+(add-hook 'dired-mode-hook 'dired-hide-details-mode)
+
+(defconst dired-pickle-extensions  '("pk")  "Dired pickle file extensions")
+(dired-rainbow-define audio "#329EE8" dired-pickle-extensions)
+
+
+(defun dired-toggle-listing ()
+  "Toggle between showing only directories and showing all files and directories excluding hidden files."
+  (interactive)
+  (if (string-match-p "--hide=" dired-listing-switches)
+      (setq dired-listing-switches dired-listing-switches_showFiles )
+    (setq dired-listing-switches dired-listing-switches_hideFiles ))
+  (dired-sort-other dired-listing-switches))
+
+(message "--------------Emacs Windows Section")
+
+;;----------------------- subtree
+(setq dired-subtree-line-prefix "  ")
+(setq dired-subtree-use-backgrounds nil)
 
 ;;(setq dired-use-ls-dired nil)
 (setq dired-dwim-target t)
@@ -1955,6 +2070,15 @@ invoked by: ~/.emacs.d/init.el
           (setq result (match-string 2))))
       result)))
 
+(defun get-in-file-url-webloc (file-path)
+  "heuristically extracts url from .webloc file"
+   (with-temp-buffer
+     (message (concat "url-file-path:" file-path))
+     (insert-file-contents file-path)
+     (let ((xml-dom-tree (libxml-parse-xml-region (point-min) (point-max))))
+       (print xml-dom-tree)
+       (cadr (dom-strings xml-dom-tree)))))
+
 (defun my-eww-open-file ()
   (interactive)
   (let ((curDrdBuff (current-buffer))
@@ -1975,7 +2099,6 @@ invoked by: ~/.emacs.d/init.el
              (eww url)))))
 
 (progn
-  (define-key dired-mode-map (kbd "TAB")       'dired-sidebar-subtree-toggle)
   (define-key dired-mode-map "J"               'dired-move-to-old) ; junk
   (define-key dired-mode-map "O"               'ergoemacs-open-in-external-app)  
   (define-key dired-mode-map (kbd "A")         'dired-toggle-listing)
@@ -2006,6 +2129,32 @@ invoked by: ~/.emacs.d/init.el
 #+end_src
 
 *** Dired/subtree funs
+
+:  (dired-utils-is-dir-p)
+:  (dired-utils-is-file-p)
+:  (dired-view-current)     ; was dired-display-file
+:  (define-key dired-mode-map "r" 'wdired-change-to-wdired-mode)
+:  (define-key dired-mode-map (kbd "K") 'dired-k)
+:  (define-key dired-mode-map (kbd "p")  'dired-subtree-only-this-file)
+:        tbd: pick-off the path of the given file into clipboard
+:        of emacs.  It is adviced to place bindings for these into a
+:        convenient prefix key map, for example `C-,`
+: 
+:   dired-subtree-remove
+:   dired-subtree-revert
+:   dired-subtree-narrow
+:   dired-subtree-up
+:   dired-subtree-down
+:   dired-subtree-previous-sibling
+:   dired-subtree-beginning
+:   dired-subtree-end
+:   dired-subtree-mark-subtree
+:   dired-subtree-unmark-subtree
+:   dired-subtree-only-this-file
+:   dired-subtree-only-this-directory
+: 
+:  ;(add-hook 'ediff-mode-hook (lambda () (setq ediff-shell "C:/cygwin/bin/mintty.exe")))
+:  ;(add-hook 'ediff-load-hook (lambda () (setq ediff-shell "C:/cygwin/bin/mintty.exe")))
 
 *** Dired Notes
 :  ;;(defalias 'dired-up (kbd "ESC < C-e C-r / NUL C-a ESC w C-x d C-a C-y C-k C-a ESC \\ C-e RET C-x b RET C-x k RET"))
@@ -2059,40 +2208,6 @@ invoked by: ~/.emacs.d/init.el
 :  ;;     (add-to-list 'tramp-connection-properties (list (regexp-quote "android") "remote-shell" "sh"))
 :  ;; Open a remote connection with a more concise command C-x C-f /ssh:android: <RET>.
 
-*** faded
-
-:  ;; if it's a folder=>insert subdir  & move to first; elseif it's a file = >preview-in-other window and move to next, if it's previewed,....
-:  (defun my-subdired-dfs ()
-:    (interactive)
-:    (dired-subtree--is-expanded-p)
-:    (dired-utils-is-dir-p)
-:    (dired-utils-is-file-p)
-:    (let ((sDpth (dired-subtree--get-depth (dired-subtree--get-ov))))
-:      (if (eq sDpth 0)
-:          (if (dired-utils-is-dir-p)
-:              (dired-subtree-insert))
-:          (dired-subtree-remove))))
-: 
-:  (defun my-subdired-dfs ()
-:    (interactive)
-:    (dired-utils-is-dir-p)
-:    (dired-utils-is-file-p)
-:    (let ((sDpth (dired-subtree--get-depth (dired-subtree--get-ov))))
-:          (if (dired-utils-is-dir-p)
-:              (if (dired-subtree--is-expanded-p)
-:                  (dired-subtree-remove)
-:                  (dired-subtree-insert)))))
-:  (define-key dired-mode-map [left]            'dired-up) ;; dired-up-directory
-:  (define-key dired-mode-map [left]            'dired-up-directory)
-:  (define-key dired-mode-map [right]           'dired-go-subdir-kbm)
-:  (define-key dired-mode-map (kbd "<S-down>")  'dired-subtree-next-sibling)
-:  (define-key dired-mode-map (kbd "<S-left>")  'dired-subtree-remove)
-:  (define-key dired-mode-map (kbd "<S-right>") 'dired-subtree-insert)
-:  (define-key dired-mode-map (kbd "<S-up>")    'dired-subtree-previous-sibling)
-:  (define-key dired-mode-map [right]           'dired-find-file-drop-prev-dired-buffer)
-:  (define-key dired-mode-map [left]            'dired-up-directory-drop-prev-dired-buffer)
-:  (define-key dired-mode-map (kbd "C-n")       'dired-next-line)
-:  (define-key dired-mode-map (kbd "C-p")       'dired-previous-line)
 
 ** Image Dired
 
@@ -2361,80 +2476,81 @@ for flushing messages to *Message* buffer
 
 ** Global Keys
 #+begin_src emacs-lisp
-  ; Ordered by order on QWERTY keyboard
+; 20211215_15:09:19 ordered by order on QWERTY keyboard
+;;  (global-set-key "\C-q"          'quoted-insert)  ; for resetting, already default
 
-  ; C-c
-  ;
-  ; qwerty 1st row
-  (global-set-key (kbd "C-<tab>")    'yafolding-toggle-element)
-  (global-set-key (kbd "C-c q")      'lines-to-cslist)                                    ; 'quick-calc
-  (global-set-key (kbd "C-c w")      'delete-trailing-whitespace)
-  (global-set-key (kbd "C-c r")      'auto-revert-tail-mode)
-  (global-set-key (kbd "C-c t")      'toggle-truncate-lines)
-  (global-set-key (kbd "C-c C-t")    'org-table-convert-region)
-  (global-set-key (kbd "C-c i")      'indent-to-column)
-  ;
-  ; qwerty 2nd row
-  (global-set-key (kbd "C-c s")      'parallel-swap)
-  (global-set-key (kbd "C-c d")      'ediff-directories)
-  (global-set-key (kbd "C-c j")      'go-to-column)                                       ; "jump"
-  (global-set-key (kbd "C-c l")      'ed-dup-line)
-  (global-set-key (kbd "C-c ;")      'comment-or-uncomment-region)
-  ;
-  ; qwerty 3rd row
-  (global-set-key (kbd "C-c b")      'ediff-buffers)
-  (global-set-key (kbd "C-c C-b")    'compare-windows)
-  (global-set-key (kbd "C-c <")      'selective-display-level-decr)
-  (global-set-key (kbd "C-c >")      'selective-display-level-incr)
-  ; C-s
-  ;(global-set-key (kbd "C-s y")     'overwrite-yank)
-  ;
-  ; C-x
-  ; qwerty 0th row
-  (global-set-key (kbd "C-x 3")     #'(lambda () (interactive) (split-window-right) (other-window 1))) ;; was switch-to-buffer
-  ;
-  ; qwerty 1st row
-  (global-set-key (kbd "C-x q")      'align-lisp)
-  (global-set-key (kbd "C-x e")      'eval-next-sexp)                                     ; C-x C-w for *last* sexp
-  (global-set-key (kbd "C-x t")      'instimestamp)                                       ; C-x C-t is swap lines
+; C-c
+;
+; qwerty 1st row
+(global-set-key (kbd "C-<tab>")    'yafolding-toggle-element)
+(global-set-key (kbd "C-c q")      'lines-to-cslist)                                    ; 'quick-calc
+(global-set-key (kbd "C-c w")      'delete-trailing-whitespace)
+(global-set-key (kbd "C-c r")      'auto-revert-tail-mode)
+(global-set-key (kbd "C-c t")      'toggle-truncate-lines)
+(global-set-key (kbd "C-c C-t")    'org-table-convert-region)
+(global-set-key (kbd "C-c i")      'indent-to-column)
+;
+; qwerty 2nd row
+(global-set-key (kbd "C-c s")      'parallel-swap)
+(global-set-key (kbd "C-c d")      'ediff-directories)
+(global-set-key (kbd "C-c j")      'go-to-column)                                       ; "jump"
+(global-set-key (kbd "C-c l")      'ed-dup-line)
+(global-set-key (kbd "C-c ;")      'comment-or-uncomment-region)
+;
+; qwerty 3rd row
+(global-set-key (kbd "C-c b")      'ediff-buffers)
+(global-set-key (kbd "C-c C-b")    'compare-windows)
+(global-set-key (kbd "C-c <")      'selective-display-level-decr)
+(global-set-key (kbd "C-c >")      'selective-display-level-incr)
+; C-s
+;(global-set-key (kbd "C-s y")     'overwrite-yank)
+;
+; C-x
+; qwerty 0th row
+(global-set-key (kbd "C-x 3")   '(lambda () (interactive) (split-window-right) (other-window 1))) ;; was switch-to-buffer
+; qwerty 1st row - treesycalc
+(global-set-key (kbd "C-x q")   'align-lisp)
+(global-set-key (kbd "C-x w")   'grexc-tidy)
+(global-set-key (kbd "C-x e")   'eval-last-sexp)
+(global-set-key (kbd "C-x t")   'instimestamp)
+(global-set-key (kbd "C-x y")   'grexc-update-sexp-result)
+(global-set-key (kbd "C-x u")   'grexc-parse)
+(global-set-key (kbd "C-x i")   'my-insert-last-sexp) ; ielm
+(global-set-key (kbd "C-x p")   'my-transpose-sexps)
+; qwerty 2nd row
+(global-set-key (kbd "C-x D")     #'image-dired)                                        ; C-f, C-b forward/backward image
+(global-set-key (kbd "S-<right>") #'image-dired-display-next-thumbnail-original)        ; my-next-image)
+(global-set-key (kbd "S-<left>")  #'image-dired-display-previous-thumbnail-original)    ; my-prev-image)
+(global-set-key (kbd "C-x d")     #'dired)
+(global-set-key (kbd "C-x f")      'find-function)                                      ; set-fill-column other-frame view-buffer-other-frame switch-to-buffer-other-frame
 
-  (global-set-key (kbd "C-x i")      'my-insert-last-sexp)                                ; ielm
-  (global-set-key (kbd "C-x p")      'my-transpose-sexps)
-  ;
-  ; qwerty 2nd row
-  (global-set-key (kbd "C-x D")     #'image-dired)                                        ; C-f, C-b forward/backward image
-  (global-set-key (kbd "S-<right>") #'image-dired-display-next-thumbnail-original)        ; my-next-image)
-  (global-set-key (kbd "S-<left>")  #'image-dired-display-previous-thumbnail-original)    ; my-prev-image)
-  (global-set-key (kbd "C-x d")     #'dired)
-  (global-set-key (kbd "C-x f")      'find-function)                                      ; set-fill-column other-frame view-buffer-other-frame switch-to-buffer-other-frame
+(global-set-key (kbd "C-x G")      'vc-ediff)
+(global-set-key (kbd "C-x g")      'magit-status)
+(global-set-key (kbd "C-x l")      'list-matching-lines)
+; (global-set-key (kbd "C-x G") '(lambda () (interactive) (progn (switch-to-buffer-other-frame (current-buffer)) (vc-ediff))))
+; (global-set-key (kbd "C-x G") '(lambda () (interactive) (progn (make-frame '((minibuffer . t))) )))   ;; (vc-ediff)
+;
+; qwerty 3rd row
+(global-set-key (kbd "C-x c")      'filepath-on-clipboard-and-killring)
+(global-set-key (kbd "C-x b")      'ivy-switch-buffer)                                  ; was switch-to-buffer
+(global-set-key (kbd "C-x C-b")   #'(lambda () (interactive) (ibuffer "home") (ibuffer-switch-to-saved-filter-groups "home")))  ; (global-set-key (kbd "C-x C-b") 'my-list-buffers)
+(global-set-key (kbd "C-x C-a")   #'pop-to-mark-command)  ; (global-set-key (kbd "C-x C-b") 'my-list-buffers)  
 
-  (global-set-key (kbd "C-x G")      'vc-ediff)
-  (global-set-key (kbd "C-x g")      'magit-status)
-  (global-set-key (kbd "C-x l")      'list-matching-lines)
-  ; (global-set-key (kbd "C-x G") '(lambda () (interactive) (progn (switch-to-buffer-other-frame (current-buffer)) (vc-ediff))))
-  ; (global-set-key (kbd "C-x G") '(lambda () (interactive) (progn (make-frame '((minibuffer . t))) )))   ;; (vc-ediff)
-  ;
-  ; qwerty 3rd row
-  (global-set-key (kbd "C-x c")      'filepath-on-clipboard)
-  (global-set-key (kbd "C-x b")      'ivy-switch-buffer)                                  ; was switch-to-buffer
-  (global-set-key (kbd "C-x C-b")   #'(lambda () (interactive) (ibuffer "home") (ibuffer-switch-to-saved-filter-groups "home")))  ; (global-set-key (kbd "C-x C-b") 'my-list-buffers)
-  (global-set-key (kbd "C-x C-a")   #'pop-to-mark-command)  ; (global-set-key (kbd "C-x C-b") 'my-list-buffers)  
+(global-set-key (kbd "C-s-y") 'overwrite-yank)
 
-
-  (global-set-key (kbd "s-\\")       'delete-whitespace-right)
-  (global-set-key (kbd "C-z")        'undo)                                               ; replace-string
-  (global-set-key (kbd "C-.")        'repeat)
-  (global-set-key (kbd "M-$")        'query-replace-regexp)
-  (global-set-key (kbd "M-y")        'counsel-yank-pop)
-  (global-set-key (kbd "M-o")        'ace-window)                                         ; (setq aw-background nil)
-  (global-set-key (kbd "<end>")      'other-window)
-  ; (global-set-key (kbd "<f9> i")   'my-insert-current-image-path)
-  ; (global-set-key (kbd "M-.")      'hs-toggle-hiding)                                   ; was xref find defs
-  ; (global-set-key "\C-q"           'quoted-insert)                                      ; for resetting, already default
+(global-set-key (kbd "s-\\")       'delete-whitespace-right)
+(global-set-key (kbd "C-z")        'undo)                                               ; replace-string
+(global-set-key (kbd "C-.")        'repeat)
+(global-set-key (kbd "M-$")        'query-replace-regexp)
+(global-set-key (kbd "M-y")        'counsel-yank-pop)
+; (global-set-key (kbd "<f9> i")   'my-insert-current-image-path)
+; (global-set-key (kbd "M-.")      'hs-toggle-hiding)                                   ; was xref find defs
+; (global-set-key "\C-q"           'quoted-insert)                                      ; for resetting, already default
 
 
-  (message "-------------- Done: Global Keys")
+(message "-------------- Done: Global Keys")
 #+end_src
+
 ** org-babel keys notes
 C-down / C-up = next section / previous section in org-babel
 org-goto
@@ -2494,233 +2610,151 @@ org-goto
 (global-set-key [C-f1]     #'(lambda () (interactive) (progn (if (eq (get-buffer "*shell*")  nil) (shell))      (switch-to-buffer "*shell*"))))
 (global-set-key [S-f1]     #'(lambda () (interactive) (progn (if (eq (get-buffer "*Python*") nil) (run-python)) (switch-to-buffer "*Python*"))))
 (global-set-key [M-f1]     #'(lambda () (interactive) (progn (set-mark-command 0))))
-;(global-set-key [s-f1]     'split-window-3)
-(defun split-window-3 ()
- "Splite window into 4 sub-window"
- (interactive)
- (if (= 1 (length (window-list)))
-     (progn  (split-window-horizontally -60)
-             (split-window-vertically -30) ; lower window gets 40 lines
-	    ;(other-window 2)
-	    ;(split-window-horizontally)
-	    )
-   )
+
+;;'ielm) ;; open file under cursor ;;(global-set-key [M-f9] 'my-insert-last-sexp) ;; insert result
+
+(global-set-key [f2]       #'(lambda () (interactive) (find-file "/home/kleyn/aNotes/doAndDone.org")))
+(global-set-key [C-f2]     #'(lambda () (interactive) (find-file "/home/kleyn/stromatolite/priv/aNotes/ToDoList.org")))  ;; aNotes/mySystems.org
+(global-set-key [S-f2]     #'(lambda () (interactive) (find-file "/home/kleyn/aNotes/bigNotes.org")))
+(global-set-key [M-f2]     #'(lambda () (interactive) (find-file "/home/kleyn/projects/repos/mkmain/landing/jupyClips.org")))
+(global-set-key [s-f2]     #'(lambda () (interactive) (find-file "/home/kleyn/aNotes/access.org.gpg")))
+
+(global-set-key [f3]       #'list-command-history) 
+(global-set-key [S-f3]     #'(lambda () (interactive) (progn (find-file (concat "/home/kleyn/history/commands/history_" (format-time-string "%Y" (current-time)) "-w" (format-time-string "%W" (current-time))))
+                                                            (setq truncate-lines t)
+                                                            (goto-char (point-max))
+                                                            (auto-revert-mode)))) ;; history_2021-w30
+(global-set-key [C-f3]     #'(lambda () (interactive) (dired     "/home/kleyn/history/commands/history_2021-w*")))  ; view this week's bash history
+(global-set-key [M-f3]     #'(lambda () (interactive) (find-file "/home/kleyn/.emacs.d/dotEmacs.org") (search-forward "** Function Keys") (org-show-subtree)))  ;; nok900  'my-openfile  'neotree-show
+(global-set-key [s-f3]     #'(lambda () (interactive) (find-file "/home/kleyn/config/dot/dotBashrc") ))
+
+
+(global-set-key [f4]       'tbd)
+(global-set-key [C-f4]     'tbd)
+(global-set-key [S-f4]     #'(lambda () (interactive) (dired "~/")))
+
+
+(global-set-key [f5]       #'ergoemacs-open-in-external-app)    ;; bookmark-menu-list',
+(global-set-key [C-f5]     #'ffap)
+(global-set-key [S-f5]     #'(lambda () (interactive)  (let ((fpth (thing-at-point 'filename t))) (kill-new fpth) (message fpth))))  ; copy file path at point
+(global-set-key [M-f5]     #'filepath-to-clipboard-and-killring)
+(global-set-key [s-f5]     #'dired-paste-to-yank-buffer)
+
+
+(global-set-key [f6]       #'toggle-truncate-lines)
+(global-set-key [C-f6]     #'toggle-window-split)
+(global-set-key [S-f6]     #'bool-flip-do-flip)
+(global-set-key [M-f6]     #'grexc-update-sexp-result)
+(global-set-key [s-f6]     #'(lambda () (interactive)  (let* ((currWord (thing-at-point 'symbol t))
+                                                              (currWordVal (symbol-value (intern currWord))))
+                                                          (switch-to-buffer "*scratch*")
+                                                          (goto-char (point-min))                                              ;; (print currWordVal  (get-buffer "*scratch*"))
+                                                          (cl-prettyprint currWordVal))))
+
+
+(global-set-key [f7]       #'org-table-sort-lines)
+(global-set-key [C-f7]     #'org-table-transpose-table-at-point)
+(global-set-key [S-f7]     #'org-table-export)
+(global-set-key [M-f7]     #'org-table-toggle-coordinate-overlays)
+(global-set-key [s-f7]     #'org-table-recalculate)          ;; org-table-convert-region
+
+
+(global-set-key [f8]       #'(lambda () (interactive) (org-babel-execute-src-block)))
+(global-set-key [C-f8]     #'(lambda () (interactive) (my-org-babel-execute-and-next)))
+(global-set-key [S-f8]     #'(lambda () (interactive) (org-babel-execute-subtree)))
+(global-set-key [M-f8]     #'(lambda () (interactive) (org-latex-preview)))
+(global-set-key [s-f8]     #'(lambda () (interactive) (org-babel-switch-to-session)))
+
+
+(global-set-key [f9]       #'kmacro-start-macro)                ;; 'ielm)  ;; open file under cursor
+(global-set-key [C-f9]     #'kmacro-end-and-call-macro)         ;; see-shell-output)
+(global-set-key [S-f9]     #'kmacro-end-macro)
+(global-set-key [M-f9]     #'(lambda () (interactive) (recenter-top-bottom  0)))
+(global-set-key [s-f9]     #'(lambda () (interactive) (recenter-top-bottom 50)))
+
+
+(global-set-key [f10]      #'yafolding-toggle-element)
+(global-set-key [C-f10]    #'yafolding-toggle-all)
+(global-set-key [S-f10]    #'yafolding-show-all)
+(global-set-key [M-f10]    #'yafolding-mode)     ;(global-set-key [M-f10]    'see-shell-output)  
+(global-set-key [s-f10]    #'yafolding-discover)
+
+
+(global-set-key [f11]      #'selective-display-level-zero)
+(global-set-key [C-f11]    #'selective-display-level-incr)
+(global-set-key [S-f11]    #'selective-display-level-decr)
+
+
+(global-set-key [f12]      #'edebug-defun)                      ;; put break in defun/ form whatever - REMOVE by re-evaluating the definition
+(global-set-key [C-f12]    #'eval-defun)    
+(global-set-key [S-f12]    #'set-debug-on)
+(global-set-key [M-f12]    #'set-debug-off)
+(global-set-key [s-f12]    #'insertcodePyCodeSnippet)
+
+(global-unset-key    "\C-x\C-c")                                      ;; Don't quit so easily
+(global-set-key (kbd "C-x C-c C-v")  #'save-buffers-kill-emacs)        ;; But we establish a longer sequence that is harder to hit by accident:
+
+(message "-------------- Done: Function Keys")
+#+end_src
+
+
+** KeyPad Keys
+
+*** Midpad Global Key Bindings
+#+begin_src emacs-lisp
+(global-set-key [(next)]        'cycle-buffer-permissive)
+(global-set-key [C-next]        'cycle-buffer)              ;; avoid default binding (global-set-key (kbd "C-c <down>")  'windmove-down)
+(global-set-key [(prior)]       'cycle-buffer-backward-permissive)
+(global-set-key [C-prior]       'cycle-buffer-backward)
+
+(global-set-key [C-up]          'previous-buffer)           ;; clashes with org-mode - try to match dirac and astro...
+(global-set-key [C-down]        'next-buffer)               
+
+(global-set-key [S-down]        'scroll-one-line-up)
+(global-set-key [S-up]          'scroll-one-line-down)
+(if nil           ;;; Scrolling.  iscroll-mode better?
+  ;; Good speed and allow scrolling through large images (pixel-scroll).
+  ;; Note: Scroll lags when point must be moved but increasing the number
+  ;;       of lines that point moves in pixel-scroll.el ruins large image
+  ;;       scrolling. So unfortunately I think we'll just have to live with
+  ;;       this.
+  (pixel-scroll-mode)
+  (setq pixel-dead-time 0) ; Never go back to the old scrolling behaviour.
+  (setq pixel-resolution-fine-flag t) ; Scroll by number of pixels instead of lines (t = frame-char-height pixels).
+  (setq mouse-wheel-scroll-amount '(1)) ; Distance in pixel-resolution to scroll each mouse wheel event.
+  (setq mouse-wheel-progressive-speed nil)) ; Progressive speed is too fast for me
+
+(global-set-key [C-insert]      'clipboard-kill-ring-save)
+(global-set-key [S-insert]      'clipboard-yank)
+
+;(global-set-key [S-left]        'window-hshrink)   ; deprecated, never  use these
+;(global-set-key [S-right]       'window-hwiden)
+
+(global-set-key [M-insert]      'toggle-window-split)
+
+(global-set-key [delete]        'delete-window)
+(global-set-key [M-delete]      'kill-this-buffer-volatile)
+(global-set-key (kbd "<end>")   'other-window)
+
+;; C-M-v and C-M-V scroll other window
+
+(message "-------------- Done: Midpad key bindings")
+
+
+(progn 
+  (global-set-key [s-left]  'windmove-left)          ; move to left window
+  (global-set-key [s-right] 'windmove-right)         ; move to right window
+  (global-set-key [s-up]    'windmove-up)            ; move to upper window
+  (global-set-key [s-down]  'windmove-down)          ; move to lower window
 )
 
 
-  (global-set-key [f2]       #'(lambda () (interactive) (find-file "/home/kleyn/aNotes/doAndDone.org")))
-  (global-set-key [C-f2]     #'(lambda () (interactive) (find-file "/home/kleyn/stromatolite/priv/aNotes/ToDoList.org")))  ;; aNotes/mySystems.org
-  (global-set-key [S-f2]     #'(lambda () (interactive) (find-file "/home/kleyn/aNotes/bigNotes.org")))
-  (global-set-key [M-f2]     #'(lambda () (interactive) (find-file "/home/kleyn/projects/repos/mkmain/landing/jupyClips.org")))
-  (global-set-key [s-f2]     #'(lambda () (interactive) (find-file "/home/kleyn/aNotes/access.org.gpg")))
-
-
-  (global-set-key [f3]       'list-command-history) 
-  (global-set-key [S-f3]     #'(lambda () (interactive) (progn (find-file (concat "/home/kleyn/history/commands/history_" (format-time-string "%Y" (current-time)) "-w" (format-time-string "%W" (current-time))))
-                                                              (setq truncate-lines t)
-                                                              (goto-char (point-max))
-                                                              (auto-revert-mode)))) ;; history_2021-w30
-  (global-set-key [C-f3]     #'(lambda () (interactive) (dired     "/home/kleyn/history/commands/history_2021-w*")))  ; view this week's bash history
-  (global-set-key [M-f3]     #'(lambda () (interactive) (find-file "/home/kleyn/.emacs.d/dotEmacs.org") (search-forward "** Function Keys") (org-show-subtree)))  ;; nok900  'my-openfile  'neotree-show
-  (global-set-key [s-f3]     #'(lambda () (interactive) (find-file "/home/kleyn/config/dot/dotBashrc") ))
-
-
-  (global-set-key [f4]       'treemacs-select-directory) ; make-ide-windows sidebar-toggle   (global-set-key [f4]       'make-ide-windows) ; sidebar-toggle
-  (global-set-key [C-f4]     #'(lambda () (interactive) (ibuffer "home" nil) (ibuffer-switch-to-saved-filter-groups "home")))
-  (global-set-key [S-f4]     #'(lambda () (interactive) (dired "~/")))
-  (global-set-key [M-f4]     #'(lambda () (interactive) (dired "~/projects")))
-  (global-set-key [s-f4]     #'(lambda () (interactive) (dired "~/projects/repos")))
-
-
-  (global-set-key [f5]       'ergoemacs-open-in-external-app)    ;; bookmark-menu-list',
-  (global-set-key [C-f5]     'ffap)
-  (global-set-key [S-f5]     #'(lambda () (interactive)  (let ((fpth (thing-at-point 'filename t))) (kill-new fpth) (message fpth))))  ; copy file path at point
-  (global-set-key [M-f5]     'filepath-to-clipboard-and-killring)
-
-
-  (global-set-key [f6]       'toggle-truncate-lines)
-  (global-set-key [C-f6]     'toggle-window-split)
-  (global-set-key [S-f6]     'bool-flip-do-flip)
-  (global-set-key [M-f6]     'grexc-update-sexp-result)
-  (global-set-key [s-f6]     #'(lambda () (interactive)  (let* ((currWord (thing-at-point 'symbol t))
-                                                                (currWordVal (symbol-value (intern currWord))))
-                                                            (switch-to-buffer "*scratch*")
-                                                            (goto-char (point-min))                                              ;; (print currWordVal  (get-buffer "*scratch*"))
-                                                            (cl-prettyprint currWordVal))))
-
-  (global-set-key [f7]       'org-table-sort-lines)
-  (global-set-key [C-f7]     'org-table-transpose-table-at-point)
-  (global-set-key [S-f7]     'org-table-export)                  ;; (global-set-key [S-f7] 'buffer-menu-sort-by-filename)
-  (global-set-key [M-f7]     'org-table-toggle-coordinate-overlays)
-  (global-set-key [s-f7]     'org-table-recalculate)          ;; org-table-convert-region
-
-
-  (global-set-key [f8]       #'(lambda () (interactive) (org-babel-execute-src-block)))
-  (global-set-key [C-f8]     #'(lambda () (interactive) (my-org-babel-execute-and-next)))
-  (global-set-key [S-f8]     #'(lambda () (interactive) (org-babel-execute-subtree)))
-  (global-set-key [M-f8]     #'(lambda () (interactive) (org-latex-preview)))
-  (global-set-key [s-f8]     #'(lambda () (interactive) (org-babel-switch-to-session)))
-
-
-  (global-set-key [f9]       'kmacro-start-macro)                ;; 'ielm)  ;; open file under cursor
-  (global-set-key [C-f9]     'kmacro-end-and-call-macro)         ;; see-shell-output)
-  (global-set-key [S-f9]     'kmacro-end-macro)
-  (global-set-key [M-f9]     #'(lambda () (interactive) (recenter-top-bottom  0)))
-  (global-set-key [s-f9]     #'(lambda () (interactive) (recenter-top-bottom 50)))
-
-
-  (global-set-key [f10]      'yafolding-toggle-element)
-  (global-set-key [C-f10]    'yafolding-toggle-all)
-  (global-set-key [S-f10]    'yafolding-show-all)
-  (global-set-key [M-f10]    'yafolding-mode)
-  (global-set-key [s-f10]    'yafolding-discover)
-
-
-  (global-set-key [f11]      'selective-display-level-zero)
-  (global-set-key [C-f11]    'selective-display-level-incr)
-  (global-set-key [S-f11]    'selective-display-level-decr)
-
-
-  (global-set-key [f12]     'edebug-defun)                      ;; put break in defun/ form whatever - REMOVE by re-evaluating the definition
-  (global-set-key [C-f12]    'eval-defun)    
-  (global-set-key [S-f12]    'set-debug-on)
-  (global-set-key [M-f12]    'set-debug-off)
-  (global-set-key [s-f12]    'insertcodePyCodeSnippet)
-
-
-  (global-unset-key    "\C-x\C-c")                               ;; Don't quit so easily
-  (global-set-key (kbd "C-x C-c C-v")  'save-buffers-kill-emacs) ;; But we establish a longer sequence that is harder to hit by accident:
-
-  (message "-------------- Done: Function Keys")
-
+(message "-------------- Done: Midpad key bindings")
 #+end_src
 
-** ace-window keys
-: (defvar aw-dispatch-alist
-:   '((?x aw-delete-window "Delete Window")
-: 	(?m aw-swap-window "Swap Windows")
-: 	(?M aw-move-window "Move Window")
-: 	(?c aw-copy-window "Copy Window")
-: 	(?j aw-switch-buffer-in-window "Select Buffer")
-: 	(?n aw-flip-window)
-: 	(?u aw-switch-buffer-other-window "Switch Buffer Other Window")
-: 	(?c aw-split-window-fair "Split Fair Window")
-: 	(?v aw-split-window-vert "Split Vert Window")
-: 	(?b aw-split-window-horz "Split Horz Window")
-: 	(?o delete-other-windows "Delete Other Windows")
-: 	(?? aw-show-dispatch-help))
-:   "List of actions for `aw-dispatch-default'.")
-
-
-:  ;-------------------------------------------------------------------------------- Ace jump
-:  ;;
-:  ;; ace jump mode major function
-:  ;;
-:  ;;(add-to-list 'load-path "/full/path/where/ace-jump-mode.el/in/")
-:  (autoload
-:    'ace-jump-mode
-:    "ace-jump-mode"
-:    "Emacs quick move minor mode"
-:    t)
-:  ;; you can select the key you prefer to
-:  ;(define-key global-map (kbd "C-c SPC") 'ace-jump-mode)
-: 
-:  ;; ;;
-:  ;; ;; enable a more powerful jump back function from ace jump mode
-:  ;; ;;
-:  ;; (autoload
-:  ;;   'ace-jump-mode-pop-mark
-:  ;;   "ace-jump-mode"
-:  ;;   "Ace jump back:-)"
-:  ;;   t)
-:  ;; (eval-after-load "ace-jump-mode"
-:  ;;   '(ace-jump-mode-enable-mark-sync))
-:  ;; (define-key global-map (kbd "C-x SPC") 'ace-jump-mode-pop-mark)
-
-** KeyPad Keys
-*** Midpad Global Key Bindings
-#+begin_src emacs-lisp
-    (global-set-key [(next)]        'cycle-buffer-permissive)
-    (global-set-key [C-next]        'cycle-buffer)              ;; avoid default binding (global-set-key (kbd "C-c <down>")  'windmove-down)
-    (global-set-key [(prior)]       'cycle-buffer-backward-permissive)
-    (global-set-key [C-prior]       'cycle-buffer-backward)
-
-    (global-set-key [C-up]          'previous-buffer)           ;; clashes with org-mode - try to match dirac and astro...
-    (global-set-key [C-down]        'next-buffer)               
-
-    (global-set-key [S-down]        'scroll-one-line-up)
-    (global-set-key [S-up]          'scroll-one-line-down)
-    (if nil           ;;; Scrolling.  iscroll-mode better?
-      ;; Good speed and allow scrolling through large images (pixel-scroll).
-      ;; Note: Scroll lags when point must be moved but increasing the number
-      ;;       of lines that point moves in pixel-scroll.el ruins large image
-      ;;       scrolling. So unfortunately I think we'll just have to live with
-      ;;       this.
-      (pixel-scroll-mode)
-      (setq pixel-dead-time 0) ; Never go back to the old scrolling behaviour.
-      (setq pixel-resolution-fine-flag t) ; Scroll by number of pixels instead of lines (t = frame-char-height pixels).
-      (setq mouse-wheel-scroll-amount '(1)) ; Distance in pixel-resolution to scroll each mouse wheel event.
-      (setq mouse-wheel-progressive-speed nil)) ; Progressive speed is too fast for me
-  
-    (global-set-key [C-insert]      'clipboard-kill-ring-save)
-    (global-set-key [S-insert]      'clipboard-yank)
-
-    ;(global-set-key [S-left]        'window-hshrink)   ; deprecated, never  use these
-    ;(global-set-key [S-right]       'window-hwiden)
-
-    (global-set-key [M-insert]      'toggle-window-split)
-
-    (global-set-key [delete]        'delete-window)
-    (global-set-key [M-delete]      'kill-this-buffer-volatile)
-    (global-set-key (kbd "<end>")   'other-window)
-
-    ;; C-M-v and C-M-V scroll other window
-
-    (message "-------------- Done: Midpad key bindings")
-
-
-    (progn 
-      (global-set-key [s-left]  'windmove-left)          ; move to left window
-      (global-set-key [s-right] 'windmove-right)         ; move to right window
-      (global-set-key [s-up]    'windmove-up)            ; move to upper window
-      (global-set-key [s-down]  'windmove-down)          ; move to lower window
-    )
-
-
-#+end_src
-
-(defhydra hydra-windows ()
-  "C-arrow = switch, S-arrow = size, M-arrow = move"
-  ("C-<left>" windmove-left nil)
-  ("C-<right>" windmove-right nil)
-  ("C-<up>" windmove-up nil)
-  ("C-<down>" windmove-down nil)
-  ("S-<left>" hydra-move-splitter-left nil)
-  ("S-<right>" hydra-move-splitter-right  nil)
-  ("S-<up>" hydra-move-splitter-up nil)
-  ("S-<down>" hydra-move-splitter-down nil)
-  ("M-<left>" buf-move-left nil)
-  ("M-<right>" buf-move-right nil)
-  ("M-<up>" buf-move-up nil)
-  ("M-<down>" buf-move-down nil)
-  ("p" previous-buffer "prev-buf")
-  ("n" next-buffer "next-buf")
-  ("1" delete-other-windows "1")
-  ("d" delete-window "del")
-  ("k" kill-buffer "kill")
-  ("s" save-buffer "save")
-  ("u" (progn (winner-undo) (setq this-command 'winner-undo)) "undo")
-  ("r" winner-redo "redo")
-  ("b" helm-mini "helm-mini" :exit t)
-  ("f" helm-find-files "helm-find" :exit t)
-  ("|" (lambda () (interactive) (split-window-right) (windmove-right)))
-  ("_" (lambda () (interactive) (split-window-below) (windmove-down)))
-  ("q" nil "cancel")
-  )
-
-(global-set-key (kbd "M-#") 'hydra-windows/body)
 : (global-set-key [M-up]          'kill-this-buffer-volatile) ;; kill-buffer
 : (global-set-key [M-+]           'text-scale-increase)
+
 
 *** Keypad Maps
 :         |----------------+----------------+----------------+----------|        
@@ -2836,17 +2870,18 @@ org-goto
 #+begin_src emacs-lisp                     :REM TreeNavPad keys for treemacs
 (progn     ;; in treemacs chaging root only works when you have one "project" (i.e folder tree root)
   (define-key treemacs-mode-map [kp-4]     #'treemacs-root-up)                                      ;; works!
+  (define-key treemacs-mode-map (kbd "<C-left>")     #'treemacs-root-up)                             ;; works?
 
   (define-key treemacs-mode-map [kp-8]     #'(lambda () (interactive) (progn (treemacs-previous-neighbour) (treemacs-peek-mode))))                    ;; move #2=ps
   (define-key treemacs-mode-map [kp-5]     #'treemacs-TAB-action)
   (define-key treemacs-mode-map [kp-2]     #'(lambda () (interactive) (progn (treemacs-next-neighbour) (treemacs-peek-mode))))                        ;; move #8=ns                           
 
-  (define-key treemacs-mode-map [kp-6]     #'treemacs-root-down)                             ;; works?
+  (define-key treemacs-mode-map [kp-6]            #'treemacs-root-down)                             ;; works?
+  (define-key treemacs-mode-map (kbd "<C-right>") #'treemacs-root-down)                                          ;; ok-same as sidebar; move #6=u1  
 )
 #+end_src
 
 #+begin_src emacs-lisp                     :REM TreeNavPad keys for neotree
-
 (defun opn-f (f &optional arg) 
   (message "xdg-open %s" f)
   (let ((process-connection-type nil)) 
@@ -3441,6 +3476,8 @@ org-goto
   (interactive)
   (beginning-of-line)
   (forward-char (length ":: ")))
+
+;; (add-hook 'eshell-mode-hook '(lambda () (define-key eshell-mode-map (kbd "C-<tab>")  (lambda () (interactive) (pcomplete-std-complete)))))
 
 (defun save-eshell-terminal ()
   "Clone the current buffer writing it into FILENAME and open it"
