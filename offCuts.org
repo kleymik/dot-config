@@ -1,4 +1,169 @@
+* trello
+;----------------------------------------------------------------------------------- org-trello
+;; NO: (add-to-list 'load-path "L:/MyDocs/ulib/emacs/org-trello-master/")
+;;its here: /home/kleynmi/l_C/cygwin64/home/kleynmi/.emacs.d/elpa/org-trello-0.8.1/org-trello.el:
+
+(require 'org-trello)
+;; load trello-key.el
+(add-to-list 'auto-mode-alist '("\\.trello$" . org-mode)) ;; org-trello major mode for all .trello files
+(add-hook 'org-mode-hook                                  ;; add a hook function to check if this is trello file
+          (lambda ()                                      ;; then activate the org-trello minor mode.
+            (let ((filename (buffer-file-name (current-buffer))))
+              (when (and filename (string= "trello" (file-name-extension filename)))
+              (org-trello-mode)))))
+
+(org-trello-install-key-and-token)
+(org-trello-install-board-metadata)
+(org-trello-update-board-metadata)
+(org-trello-sync-buffer t) ; sync of the entire buffer FROM trello.
+
+(setq board-name (read-from-minibuffer "Trello Board: ")
+
+(defun mk-init-keys-trello ()         ; read keys an register them via org-trello function
+   (load "~/.emacs.d/trello-key.el")
+   (orgtrello-controller--do-install-config-file my-trello-id my-trello-consumer-key my-trello-access-token 'do-ask-for-overwrite)
+)
+
+(defun mk-refresh-from-trello ()   ; sync the entire buffer FROM trello.
+   (interactive)
+   ;; (switch-to-buffer board-name)
+   ;; (buffer-mode "org-mode")
+   (org-trello-update-board-metadata)  (message "org-trello-update-board-metadata done")
+   (org-trello-sync-buffer t)    (message "org-trello-sync-buffer done");; t=> FROM TRELLO -TO-> FILE
+
+)
+
+(defun mk-get-from-trello ()   ; prompt for a board, then sync the buffer FROM trello.
+   (interactive)
+   (org-trello-install-board-metadata) (message "org-trello-install-board-metadata done") ;; only for a new board, prompts for board
+   (org-trello-update-board-metadata)  (message "org-trello-update-board-metadata done")
+   (org-trello-sync-buffer t)          (message "org-trello-sync-buffer done")  ;; t=> FROM TRELLO -TO-> FILE
+)
+
+;; (orgtrello-controller-do-sync-buffer-from-trello)
+;; org-trello-install-key-and-token
+;; (org-trello-update-board-metadata)
+;; (Org-trello-sync-buffer t)
+
+;;(org-trello-current-prefix-keybinding "C-c o" nil (org-trello))
+;; (progn
+;;   (require 'org)
+;;   (require 'org-trello-utils)
+;;   (require 'org-trello-log)
+;;   (require 'org-trello-hash)
+;;   (require 'dash)
+;;   (require 'org-trello))
+
+* sidebar
+;;--------------------------------- sidebar
+: ; (use-package dired-sidebar
+: ;   :bind (("C-x C-n" . dired-sidebar-toggle-sidebar))
+: ;   :ensure nil
+: ;   :commands (dired-sidebar-toggle-sidebar))
+: 
+: ;(use-package ibuffer-sidebar
+: ;  :bind (("C-x C-b" . ibuffer-sidebar-toggle-sidebar))
+: ;  :ensure nil
+: ;  :commands (ibuffer-sidebar-toggle-sidebar))
+
+(progn                                       ;; dired-sidebar treepad navigation
+  ;(define-key dired-sidebar-mode-map [kp-8]      'dired-previous-line)
+  ;(define-key dired-sidebar-mode-map [kp-2]      'dired-next-line)
+
+  (define-key dired-sidebar-mode-map [kp-4]        #'(lambda () (interactive)                                        ;; keep
+                                                       (message (format "%d %d" (line-number-at-pos) (dired-subtree--get-depth (dired-subtree--get-ov))))
+                                                       (if (= (dired-subtree--get-depth (dired-subtree--get-ov)) 0)
+                                                          (dired-sidebar-up-directory)
+                                                          (dired-subtree-up))))
+
+  (define-key dired-sidebar-mode-map [kp-8]        'dired-subtree-previous-sibling)                                 ;; move #2=ps
+  (define-key dired-sidebar-mode-map [kp-5]        'dired-sidebar-subtree-toggle)
+  (define-key dired-sidebar-mode-map [kp-2]        'dired-subtree-next-sibling)                                     ;; move #8=ns                           
+
+  (define-key dired-sidebar-mode-map [kp-6]        'dired-sidebar-find-file)
+  ;(define-key dired-sidebar-mode-map [kp-3]       '(lambda () (interactive) (dired-subtree-cycle 4)))
+  (define-key dired-sidebar-mode-map [C-kp-6]       #'(lambda () (interactive) ;; first child, open if needed
+                                                       (if (not (dired-subtree--is-expanded-p)) (dired-sidebar-subtree-toggle))
+                                                       (dired-next-line 1)))                                       ;; dired-sidebar-find-file
+
+  (define-key dired-sidebar-mode-map [kp-subtract]  #'(lambda () (interactive) (dired-sidebar-subtree-toggle) (dired-next-lne)))
+  (define-key dired-sidebar-mode-map [kp-0]         #'(lambda () (interactive) (ergoemacs-open-in-external-app)))
+
+  ;(define-key dired-sidebar-mode-map [C-kp-5]      'dired-sidebar-up-directory) now subsumed in kp-5
+)
+(defun sidebar-toggle ()  ; tbd install ibuffer sidebar  ; not longr used?
+  "Toggle both `dired-sidebar' and `ibuffer-sidebar'."
+  (interactive)
+  (dired-sidebar-toggle-sidebar)
+  (ibuffer-sidebar-toggle-sidebar))
+
+(defun dired-sidebar-cmd (dirname)  ;; TBD opne in *current* window?
+  (interactive "D")
+  (let ((dired-buffer (dired-sidebar-get-or-create-buffer dirname)))
+    (dired-sidebar-show-sidebar dired-buffer)
+    (pop-to-buffer dired-buffer)
+    (setq window-size-fixed nil))
+)
+; (dired-sidebar-toggle dirname)
+
+total used in directory 372K available 119 GiB
+
+* bashrc
+
+# ----------------------------------------------------------------------------- window title
+# function my_set_screen_title() {
+#   echo -ne "\ekHELLO$1\e\\"
+#   PROMPT_COMMAND='echo -ne "\033]0;"myWindowTitle"\007"'
+#   currWindow=`xprop -root | grep "_NET_ACTIVE_WINDOW(WINDOW)" | awk '{ print $5}'`
+#   xdotool set_window --name hello $currWindow
+# }
+
+# function swtt(){
+#  currWCmd="xprop -root \| grep _NET_ACTIVE_WINDOW\(WINDOW\) \| awk '{print $5}'"
+#  currWindow=`$currWindowCmd`
+#  echo "Curr Window is $currWindow"
+#  xdotool set_window --name "$$:$1" `$currWindow
+# }
+
+# function swtt(){
+#  curWS=`xprop -root \| grep _NET_ACTIVE_WINDOW\(WINDOW\)`
+#  curW= awk '{print $5}'
+#  currWindow=`$currWindowCmd`
+#  echo "Curr Window is $currWindow"
+#  xdotool set_window --name "$$:$1" `$currWindow
+# }
+
+# ----------------------------------------------------------------------------- xterm colored
+alias xtm='xterm   -sl 2000 &'
+alias xtmr='xterm  -sl 20000 -bg darkred   -fg white  -cr lightblue     &'
+alias xtmg='xterm  -sl 20000 -bg darkgreen -fg yellow -cr lightblue     &'
+alias xtmb='xterm  -sl 20000 -bg darkblue  -fg white  -cr lightblue     &'
+alias xtmbl='xterm -sl 20000 -bg lightblue -fg black  -cr red           &'
+alias xtmy='xterm  -sl 20000 -bg darkgrey  -fg white  -cr lightblue     &'
+alias xtmo='xterm  -sl 20000 -bg orange4   -fg white  -cr lightgreen    &'
+alias xtmv='xterm  -sl 20000 -bg palevioletred -fg black -cr lightgreen &'
+
+* foo
 (put 'narrow-to-region 'disabled nil)
+
+(defun ora-ediff-file_old ()
+  (interactive)
+  (let ((files (dired-get-marked-files))
+        (wnd (current-window-configuration)))
+    (if (leq (length files) 2)
+        (let ((file1 (car files))
+              (file2 (if (cdr files)
+                         (cadr files)
+                       (read-file-name "file: " (dired-dwim-target-directory)))))
+          (make-frame-command)         
+          (if (file-newer-than-file-p file1 file2)
+              (ediff-files file2 file1)
+            (ediff-files file1 file2))
+          (add-hook 'ediff-after-quit-hook-internal
+                    (lambda ()
+                      (setq ediff-after-quit-hook-internal nil)
+                      (set-window-configuration wnd))))
+      (error "no more than 2 files should be marked"))))
 
 * ztree
 : 

@@ -8,6 +8,8 @@ invoked by: ~/.emacs.d/init.el
 * Packages
 #+begin_src emacs-lisp                            :REM packages
 
+(custom-set-variables '(gnus-select-method (quote (nnreddit ""))))
+
 (setq load-path (append load-path '("~/ulib/emacs/")))
 (setq load-path (append load-path '("~/ulib/emacs/dired-hacks")))
 
@@ -19,7 +21,6 @@ invoked by: ~/.emacs.d/init.el
 (add-to-list 'package-archives '("org"      . "https://orgmode.org/elpa/")             t)
 
 (require 'simpleclip) 
-(simpleclip-mode 1)
 
 (require 'uniquify)
 (require 'ob)
@@ -31,7 +32,6 @@ invoked by: ~/.emacs.d/init.el
 ; (require 'dired-x)
 (require 'wdired)
 (require 'dired-subtree)
-(require 'dired-sidebar)
 (require 'dired-rainbow)
 (require 'treemacs)
 (require 'eww)
@@ -54,7 +54,6 @@ invoked by: ~/.emacs.d/init.el
 (require 'ox-gfm)
 (require 'ox-reveal)    (setq Org-Reveal-root "file:///home/kleyn/ulib/reveal.js-master/js/reveal.js")    (setq Org-Reveal-title-slide nil)
 (require 'orgtbl-join)
-; (load-file "orgtbl-join.el")
 ; (load-file "org-insert-dblock.el") ;; optional, extends C-c C-c i
 
 ; ---------jupyter / ipython / emacs
@@ -329,6 +328,18 @@ invoked by: ~/.emacs.d/init.el
   (message "line is dup'ed")
 )
 
+;; ------------------------------------------------------------------- Window Sizing
+(defun window-hwiden (&optional arg)
+  "Widen window"
+  (interactive "p")
+  (enlarge-window-horizontally 10)
+)
+(defun window-hshrink (&optional arg)
+  "Shrink window"
+  (interactive "p")
+  (shrink-window-horizontally 10)
+)
+
 ;;---- option1 proto swap
 (defun proto-swap (a b)  ;; (require 'regexp-opt)
   (save-excursion
@@ -368,6 +379,21 @@ invoked by: ~/.emacs.d/init.el
           (goto-char next-line)))))
 )
 
+;;-------------------------------------------------------------------- number a region
+(defun number-region (start end)
+  (interactive "r")
+  (let* ((count 1)
+     (indent-region-function (lambda (start end)
+                   (save-excursion
+                     (setq end (copy-marker end))
+                     (goto-char start)
+                     (while (< (point) end)
+                       (or (and (bolp) (eolp))
+                       (insert (format ",%d " count))
+                       (setq count (1+ count)))
+                       (forward-line 1))
+                     (move-marker end nil)))))
+    (indent-region start end)))
 
 ;;-------------------------------------------------------------------- quotify list of items
 (defun lines-to-cslist (start end &optional arg)
@@ -411,6 +437,7 @@ invoked by: ~/.emacs.d/init.el
   (align-regexp start end (concat "\\(\\s-*\\)" regexp) 1 1 t)
 )
 
+;;-------------------------------------------------------------------- align
 (defun alignFoo (pat)
   (interactive "spattern?")
   (align-regexp (region-beginning) (region-end) (concat "\\(\\s-*\\)" pat) 1 1 nil)
@@ -751,8 +778,8 @@ invoked by: ~/.emacs.d/init.el
 ;; (octal, hexadecimal, and character).
 (message "-------------- Done: Settings")
 
-
 #+end_src
+
 ** Highlighting/Cursor Visibility
 #+begin_src emacs-lisp                            :REM highlighting
 (message "-------------- Start: Highlighting")
@@ -883,6 +910,7 @@ invoked by: ~/.emacs.d/init.el
 (message "-------------- Done: Modes Assoc List")
 #+end_src
 * Modes Section
+
 ** Chat GPT (pending)
 ;;; Chat GPT
 ;; 0) gpt.el
@@ -933,52 +961,52 @@ invoked by: ~/.emacs.d/init.el
 #+end_src
 
 #+begin_src emacs-lisp                            :REM Python Mode
-  (defun my-python-hook ()
-     (setq indent-tabs-mode nil)
-     (setq tab-width 4)
-     (setq python-indent 4)
-     (toggle-truncate-lines 1) ;; deprecated? ->   (setq default-truncate-lines t)
-     (progn
-       (define-key python-mode-map [kp-9] 'python-nav-backward-block)
-       (define-key python-mode-map [kp-6] 'yafolding-toggle-element)
-       (define-key python-mode-map [kp-3] 'python-nav-forward-block))
-  )
+(defun my-python-hook ()
+   (setq indent-tabs-mode nil)
+   (setq tab-width 4)
+   (setq python-indent 4)
+   (toggle-truncate-lines 1) ;; deprecated? ->   (setq default-truncate-lines t)
+   (progn
+     (define-key python-mode-map [kp-9] 'python-nav-backward-block)
+     (define-key python-mode-map [kp-6] 'yafolding-toggle-element)
+     (define-key python-mode-map [kp-3] 'python-nav-forward-block))
+)
 
-  (add-hook 'python-mode-hook 'my-python-hook)
+(add-hook 'python-mode-hook 'my-python-hook)
 
-  (defun insertcodePyCodeSnippet ()
-    (interactive)
-    (move-end-of-line nil)
-    (if (= (line-beginning-position) (line-end-position))
-        (progn (move-beginning-of-line nil)
-               (indent-according-to-mode)
-               (insert "breakpoint()")
-               (newline)
-               (indent-according-to-mode)
-               (previous-line))
-        (progn (backward-word)
-               (let ((currWord (thing-at-point 'word)))
-               (if (equal currWord "breakpoint")
-                 (delete-region (line-beginning-position) (+ (line-end-position)1))
-                 (progn (move-beginning-of-line nil)
-                        (indent-according-to-mode)
-                        (insert "breakpoint()")
-                        (newline)
-                        (indent-according-to-mode)
-                        (previous-line))))))
-  )
+(defun insertcodePyCodeSnippet ()
+  (interactive)
+  (move-end-of-line nil)
+  (if (= (line-beginning-position) (line-end-position))
+      (progn (move-beginning-of-line nil)
+             (indent-according-to-mode)
+             (insert "breakpoint()")
+             (newline)
+             (indent-according-to-mode)
+             (previous-line))
+      (progn (backward-word)
+             (let ((currWord (thing-at-point 'word)))
+             (if (equal currWord "breakpoint")
+               (delete-region (line-beginning-position) (+ (line-end-position)1))
+               (progn (move-beginning-of-line nil)
+                      (indent-according-to-mode)
+                      (insert "breakpoint()")
+                      (newline)
+                      (indent-according-to-mode)
+                      (previous-line))))))
+)
 
-  ;
-  ;; this location is "~/.pudb-bp" in older versions of pudb
-  (setq pudb-bp-file (expand-file-name "~/.config/pudb/saved-breakpoints-3.9"))
-  (defun pudb-add-breakpoint ()
-    (interactive)
-    (append-to-file
-      (concat "b " (file-truename buffer-file-name) ":" (nth 1 (split-string (what-line))) "\n") ; - needs non-symlinked path of source file
-      nil pudb-bp-file))
-  ;(define-key py-mode-map (kbd "C-c C-t") 'pudb-add-breakpoint)
+;
+;; this location is "~/.pudb-bp" in older versions of pudb
+(setq pudb-bp-file (expand-file-name "~/.config/pudb/saved-breakpoints-3.9"))
+(defun pudb-add-breakpoint ()
+  (interactive)
+  (append-to-file
+    (concat "b " (file-truename buffer-file-name) ":" (nth 1 (split-string (what-line))) "\n") ; - needs non-symlinked path of source file
+    nil pudb-bp-file))
+;(define-key py-mode-map (kbd "C-c C-t") 'pudb-add-breakpoint)
 
-  (message "-------------- Done: Python Mode Section")
+(message "-------------- Done: Python Mode Section")
 #+end_src
 
 : (insert "from util import dbg_toolbag as t; t.brk()")
@@ -1572,39 +1600,26 @@ invoked by: ~/.emacs.d/init.el
 :           "Dired Video files extensions")
 : (dired-rainbow-define video "#B3CCFF" dired-video-files-extensions)
 : 
-: ; (use-package dired-sidebar
-: ;   :bind (("C-x C-n" . dired-sidebar-toggle-sidebar))
-: ;   :ensure nil
-: ;   :commands (dired-sidebar-toggle-sidebar))
-: 
-: ;(use-package ibuffer-sidebar
-: ;  :bind (("C-x C-b" . ibuffer-sidebar-toggle-sidebar))
-: ;  :ensure nil
-: ;  :commands (ibuffer-sidebar-toggle-sidebar))
 
 
 *** Diff 2 from dired
 #+begin_src emacs-lisp
 ;; -*- lexical-binding: t -*-
+;
 (defun ora-ediff-files ()
   (interactive)
-  (let ((files (dired-get-marked-files))
-        (wnd (current-window-configuration)))
-    (if (<= (length files) 2)
+  (let ((files (dired-get-marked-files)))
+    (message (format "%s" files))
+    (if (= (length files) 2)
         (let ((file1 (car files))
-              (file2 (if (cdr files)
-                         (cadr files)
-                       (read-file-name
-                        "file: "
-                        (dired-dwim-target-directory)))))
+              (file2 (cadr files)))
+          (find-file-other-frame file1)
+          (find-file file2)
           (if (file-newer-than-file-p file1 file2)
               (ediff-files file2 file1)
-            (ediff-files file1 file2))
-          (add-hook 'ediff-after-quit-hook-internal
-                    (lambda ()
-                      (setq ediff-after-quit-hook-internal nil)
-                      (set-window-configuration wnd))))
+            (ediff-files file1 file2)))
       (error "no more than 2 files should be marked"))))
+
 #+end_src
 ;; My ediff customizations
 
@@ -1754,7 +1769,9 @@ invoked by: ~/.emacs.d/init.el
 ;; M-x customize-variable RET dired-listing-switches RET
 ;; Dired Listing Switches: Hide Value -ahl --time-style=long-iso
 ;;  State: SET for current session only.
-(setq dired-listing-switches "-aoht --time-style=long-iso --group-directories-first") ;; list most recent first (setq dired-listing-switches "-aBhl  ")
+(setq dired-listing-switches_showFiles " -oht --time-style=long-iso --group-directories-first ") 
+(setq dired-listing-switches_hideFiles " -oht --time-style=long-iso --group-directories-first  --hide='*.*' ") 
+(setq dired-listing-switches "-aoht --time-style=long-iso --group-directories-first ") ;; list most recent first (setq dired-listing-switches "-aBhl  ")
 ;; (setq dired-omit-files "^\\..*$")
 
 ;;(use-package dired-x :config
@@ -1855,6 +1872,14 @@ invoked by: ~/.emacs.d/init.el
   (insert (concat "cd " (file-name-directory ffn) "; ll" ))
   )
 
+(defun dired-paste-to-yank-buffer (&optional arg)
+  "Move down one line and view the current file in another window."
+  (interactive)
+  (setq ffn (dired-get-filename))
+  (message ffn)
+  (kill-append (dired-get-filename) nil)
+  )
+
 ;;------------------------------------ dired peek at file contents
 (defun dired-view-next ()
   "Move down one line and view the current file in another window."
@@ -1953,6 +1978,7 @@ invoked by: ~/.emacs.d/init.el
   (define-key dired-mode-map (kbd "TAB")       'dired-sidebar-subtree-toggle)
   (define-key dired-mode-map "J"               'dired-move-to-old) ; junk
   (define-key dired-mode-map "O"               'ergoemacs-open-in-external-app)  
+  (define-key dired-mode-map (kbd "A")         'dired-toggle-listing)
   (define-key dired-mode-map (kbd "r")         'wdired-change-to-wdired-mode)
   (define-key dired-mode-map (kbd "t")         'my-dired-subtree-toggle)
   (define-key dired-mode-map (kbd "w")         'my-eww-open-file)
@@ -2409,6 +2435,33 @@ for flushing messages to *Message* buffer
 
   (message "-------------- Done: Global Keys")
 #+end_src
+** org-babel keys notes
+C-down / C-up = next section / previous section in org-babel
+org-goto
+
+  C-c C-o     results in separate buffer
+  C-c C-o     open link
+  C-c C-x C-l (org-latex-preview)
+  C-c C-x C-l show latex
+  C-c C-v h   list keybings
+  C-c C-v s   execute subtree
+  C-c C-v C-b execute all
+  C-c C-v z   show REPL
+  C-c C-c     execute block
+  C-c n       execute and next block
+  C-c C-,     insert block
+  C-up        up heading
+  C-c C-f     forward heading
+  C-c C-p     backward heading
+  M-i         for function description
+  C-M-i       babel completion-at-point
+  M-Tab       org complete word at point
+  C- '        edit block
+
+ completion
+   M-/
+   M-TAB - orgmode
+   M-i babel> complete-symbol
 
 ** Function Keys
 |------+-----------+-----------+------------+-----------------+---+------------------+----------------+----------+--------------+---+-------------+-------------+--------+--------------+------|
@@ -2541,9 +2594,6 @@ for flushing messages to *Message* buffer
   (message "-------------- Done: Function Keys")
 
 #+end_src
-
-#+RESULTS:
-: -------------- Done: Function Keys
 
 ** ace-window keys
 : (defvar aw-dispatch-alist
@@ -2807,31 +2857,7 @@ for flushing messages to *Message* buffer
 ;(dired-sidebar-subtree-toggle)
 ;(setq dired-subtree-cycle-depth 5) = 5
 
-(progn                                       ;; dired-sidebar treepad navigation
-  ;(define-key dired-sidebar-mode-map [kp-8]      'dired-previous-line)
-  ;(define-key dired-sidebar-mode-map [kp-2]      'dired-next-line)
 
-  (define-key dired-sidebar-mode-map [kp-4]        #'(lambda () (interactive)                                        ;; keep
-                                                       (message (format "%d %d" (line-number-at-pos) (dired-subtree--get-depth (dired-subtree--get-ov))))
-                                                       (if (= (dired-subtree--get-depth (dired-subtree--get-ov)) 0)
-                                                          (dired-sidebar-up-directory)
-                                                          (dired-subtree-up))))
-
-  (define-key dired-sidebar-mode-map [kp-8]        'dired-subtree-previous-sibling)                                 ;; move #2=ps
-  (define-key dired-sidebar-mode-map [kp-5]        'dired-sidebar-subtree-toggle)
-  (define-key dired-sidebar-mode-map [kp-2]        'dired-subtree-next-sibling)                                     ;; move #8=ns                           
-
-  (define-key dired-sidebar-mode-map [kp-6]        'dired-sidebar-find-file)
-  ;(define-key dired-sidebar-mode-map [kp-3]       '(lambda () (interactive) (dired-subtree-cycle 4)))
-  (define-key dired-sidebar-mode-map [C-kp-6]       #'(lambda () (interactive) ;; first child, open if needed
-                                                       (if (not (dired-subtree--is-expanded-p)) (dired-sidebar-subtree-toggle))
-                                                       (dired-next-line 1)))                                       ;; dired-sidebar-find-file
-
-  (define-key dired-sidebar-mode-map [kp-subtract]  #'(lambda () (interactive) (dired-sidebar-subtree-toggle) (dired-next-lne)))
-  (define-key dired-sidebar-mode-map [kp-0]         #'(lambda () (interactive) (ergoemacs-open-in-external-app)))
-
-  ;(define-key dired-sidebar-mode-map [C-kp-5]      'dired-sidebar-up-directory) now subsumed in kp-5
-)
 
 (progn ;; dired treepad navigation
   (define-key dired-mode-map [kp-4]                'my-dired-up-to-parent)                                          ;; ok-same as sidebar; move #6=u1  
@@ -3096,15 +3122,14 @@ for flushing messages to *Message* buffer
 (message "-------------- Done: Keybindings Section")
 #+end_src
 
+
+
 * Debugging
 #+begin_src emacs-lisp
 (defun set-debug-on()   (interactive) (progn (setq edebug-on-error t)    (message "emacs edebug on-error")))
 (defun set-debug-off()  (interactive) (progn (setq edebug-on-error nil)  (message "emacs edebug on-error off")))
 (setq edebug-print-level 2) ; usually 50
 #+end_src
-
-#+RESULTS:
-: set-debug-off
 
 : ;;-------------------------------------------------------------------- DEBUG
 : ;;Go to where your function is defined and type M-x edebug-defun,
@@ -3172,6 +3197,7 @@ for flushing messages to *Message* buffer
 :         (t nil)))
 
 * ESHELL
+
 #+begin_src emacs-lisp
 (require 'ansi-color)
 
@@ -3244,6 +3270,7 @@ for flushing messages to *Message* buffer
 ;;----------------------------------------------------- for small keyboards without function keys
 (defun ke()                     (interactive)  (kill-emacs))                                                                                  
 (defun dz()                     (interactive)  (progn (ztree-dir "/data/data/com.termux/files/home/MyDocs/projects") (split-window-right 40)))
+
 
 
 (defun sb ()                                                                              ;; mirror bash aliases in eshell
@@ -3355,6 +3382,50 @@ for flushing messages to *Message* buffer
    (copy-file "/home/kleyn/.emacs.d/eshell/history" es_hstFile)
    es_hstFile)
 
+(setq eshell-prompt-function
+       (lambda ()
+         (setq dts (format-time-string "%Y%m%d%H:%M" (current-time)))
+         (concat (substring dts 0 8)
+                 "|" (propertize (substring dts 8) 'face `(:foreground "green"))
+;;                 "|" (car (last (split-string (getenv "VIRTUAL_ENV") "/")))
+                 "|" (propertize (substring (pwd) 10) 'face `(:foreground "green"))
+                 "\n:: "))
+
+    eshell-prompt-regexp "^:: "
+)
+
+(add-hook 'eshell-mode-hook '(lambda () (define-key eshell-mode-map (kbd "C-<tab>")  'pcomplete-std-complete)))
+(add-hook 'eshell-mode-hook '(lambda () (define-key eshell-mode-map (kbd "C-a")      'eshell-prompt-bol)))
+
+
+;; nb use egrep (or *grep) rather than grep to avoid using emacs grep
+;; (add-to-list 'eshell-command-aliases-list (list "utilGpu"     "glxinfo | grep -i -o 'device|memory|[0-9]{1,12} MB' | head -n 1"))
+;; (add-to-list 'eshell-command-aliases-list (list "utilDf"      "watch -n 1 df -m"))
+;; find -maxdepth 1 -printf '%t %s %p\n'
+;; works: find ~/*/ \( -path ~/mySystems/firefoxOld -o -path ~/projects \) -prune -false -o -iname '*.sqlite'
+;; works: find ~/*/ -path ~/mySystems -prune -false -o -iname '*sql'   <- no fucking end-slash on directory path !!!!!!!!!
+;; aptitude doesn't echo into eshell buffer :(
+;; (add-to-list 'eshell-command-aliases-list (list "hgg"   "cat ~/history/commands/history* | grep -i $*"))
+;; (add-to-list 'eshell-command-aliases-list (list "hs"    "(setq es_hstFile (concat \"/home/kleyn/history/commands/history_eshell_\" (format-time-string \"%Y%m%d-%H%M\" (current-time)) \".lst\")); echo $eshell-history-file-name; (eshell-write-history); cp $eshell-history-file-name $es_hstFile; cat $es_hstFile"))
+;; (add-to-list 'eshell-command-aliases-list (list "hs"    "(setq es_hstFile (concat \"/home/kleyn/history/commands/history_eshell_\" (format-time-string \"%Y%m%d-%H%M\" (current-time)) \".lst\")); echo $es_hstFile; (eshell-write-history es_hstFile); cat $es_hstFile"))
+;; (add-to-list 'eshell-command-aliases-list (list "hs"    "(setq es_hstFile (concat \"/home/kleyn/history/commands/history_eshell_\" (format-time-string \"%Y%m%d-%H%M\" (current-time)) \".lst\")); echo $eshell-history-file-name; cp $eshell-history-file-name $es_hstFile; cat $es_hstFile"))
+;; (add-to-list 'eshell-command-aliases-list (list "hs"    "(setq es_hstFile (concat \"/home/kleyn/history/commands/history_eshell_\" (format-time-string \"%Y%m%d-%H%M\" (current-time)) \".lst\")); history > $es_hstFile; cat $es_hstFile;"))
+;; (add-to-list 'eshell-command-aliases-list (list "hs"    (concat "(setq es_hstFile " "/home/kleyn/history/commands/history_eshell_" (format-time-string "%Y%m%d-%H%M" (current-time)) ".lst)" "; history > $es_hstFile; cat $es_hstFile;")))
+;; (add-to-list 'eshell-command-aliases-list (list "hs"    "(setq es_hstFile (concat \"/home/kleyn/history/commands/history_eshell_\" (format-time-string \"%Y%m%d-%H%M\" (current-time)) \".lst\")); history > $es_hstFile; cat $es_hstFile;"))
+;; (add-to-list 'eshell-command-aliases-list (list "hs"    "(setq es_hstFile (concat \"~/history/commands/history_eshell_\" (format-time-string \"%Y%m%d-%H%M\" (current-time)) \".lst\")); history > $es_hstFile; cat $es_hstFile;"))
+;; https://emacs.stackexchange.com/questions/27849/how-can-i-setup-eshell-to-use-ivy-for-tab-completion
+
+
+;; eshell-prompt-regexp "^[^:]*:: "
+;; (if (= (user-uid) 0) " :: " " :: ")
+;; (if (= (user-uid) 0) " \n:: " " \n:: ")))
+;;eshell-prompt-regexp "^::.*\n:: "
+;(setq eshell-prompt-function (lambda () (concat ":: "))
+;      eshell-prompt-regexp "^:: "
+;)
+
+;; (add-to-list 'eshell-command-aliases-list (list "l"     "stat --printf=%y\t%6s\t%-16n\n * | cut -b -16,36-"))
+
 (defun eshell-cwd ()
   " Sets the eshell directory to the current buffer  
   Usage: M-x eshell-cwd "
@@ -3364,6 +3435,7 @@ for flushing messages to *Message* buffer
     (with-current-buffer "*eshell*"
       (cd path)
       (eshell-emit-prompt))))
+
 
 (defun eshell-prompt-bol ()
   (interactive)
@@ -4020,11 +4092,13 @@ for flushing messages to *Message* buffer
   ; (treemacs-select-directory)
 
 #+begin_src emacs-lisp
+
 (put 'narrow-to-region 'disabled nil)
 (setq password-cache-expiry nil)
 (set-cursor-color "gold") 
 
 ;; weird and wacky incantations to get desired layout of uncooperative buffers and windows
+
 (set-frame-size (selected-frame) 350 110)     ; chars? NOT commutative!!!!!!
 (set-frame-position (selected-frame) 600 100) ; pixels?
 
@@ -4032,7 +4106,7 @@ for flushing messages to *Message* buffer
 (setq treemacs-show-cursor t)
 (setq treemacs-display-in-side-window nil)
 (setq treemacs-width-is-initially-locked nil)
-(treemacs)
+(treemacs) ; must also already be called in init.el!!! WTF
 (define-key treemacs-mode-map  (kbd "<return>")     #'treemacs-visit-node-in-most-recently-used-window)
 (setq treemacs-display-in-side-window nil)
 (split-window (treemacs-get-local-window) nil 'above) 
