@@ -1,4 +1,282 @@
 
+: 
+: ;;-------------------------------------------------------------------- ediff
+: ;; (setq ediff-shell "C:/cygwin/bin/mintty.exe")
+: ;;  (if (file-directory-p "c:/cygwin/bin")      (add-to-list 'exec-path "c:/cygwin/bin"))
+: ;;--------------------------------------------------------------------- Diff Stuff
+: ;; (diffview-current)
+: 
+: 
+: ;;-------------------------------------------------------------------- Switches
+: 
+: ;;-------------------------------------------------------------------- Magit
+: ;; (add-to-list 'magit-section-initial-visibility-alist '(stashes . hide))
+: 
+: ;; ;; ---------------------------------------------------------------- DOS Mode
+: ;; (autoload 'dos-mode "/home/uri03204/myDocs/ulib/emacs/dos.elc" "Enter DOS CMD mode." t)
+: 
+: ;; ------------------------------------------------------------------- Java
+: ;; TBD add hs-minor-mode for hide/show t
+: ;; TDB (add-hook  'java-mode-hook 'my-java-mode-hook t)
+: ;; ;(defun my-java-mode-hook ()
+: ;; ;  (hs-minor-mode)
+: ;; ;  (setq indent-tabs-mode nil))
+
+** Misc
+: (setq cur-syntax-table (syntax-table)) ; better to use "describe-syntax"
+: undefine a funcion: (fmakunbound 'trysc-clear-all-whitespace-columns) 
+: 
+: default-directory
+: 
+: good fonts "Ubuntu Mono"
+: 
+: Print message listing key sequences that invoke the command DEFINITION.
+: Argument is a command definition, usually a symbol with a function definition.
+: If INSERT (the prefix arg) is non-nil, insert the message in the buffer.
+: 
+: TBD dired-find-file-otherwindow open a cygwin link by inspecting it
+: 
+: ------------------------------------------------------------------------------ Org-Mode
+: (print (cadr info) (get-buffer "*scratch*"))
+: (write-region (cadr info) nil "L:/MyDocs/history/matlabCmds/org_cmd.m")
+: (write-region (cadr info) nil "C:/MyDocs/grepHist/aaa_org_cmd.m"))
+: (save-restriction (org-mark-subtree) (rot13-region (point) (mark))))
+: 
+: find-dired  calls unix find
+: Dired Listing Switches: Hide Value -ahl --time-style=long-iso
+: of emacs.  It is advised to place bindings for these into a
+: convenient prefix key map, for example `C-,`
+: 
+: -------------------------------------------------------------------- Key Bindings
+: (global-set-key [f4]            'see-orglink-dired) ;;     'desktop-save)
+: (define-key global-map "\C-co" 'org-capture)
+: ------------------------------------------------------------------------------
+: 
+: ; cleanMlLog
+: ;;[                     ;; self-insert-command
+: ;;3*C-k                 ;; kill-line
+: (fset 'cleanMlLog [?\C-s ?\[ ?\C-q ?\C-h ?\C-a escape ?\C-k ?\C-k ?\C-k])
+: 
+: ;; -------------------------- new stuff
+: ;; ;; Save point position between sessions.
+: ;; (use-package saveplace)
+: ;; (setq-default save-place t)
+: ;; (setq save-place-file (expand-file-name "places" user-emacs-directory))
+: 
+: ;; ;; Fix empty pasteboard error.
+: ;; (setq save-interprogram-paste-before-kill nil)
+: 
+: ;; ;; Auto refresh buffers when edits occur outside emacs
+: ;; (global-auto-revert-mode 1)
+: 
+: ;; ;; Also auto refresh dired, but be quiet about it
+: ;; (setq global-auto-revert-non-file-buffers t)
+: ;; (setq auto-revert-verbose nil)
+: 
+: ;; ;; Show keystrokes in progress
+: ;; (setq echo-keystrokes 0.5)
+: (global-subword-mode 1)
+: ;; from 'better-defaults.el'
+: ;; Allow clipboard from outside emacsselect-enable-clipboard
+: ;; (setq x-select-enable-clipboard t
+: ;;       x-select-enable-primary t
+: ;;       save-interprogram-paste-before-kill t
+: ;;       apropos-do-all t
+: ;;       mouse-yank-at-point t)
+
+: (add-to-list 'eshell-command-aliases-list (list "doBackup"
+:     (setq  (concat /data/data/com.termux/files/home/internalBackup/ (format-time-string \"%Y%m%d-%H%M\" (current-time)) \".lst\"))
+:     find ~/        -name '.#-emacs*' -exec rm -v {} \;
+:     find ~/MyDocs/ -name '.#-emacs*' -exec rm -v {} \;
+:     mkdir -p $budir
+:     cp -r $frootDir/MyDocs/aNotes   $budir
+:     cp -r $frootDir/MyDocs/Personal $budir
+:     cp -r $frootDir/MyDocs/projects $budir
+:     cp -r $frootDir/dot             $budir
+:     tar -czvf - $frootDir/gitio >   $budir/gitio.tgz
+:     du -sm $frootDir/internalBackup/*
+: ))
+
+;;---------------------------------------------------------------------- SGML XML
+;C-c C-v        sgml-validate
+;C-M-h          sgml-mark-current-element
+;C-c C-u C-a    sgml-unfold-all
+;C-c C-u C-e    sgml-unfold-element
+;C-c C-f C-e    sgml-fold-element
+;(require 'psgml)
+;(add-to-list 'auto-mode-alist '("\\.xml$"     . psgml-mode)   )
+;(setq load-path (append load-path '("/home/uri03204/ulib/emacs/psgml-1.3.2"))) ;; (insert (format "%s" load-path))
+;(load-library "psgml")
+(setq sgml-basic-offset 2)
+(autoload 'xml-mode "psgml" "Major mode to edit XML files." t)
+(add-hook 'xml-mode-hook                ; XML-specific settings
+  (function (lambda()
+              (make-face 'sgml-comment-face) ; faces creation
+              (make-face 'sgml-start-tag-face)
+              (make-face 'sgml-end-tag-face)
+              (make-face 'sgml-doctype-face)
+              (set-face-foreground 'sgml-comment-face "SeaGreen") ; faces definitions
+              (set-face-foreground 'sgml-start-tag-face "DarkBlue")
+                                ;(set-face-foreground 'sgml-end-tag-face "OrangeRed")
+                                ;(set-face-foreground 'sgml-doctype-face "MintCream") ; markup to face mappings
+                                ; (see http://www.lysator.liu.se/~lenst/about_psgml/psgml.html#Highlight for details)
+              (setq sgml-markup-faces
+                    '((comment   . sgml-comment-face)
+                      (start-tag . sgml-start-tag-face)
+                      (end-tag   . sgml-end-tag-face)
+                      (doctype   . sgml-doctype-face) ) )
+              (local-set-key [S-left]  'sgml-fold-element)
+              (local-set-key [S-right] 'sgml-unfold-element)
+              ; sgml-fold-element  sgml-unfold-element
+              ; sgml-fold-region
+              ; sgml-fold-subelement
+              ; sgml-unfold-all
+              ; sgml-unfold-line
+              (setq sgml-set-face t) ; turn faces on
+              (setq sgml-indent-data t))))
+; 3 bottom keys of keypad, upper 6 are work 6 virtual screens
+;; (global-set-key [S-M-kp-down] 'sgml-fold-subelement)
+;; (global-set-key [S-M-kp-end]  'sgml-fold-element)   ;  fold everything below current element
+;; (global-set-key [S-M-kp-next] 'sgml-unfold-element)
+
+
+
+** Modes
+: ;; ------------------------------------------------------------------- CSHARP Mode
+: ;(autload 'csharp-mode "/home/uri03204/myDocs/ulib/emacs/csharp-mode-0.8.5.elc" t)
+: (autoload 'csharp-mode "csharp-mode" "Major mode for editing C# code." t)
+: (defun csharp-mode-untabify ()
+:   (if (string= (substring mode-name 0 2) "C#")
+:      (save-excursion
+:      (delete-trailing-whitespace)
+:      (untabify (point-min) (point-max)))))
+: (defun my-csharp-mode-fn ()
+:   "function that runs when csharp-mode is initialized for a buffer."
+:   (turn-on-auto-revert-mode)
+:   (setq indent-tabs-mode nil)
+:   (require 'flymake)
+:   (setq flymake-mode nil)
+:   ;;(add-hook 'write-contents-hooks 'csharp-mode-untabify nil t)
+:   )
+:   ;;      (require 'yasnippet)
+:   ;;      (yas/minor-mode-on)
+:   ;;      (require 'rfringe)
+: (add-hook  'csharp-mode-hook 'my-csharp-mode-fn t)
+: ;;(add-hook 'csharp-mode-hook '(lambda () (add-hook 'write-contents-hooks 'csharp-mode-untabify nil t)))
+: 
+: ;;-------------------------------------------------------------------- Matlab Mode
+: (require 'matlab)
+: (setq matlab-indent-function t)
+: (setq matlab-shell-command "matlab")
+: ;;(autoload 'matlab-mode "/home/kleyn/myDocs/ulib/emacs/matlab.elc" "Enter Matlab mode." t)
+: ;; User Level customizations:
+: ;;   (setq matlab-verify-on-save-flag nil) ; turn off auto-verify on save
+: (defun my-matlab-mode-hook ()
+:   (matlab-mode-hilit)                        ; Turn highlight on
+:   (setq fill-column 276)             ; where auto-fill should wrap
+:   (setq matlab-indent-function t)    ; if you want function bodies indented
+:   (setq matlab-indent-level  2)         ; set matlab indentation
+:   (set matlab-fill-code nil)
+:   (setq indent-tabs-mode nil))
+: (add-hook 'matlab-mode-hook 'my-matlab-mode-hook)
+: 
+: ;;-------------------------------------------------------------------- iedit Mode
+:  TBD (autoload 'iedit-mode "/home/uri03204/myDocs/ulib/emacs/iedit.elc" "Enter iedit mode" t)
+: 
+: 
+: ;;-------------------------------------------------------------------- ediff
+: ;; (setq ediff-shell "C:/cygwin/bin/mintty.exe")
+: ;;  (if (file-directory-p "c:/cygwin/bin")      (add-to-list 'exec-path "c:/cygwin/bin"))
+: ;;--------------------------------------------------------------------- Diff Stuff
+: ;; (diffview-current)
+: 
+: 
+: ;;-------------------------------------------------------------------- Switches
+: 
+: ;;-------------------------------------------------------------------- Magit
+: ;; (add-to-list 'magit-section-initial-visibility-alist '(stashes . hide))
+: 
+: ;; ;; ---------------------------------------------------------------- DOS Mode
+: ;; (autoload 'dos-mode "/home/uri03204/myDocs/ulib/emacs/dos.elc" "Enter DOS CMD mode." t)
+: 
+: ;; ------------------------------------------------------------------- Java
+: ;; TBD add hs-minor-mode for hide/show t
+: ;; TDB (add-hook  'java-mode-hook 'my-java-mode-hook t)
+: ;; ;(defun my-java-mode-hook ()
+: ;; ;  (hs-minor-mode)
+: ;; ;  (setq indent-tabs-mode nil))
+
+** Misc
+: (setq cur-syntax-table (syntax-table)) ; better to use "describe-syntax"
+: undefine a funcion: (fmakunbound 'trysc-clear-all-whitespace-columns) 
+: 
+: default-directory
+: 
+: good fonts "Ubuntu Mono"
+: 
+: Print message listing key sequences that invoke the command DEFINITION.
+: Argument is a command definition, usually a symbol with a function definition.
+: If INSERT (the prefix arg) is non-nil, insert the message in the buffer.
+: 
+: TBD dired-find-file-otherwindow open a cygwin link by inspecting it
+: 
+: ------------------------------------------------------------------------------ Org-Mode
+: (print (cadr info) (get-buffer "*scratch*"))
+: (write-region (cadr info) nil "L:/MyDocs/history/matlabCmds/org_cmd.m")
+: (write-region (cadr info) nil "C:/MyDocs/grepHist/aaa_org_cmd.m"))
+: (save-restriction (org-mark-subtree) (rot13-region (point) (mark))))
+: 
+: find-dired  calls unix find
+: Dired Listing Switches: Hide Value -ahl --time-style=long-iso
+: of emacs.  It is advised to place bindings for these into a
+: convenient prefix key map, for example `C-,`
+: 
+: -------------------------------------------------------------------- Key Bindings
+: (global-set-key [f4]            'see-orglink-dired) ;;     'desktop-save)
+: (define-key global-map "\C-co" 'org-capture)
+: ------------------------------------------------------------------------------
+: 
+: ; cleanMlLog
+: ;;[                     ;; self-insert-command
+: ;;3*C-k                 ;; kill-line
+: (fset 'cleanMlLog [?\C-s ?\[ ?\C-q ?\C-h ?\C-a escape ?\C-k ?\C-k ?\C-k])
+: 
+: ;; -------------------------- new stuff
+: ;; ;; Save point position between sessions.
+: ;; (use-package saveplace)
+: ;; (setq-default save-place t)
+: ;; (setq save-place-file (expand-file-name "places" user-emacs-directory))
+: 
+: ;; ;; Fix empty pasteboard error.
+: ;; (setq save-interprogram-paste-before-kill nil)
+: 
+: ;; ;; Auto refresh buffers when edits occur outside emacs
+: ;; (global-auto-revert-mode 1)
+: 
+: ;; ;; Also auto refresh dired, but be quiet about it
+: ;; (setq global-auto-revert-non-file-buffers t)
+: ;; (setq auto-revert-verbose nil)
+: 
+: ;; ;; Show keystrokes in progress
+: ;; (setq echo-keystrokes 0.5)
+: (global-subword-mode 1)
+: ;; from 'better-defaults.el'
+: ;; Allow clipboard from outside emacsselect-enable-clipboard
+: ;; (setq x-select-enable-clipboard t
+: ;;       x-select-enable-primary t
+: ;;       save-interprogram-paste-before-kill t
+: ;;       apropos-do-all t
+: ;;       mouse-yank-at-point t)
+: 
+: ;;------------------------------------------------------------------------------- ido Mode
+: ;; TBD
+: ;;(load-library "ido")
+: ;;(setq ido-enable-flex-matching t)
+: ;;(setq ido-everywhere t)
+: ;;(ido-mode 1)
+: ;;(ido-mode t)
+: ;;(windmove-default-keybindings 'shift)
+
 xxxxxxxxxxxxxxxxx
 
 : This first part controls the shells. It will force Emacs to place them at the bottom, with a window height of no more than 30% of the size of the frame.
