@@ -1488,7 +1488,6 @@ M-x clone-indirect-buffer RET
 :  (defun org-collapse()     (interactive) (org-shifttab 0))
 : 
 
-
 *** Org-Babel
 
 #+begin_src emacs-lisp                     :REM org navigation functions
@@ -1721,69 +1720,6 @@ M-x clone-indirect-buffer RET
 
 
 
-*** Diff 2 from dired
-#+begin_src emacs-lisp
-;; -*- lexical-binding: t -*-
-;
-(defun ora-ediff-files ()
-  (interactive)
-  (let ((files (dired-get-marked-files)))
-    (message (format "%s" files))
-    (if (= (length files) 2)
-        (let ((file1 (car files))
-              (file2 (cadr files)))
-          (find-file-other-frame file1)
-          (find-file file2)
-          (if (file-newer-than-file-p file1 file2)
-              (ediff-files file2 file1)
-            (ediff-files file1 file2)))
-      (error "no more than 2 files should be marked"))))
-
-#+end_src
-;; My ediff customizations
-
-(defun dired-ediff-marked-files ()
-  "Compare two marked files in Dired with ediff."
-  (interactive)
-  (let ((marked-files (dired-get-marked-files)))
-    (unless (= (length marked-files) 2)
-      (error "You need to mark exactly two files to compare"))
-    (ediff-files (car marked-files) (cadr marked-files))))
-
-;; Compare marked files using =
-(with-eval-after-load 'dired
-  (define-key dired-mode-map "=" nil)
-  (define-key dired-mode-map "=" 'dired-ediff-marked-files))
-
-;; Ignore whitespace while comparing files
-(setq ediff-diff-options "-w")
-
-;; Split windows vertically
-(setq ediff-split-window-function 'split-window-horizontally)
-
-;; Restore window configuration after ediff exits
-(defvar my-ediff-bwin-config nil "Window configuration before ediff.")
-(defcustom my-ediff-bwin-reg ?b
-  "*Register to be set up to hold `my-ediff-bwin-config'
-        configuration.")
-
-(defun my-ediff-bsh ()
-  "Function to be called before any buffers or window setup for
-        ediff."
-  (setq my-ediff-bwin-config (current-window-configuration))
-  (when (characterp my-ediff-bwin-reg)
-    (set-register my-ediff-bwin-reg
-                  (list my-ediff-bwin-config (point-marker)))))
-
-(defun my-ediff-qh ()
-  "Function to be called when ediff quits."
-  (when my-ediff-bwin-config
-    (set-window-configuration my-ediff-bwin-config)))
-
-(add-hook 'ediff-before-setup-hook 'my-ediff-bsh)
-(add-hook 'ediff-quit-hook 'my-ediff-qh)
-
-
 *** Window arrangements
 
 #+begin_src emacs-lisp     :REM Window Arrangements
@@ -1850,6 +1786,7 @@ M-x clone-indirect-buffer RET
 : display-buffer-alist = nil
 : (current-window-configuration) = #<window-configuration>
 : window-dedicated-p
+
 
 ** Dired Stuff
 
@@ -2140,6 +2077,67 @@ M-x clone-indirect-buffer RET
 (message "-------------- Done: Dired Section")
 #+end_src
 
+*** Diff 2 from dired
+#+begin_src emacs-lisp
+;; -*- lexical-binding: t -*-
+;
+(defun ora-ediff-files ()
+  (interactive)
+  (let ((files (dired-get-marked-files)))
+    (message (format "%s" files))
+    (if (= (length files) 2)
+        (let ((file1 (car files))
+              (file2 (cadr files)))
+          (find-file-other-frame file1)
+          (find-file file2)
+          (if (file-newer-than-file-p file1 file2)
+              (ediff-files file2 file1)
+            (ediff-files file1 file2)))
+      (error "no more than 2 files should be marked"))))
+
+#+end_src
+;; My ediff customizations
+
+(defun dired-ediff-marked-files ()
+  "Compare two marked files in Dired with ediff."
+  (interactive)
+  (let ((marked-files (dired-get-marked-files)))
+    (unless (= (length marked-files) 2)
+      (error "You need to mark exactly two files to compare"))
+    (ediff-files (car marked-files) (cadr marked-files))))
+
+;; Compare marked files using =
+(with-eval-after-load 'dired
+  (define-key dired-mode-map "=" nil)
+  (define-key dired-mode-map "=" 'dired-ediff-marked-files))
+
+;; Ignore whitespace while comparing files
+(setq ediff-diff-options "-w")
+
+;; Split windows vertically
+(setq ediff-split-window-function 'split-window-horizontally)
+
+;; Restore window configuration after ediff exits
+(defvar my-ediff-bwin-config nil "Window configuration before ediff.")
+(defcustom my-ediff-bwin-reg ?b
+  "*Register to be set up to hold `my-ediff-bwin-config'
+        configuration.")
+
+(defun my-ediff-bsh ()
+  "Function to be called before any buffers or window setup for
+        ediff."
+  (setq my-ediff-bwin-config (current-window-configuration))
+  (when (characterp my-ediff-bwin-reg)
+    (set-register my-ediff-bwin-reg
+                  (list my-ediff-bwin-config (point-marker)))))
+
+(defun my-ediff-qh ()
+  "Function to be called when ediff quits."
+  (when my-ediff-bwin-config
+    (set-window-configuration my-ediff-bwin-config)))
+
+(add-hook 'ediff-before-setup-hook 'my-ediff-bsh)
+(add-hook 'ediff-quit-hook 'my-ediff-qh)
 *** Dired/subtree funs
 
 :  (dired-utils-is-dir-p)
@@ -2220,8 +2218,7 @@ M-x clone-indirect-buffer RET
 :  ;;     (add-to-list 'tramp-connection-properties (list (regexp-quote "android") "remote-shell" "sh"))
 :  ;; Open a remote connection with a more concise command C-x C-f /ssh:android: <RET>.
 
-
-** Image Dired
+*** Image Dired
 
 #+begin_src emacs-lisp                            :REM image-dired
 (setq image-dired-thumb-size 300)
@@ -2764,7 +2761,6 @@ org-goto
 
 : (global-set-key [M-up]          'kill-this-buffer-volatile) ;; kill-buffer
 : (global-set-key [M-+]           'text-scale-increase)
-
 
 *** Keypad Maps
 :         |----------------+----------------+----------------+----------|        
@@ -4214,29 +4210,30 @@ org-goto
 
 ;; weird and wacky incantations to get desired layout of uncooperative buffers and windows
 
-(set-frame-size (selected-frame) 350 110)     ; chars? NOT commutative!!!!!!
-(set-frame-position (selected-frame) 600 100) ; pixels?
+(when (string= (system-name) "maxwell")
+  (set-frame-size (selected-frame) 350 110)     ; chars? NOT commutative!!!!!!
+  (set-frame-position (selected-frame) 600 100) ; pixels?
 
-(ibuffer) ; (set-window-dedicated-p (selected-window)  t)
-(setq treemacs-show-cursor t)
-(setq treemacs-display-in-side-window nil)
-(setq treemacs-width-is-initially-locked nil)
-(treemacs) ; must also already be called in init.el!!! WTF
-(define-key treemacs-mode-map  (kbd "<return>")     #'treemacs-visit-node-in-most-recently-used-window)
-(setq treemacs-display-in-side-window nil)
-(split-window (treemacs-get-local-window) nil 'above) 
-(set-window-buffer (split-window (treemacs-get-local-window) nil 'below) "*Ibuffer*") ; ??????? have to split twice to get one split
+  (ibuffer) ; (set-window-dedicated-p (selected-window)  t)
+  (setq treemacs-show-cursor t)
+  (setq treemacs-display-in-side-window nil)
+  (setq treemacs-width-is-initially-locked nil)
+  (treemacs) ; must also already be called in init.el!!! WTF
+  (define-key treemacs-mode-map  (kbd "<return>")     #'treemacs-visit-node-in-most-recently-used-window)
+  (setq treemacs-display-in-side-window nil)
+  (split-window (treemacs-get-local-window) nil 'above) 
+  (set-window-buffer (split-window (treemacs-get-local-window) nil 'below) "*Ibuffer*") ; ??????? have to split twice to get one split
 
-(eshell)
-(let ((botRghtWin (window-at (- (frame-width) 2) (- (frame-height) 2))))
-    (set-window-buffer (split-window  botRghtWin 220 'right) "*Messages*")
-    (set-window-buffer botRghtWin "*eshell*")
-    (window-resize botRghtWin -30))
+  (eshell)
+  (let ((botRghtWin (window-at (- (frame-width) 2) (- (frame-height) 2))))
+      (set-window-buffer (split-window  botRghtWin 220 'right) "*Messages*")
+      (set-window-buffer botRghtWin "*eshell*")
+      (window-resize botRghtWin -30))
 
-(let ((topRghtWin (window-at (- (frame-width) 2)  2)))
-     (set-window-buffer topRghtWin (find-file-noselect "/home/kleyn/stromatolite/priv/aNotes/ToDoList.org"))
-    (window-resize topRghtWin -50 t))
-
+  (let ((topRghtWin (window-at (- (frame-width) 2)  2)))
+       (set-window-buffer topRghtWin (find-file-noselect "/home/kleyn/stromatolite/priv/aNotes/ToDoList.org"))
+      (window-resize topRghtWin -50 t))
+)
 
 (message "dotEmacs.org done")
 #+end_src

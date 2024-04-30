@@ -87,7 +87,7 @@
 : (add-to-list 'eshell-command-aliases-list (list "doBackup"
 :     (setq  (concat /data/data/com.termux/files/home/internalBackup/ (format-time-string \"%Y%m%d-%H%M\" (current-time)) \".lst\"))
 :     find ~/        -name '.#-emacs*' -exec rm -v {} \;
-:     find ~/MyDocs/ -name '.#-emacs*' -exec rm -v {} \;
+:     find ~/MyDocs/ -name '.#-emacs*' -exec rm -v {} \;y
 :     mkdir -p $budir
 :     cp -r $frootDir/MyDocs/aNotes   $budir
 :     cp -r $frootDir/MyDocs/Personal $budir
