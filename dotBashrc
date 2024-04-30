@@ -244,6 +244,10 @@ export VISUAL="emacsclient28 -c -s emcsSrvr"         # $VISUAL opens in GUI mode
 alias emacsServer='emacs28 --daemon=emcsSrvr -l ~/.emacs.d/init.el'
 alias emacsClient='emacsclient28 -c -s emcsSrvr &'
 
+alias emacsNormal='emacs28 -l ~/.emacs.d/init.el'
+alias emacs='emacsServer; sleep 2; emacsClient'
+
+#alias emacs='emacs26'
 #alias emnw='emacs26 -nw -fg black  -bg white1'
 #alias ew='emacsclient -n'
 #function emd () { emacsclient -n --eval "(ediff-files \"$1\" \"$2\")" }
@@ -257,7 +261,6 @@ alias cw='cut -b -$COLUMNS'
 # ----------------------------------------------------------------------------- process stuff
 
 export NMON=CcdtJr
-
 
 # ps -ejH
 # pstree
@@ -469,15 +472,6 @@ function tstArgs() {
 }
 
 
-# ----------------------------------------------------------------------------- xterm colored
-alias xtm='xterm   -sl 2000 &'
-alias xtmr='xterm  -sl 20000 -bg darkred   -fg white  -cr lightblue     &'
-alias xtmg='xterm  -sl 20000 -bg darkgreen -fg yellow -cr lightblue     &'
-alias xtmb='xterm  -sl 20000 -bg darkblue  -fg white  -cr lightblue     &'
-alias xtmbl='xterm -sl 20000 -bg lightblue -fg black  -cr red           &'
-alias xtmy='xterm  -sl 20000 -bg darkgrey  -fg white  -cr lightblue     &'
-alias xtmo='xterm  -sl 20000 -bg orange4   -fg white  -cr lightgreen    &'
-alias xtmv='xterm  -sl 20000 -bg palevioletred -fg black -cr lightgreen &'
 
 # ----------------------------------------------------------------------------- start jobs
 #  firefox &
@@ -490,28 +484,7 @@ function startJobs () {
   (sleep 5) && (pavucontrol-qt &)
 }
 
-# ----------------------------------------------------------------------------- window title
-# function my_set_screen_title() {
-#   echo -ne "\ekHELLO$1\e\\"
-#   PROMPT_COMMAND='echo -ne "\033]0;"myWindowTitle"\007"'
-#   currWindow=`xprop -root | grep "_NET_ACTIVE_WINDOW(WINDOW)" | awk '{ print $5}'`
-#   xdotool set_window --name hello $currWindow
-# }
-
-# function swtt(){
-#  currWCmd="xprop -root \| grep _NET_ACTIVE_WINDOW\(WINDOW\) \| awk '{print $5}'"
-#  currWindow=`$currWindowCmd`
-#  echo "Curr Window is $currWindow"
-#  xdotool set_window --name "$$:$1" `$currWindow
-# }
-
-# function swtt(){
-#  curWS=`xprop -root \| grep _NET_ACTIVE_WINDOW\(WINDOW\)`
-#  curW= awk '{print $5}'
-#  currWindow=`$currWindowCmd`
-#  echo "Curr Window is $currWindow"
-#  xdotool set_window --name "$$:$1" `$currWindow
-# }
+alias weather='curl wttr.in/oxford'
 
 # manipulate symlink - "repoint"
 function rp(){
