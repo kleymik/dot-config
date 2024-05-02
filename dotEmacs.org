@@ -176,6 +176,7 @@ convenient prefix key map, for example `C-,`
   (yank)
 )
 
+;;---------------------------------------------------- toggle booleans
 (defun bool-flip-do-flip ()
   (interactive)
   (let ((currWord (thing-at-point 'word))
@@ -1848,7 +1849,6 @@ M-x clone-indirect-buffer RET
 : window-dedicated-p
 
 ** Dired Stuff
-
 
 (defconst dired-audio-files-extensions  '("mp3" "MP3" "ogg" "OGG" "flac" "FLAC" "wav" "WAV")  
           "Dired Audio files extensions")
