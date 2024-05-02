@@ -4240,10 +4240,28 @@ org-goto
 
 * End bit - Initialize Windows
 
+: (window-tree) =
+: ((nil
+:   (0 0 379 109)
+:   (t
+:    (0 0 69 109)
+:    #<window 9 on  *Treemacs-Scoped-Buffer-#<frame  0x26c5d18>*>           
+:    #<window 12 on *Ibuffer*>)
+:   (t
+:    (69 0 379 109)
+:    (nil
+:     (69 0 379 85)
+:     #<window 3 on dotEmacs.org> 
+:     #<window 14 on ToDoList.org>)
+:    (nil
+:     (69 85 379 109)
+:     #<window 7 on *eshell*> #<window 16 on *Messages*>)))
+:  #<window 4 on  *Minibuf-0*>)
+
+
 #+begin_src emacs-lisp
 (put 'narrow-to-region 'disabled nil)
 (setq password-cache-expiry nil)
-
 ;; weird and wacky incantations to get desired layout of uncooperative buffers and windows
 
 (when (string= (system-name) "maxwell")
@@ -4276,6 +4294,8 @@ org-goto
      (set-window-dedicated-p (get-buffer-window "ToDoList.org")  t)
 )
 
+
+;(message (format "%s\n" (with-output-to-string (pp (window-tree)))))
 (message "dotEmacs.org done")
 #+end_src
 
