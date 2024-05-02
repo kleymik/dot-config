@@ -114,6 +114,21 @@ convenient prefix key map, for example `C-,`
 #+begin_src emacs-lisp                            :REM Function Definitions
 (message "-------------- Start: Handy Function Definitions")
 
+
+(defun ibuffer-visit-ace-window ()  ; for ibuffer
+  "Visit the buffer on this line in another window."
+  (interactive)
+  (let ((buf (ibuffer-current-buffer t)))
+     (set-window-buffer (ace-select-window) buf)))
+
+(defun dired-visit-ace-window ()  ; for dired
+  "Visit the buffer on this line in another window."
+  (interactive)
+  (let ((buf (find-file-noselect (dired-get-filename))))
+     (message (format "opened file in  buffer %s" buf))
+     (set-window-buffer (ace-select-window) buf)))
+
+;;---------------------------------------------------- drag lines
 (defun move-line (n)
   "Move the current line up or down by N lines."
   (interactive "p")
@@ -832,9 +847,12 @@ convenient prefix key map, for example `C-,`
    (ibuffer-auto-mode 1)
    (define-key ibuffer-mode-map (kbd "<return>")   #'ibuffer-visit-buffer-other-window)
    (define-key ibuffer-mode-map (kbd "t")          #'ibuffer-toggle-filter-group)
+
    (define-key ibuffer-mode-map [kp-9]             #'previous-line)
    (define-key ibuffer-mode-map [kp-6]             #'ibuffer-toggle-filter-group)
    (define-key ibuffer-mode-map [kp-3]             #'next-line)
+
+   (define-key ibuffer-mode-map [kp-0]             #'ibuffer-visit-ace-window)
    (message "in ibuffer"))
 
 (add-hook 'ibuffer-mode-hook 'my-ibuffer-hooks)   ; (lambda () ;; no need to quote the lambda, but try to avoid using them as hooks
@@ -2525,6 +2543,8 @@ for flushing messages to *Message* buffer
 
 ** Global Keys
 #+begin_src emacs-lisp
+(global-set-key (kbd "M-o") 'ace-window)
+
 (global-set-key (kbd "M-x") 'counsel-M-x)            ; Ivy-based interface to standard commands
 (global-set-key (kbd "M-y") 'counsel-yank-pop)
 (global-set-key "\C-s" 'isearch-forward)
@@ -2811,6 +2831,7 @@ org-goto
 : (global-set-key [M-up]          'kill-this-buffer-volatile) ;; kill-buffer
 : (global-set-key [M-+]           'text-scale-increase)
 
+
 *** Keypad Maps
 :         |----------------+----------------+----------------+----------|        
 :         |         NumLock|               /|               *|         -|        
@@ -2907,6 +2928,8 @@ org-goto
 
   (define-key treemacs-mode-map [kp-6]            #'treemacs-root-down)                             ;; works?
   (define-key treemacs-mode-map (kbd "<C-right>") #'treemacs-root-down)                                          ;; ok-same as sidebar; move #6=u1  
+ 
+  (define-key treemacs-mode-map [kp-0]     #'treemacs-visit-node-ace)
 )
 #+end_src
 
@@ -2918,26 +2941,24 @@ org-goto
 #+end_src
 
 #+begin_src emacs-lisp                     :REM TreeNavPad keys for dired modes 
-;(dired-sidebar-subtree-toggle)
-;(setq dired-subtree-cycle-depth 5) = 5
-
-
-
 (progn ;; dired treepad navigation
-  (define-key dired-mode-map [kp-4]                'my-dired-up-to-parent)                                          ;; ok-same as sidebar; move #6=u1  
+  (define-key dired-mode-map [kp-4]                #'my-dired-up-to-parent)                                          ;; ok-same as sidebar; move #6=u1  
 
-  (define-key dired-mode-map [kp-8]                'dired-subtree-previous-sibling)                                 ;; ok-same as sidebar; move #2=ps
-  (define-key dired-mode-map [kp-5]                'my-dired-subtree-toggle)                                        ;; ok-same as sidebar; tbd toggle with 'dired-subtree-remove ;; toggle open children
-  (define-key dired-mode-map [kp-2]                'dired-subtree-next-sibling)                                     ;; ok-same as sidebar;  move #8=ns
+  (define-key dired-mode-map [kp-8]                #'dired-subtree-previous-sibling)                                 ;; ok-same as sidebar; move #2=ps
+  (define-key dired-mode-map [kp-5]                #'my-dired-subtree-toggle)                                        ;; ok-same as sidebar; tbd toggle with 'dired-subtree-remove ;; toggle open children
+  (define-key dired-mode-map [kp-2]                #'dired-subtree-next-sibling)                                     ;; ok-same as sidebar;  move #8=ns
 
-  (define-key dired-mode-map [kp-6 ]               'dired-find-file-drop-prev-dired-buffer)                         ;; dired-find-file
-  (define-key dired-mode-map [C-kp-6]              'my-subdired-dft)                                                ;; dired-subtree-insert move #8=ns     ;; open and moveto first child,
+  (define-key dired-mode-map [kp-6 ]               #'dired-find-file-drop-prev-dired-buffer)                         ;; dired-find-file
+  (define-key dired-mode-map [C-kp-6]              #'my-subdired-dft)                                                ;; dired-subtree-insert move #8=ns     ;; open and moveto first child,
 
-  (define-key dired-mode-map [kp-0]                'dired-view-current)
-  ;(define-key dired-mode-map [kp-4]                '(lambda () (interactive)   (my-dired-up-to-parent) (my-dired-up-to-parent)))
-  ;(define-key dired-mode-map [kp-decimal]          '(lambda () (interactive)  (my-dired-subtree-next-sibling-n 7)))              ;; moveto nth sibling, and open
+  (define-key dired-mode-map [kp-0]               #'dired-visit-ace-window)
 )
 #+end_src
+: (define-key dired-mode-map [kp-4]                '(lambda () (interactive)   (my-dired-up-to-parent) (my-dired-up-to-parent)))
+: (define-key dired-mode-map [kp-decimal]          '(lambda () (interactive)  (my-dired-subtree-next-sibling-n 7)))              ; moveto nth sibling, and open
+: (dired-sidebar-subtree-toggle)
+: (setq dired-subtree-cycle-depth 5) = 5
+
 
 #+begin_src emacs-lisp                     :REM dired navigation functions
 (defun my-subdired-dft ()
