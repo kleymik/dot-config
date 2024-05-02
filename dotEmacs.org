@@ -53,11 +53,11 @@ convenient prefix key map, for example `C-,`
 (require 'em-alias)                             ; for eshell
 ; (require 'diffview)                           ; make patch files look like ediff
 ; ----------------------- dired etc
-; (require 'dired+)
-; (require 'dired-x)
+(require 'dired-x)
 (require 'wdired)
 (require 'dired-subtree)
 (require 'dired-rainbow)
+(load-file "/home/kleyn/ulib/emacs/diredPlus.el") ;(require 'dired+)  ; my fixed version (require 'diredPlus)  ; my fixed version
 (require 'treemacs)
 (require 'eww)
 ;; (require 'tree-inspector) under dev ind grex-calc
