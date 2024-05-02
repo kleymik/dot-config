@@ -246,18 +246,6 @@ convenient prefix key map, for example `C-,`
   (move-to-column column t)
 )
 
-;; ------------------------------------------------------------------- Window Sizing
-(defun window-hwiden (&optional arg)
-  "Widen window"
-  (interactive "p")
-  (enlarge-window-horizontally 10)
-)
-(defun window-hshrink (&optional arg)
-  "Shrink window"
-  (interactive "p")
-  (shrink-window-horizontally 10)
-)
-
 ;; ------------------------------------------------------------------- unfill-paragraph
 ;;; Stefan Monnier <foo at acm.org>. It is the opposite of fill-paragraph. 
 ;;; Takes a multi-line paragraph and makes; it into a single line of text.
