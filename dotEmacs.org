@@ -528,11 +528,59 @@ convenient prefix key map, for example `C-,`
    (dolist (l fileLines)
       (message l)
       (cond ((string-match "^TITLE:" l) (setq title (substring l (length "TITLE: "))))
-            ((string-match "^URI:" l)   (setq url   (substring l (length "URI: "))))))
+            ((string-match "^URI:"   l) (setq url   (substring l (length "URI: "))))
+            ((string-match "^URL="  l) (setq url   (substring l (length "URI="))))))
    (message "opening %s in browser"  title)
    (message "with url %s in browser" url)
    (when url (browse-url-firefox url)))
 )
+
+;; (defun read-file (file-path)
+;;   "Read the contents of a file and return it as a string."
+;;   (with-temp-buffer
+;;     (insert-file-contents file-path)
+;;     (buffer-string)))
+
+(defun get-in-file-url (file-path)
+  "Parse .url file and return value of URL= entry"
+   (with-temp-buffer
+     (message (concat "file-path:" file-path))
+     (insert-file-contents file-path)
+     (let (result)
+        (goto-char (point-min))
+        (while (re-search-forward "^\\([^#;][^=]*\\)=\\(.*\\)$" nil t)
+         (message (concat "match = " (match-string 1) (match-string 2)))
+         (when (string= "URL" (upcase (match-string 1)))
+          (setq result (match-string 2))))
+      result)))
+
+(defun get-in-file-url-webloc (file-path)
+  "heuristically extracts url from .webloc file"
+   (with-temp-buffer
+     (message (concat "url-file-path:" file-path))
+     (insert-file-contents file-path)
+     (let ((xml-dom-tree (libxml-parse-xml-region (point-min) (point-max))))
+       (print xml-dom-tree)
+       (cadr (dom-strings xml-dom-tree)))))
+
+(defun my-eww-open-file ()
+  (interactive)
+  (let ((curDrdBuff (current-buffer))
+         (ufn (dired-get-filename))
+        url)
+     (message (concat "ufn:" ufn))
+     (cond ((string-equal "URL" (upcase (file-name-extension ufn)))
+             (setq url (get-in-file-url ufn))
+             (message (concat "url:" url))
+             (eww url))
+           ((string-equal "HTML" (upcase (file-name-extension ufn)))  ;; tbd find the embedded url
+             (setq url (get-in-file-url ufn)) ;; extend function to ".html" files
+             (message (concat "url:" url))
+             (eww url))
+           ((string-equal "WEBLOC" (upcase (file-name-extension ufn)))  ;; tbd find the embedded url
+             (setq url (get-in-file-url ufn)) ;; extend function to ".html" files
+             (message (concat "url:" url))
+             (eww url)))))
 
 ;; ------------------------------------------------------------------- Selective Display
 ;; tweaked for grex-calc
@@ -2011,52 +2059,8 @@ M-x clone-indirect-buffer RET
     (buffer-string))
   )
 
-;; (defun read-file (file-path)
-;;   "Read the contents of a file and return it as a string."
-;;   (with-temp-buffer
-;;     (insert-file-contents file-path)
-;;     (buffer-string)))
 
-(defun get-in-file-url (file-path)
-  "Parse .url file and return value of URL= entry"
-   (with-temp-buffer
-     (message (concat "file-path:" file-path))
-     (insert-file-contents file-path)
-     (let (result)
-        (goto-char (point-min))
-        (while (re-search-forward "^\\([^#;][^=]*\\)=\\(.*\\)$" nil t)
-         (message (concat "match = " (match-string 1) (match-string 2)))
-         (when (string= "URL" (upcase (match-string 1)))
-          (setq result (match-string 2))))
-      result)))
 
-(defun get-in-file-url-webloc (file-path)
-  "heuristically extracts url from .webloc file"
-   (with-temp-buffer
-     (message (concat "url-file-path:" file-path))
-     (insert-file-contents file-path)
-     (let ((xml-dom-tree (libxml-parse-xml-region (point-min) (point-max))))
-       (print xml-dom-tree)
-       (cadr (dom-strings xml-dom-tree)))))
-
-(defun my-eww-open-file ()
-  (interactive)
-  (let ((curDrdBuff (current-buffer))
-         (ufn (dired-get-filename))
-        url)
-     (message (concat "ufn:" ufn))
-     (cond ((string-equal "URL" (upcase (file-name-extension ufn)))
-             (setq url (get-in-file-url ufn))
-             (message (concat "url:" url))
-             (eww url))
-           ((string-equal "HTML" (upcase (file-name-extension ufn)))  ;; tbd find the embedded url
-             (setq url (get-in-file-url ufn)) ;; extend function to ".html" files
-             (message (concat "url:" url))
-             (eww url))
-           ((string-equal "WEBLOC" (upcase (file-name-extension ufn)))  ;; tbd find the embedded url
-             (setq url (get-in-file-url ufn)) ;; extend function to ".html" files
-             (message (concat "url:" url))
-             (eww url)))))
 
 (progn
   (define-key dired-mode-map "J"               'dired-move-to-old) ; junk
@@ -2438,6 +2442,7 @@ for flushing messages to *Message* buffer
 (add-hook 'write-file-hooks 'py-clean-file)
 
 #+end_src
+
 
 * Key Bindings
 ** keys notes: may be useful
