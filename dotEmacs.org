@@ -114,7 +114,6 @@ convenient prefix key map, for example `C-,`
 #+begin_src emacs-lisp                            :REM Function Definitions
 (message "-------------- Start: Handy Function Definitions")
 
-
 (defun ibuffer-visit-ace-window ()  ; for ibuffer
   "Visit the buffer on this line in another window."
   (interactive)
@@ -718,7 +717,6 @@ convenient prefix key map, for example `C-,`
 
 
 * Settings
-
 ** Highlighting/Cursor Visibility
 ; ------------------------------------- highlighting
 (require 'highlight-sexp)  - fails
@@ -1164,8 +1162,8 @@ M-x clone-indirect-buffer RET
 ** Python Mode
 #+begin_src emacs-lisp   
 ;  Python Shell (ipython)
-  (setq python-shell-interpreter "ipython" 
-        python-shell-interpreter-args "-i --simple-prompt --InteractiveShell.display_page=True")
+(setq python-shell-interpreter "ipython" 
+      python-shell-interpreter-args "-i --simple-prompt --InteractiveShell.display_page=True")
 
 (defun insertcodePyCodeSnippet ()
   (interactive)
@@ -1189,7 +1187,6 @@ M-x clone-indirect-buffer RET
                       (previous-line))))))
 )
 
-;
 ;; this location is "~/.pudb-bp" in older versions of pudb
 (setq pudb-bp-file (expand-file-name "~/.config/pudb/saved-breakpoints-3.9"))
 (defun pudb-add-breakpoint ()
@@ -2058,25 +2055,23 @@ M-x clone-indirect-buffer RET
   )
 
 
-
-
 (progn
-  (define-key dired-mode-map "J"               'dired-move-to-old) ; junk
-  (define-key dired-mode-map "O"               'ergoemacs-open-in-external-app)  
-  (define-key dired-mode-map (kbd "A")         'dired-toggle-listing)
-  (define-key dired-mode-map (kbd "r")         'wdired-change-to-wdired-mode)
-  (define-key dired-mode-map (kbd "t")         'my-dired-subtree-toggle)
-  (define-key dired-mode-map (kbd "w")         'my-eww-open-file)
-  (define-key dired-mode-map (kbd "T")         'dired-omit-mode)
-  (define-key dired-mode-map [(tab)]           'my-dired-subtree-toggle)
-  (define-key dired-mode-map (kbd "I")         'image-dired-jump-thumbnail-buffer)
-  (define-key dired-mode-map (kbd "c")         'dired-ediff-git)      ;; compare to last version with ediff
-  (define-key dired-mode-map (kbd "e")         'dired-cd-eshell)      ;; was dired-subtree-only-this-file
-  (define-key dired-mode-map (kbd "=")         'ora-ediff-files)
-  ;; (define-key dired-mode-map (kbd "p")      'dired-paste-to-yank-buffer)
-  (define-key dired-mode-map (kbd ",")         'dired-sort-toggle-or-edit) ;; to match sidebar-mode
-  (define-key dired-mode-map [M-down]          'dired-view-next)      ;; was dired-previous-line
-  (define-key dired-mode-map [M-up]            'dired-view-previous)  ;; was dired-next-line
+  (define-key dired-mode-map "J"               #'dired-move-to-old) ; junk
+  (define-key dired-mode-map "O"               #'ergoemacs-open-in-external-app)  
+  (define-key dired-mode-map (kbd "A")         #'dired-toggle-listing)
+  (define-key dired-mode-map (kbd "r")         #'wdired-change-to-wdired-mode)
+  (define-key dired-mode-map (kbd "t")         #'my-dired-subtree-toggle)
+  (define-key dired-mode-map (kbd "w")         #'my-eww-open-file)
+  (define-key dired-mode-map (kbd "T")         #'dired-omit-mode)
+  (define-key dired-mode-map [(tab)]           #'my-dired-subtree-toggle)
+  (define-key dired-mode-map (kbd "I")         #'image-dired-jump-thumbnail-buffer)
+  (define-key dired-mode-map (kbd "c")         #'dired-ediff-git)      ;; compare to last version with ediff
+  (define-key dired-mode-map (kbd "e")         #'dired-cd-eshell)      ;; was dired-subtree-only-this-file
+  (define-key dired-mode-map (kbd "=")         #'ora-ediff-files)
+  ;; (define-key dired-mode-map (kbd "p")         'dired-paste-to-yank-buffer)
+  (define-key dired-mode-map (kbd ",")         #'dired-sort-toggle-or-edit) ;; to match sidebar-mode
+  (define-key dired-mode-map [M-down]          #'dired-view-next)      ;; was dired-previous-line
+  (define-key dired-mode-map [M-up]            #'dired-view-previous)  ;; was dired-next-line
 )
 
 (defvar dired-subtree-last-previewed-buffer nil  "record which previous preview buffer to delete")
@@ -2267,7 +2262,6 @@ M-x clone-indirect-buffer RET
 ; treemacs-project-follow-mode
 ; treemacs-project-follow-mode
 ; (treemacs-select-directory)
-
 :      (key-root-up        (treemacs--find-keybind #'treemacs-root-up))
 :      (key-root-down      (treemacs--find-keybind #'treemacs-root-down))
 :      (key-next-line      (treemacs--find-keybind #'treemacs-next-line))
@@ -2452,20 +2446,13 @@ for flushing messages to *Message* buffer
 :  :                           ;; self-insert-command
 :  ??                          ;; package-list-packages
 :  C-;                         ;; Highlight item for MULTIPLE edit
-:  C-a                         ;; move-beginning-of-line
-:  C-b                         ;; backward-char
-:  C-c C-b                     ;; associate ielm with buffer
 :  C-ci                        ;; indent-to-column
-:  C-h C-a                     ;; about-emacs
 :  C-h f                       ;; describe-function
 :  C-h F                       ;; Info-goto-emacs-command-node
 :  C-h w                       ;; command where-is (found in global-map) (where-is DEFINITION &optional INSERT)
 :  C-j                         ;; eval in scratch buffer ?
-:  C-k                         ;; kill-line
 :  C-q                         ;; unfill-paragraph
-:  C-s                         ;; isearch-forward
 :  C-x C-f                     ;; find-file
-:  C-u C-space or C-u C-@      ;; move back to previous positions (within buffer)
 :  C-x C-space or C-x C-@      ;; move back to previous positions (between buffers)
 :  C-x C-x                     ;; exchange-point-and-mark
 :  C-x RTN f unix RTN          ;; dos2unix
@@ -2473,30 +2460,21 @@ for flushing messages to *Message* buffer
 :  C-x n w                     ;; To Region - Widen
 :  C-x r s r                   ;; Register "r" Copy region into  (copy-to-register).
 :  C-x r i r                   ;; Register "r" Insert text from  (insert-register).
-:  C-x r w w                   ;; Save winows config in register "w"
-:  C-x r j w                   ;; jump back (where <register> is a single character) to jump back to it.
-:  C-x M-:                     ;; like M-: but with the elisp expression already filled in for youo
-:  C-y                         ;; yank
+:  C-x M-:                     ;; like M-: but with the elisp expression already filled in for you
 :  DEL                         ;; delete-backward-char
-:  ESC                         ;; ESC-prefix
-:  M-6 M-x                     ;; Buffer-menu-sort = sort by file name
 :  M-s h f                     ;; hi-lock-find-patterns           Searches for Hi-Lock patterns in the buffer to use.
 :  M-s h l                     ;; highlight-lines-matching-regexp Highlights all lines matching a regular expression
 :  M-s h p                     ;; highlight-phrase                Highlights everything matching a phrase
 :  M-s h r                     ;; highlight-regexp                Highlights everything matching a regular expression
 :  M-s h u                     ;; unhighlight-regexp              Deletes the highlighter under point
 :  M-s h w                     ;; hi-lock-write-interactive-patterns Inserts a list of Hi-Lock patterns into the buffer
-:  RET                         ;; newline
-:  w                           ;; self-insert-command
 :  command C-x z, then z again ;; repeat last
 :  complex command C-x ESC ESC ;; repeat last
 
 ** keys notes: org-babel
-
 : C-down / C-up = next section / previous section in org-babel
 : org-goto
 : 
-:   C-c C-o     results in separate buffer
 :   C-c C-o     open link
 :   C-c C-x C-l (org-latex-preview)
 :   C-c C-x C-l show latex
@@ -2521,15 +2499,15 @@ for flushing messages to *Message* buffer
 :    M-i babel> complete-symbol
 ** Mousing
 #+begin_src emacs-lisp
-(global-set-key (kbd "s-x")         #'(lambda () (interactive) (progn (set-mark-command 0))))   ; Super = windowframe key is  mod 4 see xmodmap cycle-buffer
-(global-set-key (kbd "<S-mouse-4>") 'cycle-buffer-permissive)
-(global-set-key (kbd "<S-mouse-5>") 'cycle-buffer-permissive-backward)
+(global-set-key (kbd "s-x")          #'(lambda () (interactive) (progn (set-mark-command 0))))   ; Super = windowframe key is  mod 4 see xmodmap cycle-buffer
+(global-set-key (kbd "<S-mouse-4>")  #'cycle-buffer-permissive)
+(global-set-key (kbd "<S-mouse-5>")  #'cycle-buffer-permissive-backward)
 
-(global-set-key (kbd "<C-mouse-4>") 'text-scale-increase)
-(global-set-key (kbd "<C-mouse-5>") 'text-scale-decrease)
+(global-set-key (kbd "<C-mouse-4>")  #'text-scale-increase)
+(global-set-key (kbd "<C-mouse-5>")  #'text-scale-decrease)
 
-(global-set-key (kbd "<M-mouse-4>") 'selective-display-level-incr)
-(global-set-key (kbd "<M-mouse-5>") 'selective-display-level-decr)
+(global-set-key (kbd "<M-mouse-4>")  #'selective-display-level-incr)
+(global-set-key (kbd "<M-mouse-5>")  #'selective-display-level-decr)
 (message "-------------- Done: Mousing")
 #+end_src
 
@@ -2550,8 +2528,8 @@ for flushing messages to *Message* buffer
 ; 20211215_15:09:19 ordered by order on QWERTY keyboard
 ;;  (global-set-key "\C-q"          'quoted-insert)  ; for resetting, already default
 
-; C-c
 ;
+; C-c
 ; qwerty 1st row
 (global-set-key (kbd "C-<tab>")    'yafolding-toggle-element)
 (global-set-key (kbd "C-c q")      'lines-to-cslist)                                    ; 'quick-calc
@@ -2573,6 +2551,7 @@ for flushing messages to *Message* buffer
 (global-set-key (kbd "C-c C-b")    'compare-windows)
 (global-set-key (kbd "C-c <")      'selective-display-level-decr)
 (global-set-key (kbd "C-c >")      'selective-display-level-incr)
+;
 ; C-s
 ;(global-set-key (kbd "C-s y")     'overwrite-yank)
 ;
@@ -2622,34 +2601,6 @@ for flushing messages to *Message* buffer
 (message "-------------- Done: Global Keys")
 #+end_src
 
-** org-babel keys notes
-C-down / C-up = next section / previous section in org-babel
-org-goto
-
-  C-c C-o     results in separate buffer
-  C-c C-o     open link
-  C-c C-x C-l (org-latex-preview)
-  C-c C-x C-l show latex
-  C-c C-v h   list keybings
-  C-c C-v s   execute subtree
-  C-c C-v C-b execute all
-  C-c C-v z   show REPL
-  C-c C-c     execute block
-  C-c n       execute and next block
-  C-c C-,     insert block
-  C-up        up heading
-  C-c C-f     forward heading
-  C-c C-p     backward heading
-  M-i         for function description
-  C-M-i       babel completion-at-point
-  M-Tab       org complete word at point
-  C- '        edit block
-
- completion
-   M-/
-   M-TAB - orgmode
-   M-i babel> complete-symbol
-
 ** Function Keys
 |------+-----------+-----------+------------+-----------------+---+------------------+----------------+----------+--------------+---+-------------+-------------+--------+--------------+------|
 | ***  | F1        | F2        | F3         | F4              | X | F5               | F6             | F7 TABLE | F8 BABEL     | X | F9          | F10         | F11    | F12 DEBUG    | ***  |
@@ -2689,11 +2640,11 @@ org-goto
 (global-set-key [s-f2]     #'(lambda () (interactive) (find-file "/home/kleyn/aNotes/access.org.gpg")))
 
 (global-set-key [f3]       #'list-command-history) 
+(global-set-key [C-f3]     #'(lambda () (interactive) (dired     "/home/kleyn/history/commands/history_2021-w*")))  ; view this week's bash history
 (global-set-key [S-f3]     #'(lambda () (interactive) (progn (find-file (concat "/home/kleyn/history/commands/history_" (format-time-string "%Y" (current-time)) "-w" (format-time-string "%W" (current-time))))
                                                             (setq truncate-lines t)
                                                             (goto-char (point-max))
                                                             (auto-revert-mode)))) ;; history_2021-w30
-(global-set-key [C-f3]     #'(lambda () (interactive) (dired     "/home/kleyn/history/commands/history_2021-w*")))  ; view this week's bash history
 (global-set-key [M-f3]     #'(lambda () (interactive) (find-file "/home/kleyn/.emacs.d/dotEmacs.org") (search-forward "** Function Keys") (org-show-subtree)))  ;; nok900  'my-openfile  'neotree-show
 (global-set-key [s-f3]     #'(lambda () (interactive) (find-file "/home/kleyn/config/dot/dotBashrc") ))
 
@@ -2863,91 +2814,84 @@ org-goto
 : | SUPER<|                                 |                |          |<SUPER |
 : |-------+---------------------------------+----------------+----------+-------|
 
- |---+------+-------------------------------------+-------+-------+-----------------------------------------+-------------------------------------+----------------------------------------------+----------------------------+--------------------------------------------------------+------------------------+---+------+----------------+-------|
- | # | KEY  | DESCRIPTION                         | ABBRV | SoFar | org-mode/babel                          | dired                               | python                                       | elisp                      | Treemacs                                               | ibuffer                |   | json | xml/yafoldable | table |
- |---+------+-------------------------------------+-------+-------+-----------------------------------------+-------------------------------------+----------------------------------------------+----------------------------+--------------------------------------------------------+------------------------+---+------+----------------+-------|
- |   | kp-4 | move upto parent;                   | out   | JJXJX | j outline-up-heading     : tbd collapse | J dired-up-to-parent                | python-nav-backward-up-list/-beginning-block | J backward-up-list         | (treemacs--find-keybind #'treemacs-goto-parent-node))  |                        |   |      |                | left  |
- |---+------+-------------------------------------+-------+-------+-----------------------------------------+-------------------------------------+----------------------------------------------+----------------------------+--------------------------------------------------------+------------------------+---+------+----------------+-------|
- |   | kp-8 | move to previous sibling            | sup   | JJXJX | J org-backward-heading-same-level       | J dired-subtree-previous-sibling    | python-nav-backward-[block/list/..]          | J backward-sexp            | (treemacs--find-keybind #'treemacs-previous-neighbour) | J                      |   |      |                | up    |
- |   | kp-5 | troggle children                    | trg   | JJJJX | J org-cycle                             | J my-dired-subtree-toggle           | J yafolding-toggle-element                   | J yafolding-toggle-element | TAB=                                                   | J toggle ibuffer group |   |      |                | right |
- |   | kp-2 | move to next     sibling            | sdn   | JJXJX | J org-forward-heading-same-level        | J dired-subtree-next-sibling        | python-nav-forward-[block/list/..]           | J forward-sexp             | (treemacs--find-keybind #'treemacs-next-neighbour)     | J                      |   |      |                | down  |
- |---+------+-------------------------------------+-------+-------+-----------------------------------------+-------------------------------------+----------------------------------------------+----------------------------+--------------------------------------------------------+------------------------+---+------+----------------+-------|
- |   | kp-6 | go in; expand/dft if needed         | in    | JJXXX | J my-org-dft                            | J my-dired-dft                      |                                              | J down-list                |                                                        |                        |   |      |                |       |
- |   | kp-9 | up one line                         | prv   |       |                                         |                                     |                                              |                            |                                                        |                        |   |      |                |       |
- |   | kp-3 | down one line                       | nxt   |       |                                         |                                     |                                              |                            |                                                        |                        |   |      |                |       |
- |---+------+-------------------------------------+-------+-------+-----------------------------------------+-------------------------------------+----------------------------------------------+----------------------------+--------------------------------------------------------+------------------------+---+------+----------------+-------|
- |   |      | goto first uncle                    | fu    |       |                                         |                                     |                                              |                            |                                                        |                        |   |      |                |       |
- |   |      | goto last uncle                     | lu    |       |                                         |                                     |                                              |                            |                                                        |                        |   |      |                |       |
- |   |      | show children; go to last child     | lc    | XXXXX | (org-show-children) (next-line)         |                                     |                                              |                            |                                                        |                        |   |      |                | end   |
- |   |      | move to next     sibling X7         | ns6   | JJXJX | J org-forward-heading-same-level  x7    | J my-dired-subtree-next-sibling  x7 |                                              | J forward-sexp X 6         |                                                        |                        |   |      |                |       |
- |   |      | move to previous sibling X7         | ps6   | JJXJX | J org-backward-heading-same-level x7    | J my-dired-subtree-prev-sibling  x7 |                                              | J backward-sexp x 6        |                                                        |                        |   |      |                |       |
- |   |      | upto grandparent; collapse children | up2   | JJXJX | J outline-up-heading X 2 : tbd collapse | J dired-up-to-parent X 2            |                                              | J backward-up-list X 2     |                                                        |                        |   |      |                | home  |
- |   |      | search breadth first                |       |       |                                         |                                     |                                              |                            |                                                        |                        |   |      |                |       |
- |---+------+-------------------------------------+-------+-------+-----------------------------------------+-------------------------------------+----------------------------------------------+----------------------------+--------------------------------------------------------+------------------------+---+------+----------------+-------|
+ |------+-------+-------------------------------------+-------+-----------------------------------------+-------------------------------------+------------------------------+----------------------------------------------+----------------------------+------------------------+---+------+----------------+-------|
+ | KEY  | ABBRV | DESCRIPTION                         | SoFar | org-mode/babel                          | dired                               | Treemacs                     | python                                       | elisp                      | ibuffer                |   | json | xml/yafoldable | table |
+ |------+-------+-------------------------------------+-------+-----------------------------------------+-------------------------------------+------------------------------+----------------------------------------------+----------------------------+------------------------+---+------+----------------+-------|
+ | kp-4 | out   | move upto parent;                   | JJXJX | j outline-up-heading     : tbd collapse | J dired-up-to-parent                | treemacs-goto-parent-node))  | python-nav-backward-up-list/-beginning-block | J backward-up-list         |                        |   |      |                | left  |
+ |------+-------+-------------------------------------+-------+-----------------------------------------+-------------------------------------+------------------------------+----------------------------------------------+----------------------------+------------------------+---+------+----------------+-------|
+ | kp-8 | sup   | move to previous sibling            | JJXJX | J org-backward-heading-same-level       | J dired-subtree-previous-sibling    | treemacs-previous-neighbour) | python-nav-backward-[block/list/..]          | J backward-sexp            | J                      |   |      |                | up    |
+ | kp-5 | trg   | troggle children                    | JJJJX | J org-cycle                             | J my-dired-subtree-toggle           | TAB=                         | J yafolding-toggle-element                   | J yafolding-toggle-element | J toggle ibuffer group |   |      |                | right |
+ | kp-2 | sdn   | move to next     sibling            | JJXJX | J org-forward-heading-same-level        | J dired-subtree-next-sibling        | treemacs-next-neighbour)     | python-nav-forward-[block/list/..]           | J forward-sexp             | J                      |   |      |                | down  |
+ |------+-------+-------------------------------------+-------+-----------------------------------------+-------------------------------------+------------------------------+----------------------------------------------+----------------------------+------------------------+---+------+----------------+-------|
+ | kp-6 | in    | go in; expand/dft if needed         | JJXXX | J my-org-dft                            | J my-dired-dft                      |                              |                                              | J down-list                |                        |   |      |                |       |
+ | kp-9 | prv   | up one line                         |       |                                         |                                     |                              |                                              |                            |                        |   |      |                |       |
+ | kp-3 | nxt   | down one line                       |       |                                         |                                     |                              |                                              |                            |                        |   |      |                |       |
+ |------+-------+-------------------------------------+-------+-----------------------------------------+-------------------------------------+------------------------------+----------------------------------------------+----------------------------+------------------------+---+------+----------------+-------|
+ |      | fu    | goto first uncle                    |       |                                         |                                     |                              |                                              |                            |                        |   |      |                |       |
+ |      | lu    | goto last uncle                     |       |                                         |                                     |                              |                                              |                            |                        |   |      |                |       |
+ |      | lc    | show children; go to last child     | XXXXX | (org-show-children) (next-line)         |                                     |                              |                                              |                            |                        |   |      |                | end   |
+ |      | ns6   | move to next     sibling X7         | JJXJX | J org-forward-heading-same-level  x7    | J my-dired-subtree-next-sibling  x7 |                              |                                              | J forward-sexp X 6         |                        |   |      |                |       |
+ |      | ps6   | move to previous sibling X7         | JJXJX | J org-backward-heading-same-level x7    | J my-dired-subtree-prev-sibling  x7 |                              |                                              | J backward-sexp x 6        |                        |   |      |                |       |
+ |      | up2   | upto grandparent; collapse children | JJXJX | J outline-up-heading X 2 : tbd collapse | J dired-up-to-parent X 2            |                              |                                              | J backward-up-list X 2     |                        |   |      |                | home  |
+ |      |       | search breadth first                |       |                                         |                                     |                              |                                              |                            |                        |   |      |                |       |
+ |------+-------+-------------------------------------+-------+-----------------------------------------+-------------------------------------+------------------------------+----------------------------------------------+----------------------------+------------------------+---+------+----------------+-------|
 
 
 *** KeyPad Bindings
 
 #+begin_src emacs-lisp                     :REM Keypad Global Key Bindings
 (progn 
-  (global-set-key [S-kp-prior]        #'scroll-one-line-down)                                    ;; = S-kp9
-  (global-set-key [S-kp-right]        #'(lambda () (interactive) (recenter-top-bottom '(t))))    ;; = S-kp6
-  (global-set-key [S-kp-next]         #'scroll-one-line-up)                                      ;; = S-kp3
+  (global-set-key [S-kp-prior]              #'scroll-one-line-down)                                    ;; = S-kp9
+  (global-set-key [S-kp-right]              #'(lambda () (interactive) (recenter-top-bottom '(t))))    ;; = S-kp6
+  (global-set-key [S-kp-next]               #'scroll-one-line-up)                                      ;; = S-kp3
 )
 #+end_src
 
 
 #+begin_src emacs-lisp                     :REM TreeNavPad keys for paredit
 (progn     ;; paredit commands, are already smart, e..g if at then of the sexpresion, move past the closing paren and go forward in the enclosing sexpr, like depth-first search 
-  (define-key paredit-mode-map [kp-4]      #'paredit-backward-up)
+  (define-key paredit-mode-map [kp-4]       #'paredit-backward-up)
 
-  (define-key paredit-mode-map [kp-8]      #'paredit-backward)                    
-  ;;(define-key paredit-mode-map [kp-5]    #'paredit-TAB-action)                                    ;; ?? elide/fold?
-  (define-key paredit-mode-map [kp-2]      #'paredit-forward)                                       ;; move #8=ns                           
+  (define-key paredit-mode-map [kp-8]       #'paredit-backward)                    
+  ;;(define-key paredit-mode-map [kp-5]     #'paredit-TAB-action)                                    ;; ?? elide/fold?
+  (define-key paredit-mode-map [kp-2]       #'paredit-forward)                                       ;; move #8=ns                           
 
-  (define-key paredit-mode-map [kp-6]      #'paredit-forward-down)                                  ;; works?
+  (define-key paredit-mode-map [kp-6]       #'paredit-forward-down)                                  ;; works?
 )
 #+end_src
 
 #+begin_src emacs-lisp                     :REM TreeNavPad keys for treemacs
 (progn     ;; in treemacs chaging root only works when you have one "project" (i.e folder tree root)
-  (define-key treemacs-mode-map [kp-4]     #'treemacs-root-up)                                      ;; works!
-  (define-key treemacs-mode-map (kbd "<C-left>")     #'treemacs-root-up)                             ;; works?
+  (define-key treemacs-mode-map [kp-4]      #'treemacs-root-up)                                      ;; works!
+  (define-key treemacs-mode-map (kbd "<C-left>") #'treemacs-root-up)                             ;; works?
 
-  (define-key treemacs-mode-map [kp-8]     #'(lambda () (interactive) (progn (treemacs-previous-neighbour) (treemacs-peek-mode))))                    ;; move #2=ps
-  (define-key treemacs-mode-map [kp-5]     #'treemacs-TAB-action)
-  (define-key treemacs-mode-map [kp-2]     #'(lambda () (interactive) (progn (treemacs-next-neighbour) (treemacs-peek-mode))))                        ;; move #8=ns                           
+  (define-key treemacs-mode-map [kp-8]      #'(lambda () (interactive) (progn (treemacs-previous-neighbour) (treemacs-peek-mode))))                    ;; move #2=ps
+  (define-key treemacs-mode-map [kp-5]      #'treemacs-TAB-action)
+  (define-key treemacs-mode-map [kp-2]      #'(lambda () (interactive) (progn (treemacs-next-neighbour) (treemacs-peek-mode))))                        ;; move #8=ns                           
 
-  (define-key treemacs-mode-map [kp-6]            #'treemacs-root-down)                             ;; works?
+  (define-key treemacs-mode-map [kp-6]      #'treemacs-root-down)                             ;; works?
   (define-key treemacs-mode-map (kbd "<C-right>") #'treemacs-root-down)                                          ;; ok-same as sidebar; move #6=u1  
  
-  (define-key treemacs-mode-map [kp-0]     #'treemacs-visit-node-ace)
+  (define-key treemacs-mode-map [kp-0]      #'treemacs-visit-node-ace)
 )
-#+end_src
-
-#+begin_src emacs-lisp                     :REM TreeNavPad keys for neotree
-(defun opn-f (f &optional arg) 
-  (message "xdg-open %s" f)
-  (let ((process-connection-type nil)) 
-     (start-process "" nil "xdg-open" (expand-file-name f))))
 #+end_src
 
 #+begin_src emacs-lisp                     :REM TreeNavPad keys for dired modes 
 (progn ;; dired treepad navigation
-  (define-key dired-mode-map [kp-4]                #'my-dired-up-to-parent)                                          ;; ok-same as sidebar; move #6=u1  
+  (define-key dired-mode-map [kp-4]         #'my-dired-up-to-parent)                                          ;; ok-same as sidebar; move #6=u1  
 
-  (define-key dired-mode-map [kp-8]                #'dired-subtree-previous-sibling)                                 ;; ok-same as sidebar; move #2=ps
-  (define-key dired-mode-map [kp-5]                #'my-dired-subtree-toggle)                                        ;; ok-same as sidebar; tbd toggle with 'dired-subtree-remove ;; toggle open children
-  (define-key dired-mode-map [kp-2]                #'dired-subtree-next-sibling)                                     ;; ok-same as sidebar;  move #8=ns
+  (define-key dired-mode-map [kp-8]         #'dired-subtree-previous-sibling)                                 ;; ok-same as sidebar; move #2=ps
+  (define-key dired-mode-map [kp-5]         #'my-dired-subtree-toggle)                                        ;; ok-same as sidebar; tbd toggle with 'dired-subtree-remove ;; toggle open children
+  (define-key dired-mode-map [kp-2]         #'dired-subtree-next-sibling)                                     ;; ok-same as sidebar;  move #8=ns
 
-  (define-key dired-mode-map [kp-6 ]               #'dired-find-file-drop-prev-dired-buffer)                         ;; dired-find-file
-  (define-key dired-mode-map [C-kp-6]              #'my-subdired-dft)                                                ;; dired-subtree-insert move #8=ns     ;; open and moveto first child,
+  (define-key dired-mode-map [kp-6 ]        #'dired-find-file-drop-prev-dired-buffer)                         ;; dired-find-file
+  (define-key dired-mode-map [C-kp-6]       #'my-subdired-dft)                                                ;; dired-subtree-insert move #8=ns     ;; open and moveto first child,
 
-  (define-key dired-mode-map [kp-0]               #'dired-visit-ace-window)
+  (define-key dired-mode-map [kp-0]         #'dired-visit-ace-window)
 )
 #+end_src
-: (define-key dired-mode-map [kp-4]                '(lambda () (interactive)   (my-dired-up-to-parent) (my-dired-up-to-parent)))
-: (define-key dired-mode-map [kp-decimal]          '(lambda () (interactive)  (my-dired-subtree-next-sibling-n 7)))              ; moveto nth sibling, and open
+: (define-key dired-mode-map [kp-4]         #'(lambda () (interactive)   (my-dired-up-to-parent) (my-dired-up-to-parent)))
+: (define-key dired-mode-map [kp-decimal]   #'(lambda () (interactive)  (my-dired-subtree-next-sibling-n 7)))              ; moveto nth sibling, and open
 : (dired-sidebar-subtree-toggle)
 : (setq dired-subtree-cycle-depth 5) = 5
 
