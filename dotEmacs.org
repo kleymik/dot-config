@@ -503,6 +503,11 @@ convenient prefix key map, for example `C-,`
 ;; Define external image viewer/editor
 (setq image-dired-external-viewer "/usr/bin/xviewer")
 
+(defun opn-f (f &optional arg) 
+  (message "xdg-open %s" f)
+  (let ((process-connection-type nil)) 
+     (start-process "" nil "xdg-open" (expand-file-name f))))
+
 (defun ergoemacs-open-in-external-app ()
   "Open the current file or dired marked files in external app."
   (interactive)
@@ -517,7 +522,7 @@ convenient prefix key map, for example `C-,`
             (open-url-file fPath)
           (let ((process-connection-type nil)) 
             (start-process "" nil "xdg-open" (expand-file-name fPath)))))))
-  )
+)
 
 
 (defun open-url-file (filePath)
@@ -530,17 +535,29 @@ convenient prefix key map, for example `C-,`
       (message l)
       (cond ((string-match "^TITLE:" l) (setq title (substring l (length "TITLE: "))))
             ((string-match "^URI:"   l) (setq url   (substring l (length "URI: "))))
-            ((string-match "^URL="  l) (setq url   (substring l (length "URI="))))))
-   (message "opening %s in browser"  title)
-   (message "with url %s in browser" url)
+            ((string-match "^URL="   l) (setq url   (substring l (length "URL="))))))
+   (message "opening in browser %s with url %s" title url)
    (when url (browse-url-firefox url)))
 )
 
-;; (defun read-file (file-path)
-;;   "Read the contents of a file and return it as a string."
-;;   (with-temp-buffer
-;;     (insert-file-contents file-path)
-;;     (buffer-string)))
+(defun my-eww-open-file ()
+  (interactive)
+  (let ((curDrdBuff (current-buffer))
+        (ufn (dired-get-filename))
+        url)
+     (message (concat "ufn:" ufn))
+     (cond ((string-equal "URL" (upcase (file-name-extension ufn)))
+             (setq url (get-in-file-url ufn))
+             (message (concat "found .url url:" url))
+             (eww url))
+           ((string-equal "HTML" (upcase (file-name-extension ufn)))  ;; tbd find the embedded url
+             (setq url (get-in-file-url ufn)) ;; extend function to ".html" files
+             (message (concat "found .html url:" url))
+             (eww url))
+           ((string-equal "WEBLOC" (upcase (file-name-extension ufn)))  ;; tbd find the embedded url
+             (setq url (get-in-file-url-webloc ufn)) ;; extend function to ".html" files
+             (message (concat "found .webloc url:" url))
+             (eww url)))))
 
 (defun get-in-file-url (file-path)
   "Parse .url file and return value of URL= entry"
@@ -563,25 +580,6 @@ convenient prefix key map, for example `C-,`
      (let ((xml-dom-tree (libxml-parse-xml-region (point-min) (point-max))))
        (print xml-dom-tree)
        (cadr (dom-strings xml-dom-tree)))))
-
-(defun my-eww-open-file ()
-  (interactive)
-  (let ((curDrdBuff (current-buffer))
-         (ufn (dired-get-filename))
-        url)
-     (message (concat "ufn:" ufn))
-     (cond ((string-equal "URL" (upcase (file-name-extension ufn)))
-             (setq url (get-in-file-url ufn))
-             (message (concat "url:" url))
-             (eww url))
-           ((string-equal "HTML" (upcase (file-name-extension ufn)))  ;; tbd find the embedded url
-             (setq url (get-in-file-url ufn)) ;; extend function to ".html" files
-             (message (concat "url:" url))
-             (eww url))
-           ((string-equal "WEBLOC" (upcase (file-name-extension ufn)))  ;; tbd find the embedded url
-             (setq url (get-in-file-url ufn)) ;; extend function to ".html" files
-             (message (concat "url:" url))
-             (eww url)))))
 
 ;; ------------------------------------------------------------------- Selective Display
 ;; tweaked for grex-calc
