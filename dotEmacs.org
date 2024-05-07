@@ -750,6 +750,10 @@ convenient prefix key map, for example `C-,`
 
 #+begin_src emacs-lisp                            :REM Settings
 (message "-------------- Start: Settings")
+
+(custom-set-variables '(gnus-select-method (quote (nnreddit ""))))
+
+
 ;;(setq epa-file-select-keys "nope")                                                      ; don't ask about assymmetric key?
 (setq epa-pinentry-mode 'loopback)                                                        ; don't pop up a gui
 (setq calendar-week-start-day 1)                                                          ; set....mark to get count of days
@@ -1247,8 +1251,6 @@ convenient prefix key map, for example `C-,`
 
 ** Org Mode
 #+begin_src emacs-lisp                            :REM org-mode
-(setq org-confirm-babel-evaluate nil)    ;; no-confirm
-(with-eval-after-load 'org (add-hook 'org-babel-after-execute-hook 'org-redisplay-inline-images))
 (defun org-export-get-reference (a b) nil)
 (custom-theme-set-faces 'user `(org-level-2 ((t (:foreground "Salmon1")))))
 (font-lock-add-keywords 'org-mode '(("\\(:REM .+$\\)" 1 font-lock-preprocessor-face prepend)) 'append)   ; Highlight REMark in babel segment +begin_src header
@@ -1256,8 +1258,7 @@ convenient prefix key map, for example `C-,`
 (setq org-default-notes-file "~/myDocs/logbook/notes.org")
 (setq org-cycle-include-plain-lists t)
 (setq org-startup-folded nil)
-(setq org-src-fontify-natively t)
-;;(setq org-checkbox-bullets '("J" "X"))  ;; Doesn't work ??J=done and X=tbd 20240326_11:55:41 
+(setq org-src-fontify-natively t)   ;;(setq org-checkbox-bullets '("J" "X"))  ;; Doesn't work ??J=done and X=tbd 20240326_11:55:41 
 (setq org-list-allow-alphabetical t)
 (setq org-file-apps '( ("\\.xlsx\\'"    . w2-browser)
                        ("\\.mm\\'"      . default)
