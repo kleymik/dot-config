@@ -69,23 +69,26 @@ convenient prefix key map, for example `C-,`
 ;; (require 'filetree) ; doesn't do selective expansion
 ;; dired-sidebar-theme
 
-; (load-library "vigenere")                     ; no longer needed
-(require 'yafolding)                            ; (require 'origami)
+; (load-library "vigenere")                       ;; no longer needed
+(require 'yafolding)                              ;; (require 'origami)
 
 ;; --------- org mode and babel
-(require 'org)
-(require 'ox)                                   ; org export
+(use-package org
+ :config (setq org-confirm-babel-evaluate nil)    ;; no-confirm
+ :hook (org-babel-after-execute . org-redisplay-inline-images))  ;; i.e. the function org-babel-after-execute-hook
+(require 'ox)                                     ;; org export
 (require 'ox-beamer)
 (require 'ox-gfm)
-(require 'ox-reveal)    (setq Org-Reveal-root "file:///home/kleyn/ulib/reveal.js-master/js/reveal.js")    (setq Org-Reveal-title-slide nil)
+(use-package ox-reveal
+  :config (setq Org-Reveal-root "file:///home/kleyn/ulib/reveal.js-master/js/reveal.js" 
+                Org-Reveal-title-slide nil))
 (require 'orgtbl-join)
 ; (load-file "org-insert-dblock.el") ;; optional, extends C-c C-c i
 
 ; ---------jupyter / ipython / emacs
 (require 'jupyter)
 (require 'pyvenv) ; M-x: pyvenv-activate RET <path-to-venv>
-(setq org-confirm-babel-evaluate nil)    ;; no-confirm
-(with-eval-after-load 'org (add-hook 'org-babel-after-execute-hook 'org-redisplay-inline-images))
+
 ; (defun org-export-get-reference (a b) nil)
 ; org<->python deprecated
 ; (add-hook 'org-babel-after-execute-hook 'org-display-inline-images 'append)
