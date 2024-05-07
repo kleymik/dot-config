@@ -721,16 +721,16 @@ convenient prefix key map, for example `C-,`
 
 * Settings
 ** Highlighting/Cursor Visibility
-; ------------------------------------- highlighting
-(require 'highlight-sexp)  - fails
-(add-hook 'lisp-mode-hook 'highlight-sexp-mode)
-(add-hook 'emacs-lisp-mode-hook 'highlight-sexp-mode)
- hl-sexp-background-color
-  - hl-sexp-foreground-color
-  - hl-sexp-face
- Enable `highlight-sexps-mode'
-
-(list-colors-display)
+: ; ------------------------------------- highlighting
+: (require 'highlight-sexp)  - fails
+: (add-hook 'lisp-mode-hook 'highlight-sexp-mode)
+: (add-hook 'emacs-lisp-mode-hook 'highlight-sexp-mode)
+:  hl-sexp-background-color
+:   - hl-sexp-foreground-color
+:   - hl-sexp-face
+:  Enable `highlight-sexps-mode'
+: 
+: (list-colors-display)
 #+begin_src emacs-lisp
 
 (message "-------------- Start: Highlighting")
@@ -931,53 +931,53 @@ convenient prefix key map, for example `C-,`
 
 #+end_src
 
-;(defun my-dired-mode-buffer-p (buf)
-;   "Non-nil if buffer BUF is in `dired-mode'."
-;   (with-current-buffer buf
-;     (derived-mode-p 'dired-mode)))
-
-;(defvar ibuffer-never-show-predicates '())
-;(with-eval-after-load "ibuffer" (add-to-list 'ibuffer-never-show-predicates #'my-dired-mode-buffer-p))
-
------------------------------------------------------- new stuff
-;; Save point position between sessions.
-(use-package saveplace)
-(setq-default save-place t)
-(setq save-place-file (expand-file-name "places" user-emacs-directory))
-
-;; Fix empty pasteboard error.
-(setq save-interprogram-paste-before-kill nil)
-
------------------------------------------------------- Colour
-(set-background-color "black")
-(set-background-color "darkgrey")
-(set-background-color "bisque")
-(set-background-color "bisque2")
-(set-background-color "bisque3")
-(set-face-background 'default "green3")
-(set-face-background 'default "lightyellow2")
-(set-face-background 'default "palevioletred")
-(set-face-background 'default "lightblue")
-(set-face-background 'default "paleturquoise")
-(set-face-background 'default "lightblue")
-
-(global-hl-line-mode 0) ; (global-hl-line-unhighlight) (global-hl-line-highlight)
-(global-mark-ring-max 50)
-
-(setq set-mark-command-repeat-pop 1) ;;-- needs emacs version 22
-(setq hscroll-margin 30)
-(setq hscroll-step 20) ;; # 0
-(setq header-line-format mode-line-format)
-(global-mark-ring-max 50)
-(global-set-key "\C-." 'pop-global-mark)
-(global-set-key [M-SPC] 'pop-global-mark)
-(global-set-key [S-right] 'forward-word)
-(global-set-key [remap eval-expression] 'pp-eval-expression)
-(setq mark-ring-max 50)
-(setq set-mark-command-repeat-pop 1) - needs emacs version 22
-(setq-default frame-title-format "%b %p %p(%f)")
-(setq-default line-spacing 0.06)
-M-x clone-indirect-buffer RET
+: ;(defun my-dired-mode-buffer-p (buf)
+: ;   "Non-nil if buffer BUF is in `dired-mode'."
+: ;   (with-current-buffer buf
+: ;     (derived-mode-p 'dired-mode)))
+: 
+: ;(defvar ibuffer-never-show-predicates '())
+: ;(with-eval-after-load "ibuffer" (add-to-list 'ibuffer-never-show-predicates #'my-dired-mode-buffer-p))
+: 
+: ------------------------------------------------------ new stuff
+: ;; Save point position between sessions.
+: (use-package saveplace)
+: (setq-default save-place t)
+: (setq save-place-file (expand-file-name "places" user-emacs-directory))
+: 
+: ;; Fix empty pasteboard error.
+: (setq save-interprogram-paste-before-kill nil)
+: 
+: ------------------------------------------------------ Colour
+: (set-background-color "black")
+: (set-background-color "darkgrey")
+: (set-background-color "bisque")
+: (set-background-color "bisque2")
+: (set-background-color "bisque3")
+: (set-face-background 'default "green3")
+: (set-face-background 'default "lightyellow2")
+: (set-face-background 'default "palevioletred")
+: (set-face-background 'default "lightblue")
+: (set-face-background 'default "paleturquoise")
+: (set-face-background 'default "lightblue")
+: 
+: (global-hl-line-mode 0) ; (global-hl-line-unhighlight) (global-hl-line-highlight)
+: (global-mark-ring-max 50)
+: 
+: (setq set-mark-command-repeat-pop 1) ;;-- needs emacs version 22
+: (setq hscroll-margin 30)
+: (setq hscroll-step 20) ;; # 0
+: (setq header-line-format mode-line-format)
+: (global-mark-ring-max 50)
+: (global-set-key "\C-." 'pop-global-mark)
+: (global-set-key [M-SPC] 'pop-global-mark)
+: (global-set-key [S-right] 'forward-word)
+: (global-set-key [remap eval-expression] 'pp-eval-expression)
+: (setq mark-ring-max 50)
+: (setq set-mark-command-repeat-pop 1) - needs emacs version 22
+: (setq-default frame-title-format "%b %p %p(%f)")
+: (setq-default line-spacing 0.06)
+: M-x clone-indirect-buffer RET
 
 ** Web Proxy
 : -------------------------------------------------------------------- WEB PROXY
@@ -2108,48 +2108,49 @@ M-x clone-indirect-buffer RET
       (error "no more than 2 files should be marked"))))
 
 #+end_src
-;; My ediff customizations
 
-(defun dired-ediff-marked-files ()
-  "Compare two marked files in Dired with ediff."
-  (interactive)
-  (let ((marked-files (dired-get-marked-files)))
-    (unless (= (length marked-files) 2)
-      (error "You need to mark exactly two files to compare"))
-    (ediff-files (car marked-files) (cadr marked-files))))
-
-;; Compare marked files using =
-(with-eval-after-load 'dired
-  (define-key dired-mode-map "=" nil)
-  (define-key dired-mode-map "=" 'dired-ediff-marked-files))
-
-;; Ignore whitespace while comparing files
-(setq ediff-diff-options "-w")
-
-;; Split windows vertically
-(setq ediff-split-window-function 'split-window-horizontally)
-
-;; Restore window configuration after ediff exits
-(defvar my-ediff-bwin-config nil "Window configuration before ediff.")
-(defcustom my-ediff-bwin-reg ?b
-  "*Register to be set up to hold `my-ediff-bwin-config'
-        configuration.")
-
-(defun my-ediff-bsh ()
-  "Function to be called before any buffers or window setup for
-        ediff."
-  (setq my-ediff-bwin-config (current-window-configuration))
-  (when (characterp my-ediff-bwin-reg)
-    (set-register my-ediff-bwin-reg
-                  (list my-ediff-bwin-config (point-marker)))))
-
-(defun my-ediff-qh ()
-  "Function to be called when ediff quits."
-  (when my-ediff-bwin-config
-    (set-window-configuration my-ediff-bwin-config)))
-
-(add-hook 'ediff-before-setup-hook 'my-ediff-bsh)
-(add-hook 'ediff-quit-hook 'my-ediff-qh)
+: ;; My ediff customizations
+: 
+: (defun dired-ediff-marked-files ()
+:   "Compare two marked files in Dired with ediff."
+:   (interactive)
+:   (let ((marked-files (dired-get-marked-files)))
+:     (unless (= (length marked-files) 2)
+:       (error "You need to mark exactly two files to compare"))
+:     (ediff-files (car marked-files) (cadr marked-files))))
+: 
+: ;; Compare marked files using =
+: (with-eval-after-load 'dired
+:   (define-key dired-mode-map "=" nil)
+:   (define-key dired-mode-map "=" 'dired-ediff-marked-files))
+: 
+: ;; Ignore whitespace while comparing files
+: (setq ediff-diff-options "-w")
+: 
+: ;; Split windows vertically
+: (setq ediff-split-window-function 'split-window-horizontally)
+: 
+: ;; Restore window configuration after ediff exits
+: (defvar my-ediff-bwin-config nil "Window configuration before ediff.")
+: (defcustom my-ediff-bwin-reg ?b
+:   "*Register to be set up to hold `my-ediff-bwin-config'
+:         configuration.")
+: 
+: (defun my-ediff-bsh ()
+:   "Function to be called before any buffers or window setup for
+:         ediff."
+:   (setq my-ediff-bwin-config (current-window-configuration))
+:   (when (characterp my-ediff-bwin-reg)
+:     (set-register my-ediff-bwin-reg
+:                   (list my-ediff-bwin-config (point-marker)))))
+: 
+: (defun my-ediff-qh ()
+:   "Function to be called when ediff quits."
+:   (when my-ediff-bwin-config
+:     (set-window-configuration my-ediff-bwin-config)))
+: 
+: (add-hook 'ediff-before-setup-hook 'my-ediff-bsh)
+: (add-hook 'ediff-quit-hook 'my-ediff-qh)
 *** Dired/subtree funs
 
 :  (dired-utils-is-dir-p)
