@@ -1,5 +1,5 @@
 
-my continuosly improving(?) init files
+my continuously improving(?) init files
 
 gradually moving from bash to eshell
 
