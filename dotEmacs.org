@@ -1,65 +1,39 @@
 
     *Emacs Initialisation*
 
-invoked by: ~/.emacs.d/init.el
- (package-initialize)
- (org-babel-load-file "~/.emacs.d/dotEmacs.org)
-
-* New Stuff/Notes
-
-(setq cur-syntax-table (syntax-table)) ; better to use "describe-syntax"
-undefine a funcion: ;(fmakunbound 'trysc-clear-all-whitespace-columns) 
-default-directory
-
-good fonts "Ubuntu Mono"
-
-Print message listing key sequences that invoke the command DEFINITION.
-Argument is a command definition, usually a symbol with a function definition.
-If INSERT (the prefix arg) is non-nil, insert the message in the buffer.
-
-TBD dired-find-file-otherwindow open a cygwin link by inspecting it
------------------------------------------------------------------------------- Org-Mode
-(print (cadr info) (get-buffer "*scratch*"))
-(write-region (cadr info) nil "L:/MyDocs/history/matlabCmds/org_cmd.m")
-(write-region (cadr info) nil "C:/MyDocs/grepHist/aaa_org_cmd.m"))
-(save-restriction (org-mark-subtree) (rot13-region (point) (mark))))
-
-find-dired  calls unix find
-Dired Listing Switches: Hide Value -ahl --time-style=long-iso
-of emacs.  It is advised to place bindings for these into a
-convenient prefix key map, for example `C-,`
-
+: invoked by: ~/.emacs.d/init.el
+:  (package-initialize)
+:  (org-babel-load-file "~/.emacs.d/dotEmacs.org)
 
 * Packages
+n.b. using use-package package
 #+begin_src emacs-lisp                            :REM packages
-
-(custom-set-variables '(gnus-select-method (quote (nnreddit ""))))
-
 (setq load-path (append load-path '("~/ulib/emacs/")))
 (setq load-path (append load-path '("~/ulib/emacs/dired-hacks")))
 
 (require 'package)                                                                     ; (setq package-archives ())
-;;(add-to-list 'package-archives '("mlpamlk" . "https://melpa.milkbox.net/packages/") t)  ;; Added by Package.el.  This must come before configurations of installed packages.  Don't delete this line.  
 (add-to-list 'package-archives '("melpa"    . "https://melpa.org/packages/")           t)
 (add-to-list 'package-archives '("mlpstbl"  . "https://stable.melpa.org/packages/")    t)
 (add-to-list 'package-archives '("elpaorg"  . "https://elpa.gnu.org/packages/")        t)
 (add-to-list 'package-archives '("org"      . "https://orgmode.org/elpa/")             t)
 (add-to-list 'package-archives '("jcs-elpa" . "https://jcs-emacs.github.io/jcs-elpa/packages/") t)
+;;(add-to-list 'package-archives '("mlpamlk" . "https://melpa.milkbox.net/packages/") t)  ;; Added by Package.el.  This must come before configurations of installed packages.  Don't delete this line.  
 
 (require 'simpleclip) 
 (require 'uniquify)
 (require 'ob)
 (require 'regexp-opt)
 (require 'em-alias)                             ; for eshell
-; (require 'diffview)                           ; make patch files look like ediff
 ; ----------------------- dired etc
+(load-file "/home/kleyn/ulib/emacs/diredPlus.el") ;(require 'dired+)  ; my fixed version (require 'diredPlus)
 (require 'dired-x)
-(load-file "/home/kleyn/ulib/emacs/diredPlus.el") ;(require 'dired+)  ; my fixed version (require 'diredPlus)  ; my fixed version
 (require 'wdired)
 (require 'dired-subtree)
 (require 'dired-rainbow)
+
 (require 'treemacs)
 (require 'eww)
+;; (require 'diffview)                           ; make patch files look like ediff
 ;; (require 'tree-inspector) under dev ind grex-calc
 ;; (require 'dired-lis)
 ;; (require 'dired-k)
@@ -4019,6 +3993,8 @@ for flushing messages to *Message* buffer
 
 ;(message (format "%s\n" (with-output-to-string (pp (window-tree)))))
 (message "dotEmacs.org done")
+;(load-file "/home/kleyn/ulib/emacs/diredPlus.el")
+
 #+end_src
 
 (dired "~/")
